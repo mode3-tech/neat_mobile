@@ -1,0 +1,325 @@
+import { useState } from 'react';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
+
+import { authService } from '@/services/auth.service';
+import { useSignUpStore } from '@/stores/sign-up.store';
+import { NIN_LENGTH } from '@/constants';
+import type { NinData } from '@/types/sign-up.types';
+
+const PRIMARY = '#472FF8';
+const ERROR_COLOR = '#EF4444';
+const SUCCESS_COLOR = '#16A34A';
+
+type Status = 'idle' | 'loading' | 'error' | 'verified';
+
+export default function NinVerificationScreen() {
+  const [nin, setNin] = useState('');
+  const [status, setStatus] = useState<Status>('idle');
+  const [ninResult, setNinResult] = useState<NinData | null>(null);
+  const storeNinData = useSignUpStore((s) => s.setNinData);
+
+  const isValid = nin.length === NIN_LENGTH;
+  const isLoading = status === 'loading';
+  const isError = status === 'error';
+  const isVerified = status === 'verified';
+
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleVerify = async () => {
+    if (!isValid || isLoading) return;
+    setStatus('loading');
+    setErrorMsg('');
+    try {
+      const data = await authService.verifyNin(nin);
+      setNinResult(data);
+      setStatus('verified');
+    } catch (err: any) {
+      setErrorMsg(err.message);
+      setStatus('error');
+    }
+  };
+
+  const handleConfirm = () => {
+    if (!ninResult) return;
+    storeNinData(nin, ninResult);
+    router.push('/(sign-up)/email-validation');
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+        <Text style={styles.backText}>Back</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.title}>NIN Verification</Text>
+      <Text style={styles.subtitle}>
+        Enter your National Identification Number for verification
+      </Text>
+
+      <View style={styles.field}>
+        <Text style={styles.label}>NIN Number</Text>
+        <View style={[styles.inputWrap, isError && styles.inputWrapError]}>
+          <TextInput
+            style={styles.input}
+            value={nin}
+            onChangeText={(t) => {
+              setNin(t.replace(/\D/g, '').slice(0, NIN_LENGTH));
+              if (isError) setStatus('idle');
+            }}
+            placeholder="Enter 11-digit NIN"
+            placeholderTextColor="#9CA3AF"
+            keyboardType="number-pad"
+            maxLength={NIN_LENGTH}
+            editable={!isVerified}
+          />
+        </View>
+        {isError && <Text style={styles.errorText}>{errorMsg || 'Invalid NIN Number'}</Text>}
+        {!isVerified && (
+          <Text style={styles.helperText}>Your NIN is used to verify your identity</Text>
+        )}
+      </View>
+
+      {/* Info box — shown before verification */}
+      {!isVerified && (
+        <View style={styles.infoBox}>
+          <Text style={styles.infoBoxTitle}>Why we need your NIN:</Text>
+          {[
+            'Verify your identity.',
+            'Comply with financial regulations.',
+            'Protect your account from fraud.',
+            'Enable seamless banking services.',
+          ].map((item) => (
+            <View key={item} style={styles.bulletRow}>
+              <Text style={styles.bullet}>{'•'}</Text>
+              <Text style={styles.bulletText}>{item}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {/* Success card — shown after verification */}
+      {isVerified && ninResult && (
+        <View style={styles.successCard}>
+          <View style={styles.successHeader}>
+            <View style={styles.checkCircle}>
+              <Text style={styles.checkMark}>✓</Text>
+            </View>
+            <Text style={styles.successTitle}>Details match BVN records</Text>
+          </View>
+          <InfoRow label="Name:" value={ninResult.name} />
+          <InfoRow label="DOB:" value={ninResult.dob} />
+        </View>
+      )}
+
+      <View style={styles.spacer} />
+
+      <View style={styles.footer}>
+        {isVerified ? (
+          <TouchableOpacity style={styles.primaryBtn}   onPress={handleConfirm}  activeOpacity={0.85}>
+            <Text style={styles.primaryBtnText}>Confirm & Continue</Text>
+          </TouchableOpacity>
+        
+        ) : (
+          <TouchableOpacity
+            style={[styles.primaryBtn, !isValid && styles.disabledBtn]}
+            onPress={handleVerify}
+            disabled={!isValid || isLoading}
+            activeOpacity={0.85}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
+                Verify NIN
+              </Text>
+            )}
+          </TouchableOpacity>
+        )}
+      </View>
+    </SafeAreaView>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.infoRow}>
+      <Text style={styles.infoLabel}>{label}</Text>
+      <Text style={styles.infoValue}>{value}</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 24,
+  },
+  backBtn: {
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    marginTop: 8,
+    marginBottom: 24,
+  },
+  backText: {
+    fontSize: 14,
+    color: '#374151',
+    fontWeight: '500',
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: 6,
+  },
+  subtitle: {
+    fontSize: 13,
+    color: '#6B7280',
+    lineHeight: 20,
+    marginBottom: 28,
+  },
+  field: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 8,
+  },
+  inputWrap: {
+    backgroundColor: '#F5F5F5',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 15,
+    borderWidth: 1.5,
+    borderColor: 'transparent',
+  },
+  inputWrapError: {
+    backgroundColor: '#fff',
+    borderColor: ERROR_COLOR,
+  },
+  input: {
+    fontSize: 15,
+    color: '#1A1A1A',
+    padding: 0,
+  },
+  errorText: {
+    fontSize: 12,
+    color: ERROR_COLOR,
+    marginTop: 6,
+  },
+  helperText: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 6,
+  },
+  infoBox: {
+    backgroundColor: '#EEF0FF',
+    borderRadius: 12,
+    padding: 16,
+    gap: 8,
+  },
+  infoBoxTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    marginBottom: 4,
+  },
+  bulletRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  bullet: {
+    fontSize: 13,
+    color: '#374151',
+    lineHeight: 20,
+  },
+  bulletText: {
+    fontSize: 13,
+    color: '#374151',
+    lineHeight: 20,
+    flex: 1,
+  },
+  successCard: {
+    backgroundColor: '#EEF0FF',
+    borderRadius: 12,
+    padding: 16,
+    gap: 8,
+  },
+  successHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  checkCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: SUCCESS_COLOR,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkMark: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  successTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: SUCCESS_COLOR,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  infoLabel: {
+    fontSize: 13,
+    color: '#6B7280',
+    width: 52,
+  },
+  infoValue: {
+    fontSize: 13,
+    color: '#1A1A1A',
+    fontWeight: '500',
+    flex: 1,
+  },
+  spacer: {
+    flex: 1,
+  },
+  footer: {
+    paddingBottom: 16,
+  },
+  primaryBtn: {
+    backgroundColor: PRIMARY,
+    borderRadius: 50,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  primaryBtnText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  disabledBtn: {
+    backgroundColor: '#E5E7EB',
+  },
+  disabledBtnText: {
+    color: '#9CA3AF',
+  },
+});
