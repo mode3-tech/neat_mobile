@@ -23,6 +23,7 @@ export default function EmailOtpScreen() {
   const [loading, setLoading] = useState(false);
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
   const email = useSignUpStore((s) => s.email);
+  const setEmailVerificationId = useSignUpStore((s) => s.setEmailVerificationId);
 
   const canVerify = otp.length === OTP_LENGTH;
   const canResend = seconds === 0;
@@ -44,10 +45,11 @@ export default function EmailOtpScreen() {
     if (!canVerify || loading) return;
     setLoading(true);
     try {
-      await authService.verifyEmailOtp(email, otp);
+      const result = await authService.verifyEmailOtp(email, otp);
+      setEmailVerificationId(result.verification_id);
       router.push('/(sign-up)/create-password');
-    } catch (err: any) {
-      Alert.alert('Error', err.message);
+    } catch (err: unknown) {
+      Alert.alert('Error', err instanceof Error ? err.message : 'OTP verification failed');
     } finally {
       setLoading(false);
     }

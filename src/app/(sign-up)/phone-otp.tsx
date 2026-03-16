@@ -24,6 +24,7 @@ export default function PhoneOtpScreen() {
   const [loading, setLoading] = useState(false);
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
   const phone = useSignUpStore((s) => s.phone);
+  const setPhoneVerificationId = useSignUpStore((s) => s.setPhoneVerificationId);
 
   const handleSmsOtp = useCallback((code: string) => setOtp(code), []);
   useSmsOtp({ onOtpReceived: handleSmsOtp, otpLength: OTP_LENGTH });
@@ -48,10 +49,11 @@ export default function PhoneOtpScreen() {
     if (!canVerify || loading) return;
     setLoading(true);
     try {
-      await authService.verifyPhoneOtp(phone, otp);
+      const result = await authService.verifyPhoneOtp(phone, otp);
+      setPhoneVerificationId(result.verification_id);
       router.push('/(sign-up)/nin-verification');
-    } catch (err: any) {
-      Alert.alert('Error', err.message);
+    } catch (err: unknown) {
+      Alert.alert('Error', err instanceof Error ? err.message : 'OTP verification failed');
     } finally {
       setLoading(false);
     }

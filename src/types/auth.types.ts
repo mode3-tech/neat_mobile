@@ -1,11 +1,13 @@
+import type { DeviceInfo } from './device.types';
+
 export interface LoginPayload {
   phone: string;
   password: string;
 }
 
 export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
+  access_token: string;
+  refresh_token: string;
 }
 
 export interface AuthUser {
@@ -17,7 +19,43 @@ export interface AuthUser {
   isVerified: boolean;
 }
 
+export interface RegisterPayload {
+  phone_number: string;
+  email: string;
+  password: string;
+  confirm_password: string;
+  transaction_pin: string;
+  confirm_transaction_pin: string;
+  bvn_verification_id: string;
+  nin_verification_id: string;
+  phone_verification_id: string;
+  email_verification_id: string;
+  is_biometrics_enabled: boolean;
+  device: DeviceInfo;
+}
+
+export interface RegisterResponse {
+  access_token: string;
+  refresh_token: string;
+  message: string;
+}
+
 export interface LoginResponse {
-  user: AuthUser;
-  tokens: AuthTokens;
+  status: 'success' | 'challenge_required' | 'new_device_detected';
+  user?: AuthUser;
+  access_token?: string;
+  refresh_token?: string;
+  challenge?: string;
+  session_token?: string;
+}
+
+export interface VerifyDevicePayload {
+  challenge: string;
+  signature: string;
+  device_id: string;
+}
+
+export interface OtpVerifyResponse {
+  message: string;
+  verification_id: string;
 }

@@ -80,12 +80,13 @@ export default function BvnVerificationScreen() {
           />
         </View>
         <View style={styles.helpRow}>
-          {isError && <Text style={styles.errorText}>{errorMsg}</Text>}
+          {/* {isError && <Text style={styles.errorText}>{errorMsg}</Text>} */}
           <Text style={[styles.helpLink, !isError && { flex: 1, textAlign: 'right' }]}>
             To check your BVN, dial *565*0#.
           </Text>
         </View>
       </View>
+           {isError && <Text style={styles.errorText}>{errorMsg}</Text>}
 
       {isVerified && bvnResult && (
         <View style={styles.infoCard}>

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx expo install expo-device expo-application react-native-device-crypto react-native-uuid)"
+    ]
+  }
+}

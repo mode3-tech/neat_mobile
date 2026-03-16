@@ -29,6 +29,7 @@ export default function RootLayout(): React.JSX.Element {
           <Stack.Screen name="index" options={{ animation: 'none' }} />
           <Stack.Screen name="welcome" options={{ contentStyle: { backgroundColor: '#d4d8FF' } }} />
           <Stack.Screen name="(sign-in)" />
+          <Stack.Screen name="Dashboard" options={{ animation: 'none' }} />
           <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
         </Stack>
         <StatusBar style="auto" />

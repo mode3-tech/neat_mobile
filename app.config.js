@@ -7,7 +7,7 @@ const variants = {
     ios: { bundleIdentifier: 'com.mode3.neatmobile.dev' },
   },
   preview: {
-    name: 'NeatPay (Preview)',
+    name: 'NeatPay',
     android: { package: 'com.mode3.neatmobile.preview' },
     ios: { bundleIdentifier: 'com.mode3.neatmobile.preview' },
   },

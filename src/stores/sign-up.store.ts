@@ -12,6 +12,8 @@ interface SignUpState {
   password: string;
   transactionPin: string;
   biometricsEnabled: boolean;
+  phoneVerificationId: string;
+  emailVerificationId: string;
 
   setBvnData: (bvn: string, data: BvnData) => void;
   setNinData: (nin: string, data: NinData) => void;
@@ -19,6 +21,8 @@ interface SignUpState {
   setPassword: (password: string) => void;
   setTransactionPin: (pin: string) => void;
   setBiometrics: (enabled: boolean) => void;
+  setPhoneVerificationId: (id: string) => void;
+  setEmailVerificationId: (id: string) => void;
   reset: () => void;
 }
 
@@ -32,6 +36,8 @@ const initialState = {
   password: '',
   transactionPin: '',
   biometricsEnabled: false,
+  phoneVerificationId: '',
+  emailVerificationId: '',
 };
 
 export const useSignUpStore = create<SignUpState>((set) => ({
@@ -49,6 +55,10 @@ export const useSignUpStore = create<SignUpState>((set) => ({
   setTransactionPin: (transactionPin) => set({ transactionPin }),
 
   setBiometrics: (biometricsEnabled) => set({ biometricsEnabled }),
+
+  setPhoneVerificationId: (phoneVerificationId) => set({ phoneVerificationId }),
+
+  setEmailVerificationId: (emailVerificationId) => set({ emailVerificationId }),
 
   reset: () => set(initialState),
 }));

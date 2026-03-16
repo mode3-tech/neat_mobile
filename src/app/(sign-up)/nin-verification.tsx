@@ -26,6 +26,7 @@ export default function NinVerificationScreen() {
   const [status, setStatus] = useState<Status>('idle');
   const [ninResult, setNinResult] = useState<NinData | null>(null);
   const storeNinData = useSignUpStore((s) => s.setNinData);
+  const bvnData = useSignUpStore((s) => s.bvnData);
 
   const isValid = nin.length === NIN_LENGTH;
   const isLoading = status === 'loading';
@@ -39,7 +40,7 @@ export default function NinVerificationScreen() {
     setStatus('loading');
     setErrorMsg('');
     try {
-      const data = await authService.verifyNin(nin);
+      const data = await authService.verifyNin(nin, bvnData?.verification_id ?? '');
       setNinResult(data);
       setStatus('verified');
     } catch (err: any) {

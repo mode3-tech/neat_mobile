@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   StyleSheet,
   Switch,
   Text,
@@ -10,9 +11,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
-// import { authService } from '@/services/auth.service'; // TODO: uncomment when API is ready
+import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
-// import { useAuthStore } from '@/stores/auth.store'; // TODO: uncomment when API is ready
+import { useAuthStore } from '@/stores/auth.store';
 
 const PRIMARY = '#472FF8';
 
@@ -21,15 +22,39 @@ export default function EnableBiometricsScreen() {
   const [loading, setLoading] = useState(false);
 
   const store = useSignUpStore();
-  // const setTokens = useAuthStore((s) => s.setTokens); // TODO: uncomment when API is ready
-  // const setUser = useAuthStore((s) => s.setUser);     // TODO: uncomment when API is ready
+  const setTokens = useAuthStore((s) => s.setTokens);
+  const setBiometricsEnabled = useAuthStore((s) => s.setBiometricsEnabled);
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     store.setBiometrics(enabled);
-    store.reset();
-    // TODO: call authService.register(...) and setTokens/setUser when API is ready
-    // TODO: navigate to main app screen
-    router.replace('/');
+    setLoading(true);
+    try {
+      const result = await authService.registerUser({
+        phone_number: store.phone,
+        email: store.email,
+        password: store.password,
+        confirm_password: store.password,
+        transaction_pin: store.transactionPin,
+        confirm_transaction_pin: store.transactionPin,
+        bvn_verification_id: store.bvnData?.verification_id ?? '',
+        nin_verification_id: store.ninData?.verification_id ?? '',
+        phone_verification_id: store.phoneVerificationId,
+        email_verification_id: store.emailVerificationId,
+        is_biometrics_enabled: enabled,
+      });
+
+      setTokens(result.access_token, result.refresh_token);
+      setBiometricsEnabled(enabled);
+      store.reset();
+      router.replace('/(sign-up)/registration-success');
+    } catch (err: unknown) {
+      Alert.alert(
+        'Registration Failed',
+        err instanceof Error ? err.message : 'Something went wrong',
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
