@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -45,11 +44,14 @@ export default function SignInScreen() {
       }
 
       if (response.status === 'new_device_detected') {
-        Alert.alert(
-          'New Device',
-          'This device is not recognized. Please verify your identity.',
-        );
-        // TODO: navigate to device verification OTP screen
+        if (!response.session_token) {
+          setError('Server error: missing session token');
+          return;
+        }
+        router.push({
+          pathname: '/(sign-in)/new-device-detected',
+          params: { session_token: response.session_token },
+        });
         return;
       }
 

@@ -59,3 +59,14 @@ export interface OtpVerifyResponse {
   message: string;
   verification_id: string;
 }
+
+export interface VerifyNewDevicePayload {
+  device: DeviceInfo;
+  otp: string;
+  session_token: string;
+}
+
+export interface ResendNewDeviceOtpPayload {
+  device_id: string;
+  session_token: string;
+}

@@ -58,6 +58,8 @@ const SLIDES: Slide[] = [
   },
 ];
 
+const EXTENDED_SLIDES: Slide[] = [...SLIDES, { ...SLIDES[0], id: '1-clone' }];
+
 export default function WelcomeScreen(): React.JSX.Element {
   const flatListRef = useRef<FlatList<Slide>>(null);
   const activeIndexRef = useRef(0);
@@ -71,9 +73,19 @@ export default function WelcomeScreen(): React.JSX.Element {
         duration: 200,
         useNativeDriver: true,
       }).start(() => {
-        activeIndexRef.current = nextIndex;
-        setActiveIndex(nextIndex);
+        // Map to real slide index for text/dots
+        const displayIndex = nextIndex >= SLIDES.length ? 0 : nextIndex;
+        activeIndexRef.current = displayIndex;
+        setActiveIndex(displayIndex);
         flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+
+        // If we scrolled to the clone, silently reset to real slide 0
+        if (nextIndex >= SLIDES.length) {
+          setTimeout(() => {
+            flatListRef.current?.scrollToIndex({ index: 0, animated: false });
+          }, 400);
+        }
+
         Animated.timing(textOpacity, {
           toValue: 1,
           duration: 200,
@@ -86,8 +98,11 @@ export default function WelcomeScreen(): React.JSX.Element {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      const nextIndex = (activeIndexRef.current + 1) % SLIDES.length;
-      goToSlide(nextIndex);
+      const nextIndex = activeIndexRef.current + 1;
+      // Cap at clone index to prevent out-of-bounds
+      if (nextIndex <= SLIDES.length) {
+        goToSlide(nextIndex);
+      }
     }, SLIDE_DURATION);
     return () => clearInterval(timer);
   }, [goToSlide]);
@@ -106,7 +121,7 @@ export default function WelcomeScreen(): React.JSX.Element {
 
       <FlatList
         ref={flatListRef}
-        data={SLIDES}
+        data={EXTENDED_SLIDES}
         horizontal
         pagingEnabled
         scrollEnabled={false}

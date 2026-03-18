@@ -44,4 +44,5 @@ app-example
 /android
 
 # Claude
+.claude/
 .vscode/CLAUDE.md

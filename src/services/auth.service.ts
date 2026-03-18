@@ -200,6 +200,32 @@ export const authService = {
     }
   },
 
+  verifyNewDevice: async (otp: string, sessionToken: string): Promise<LoginResponse> => {
+    try {
+      const device = await getDeviceInfo();
+      const response = await api.post<LoginResponse>('/auth/verify-new-device', {
+        device,
+        otp,
+        session_token: sessionToken,
+      });
+      return response.data;
+    } catch (error) {
+      extractErrorMessage(error, 'Device verification failed');
+    }
+  },
+
+  resendNewDeviceOtp: async (sessionToken: string): Promise<void> => {
+    try {
+      const deviceId = await getOrCreateDeviceId();
+      await api.post('/auth/resend-new-device-otp', {
+        device_id: deviceId,
+        session_token: sessionToken,
+      });
+    } catch (error) {
+      extractErrorMessage(error, 'Failed to resend OTP');
+    }
+  },
+
   forgotPassword: async (email: string): Promise<void> => {
     try {
       await api.post('/auth/otp/request', { purpose: 'reset-password', channel: 'email', destination: email });

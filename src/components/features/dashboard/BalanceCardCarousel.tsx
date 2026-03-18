@@ -74,6 +74,8 @@ const CARDS: CardData[] = [
   },
 ];
 
+const EXTENDED_CARDS = [...CARDS, CARDS[0]]; // clone first card for infinite scroll
+
 export default function BalanceCardCarousel({
   balanceVisible,
   onToggleVisibility,
@@ -86,6 +88,7 @@ export default function BalanceCardCarousel({
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const cardWidthRef = useRef(cardWidth);
   cardWidthRef.current = cardWidth;
+  const isResettingRef = useRef(false);
 
   const stopAutoRotate = useCallback(() => {
     if (timerRef.current) {
@@ -98,9 +101,24 @@ export default function BalanceCardCarousel({
     stopAutoRotate();
     timerRef.current = setInterval(() => {
       setActiveIndex((prev) => {
-        const next = (prev + 1) % CARDS.length;
+        const next = prev + 1;
+        // Guard against scrolling past the clone
+        if (next > CARDS.length) return prev;
         const totalCardWidth = cardWidthRef.current + CARD_MARGIN * 2;
         scrollRef.current?.scrollTo({ x: next * totalCardWidth, animated: true });
+
+        if (next === CARDS.length) {
+          // Scrolled to the clone — after animation finishes, silently reset to real card 0
+          setTimeout(() => {
+            isResettingRef.current = true;
+            scrollRef.current?.scrollTo({ x: 0, animated: false });
+            setTimeout(() => {
+              isResettingRef.current = false;
+            }, 50);
+          }, 400);
+          return 0;
+        }
+
         return next;
       });
     }, AUTO_ROTATE_INTERVAL);
@@ -112,16 +130,29 @@ export default function BalanceCardCarousel({
   }, [startAutoRotate, stopAutoRotate]);
 
   const onScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (isResettingRef.current) return;
+
     const totalCardWidth = cardWidth + CARD_MARGIN * 2;
-    const index = Math.round(e.nativeEvent.contentOffset.x / totalCardWidth);
-    const clampedIndex = Math.max(0, Math.min(index, CARDS.length - 1));
-    setActiveIndex(clampedIndex);
+    const rawIndex = Math.round(e.nativeEvent.contentOffset.x / totalCardWidth);
+
+    if (rawIndex >= CARDS.length) {
+      // User swiped to the clone card — silently reset to real card 0
+      isResettingRef.current = true;
+      scrollRef.current?.scrollTo({ x: 0, animated: false });
+      setTimeout(() => {
+        isResettingRef.current = false;
+      }, 50);
+      setActiveIndex(0);
+    } else {
+      setActiveIndex(rawIndex);
+    }
+
     startAutoRotate();
   };
 
-  const renderCard = (card: CardData) => (
+  const renderCard = (card: CardData, index: number) => (
     <View
-      key={card.id}
+      key={`${card.id}-${index}`}
       className="rounded-2xl py-5 px-3 overflow-hidden justify-between"
       style={{ backgroundColor: card.bgColor, width: cardWidth, marginHorizontal: CARD_MARGIN, minHeight: 190 }}
     >
@@ -194,7 +225,7 @@ export default function BalanceCardCarousel({
     </View>
   );
 
-  const snapOffsets = CARDS.map((_, i) => i * (cardWidth + CARD_MARGIN * 2));
+  const snapOffsets = EXTENDED_CARDS.map((_, i) => i * (cardWidth + CARD_MARGIN * 2));
 
   return (
     <View className="mt-5">
@@ -207,7 +238,7 @@ export default function BalanceCardCarousel({
         snapToOffsets={snapOffsets}
         decelerationRate="fast"
       >
-        {CARDS.map(renderCard)}
+        {EXTENDED_CARDS.map(renderCard)}
       </ScrollView>
 
       <View className="flex-row justify-center items-center gap-1.5 mt-3">
@@ -215,7 +246,7 @@ export default function BalanceCardCarousel({
           <View
             key={card.id}
             className={`rounded-full ${
-              i === activeIndex ? 'w-2 h-2 bg-[#472FF8]' : 'w-1.5 h-1.5 bg-gray-300'
+              i === activeIndex % CARDS.length ? 'w-2 h-2 bg-[#472FF8]' : 'w-1.5 h-1.5 bg-gray-300'
             }`}
           />
         ))}
