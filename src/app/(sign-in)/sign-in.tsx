@@ -2,15 +2,13 @@ import { useState } from 'react';
 import {
   ActivityIndicator,
   Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
@@ -65,11 +63,7 @@ export default function SignInScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView
+        <KeyboardAwareScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
@@ -143,8 +137,8 @@ export default function SignInScreen() {
           <View style={styles.footer}>
             <TouchableOpacity
               style={[styles.primaryBtn, !canSignIn && styles.disabledBtn]}
-              // onPress={handleSignIn}
-              onPress={()=> router.replace('/Dashboard' as any)}
+              onPress={handleSignIn}
+              // onPress={()=> router.replace('/Dashboard' as any)}
               disabled={!canSignIn || loading}
               activeOpacity={0.85}
 
@@ -163,8 +157,7 @@ export default function SignInScreen() {
               <Text style={styles.biometricLink}>Click here</Text>
             </Text> */}
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

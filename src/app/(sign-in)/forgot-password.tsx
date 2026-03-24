@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -21,17 +20,19 @@ const PRIMARY = '#472FF8';
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const canSubmit = email.trim().length > 0;
 
   const handleSubmit = async () => {
     if (!canSubmit || loading) return;
     setLoading(true);
+    setError('');
     try {
       await authService.forgotPassword(email.trim());
       router.push({ pathname: '/(sign-in)/forgot-password-otp', params: { email: email.trim() } });
     } catch (err: any) {
-      Alert.alert('Error', err.message);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -60,7 +61,7 @@ export default function ForgotPasswordScreen() {
               <TextInput
                 style={styles.input}
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(val) => { setEmail(val); setError(''); }}
                 placeholder="Enter your email"
                 placeholderTextColor="#9CA3AF"
                 keyboardType="email-address"
@@ -70,6 +71,8 @@ export default function ForgotPasswordScreen() {
               />
             </View>
           </View>
+
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
         </ScrollView>
 
         <View style={styles.footer}>
@@ -151,6 +154,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#1A1A1A',
     padding: 0,
+  },
+  errorText: {
+    fontSize: 13,
+    color: '#EF4444',
+    marginTop: 8,
   },
   footer: {
     paddingHorizontal: 24,

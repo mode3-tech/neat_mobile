@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 
 export default function NewDeviceDetectedScreen() {
@@ -14,65 +15,37 @@ export default function NewDeviceDetectedScreen() {
         pathname: '/(sign-in)/new-device-otp',
         params: { session_token: sessionToken },
       });
-    }, 3000);
+    }, 4000);
     return () => clearTimeout(timer);
   }, [sessionToken]);
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.imageSection}>
+  return ( 
+    <View className="flex-1 bg-[#F5F5F5]">
+      {/* Top section - light bg with centered image */}
+      <View className="flex-[0.65] justify-end items-center">
         <Image
           source={require('../../../assets/images/device.png')}
-          style={styles.image}
+          className="w-[380px] h-[380px] -mb-12 z-10"
           resizeMode="contain"
         />
       </View>
 
-      <View style={styles.bottomCard}>
-        <Text style={styles.title}>New Device{'\n'}Detected</Text>
-        <Text style={styles.subtitle}>
-          You're trying to log in from a new device.{'\n'}
-          For security, we need to verify it's you.
-        </Text>
+      {/* Bottom card */}
+      <View className="flex-[0.45] rounded-t-3xl overflow-hidden">
+        <LinearGradient
+          colors={['#2A1B6A', '#0D0B2E']}
+          style={{ flex: 1 }}
+          className="px-8 pt-20 items-center"
+        >
+          <Text className="text-[32px] font-extrabold text-white text-center mb-4">
+            New Device{'\n'}Detected
+          </Text>
+          <Text className="text-sm text-[#B0B0C0] text-center leading-[22px]">
+            You're trying to log in from a new device.{'\n'}
+            For security, we need to verify it's you.
+          </Text>
+        </LinearGradient>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  imageSection: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  image: {
-    width: 220,
-    height: 220,
-  },
-  bottomCard: {
-    backgroundColor: '#1a1145',
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    paddingHorizontal: 32,
-    paddingTop: 40,
-    paddingBottom: 60,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#fff',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#B0B0C0',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-});

@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import {
   ScrollView,
   Text,
@@ -13,8 +12,8 @@ import { useLoanStore } from '@/stores/loan.store';
 
 function formatCurrency(amount: number): string {
   return '₦' + new Intl.NumberFormat('en-NG', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(amount);
 }
 
@@ -28,26 +27,24 @@ function SummaryRow({ label, value, isLast }: { label: string; value: string; is
 }
 
 export default function ReviewSummaryScreen() {
-  const summary = useLoanStore((s) => s.summary);
+  const store = useLoanStore();
 
-  useEffect(() => {
-    if (!summary) {
-      router.back();
-    }
-  }, [summary]);
-
-  if (!summary) {
-    return null;
-  }
+  const loanAmount = parseFloat(store.loanAmount) || 0;
+  const interestRate = store.interestRateBps;
+  const loanTerm = store.loanTermValue;
+  const totalRepayment = Math.round(loanAmount * (1 + interestRate / 100) * 100) / 100;
+  const periodPayment = loanTerm > 0
+    ? Math.round((totalRepayment / loanTerm) * 100) / 100
+    : 0;
 
   const rows = [
-    { label: 'Business Value', value: summary.businessValue },
-    { label: 'Age of Business', value: summary.ageOfBusiness },
-    { label: 'Loan Amount', value: formatCurrency(summary.loanAmount) },
-    { label: 'Total Repayment', value: formatCurrency(summary.totalRepayment) },
-    { label: 'Weekly Payment', value: formatCurrency(summary.weeklyPayment) },
-    { label: 'Loan Term', value: String(summary.loanTerm) },
-    { label: 'Interest Rate', value: `${summary.interestRate}%` },
+    { label: 'Business Value', value: store.businessValue },
+    { label: 'Age of Business', value: store.businessAge },
+    { label: 'Loan Amount', value: formatCurrency(loanAmount) },
+    { label: 'Total Repayment', value: formatCurrency(totalRepayment) },
+    { label: `${store.repaymentFrequency} Payment`, value: formatCurrency(periodPayment) },
+    { label: 'Loan Term', value: String(loanTerm) },
+    { label: 'Interest Rate', value: `${interestRate}%` },
   ];
 
   return (
@@ -79,7 +76,7 @@ export default function ReviewSummaryScreen() {
           </View>
           <View className="flex-1">
             <Text className="text-[13px] font-semibold text-[#374151] mb-1">Business Address</Text>
-            <Text className="text-xs text-[#6B7280] leading-[18px]">{summary.businessAddress}</Text>
+            <Text className="text-xs text-[#6B7280] leading-[18px]">{store.businessAddress}</Text>
           </View>
         </View>
       </ScrollView>

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -6,6 +7,13 @@ import { Ionicons } from '@expo/vector-icons';
 const PRIMARY = '#472FF8';
 
 export default function DeviceVerifiedScreen() {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.replace('/Dashboard' as any);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -15,17 +23,17 @@ export default function DeviceVerifiedScreen() {
 
         <Text style={styles.title}>Device Verified{'\n'}Successfully</Text>
         <Text style={styles.subtitle}>
-          Your device has been verified.{'\n'}You can now log in from this device.
+          Your device has been verified.{'\n'}Redirecting you shortly...
         </Text>
       </View>
 
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.primaryBtn}
-          onPress={() => router.replace('/(sign-in)/sign-in')}
+          onPress={() => router.replace('/Dashboard' as any)}
           activeOpacity={0.85}
         >
-          <Text style={styles.primaryBtnText}>Back to Login</Text>
+          <Text style={styles.primaryBtnText}>Continue</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

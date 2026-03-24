@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
 
 import { useAuthStore } from '@/stores/auth.store';
+import { useNotificationStore } from '@/stores/notification.store';
+import { getUnreadCount } from '@/services/notification.service';
 import BalanceCardCarousel from '@/components/features/dashboard/BalanceCardCarousel';
 import ServicesGrid from '@/components/features/dashboard/ServicesGrid';
 import PromoCard from '@/components/features/dashboard/PromoCard';
@@ -12,6 +16,18 @@ import RecentTransactions from '@/components/features/dashboard/RecentTransactio
 export default function HomeScreen() {
   const user = useAuthStore((s) => s.user);
   const [balanceVisible, setBalanceVisible] = useState(true);
+
+  const setUnreadCount = useNotificationStore((s) => s.setUnreadCount);
+  const unreadCount = useNotificationStore((s) => s.unreadCount);
+
+  const { data: fetchedCount } = useQuery({
+    queryKey: ['unread-count'],
+    queryFn: getUnreadCount,
+  });
+
+  useEffect(() => {
+    if (fetchedCount !== undefined) setUnreadCount(fetchedCount);
+  }, [fetchedCount, setUnreadCount]);
 
   const firstName = user?.firstName ?? 'MJ';
   const initial = firstName.charAt(0).toUpperCase();
@@ -34,8 +50,18 @@ export default function HomeScreen() {
             </View>
           </View>
           <View className="flex-row items-center gap-3">
-            <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <TouchableOpacity
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              onPress={() => router.push('/notifications')}
+            >
               <Ionicons name="notifications-outline" size={24} color="#1A1A1A" />
+              {unreadCount > 0 && (
+                <View className="absolute -top-1 -right-1 bg-[#EF4444] rounded-full min-w-[16px] h-4 items-center justify-center px-1">
+                  <Text className="text-white text-[10px] font-bold">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </Text>
+                </View>
+              )}
             </TouchableOpacity>
             <Image
               source={require('../../../../assets/images/dashboard/logoe.png')}

@@ -21,6 +21,7 @@ export default function ForgotPasswordOtpScreen() {
   const { email } = useLocalSearchParams<{ email: string }>();
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
 
   const canVerify = otp.length === OTP_LENGTH;
@@ -42,13 +43,14 @@ export default function ForgotPasswordOtpScreen() {
   const handleVerify = async () => {
     if (!canVerify || loading) return;
     setLoading(true);
+    setError('');
     try {
       await authService.verifyForgotPasswordOtp(email, otp);
       Alert.alert('Success', 'Your password has been reset successfully', [
         { text: 'OK', onPress: () => router.replace('/(sign-in)/sign-in') },
       ]);
     } catch (err: any) {
-      Alert.alert('Error', err.message);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -69,8 +71,10 @@ export default function ForgotPasswordOtpScreen() {
       </Text>
 
       <View style={styles.otpWrap}>
-        <OtpInput value={otp} onChange={setOtp} length={OTP_LENGTH} />
+        <OtpInput value={otp} onChange={(val) => { setOtp(val); setError(''); }} length={OTP_LENGTH} />
       </View>
+
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       <TouchableOpacity style={styles.changeEmailBtn} onPress={() => router.back()}>
         <Text style={styles.changeEmailText}>Change email</Text>
@@ -148,6 +152,11 @@ const styles = StyleSheet.create({
   },
   otpWrap: {
     marginBottom: 12,
+  },
+  errorText: {
+    fontSize: 13,
+    color: '#EF4444',
+    marginBottom: 4,
   },
   changeEmailBtn: {
     alignSelf: 'center',

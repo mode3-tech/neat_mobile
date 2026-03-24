@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   FlatList,
   Modal,
-  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -12,18 +11,23 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { loanService } from '@/services/loan.service';
 import { useLoanStore } from '@/stores/loan.store';
 import type { LoanProduct } from '@/types/loan.types';
 
 const PRIMARY = '#472FF8';
-const REPAYMENT_OPTIONS = ['Weekly', 'Bi-Weekly', 'Monthly'];
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
+
+/** Format number as ₦-style with commas and 2 decimal places */
+function formatCurrency(value: number): string {
+  return value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
 
 const currentYear = new Date().getFullYear();
 const YEARS = Array.from({ length: 50 }, (_, i) => currentYear - i);
@@ -68,10 +72,8 @@ export default function ApplyLoanScreen() {
 
   const [products, setProducts] = useState<LoanProduct[]>([]);
   const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-
+  const [selectedProduct, setSelectedProduct] = useState<LoanProduct | null>(null);
   const [showProductDropdown, setShowProductDropdown] = useState(false);
-  const [showFrequencyDropdown, setShowFrequencyDropdown] = useState(false);
   const [showDateModal, setShowDateModal] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(currentYear);
@@ -82,8 +84,13 @@ export default function ApplyLoanScreen() {
       try {
         const data = await loanService.getLoanProducts();
         setProducts(data);
+        // Restore selectedProduct if the store already has one (e.g. navigating back)
+        if (store.loanProduct) {
+          const match = data.find((p) => p.name === store.loanProduct);
+          if (match) setSelectedProduct(match);
+        }
       } catch {
-        // silent fail for mock
+        // silent fail
       } finally {
         setLoading(false);
       }
@@ -92,7 +99,9 @@ export default function ApplyLoanScreen() {
   }, []);
 
   const loanAmountNum = parseFloat(store.loanAmount) || 0;
-  const isAmountInRange = loanAmountNum >= 20000 && loanAmountNum <= 2000000;
+  const minAmount = selectedProduct?.min_loan_amount ?? 20000;
+  const maxAmount = selectedProduct?.max_loan_amount ?? 2000000;
+  const isAmountInRange = loanAmountNum >= minAmount && loanAmountNum <= maxAmount;
 
   const canProceed =
     store.businessValue.trim() !== '' &&
@@ -103,25 +112,9 @@ export default function ApplyLoanScreen() {
     isAmountInRange &&
     store.repaymentFrequency.trim() !== '';
 
-  const handleProceed = async () => {
-    if (!canProceed || submitting) return;
-    setSubmitting(true);
-    try {
-      const summary = await loanService.calculateLoan({
-        businessValue: store.businessValue,
-        businessAge: store.businessAge,
-        businessAddress: store.businessAddress,
-        loanProduct: store.loanProduct,
-        loanAmount: store.loanAmount,
-        repaymentFrequency: store.repaymentFrequency,
-      });
-      store.setSummary(summary);
-      router.push('/(loan)/review-summary');
-    } catch {
-      // handle error
-    } finally {
-      setSubmitting(false);
-    }
+  const handleProceed = () => {
+    if (!canProceed) return;
+    router.push('/(loan)/review-summary');
   };
 
   return (
@@ -133,7 +126,7 @@ export default function ApplyLoanScreen() {
         <Text className="text-sm font-medium text-[#374151]">Back</Text>
       </TouchableOpacity>
 
-      <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+      <KeyboardAwareScrollView showsVerticalScrollIndicator={false} className="flex-1">
         <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Apply for Loan</Text>
 
        
@@ -143,14 +136,18 @@ export default function ApplyLoanScreen() {
             <TextInput
               className="flex-1 text-[15px] text-[#1A1A1A] p-0"
               value={store.businessValue}
-              onChangeText={(t) => store.setFormField('businessValue', t)}
+              onChangeText={(t) => {
+                const cleaned = t.replace(/[^0-9]/g, '');
+                store.setFormField('businessValue', cleaned);
+              }}
               placeholder="Enter the value of your business"
               placeholderTextColor="#9CA3AF"
+              keyboardType="number-pad"
             />
           </View>
         </View>
 
-        {/* Age of Business */}
+      
         <View className="mb-5">
           <Text className="text-[13px] font-semibold text-[#374151] mb-2">Age of Business</Text>
           <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
@@ -203,7 +200,6 @@ export default function ApplyLoanScreen() {
             className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center"
             onPress={() => {
               setShowProductDropdown((v) => !v);
-              setShowFrequencyDropdown(false);
             }}
             activeOpacity={0.7}
           >
@@ -222,7 +218,13 @@ export default function ApplyLoanScreen() {
                     key={p.id}
                     className="px-4 py-[14px] border-b border-[#F3F4F6]"
                     onPress={() => {
+                      setSelectedProduct(p);
                       store.setFormField('loanProduct', p.name);
+                      store.setFormField('loanProductCode', p.code);
+                      store.setProductDetails({ interestRateBps: p.interest_rate_bps, loanTermValue: p.loan_term_value });
+                      const freq = p.repayment_frequency.charAt(0).toUpperCase() + p.repayment_frequency.slice(1);
+                      store.setFormField('repaymentFrequency', freq);
+                      store.setFormField('loanAmount', '');
                       setShowProductDropdown(false);
                     }}
                   >
@@ -255,61 +257,33 @@ export default function ApplyLoanScreen() {
             />
           </View>
           <Text className="text-xs text-[#472FF8] mt-1.5">
-            Min - Max amount: (₦ 20,000.00 - ₦ 2,000,000.00)
+            Min - Max amount: (₦ {formatCurrency(minAmount)} - ₦ {formatCurrency(maxAmount)})
           </Text>
         </View>
 
-        {/* Repayment Frequency */}
+        {/* Repayment Frequency (auto-filled from selected product) */}
         <View className="mb-5">
           <Text className="text-[13px] font-semibold text-[#374151] mb-2">Repayment Frequency</Text>
-          <TouchableOpacity
-            className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center"
-            onPress={() => {
-              setShowFrequencyDropdown((v) => !v);
-              setShowProductDropdown(false);
-            }}
-            activeOpacity={0.7}
-          >
+          <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
             <Text className={`flex-1 text-[15px] ${store.repaymentFrequency ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'}`}>
-              {store.repaymentFrequency || 'Repayment Frequency'}
+              {store.repaymentFrequency || 'Select a loan product first'}
             </Text>
-            <MaterialCommunityIcons name="chevron-down" size={20} color="#9CA3AF" />
-          </TouchableOpacity>
-          {showFrequencyDropdown && (
-            <View className="bg-white rounded-xl border border-[#E5E7EB] mt-1 overflow-hidden">
-              {REPAYMENT_OPTIONS.map((option) => (
-                <TouchableOpacity
-                  key={option}
-                  className="px-4 py-[14px] border-b border-[#F3F4F6]"
-                  onPress={() => {
-                    store.setFormField('repaymentFrequency', option);
-                    setShowFrequencyDropdown(false);
-                  }}
-                >
-                  <Text className="text-sm text-[#1A1A1A]">{option}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
+          </View>
         </View>
 
         <View className="h-6" />
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <View className="pb-4">
         <TouchableOpacity
           className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
           onPress={handleProceed}
-          disabled={!canProceed || submitting}
+          disabled={!canProceed}
           activeOpacity={0.85}
         >
-          {submitting ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-[#9CA3AF]'}`}>
-              Proceed
-            </Text>
-          )}
+          <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-[#9CA3AF]'}`}>
+            Proceed
+          </Text>
         </TouchableOpacity>
       </View>
       {/* Month/Year Picker Modal */}

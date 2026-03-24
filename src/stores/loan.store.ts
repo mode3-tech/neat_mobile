@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { LoanSummary } from '@/types/loan.types';
+import type { LoanApplySummary } from '@/types/loan.types';
 
 interface LoanState {
   eligibleAmount: number;
@@ -8,14 +8,20 @@ interface LoanState {
   businessAge: string;
   businessAddress: string;
   loanProduct: string;
+  loanProductCode: string;
   loanAmount: string;
   repaymentFrequency: string;
+  interestRateBps: number;
+  loanTermValue: number;
 
-  summary: LoanSummary | null;
+  summary: LoanApplySummary | null;
+  applicationRef: string | null;
 
   setEligibleAmount: (amount: number) => void;
-  setFormField: (field: keyof Pick<LoanState, 'businessValue' | 'businessAge' | 'businessAddress' | 'loanProduct' | 'loanAmount' | 'repaymentFrequency'>, value: string) => void;
-  setSummary: (summary: LoanSummary) => void;
+  setFormField: (field: keyof Pick<LoanState, 'businessValue' | 'businessAge' | 'businessAddress' | 'loanProduct' | 'loanProductCode' | 'loanAmount' | 'repaymentFrequency'>, value: string) => void;
+  setProductDetails: (details: { interestRateBps: number; loanTermValue: number }) => void;
+  setSummary: (summary: LoanApplySummary) => void;
+  setApplicationRef: (ref: string) => void;
   reset: () => void;
 }
 
@@ -25,9 +31,13 @@ const initialState = {
   businessAge: '',
   businessAddress: '',
   loanProduct: '',
+  loanProductCode: '',
   loanAmount: '',
   repaymentFrequency: '',
+  interestRateBps: 0,
+  loanTermValue: 0,
   summary: null,
+  applicationRef: null,
 };
 
 export const useLoanStore = create<LoanState>((set) => ({
@@ -37,7 +47,11 @@ export const useLoanStore = create<LoanState>((set) => ({
 
   setFormField: (field, value) => set({ [field]: value }),
 
+  setProductDetails: (details) => set(details),
+
   setSummary: (summary) => set({ summary }),
+
+  setApplicationRef: (ref) => set({ applicationRef: ref }),
 
   reset: () => set(initialState),
 }));

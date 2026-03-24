@@ -33,7 +33,6 @@ export default function LoanSuccessScreen() {
 
   const handleBack = () => {
     reset();
-    router.dismissAll();
     router.replace('/(loan)/loan-home');
   };
 
@@ -47,14 +46,18 @@ export default function LoanSuccessScreen() {
     return null;
   }
 
+  const frequencyLabel =
+    summary.repayment_frequency.charAt(0).toUpperCase() +
+    summary.repayment_frequency.slice(1);
+
   const rows = [
-    { label: 'Business Value', value: summary.businessValue },
-    { label: 'Age of Business', value: summary.ageOfBusiness },
-    { label: 'Loan Amount', value: formatCurrency(summary.loanAmount) },
-    { label: 'Total Repayment', value: formatCurrency(summary.totalRepayment) },
-    { label: 'Weekly Payment', value: formatCurrency(summary.weeklyPayment) },
-    { label: 'Loan Term', value: String(summary.loanTerm) },
-    { label: 'Interest Rate', value: `${summary.interestRate}%` },
+    { label: 'Loan Amount', value: formatCurrency(summary.loan_amount) },
+    { label: 'Total Repayment', value: formatCurrency(summary.total_repayment) },
+    { label: `${frequencyLabel} Payment`, value: formatCurrency(summary.periodic_repayment) },
+    { label: 'Interest Amount', value: formatCurrency(summary.interest_amount) },
+    { label: 'Interest Rate', value: `${summary.interest_rate_percent}%` },
+    { label: 'Loan Term', value: `${summary.loan_term_value} weeks` },
+    { label: 'Business Age', value: `${summary.business_age_years} years` },
   ];
 
   return (
@@ -83,16 +86,6 @@ export default function LoanSuccessScreen() {
             />
           ))}
         </View>
-
-        <View className="flex-row items-center bg-[#F9FAFB] rounded-[14px] p-4 gap-[14px] mb-6">
-          <View className="w-11 h-11 rounded-full bg-[#EEF0FF] items-center justify-center">
-            <MaterialCommunityIcons name="home" size={22} color="#472FF8" />
-          </View>
-          <View className="flex-1">
-            <Text className="text-[13px] font-semibold text-[#374151] mb-1">Business Address</Text>
-            <Text className="text-xs text-[#6B7280] leading-[18px]">{summary.businessAddress}</Text>
-          </View>
-        </View>
       </ScrollView>
 
       <View className="pb-4">
@@ -101,7 +94,7 @@ export default function LoanSuccessScreen() {
           onPress={handleBack}
           activeOpacity={0.85}
         >
-          <Text className="text-white text-base font-semibold">Back</Text>
+          <Text className="text-white text-base font-semibold">Back to Loans</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

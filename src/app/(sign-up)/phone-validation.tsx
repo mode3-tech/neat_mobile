@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Image,
   StyleSheet,
   Text,
@@ -19,16 +18,16 @@ const PRIMARY = '#472FF8';
 export default function PhoneValidationScreen() {
   const phone = useSignUpStore((s) => s.phone);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSendOtp = async () => {
     setLoading(true);
+    setError('');
     try {
       await authService.sendPhoneOtp(phone);
-      console.log(phone)
       router.push('/(sign-up)/phone-otp');
     } catch (err: any) {
-       console.log(phone)
-      Alert.alert('Error', err.message);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -56,6 +55,8 @@ export default function PhoneValidationScreen() {
           Tap the button below to receive{'\n'}a verification code
         </Text>
       </View>
+
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       <View style={styles.spacer} />
 
@@ -148,5 +149,11 @@ const styles = StyleSheet.create({
   },
   disabledBtn: {
     backgroundColor: '#E5E7EB',
+  },
+  errorText: {
+    fontSize: 13,
+    color: '#EF4444',
+    textAlign: 'center',
+    marginTop: 8,
   },
 });

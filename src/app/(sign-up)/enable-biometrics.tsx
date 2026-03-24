@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Switch,
   Text,
@@ -20,6 +19,7 @@ const PRIMARY = '#472FF8';
 export default function EnableBiometricsScreen() {
   const [enabled, setEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const store = useSignUpStore();
   const setTokens = useAuthStore((s) => s.setTokens);
@@ -28,6 +28,7 @@ export default function EnableBiometricsScreen() {
   const handleComplete = async () => {
     store.setBiometrics(enabled);
     setLoading(true);
+    setError('');
     try {
       const result = await authService.registerUser({
         phone_number: store.phone,
@@ -48,10 +49,7 @@ export default function EnableBiometricsScreen() {
       store.reset();
       router.replace('/(sign-up)/registration-success');
     } catch (err: unknown) {
-      Alert.alert(
-        'Registration Failed',
-        err instanceof Error ? err.message : 'Something went wrong',
-      );
+      setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -77,6 +75,8 @@ export default function EnableBiometricsScreen() {
       </View>
 
       <View style={styles.spacer} />
+
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       <View style={styles.footer}>
         <View style={styles.btnOuter}>
@@ -147,6 +147,12 @@ const styles = StyleSheet.create({
   },
   spacer: {
     flex: 1,
+  },
+  errorText: {
+    fontSize: 13,
+    color: '#EF4444',
+    textAlign: 'center',
+    marginBottom: 12,
   },
   footer: {
     paddingBottom: 16,

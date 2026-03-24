@@ -41,7 +41,17 @@ const baseConfig = {
     output: 'static',
     favicon: './assets/images/favicon.png',
   },
-  plugins: ['expo-router'],
+  plugins: [
+    'expo-router',
+    [
+      'expo-notifications',
+      {
+        icon: './assets/images/home-logo.png',
+        color: '#472FF8',
+        defaultChannel: 'transactions',
+      },
+    ],
+  ],
   experiments: {
     typedRoutes: true,
     reactCompiler: true,
@@ -49,10 +59,10 @@ const baseConfig = {
   extra: {
     router: {},
     eas: {
-      projectId: '13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
+      projectId: 'a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
     },
   },
-  owner: 'micropayafrica',
+  // owner: 'micropayafrica',
 };
 
 module.exports = {

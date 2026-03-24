@@ -36,6 +36,14 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   clearAuth: () => {
+    // Remove push token from backend (fire-and-forget — must not block logout).
+    // Note: the token may already be cleared by the time the request fires,
+    // causing a 401. This is acceptable — the backend cleans up stale tokens
+    // via its receipt-checking cron job.
+    import('@/services/notification.service')
+      .then(({ removeTokenFromBackend }) => removeTokenFromBackend())
+      .catch(() => {});
+
     setAccessToken(null);
     SecureStore.deleteItemAsync('access_token').catch(() => {});
     SecureStore.deleteItemAsync('refresh_token').catch(() => {});

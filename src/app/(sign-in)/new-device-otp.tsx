@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -13,6 +12,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { OtpInput } from '@/components/ui/otp-input';
 import { useSmsOtp } from '@/hooks/use-sms-otp';
 import { authService } from '@/services/auth.service';
+import { useAuthStore } from '@/stores/auth.store';
 import { OTP_LENGTH } from '@/constants';
 
 const PRIMARY = '#472FF8';
@@ -25,6 +25,7 @@ export default function NewDeviceOtpScreen() {
     : params.session_token;
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
 
   const handleSmsOtp = useCallback((code: string) => setOtp(code), []);
@@ -43,17 +44,30 @@ export default function NewDeviceOtpScreen() {
     if (!canResend || !session_token) return;
     setSeconds(RESEND_SECONDS);
     setOtp('');
-    await authService.resendNewDeviceOtp(session_token).catch(() => null);
+    setError('');
+    try {
+      await authService.resendNewDeviceOtp(session_token);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to resend code');
+    }
   };
 
   const handleVerify = async () => {
     if (!canVerify || loading || !session_token) return;
     setLoading(true);
+    setError('');
     try {
-      await authService.verifyNewDevice(otp, session_token);
+      const response = await authService.verifyNewDevice(otp, session_token);
+
+      if (response.access_token && response.refresh_token) {
+        const { setTokens, setUser } = useAuthStore.getState();
+        setTokens(response.access_token, response.refresh_token);
+        if (response.user) setUser(response.user);
+      }
+
       router.replace('/(sign-in)/device-verified');
     } catch (err: unknown) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'Device verification failed');
+      setError(err instanceof Error ? err.message : 'Device verification failed');
     } finally {
       setLoading(false);
     }
@@ -71,8 +85,10 @@ export default function NewDeviceOtpScreen() {
       <Text style={styles.subtitle}>Enter the 6-digit code sent to your phone</Text>
 
       <View style={styles.otpWrap}>
-        <OtpInput value={otp} onChange={setOtp} length={OTP_LENGTH} />
+        <OtpInput value={otp} onChange={(val) => { setOtp(val); setError(''); }} length={OTP_LENGTH} />
       </View>
+
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       <View style={styles.spacer} />
 
@@ -142,6 +158,11 @@ const styles = StyleSheet.create({
   },
   otpWrap: {
     marginBottom: 8,
+  },
+  errorText: {
+    fontSize: 13,
+    color: '#EF4444',
+    marginTop: 4,
   },
   spacer: {
     flex: 1,

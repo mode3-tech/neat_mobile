@@ -11,9 +11,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { loanService } from '@/services/loan.service';
+import { useLoanStore } from '@/stores/loan.store';
 import { PIN_LENGTH } from '@/constants';
 
 export default function LoanPinScreen() {
+  const store = useLoanStore();
+
   const [pin, setPin] = useState('');
   const [showPin, setShowPin] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -26,10 +29,28 @@ export default function LoanPinScreen() {
     setSubmitting(true);
     setErrorMsg('');
     try {
-      await loanService.submitApplication(pin);
+      // Convert businessAge from "MM/YYYY" to "YYYY-MM"
+      const [month, year] = store.businessAge.split('/');
+      const businessStartDate = `${year}-${month}`;
+
+      const response = await loanService.submitApplication({
+        business_address: store.businessAddress,
+        business_start_date: businessStartDate,
+        business_value: store.businessValue,
+        loan_amount: store.loanAmount,
+        loan_product_type: store.loanProductCode,
+        transaction_pin: pin,
+      });
+
+      store.setSummary(response.summary);
+      store.setApplicationRef(response.application_ref);
       router.push('/(loan)/loan-success');
     } catch (err: any) {
-      setErrorMsg(err?.message || 'Failed to submit application');
+      const message =
+        err?.response?.data?.error ||
+        err?.message ||
+        'Failed to submit application';
+      setErrorMsg(message);
     } finally {
       setSubmitting(false);
     }

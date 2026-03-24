@@ -208,7 +208,17 @@ export const authService = {
         otp,
         session_token: sessionToken,
       });
-      return response.data;
+
+      const data = response.data;
+
+      if (data.access_token && data.refresh_token) {
+        await storeTokens({
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+        });
+      }
+
+      return data;
     } catch (error) {
       extractErrorMessage(error, 'Device verification failed');
     }

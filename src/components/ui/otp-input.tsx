@@ -80,9 +80,8 @@ const styles = StyleSheet.create({
     color: '#1A1A1A',
   },
   hiddenInput: {
-    position: 'absolute',
-    width: 1,
-    height: 1,
-    opacity: 0,
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.01,
+    color: 'transparent',
   },
 });

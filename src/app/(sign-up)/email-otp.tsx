@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -21,6 +20,7 @@ const RESEND_SECONDS = 30;
 export default function EmailOtpScreen() {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
   const email = useSignUpStore((s) => s.email);
   const setEmailVerificationId = useSignUpStore((s) => s.setEmailVerificationId);
@@ -44,12 +44,13 @@ export default function EmailOtpScreen() {
   const handleVerify = async () => {
     if (!canVerify || loading) return;
     setLoading(true);
+    setError('');
     try {
       const result = await authService.verifyEmailOtp(email, otp);
       setEmailVerificationId(result.verification_id);
       router.push('/(sign-up)/create-password');
     } catch (err: unknown) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'OTP verification failed');
+      setError(err instanceof Error ? err.message : 'OTP verification failed');
     } finally {
       setLoading(false);
     }
@@ -70,8 +71,10 @@ export default function EmailOtpScreen() {
       </Text>
 
       <View style={styles.otpWrap}>
-        <OtpInput value={otp} onChange={setOtp} length={OTP_LENGTH} />
+        <OtpInput value={otp} onChange={(val) => { setOtp(val); setError(''); }} length={OTP_LENGTH} />
       </View>
+
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       {canVerify && (
         <TouchableOpacity style={styles.changeEmailBtn} onPress={() => router.back()}>
@@ -151,6 +154,11 @@ const styles = StyleSheet.create({
   },
   otpWrap: {
     marginBottom: 12,
+  },
+  errorText: {
+    fontSize: 13,
+    color: '#EF4444',
+    marginBottom: 4,
   },
   changeEmailBtn: {
     alignSelf: 'flex-end',

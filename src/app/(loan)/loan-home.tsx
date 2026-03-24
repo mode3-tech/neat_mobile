@@ -61,7 +61,11 @@ export default function LoanHomeScreen() {
           label="Apply New Loan"
           onPress={() => router.push('/(loan)/loan-eligibility')}
         />
-        <ActionItem icon="📅" label="Repayment Schedule" />
+        <ActionItem
+          icon="📅"
+          label="Repayment Schedule"
+          onPress={() => router.push('/(loan)/repayment-schedule')}
+        />
         <ActionItem icon="💰" label="Loan History" />
       </View>
     </SafeAreaView>

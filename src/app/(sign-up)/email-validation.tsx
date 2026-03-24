@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -20,6 +19,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default function EmailValidationScreen() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const storeEmail = useSignUpStore((s) => s.setEmail);
 
   const isValid = EMAIL_REGEX.test(email);
@@ -28,11 +28,12 @@ export default function EmailValidationScreen() {
     if (!isValid || loading) return;
     storeEmail(email);
     setLoading(true);
+    setError('');
     try {
       await authService.sendEmailOtp(email);
       router.push('/(sign-up)/email-otp');
     } catch (err: any) {
-      Alert.alert('Error', err.message);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -57,7 +58,7 @@ export default function EmailValidationScreen() {
           <TextInput
             style={styles.input}
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(val) => { setEmail(val); setError(''); }}
             placeholder="example@gmail.com"
             placeholderTextColor="#9CA3AF"
             keyboardType="email-address"
@@ -66,6 +67,8 @@ export default function EmailValidationScreen() {
           />
         </View>
       </View>
+
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       <View style={styles.spacer} />
 
@@ -143,6 +146,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#1A1A1A',
     padding: 0,
+  },
+  errorText: {
+    fontSize: 13,
+    color: '#EF4444',
+    marginTop: 8,
   },
   spacer: {
     flex: 1,
