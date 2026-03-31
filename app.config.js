@@ -26,6 +26,7 @@ const baseConfig = {
     supportsTablet: true,
   },
   android: {
+    googleServicesFile: './google-services.json', 
     adaptiveIcon: {
       backgroundColor: '#E6F4FE',
       foregroundImage: './assets/images/home-logo.png',

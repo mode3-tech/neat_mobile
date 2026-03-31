@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "298262413601",
+    "project_id": "neat-mobile",
+    "storage_bucket": "neat-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:298262413601:android:55ee8fdad9953470c3be60",
+        "android_client_info": {
+          "package_name": "com.mode3.neatmobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIdzNHMaqO7QwcTYOncI6PBBDDN-oL9-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:298262413601:android:b992121d095eab82c3be60",
+        "android_client_info": {
+          "package_name": "com.mode3.neatmobile.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIdzNHMaqO7QwcTYOncI6PBBDDN-oL9-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
