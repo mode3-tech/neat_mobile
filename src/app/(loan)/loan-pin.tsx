@@ -29,13 +29,9 @@ export default function LoanPinScreen() {
     setSubmitting(true);
     setErrorMsg('');
     try {
-      // Convert businessAge from "MM/YYYY" to "YYYY-MM"
-      const [month, year] = store.businessAge.split('/');
-      const businessStartDate = `${year}-${month}`;
-
       const response = await loanService.submitApplication({
         business_address: store.businessAddress,
-        business_start_date: businessStartDate,
+        business_start_date: store.businessAge,
         business_value: store.businessValue,
         loan_amount: store.loanAmount,
         loan_product_type: store.loanProductCode,

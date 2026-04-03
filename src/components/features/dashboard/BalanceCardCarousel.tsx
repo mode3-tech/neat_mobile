@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Image,
   ImageSourcePropType,
@@ -13,6 +13,7 @@ import {
 import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
+import { router } from 'expo-router';
 
 const CARD_MARGIN = 24;
 const AUTO_ROTATE_INTERVAL = 4000;
@@ -20,6 +21,9 @@ const AUTO_ROTATE_INTERVAL = 4000;
 interface BalanceCardCarouselProps {
   balanceVisible: boolean;
   onToggleVisibility: () => void;
+  accountNumber?: string;
+  availableBalance?: number;
+  loanBalance?: number;
 }
 
 interface CardData {
@@ -35,59 +39,79 @@ interface CardData {
   imageSize?: { width: number; height: number };
 }
 
-const CARDS: CardData[] = [
-  {
-    id: 'available',
-    bgColor: '#472FF8',
-    label: 'Neatpay Account',
-    accountNumber: '3029552986',
-    title: 'Available Balance',
-    amount: '10,000,000',
-    buttons: [{ label: 'Send Money', icon: 'send' }],
-    image: require('../../../../assets/images/dashboard/ball.png'),
-    imageSize:{width:70, height:70}
-  },
-  {
-    id: 'savings',
-    bgColor: '#472FF8',
-    label: 'Neatpay Account',
-    accountNumber: '3029552986',
-    title: 'Total Savings',
-    amount: '150,000',
-    buttons: [
-      { label: 'Deposit',  },
-      { label: 'Withdraw',  },
-    ],
-    image: require('../../../../assets/images/dashboard/bag.png'),
-      imageSize:{width:80, height:70}
-  },
-  {
-    id: 'loan',
-    bgColor: '#472FF8',
-    label: 'Neatpay Account',
-    accountNumber: '3029552986',
-    title: 'Loan Balance',
-    amount: '10,000,000',
-    buttons: [{ label: 'Make Repayment',  }],
-    image: require('../../../../assets/images/dashboard/barg.png'),
-     imageSize:{width:80, height:70}
-  },
-];
+function buildCards(
+  accountNumber: string,
+  availableBalance: number | undefined,
+  loanBalance: number | undefined,
+): CardData[] {
+  const fmtBalance = (val: number | undefined) =>
+    val !== undefined
+      ? new Intl.NumberFormat('en-NG').format(val)
+      : '---';
 
-const EXTENDED_CARDS = [...CARDS, CARDS[0]]; // clone first card for infinite scroll
+  return [
+    {
+      id: 'available',
+      bgColor: '#472FF8',
+      label: 'Neatpay Account',
+      accountNumber,
+      title: 'Available Balance',
+      amount: fmtBalance(availableBalance),
+      buttons: [{ label: 'Send Money', icon: 'send' }],
+      image: require('../../../../assets/images/dashboard/ball.png'),
+      imageSize: { width: 70, height: 70 },
+    },
+    {
+      id: 'savings',
+      bgColor: '#472FF8',
+      label: 'Neatpay Account',
+      accountNumber,
+      title: 'Total Savings',
+      amount: '---',
+      buttons: [{ label: 'Deposit' }, { label: 'Withdraw' }],
+      image: require('../../../../assets/images/dashboard/bag.png'),
+      imageSize: { width: 80, height: 70 },
+    },
+    {
+      id: 'loan',
+      bgColor: '#472FF8',
+      label: 'Neatpay Account',
+      accountNumber,
+      title: 'Loan Balance',
+      amount: fmtBalance(loanBalance),
+      buttons: [{ label: 'Make Repayment' }],
+      image: require('../../../../assets/images/dashboard/barg.png'),
+      imageSize: { width: 80, height: 70 },
+    },
+  ];
+}
 
 export default function BalanceCardCarousel({
   balanceVisible,
   onToggleVisibility,
+  accountNumber = '---',
+  availableBalance,
+  loanBalance,
 }: BalanceCardCarouselProps) {
   const { width: screenWidth } = useWindowDimensions();
   const cardWidth = screenWidth - CARD_MARGIN * 2;
+
+  const CARDS = useMemo(
+    () => buildCards(accountNumber, availableBalance, loanBalance),
+    [accountNumber, availableBalance, loanBalance],
+  );
+  const EXTENDED_CARDS = useMemo(
+    () => [...CARDS, CARDS[0]],
+    [CARDS],
+  );
 
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<ScrollView>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const cardWidthRef = useRef(cardWidth);
   cardWidthRef.current = cardWidth;
+  const cardsLengthRef = useRef(CARDS.length);
+  cardsLengthRef.current = CARDS.length;
   const isResettingRef = useRef(false);
 
   const stopAutoRotate = useCallback(() => {
@@ -102,12 +126,13 @@ export default function BalanceCardCarousel({
     timerRef.current = setInterval(() => {
       setActiveIndex((prev) => {
         const next = prev + 1;
+        const len = cardsLengthRef.current;
         // Guard against scrolling past the clone
-        if (next > CARDS.length) return prev;
+        if (next > len) return prev;
         const totalCardWidth = cardWidthRef.current + CARD_MARGIN * 2;
         scrollRef.current?.scrollTo({ x: next * totalCardWidth, animated: true });
 
-        if (next === CARDS.length) {
+        if (next === len) {
           // Scrolled to the clone — after animation finishes, silently reset to real card 0
           setTimeout(() => {
             isResettingRef.current = true;
@@ -179,7 +204,7 @@ export default function BalanceCardCarousel({
       <View className="mt-4 flex-row border border-white/30 rounded-3xl px-4 py-4">
         <View className=''>
           <View className="flex-row items-center gap-2">
-            <Text className="text-white/75 text-xs">{card.title}ss</Text>
+            <Text className="text-white/75 text-xs">{card.title}</Text>
             <TouchableOpacity onPress={onToggleVisibility} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
               <Ionicons
                 name={balanceVisible ? 'eye-outline' : 'eye-off-outline'}
@@ -212,6 +237,11 @@ export default function BalanceCardCarousel({
               card.buttons.length === 1 ? 'flex-1' : 'flex-1'
             } bg-white`}
             activeOpacity={0.85}
+            onPress={() => {
+              if (btn.label === 'Send Money') {
+                router.push('/(transfer)/send-money');
+              }
+            }}
           >
             {btn.icon && (
               <Feather name={btn.icon} size={16} color="#472FF8" style={{ marginRight: 8 }} />

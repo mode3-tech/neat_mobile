@@ -67,6 +67,18 @@ function isValidBusinessAge(value: string): boolean {
   return true;
 }
 
+/** Check if business start date is at least 1 year ago */
+function isBusinessAgeAtLeastOneYear(value: string): boolean {
+  const match = value.match(/^(\d{2})\/(\d{4})$/);
+  if (!match) return false;
+  const month = parseInt(match[1], 10);
+  const year = parseInt(match[2], 10);
+  const now = new Date();
+  const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth());
+  const inputDate = new Date(year, month - 1);
+  return inputDate <= oneYearAgo;
+}
+
 export default function ApplyLoanScreen() {
   const store = useLoanStore();
 
@@ -106,6 +118,7 @@ export default function ApplyLoanScreen() {
   const canProceed =
     store.businessValue.trim() !== '' &&
     isValidBusinessAge(store.businessAge) &&
+    isBusinessAgeAtLeastOneYear(store.businessAge) &&
     store.businessAddress.trim() !== '' &&
     store.loanProduct.trim() !== '' &&
     store.loanAmount.trim() !== '' &&
@@ -177,6 +190,11 @@ export default function ApplyLoanScreen() {
               <MaterialCommunityIcons name="calendar" size={20} color="#9CA3AF" />
             </TouchableOpacity>
           </View>
+          {isValidBusinessAge(store.businessAge) && !isBusinessAgeAtLeastOneYear(store.businessAge) && (
+            <Text className="text-xs text-red-500 mt-1.5">
+              Business must be at least 1 year old
+            </Text>
+          )}
         </View>
 
         {/* Business Address */}

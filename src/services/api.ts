@@ -50,15 +50,18 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config;
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
     if (
       error.response?.status !== 401 ||
       !originalRequest ||
-      originalRequest.url?.includes('/auth/refresh')
+      originalRequest.url?.includes('/auth/refresh') ||
+      originalRequest._retry
     ) {
       return Promise.reject(error);
     }
+
+    originalRequest._retry = true;
 
     // Another request is already refreshing — queue this one
     if (isRefreshing) {

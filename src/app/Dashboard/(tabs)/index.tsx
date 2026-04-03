@@ -8,10 +8,12 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/auth.store';
 import { useNotificationStore } from '@/stores/notification.store';
 import { getUnreadCount } from '@/services/notification.service';
+import { accountService } from '@/services/account.service';
 import BalanceCardCarousel from '@/components/features/dashboard/BalanceCardCarousel';
 import ServicesGrid from '@/components/features/dashboard/ServicesGrid';
 import PromoCard from '@/components/features/dashboard/PromoCard';
 import RecentTransactions from '@/components/features/dashboard/RecentTransactions';
+import ActiveLoanCard from '@/components/features/dashboard/ActiveLoanCard';
 
 export default function HomeScreen() {
   const user = useAuthStore((s) => s.user);
@@ -25,11 +27,16 @@ export default function HomeScreen() {
     queryFn: getUnreadCount,
   });
 
+  const { data: accountSummary } = useQuery({
+    queryKey: ['account-summary'],
+    queryFn: accountService.getSummary,
+  });
+
   useEffect(() => {
     if (fetchedCount !== undefined) setUnreadCount(fetchedCount);
   }, [fetchedCount, setUnreadCount]);
 
-  const firstName = user?.firstName ?? 'MJ';
+  const firstName = accountSummary?.full_name?.split(' ')[0] ?? user?.firstName ?? 'MJ';
   const initial = firstName.charAt(0).toUpperCase();
 
   return (
@@ -75,6 +82,9 @@ export default function HomeScreen() {
         <BalanceCardCarousel
           balanceVisible={balanceVisible}
           onToggleVisibility={() => setBalanceVisible((v) => !v)}
+          accountNumber={accountSummary?.account_number}
+          availableBalance={accountSummary?.available_balance}
+          loanBalance={accountSummary?.loan_balance}
         />
 
         {/* Services */}
@@ -91,7 +101,10 @@ export default function HomeScreen() {
    
         <PromoCard />
 
-       
+        {accountSummary?.active_loans && accountSummary.active_loans.length > 0 && (
+          <ActiveLoanCard loans={accountSummary.active_loans} />
+        )}
+
         <RecentTransactions />
       </ScrollView>
     </SafeAreaView>

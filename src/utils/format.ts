@@ -11,6 +11,16 @@ export const formatNaira = (kobo: number): string => {
 };
 
 /**
+ * Format whole-naira amounts (not kobo) to display string.
+ */
+export const formatNairaWhole = (amount: number): string => {
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+  }).format(amount);
+};
+
+/**
  * Format a Nigerian phone number for display.
  */
 export const formatPhoneNumber = (phone: string): string => {

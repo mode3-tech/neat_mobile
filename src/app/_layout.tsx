@@ -2,7 +2,7 @@ import '../global.css';
 import 'expo-dev-client';
 
 import { useEffect, useRef } from 'react';
-import { AppState } from 'react-native';
+import { AppState, View } from 'react-native';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack, useRouter } from 'expo-router';
@@ -11,6 +11,7 @@ import { StatusBar } from 'expo-status-bar';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
 
+import { useSessionTimeout } from '@/hooks/use-session-timeout';
 import { useAuthStore } from '@/stores/auth.store';
 import type { NotificationData } from '@/types/notification.types';
 
@@ -36,6 +37,7 @@ const queryClient = new QueryClient({
 
 export default function RootLayout(): React.JSX.Element {
   const router = useRouter();
+  const { onTouchActivity } = useSessionTimeout(router);
   const appState = useRef(AppState.currentState);
 
   // Navigate to the correct screen when user taps a notification
@@ -99,6 +101,7 @@ export default function RootLayout(): React.JSX.Element {
     <QueryClientProvider client={queryClient}>
       <KeyboardProvider>
         <ThemeProvider value={DefaultTheme}>
+          <View style={{ flex: 1 }} onStartShouldSetResponderCapture={onTouchActivity}>
           <Stack
             screenOptions={{
               headerShown: false,
@@ -116,12 +119,14 @@ export default function RootLayout(): React.JSX.Element {
               options={{ animation: 'none' }}
             />
             <Stack.Screen name="(loan)" />
+            <Stack.Screen name="(transfer)" />
             <Stack.Screen name="notifications" />
             <Stack.Screen
               name="modal"
               options={{ presentation: 'modal' }}
             />
           </Stack>
+          </View>
           <StatusBar style="auto" />
         </ThemeProvider>
       </KeyboardProvider>

@@ -153,6 +153,13 @@ export const authService = {
 
       return data;
     } catch (error) {
+      // if (axios.isAxiosError(error)) {
+      //   console.error('Login error status:', error.response?.status);
+      //   console.error('Login error data:', JSON.stringify(error.response?.data));
+      //   console.error('Login error message:', error.message);
+      // } else {
+      //   console.error('Login non-axios error:', error);
+      // }
       extractErrorMessage(error, 'Login failed');
     }
   },
@@ -163,7 +170,7 @@ export const authService = {
     deviceId: string,
   ): Promise<LoginResponse> => {
     try {
-      const response = await api.post<LoginResponse>('/auth/verify-device', {
+      const response = await api.post<LoginResponse>('/auth/device/challenge/verify', {
         challenge,
         signature,
         device_id: deviceId,
@@ -189,8 +196,10 @@ export const authService = {
       const refreshTokenValue = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
       if (!refreshTokenValue) return null;
 
+      const deviceId = await getOrCreateDeviceId();
       const response = await api.post<AuthTokens>('/auth/refresh', {
         refresh_token: refreshTokenValue,
+        device_id: deviceId,
       });
 
       await storeTokens(response.data);
@@ -203,7 +212,7 @@ export const authService = {
   verifyNewDevice: async (otp: string, sessionToken: string): Promise<LoginResponse> => {
     try {
       const device = await getDeviceInfo();
-      const response = await api.post<LoginResponse>('/auth/verify-new-device', {
+      const response = await api.post<LoginResponse>('/auth/device/otp/verify', {
         device,
         otp,
         session_token: sessionToken,
@@ -227,7 +236,7 @@ export const authService = {
   resendNewDeviceOtp: async (sessionToken: string): Promise<void> => {
     try {
       const deviceId = await getOrCreateDeviceId();
-      await api.post('/auth/resend-new-device-otp', {
+      await api.post('/auth/device/otp/resend', {
         device_id: deviceId,
         session_token: sessionToken,
       });
