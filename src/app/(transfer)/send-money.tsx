@@ -12,8 +12,10 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
 
 import { ACCOUNT_NUMBER_LENGTH, MAX_TRANSFER_AMOUNT } from '@/constants';
+import { accountService } from '@/services/account.service';
 import { walletService } from '@/services/wallet.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { useTransferStore } from '@/stores/transfer.store';
@@ -27,6 +29,10 @@ const TABS: { key: TransferType; label: string }[] = [
 export default function SendMoneyScreen() {
   const store = useTransferStore();
   const user = useAuthStore((s) => s.user);
+  const { data: accountSummary } = useQuery({
+    queryKey: ['account-summary'],
+    queryFn: accountService.getSummary,
+  });
 
   const [activeTab, setActiveTab] = useState<TransferType>('neatpay');
 
@@ -175,6 +181,7 @@ export default function SendMoneyScreen() {
     store.setAmount(amount);
     store.setNarration(narration);
     store.setSenderPhone(user?.phone ?? '');
+    store.setSenderName(accountSummary?.full_name ?? '');
     router.push('/(transfer)/transfer-review');
   };
 

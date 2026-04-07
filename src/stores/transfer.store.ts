@@ -10,6 +10,7 @@ interface TransferState {
   amount: string;
   narration: string;
   senderPhone: string;
+  senderName: string;
   transferResult: TransferResult | null;
 
   setTransferType: (type: TransferType) => void;
@@ -18,6 +19,7 @@ interface TransferState {
   setAmount: (amount: string) => void;
   setNarration: (narration: string) => void;
   setSenderPhone: (phone: string) => void;
+  setSenderName: (name: string) => void;
   setTransferResult: (result: TransferResult) => void;
   reset: () => void;
 }
@@ -31,6 +33,7 @@ const initialState = {
   amount: '',
   narration: '',
   senderPhone: '',
+  senderName: '',
   transferResult: null,
 };
 
@@ -44,6 +47,7 @@ export const useTransferStore = create<TransferState>((set) => ({
   setAmount: (amount) => set({ amount }),
   setNarration: (narration) => set({ narration }),
   setSenderPhone: (phone) => set({ senderPhone: phone }),
+  setSenderName: (name) => set({ senderName: name }),
   setTransferResult: (result) => set({ transferResult: result }),
   reset: () => set(initialState),
 }));

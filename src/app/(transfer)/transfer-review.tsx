@@ -106,7 +106,7 @@ export default function TransferReviewScreen() {
   };
 
   const summaryRows = [
-    { label: 'Sender', value: store.senderPhone },
+    { label: 'Sender', value: store.senderName },
     { label: 'Amount', value: formatCurrency(parsedAmount) },
     { label: 'Recipient Account', value: store.accountNumber },
     { label: 'Recipient Name', value: store.accountName },
@@ -150,7 +150,7 @@ export default function TransferReviewScreen() {
 
         {/* PIN section */}
         <Text className="text-[13px] font-semibold text-[#374151] mb-3">
-          Enter Transaction PINs
+          Enter Transaction PIN
         </Text>
         <View className="mb-6">
           <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">

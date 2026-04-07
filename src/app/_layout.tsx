@@ -13,12 +13,10 @@ import 'react-native-reanimated';
 
 import { useSessionTimeout } from '@/hooks/use-session-timeout';
 import { useAuthStore } from '@/stores/auth.store';
-import type { NotificationData } from '@/types/notification.types';
 
 // Show notifications as alerts when app is in foreground
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
     shouldShowBanner: true,
@@ -43,18 +41,8 @@ export default function RootLayout(): React.JSX.Element {
   // Navigate to the correct screen when user taps a notification
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        const data = response.notification.request.content
-          .data as NotificationData;
-        if (data?.screen) {
-          let params: Record<string, string> | undefined;
-          try {
-            params = data.params ? JSON.parse(data.params) : undefined;
-          } catch {
-            // Malformed params from backend — navigate without them
-          }
-          router.push({ pathname: data.screen as any, params });
-        }
+      () => {
+        router.push('/notifications');
       },
     );
 
@@ -94,6 +82,20 @@ export default function RootLayout(): React.JSX.Element {
         appState.current = nextState;
       },
     );
+    return () => subscription.remove();
+  }, []);
+
+  // Proactively detect device push token changes (FCM/APNs token rotation)
+  useEffect(() => {
+    const subscription = Notifications.addPushTokenListener(async () => {
+      const isAuthenticated = useAuthStore.getState().isAuthenticated;
+      if (!isAuthenticated) return;
+      const { registerForPushNotifications, sendTokenToBackend, isRegistering } =
+        await import('@/services/notification.service');
+      if (isRegistering) return;
+      const token = await registerForPushNotifications();
+      if (token) await sendTokenToBackend(token);
+    });
     return () => subscription.remove();
   }, []);
 

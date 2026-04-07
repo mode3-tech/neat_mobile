@@ -115,6 +115,10 @@ export default function ApplyLoanScreen() {
   const maxAmount = selectedProduct?.max_loan_amount ?? 2000000;
   const isAmountInRange = loanAmountNum >= minAmount && loanAmountNum <= maxAmount;
 
+  const businessValueNum = parseFloat(store.businessValue) || 0;
+  const maxLoanByBusiness = businessValueNum * 0.5;
+  const exceedsBizValueHalf = businessValueNum > 0 && loanAmountNum > maxLoanByBusiness;
+
   const canProceed =
     store.businessValue.trim() !== '' &&
     isValidBusinessAge(store.businessAge) &&
@@ -123,6 +127,7 @@ export default function ApplyLoanScreen() {
     store.loanProduct.trim() !== '' &&
     store.loanAmount.trim() !== '' &&
     isAmountInRange &&
+    !exceedsBizValueHalf &&
     store.repaymentFrequency.trim() !== '';
 
   const handleProceed = () => {
@@ -277,6 +282,11 @@ export default function ApplyLoanScreen() {
           <Text className="text-xs text-[#472FF8] mt-1.5">
             Min - Max amount: (₦ {formatCurrency(minAmount)} - ₦ {formatCurrency(maxAmount)})
           </Text>
+          {exceedsBizValueHalf && (
+            <Text className="text-xs text-[#F59E0B] mt-1">
+              ⚠️ Warning: Amount requested exceeds 50% of business value (₦{formatCurrency(maxLoanByBusiness)})
+            </Text>
+          )}
         </View>
 
         {/* Repayment Frequency (auto-filled from selected product) */}

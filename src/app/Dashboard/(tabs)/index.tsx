@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useState, useEffect, useCallback } from 'react';
+import { Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { QUERY_KEYS } from '@/constants';
 import { useAuthStore } from '@/stores/auth.store';
 import { useNotificationStore } from '@/stores/notification.store';
 import { getUnreadCount } from '@/services/notification.service';
@@ -17,7 +18,22 @@ import ActiveLoanCard from '@/components/features/dashboard/ActiveLoanCard';
 
 export default function HomeScreen() {
   const user = useAuthStore((s) => s.user);
+  const queryClient = useQueryClient();
   const [balanceVisible, setBalanceVisible] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['unread-count'] }),
+        queryClient.invalidateQueries({ queryKey: ['account-summary'] }),
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECENT_TRANSACTIONS] }),
+      ]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [queryClient]);
 
   const setUnreadCount = useNotificationStore((s) => s.setUnreadCount);
   const unreadCount = useNotificationStore((s) => s.unreadCount);
@@ -44,6 +60,9 @@ export default function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 10 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         {/* Header */}
         <View className="flex-row justify-between items-center px-6 pt-2 pb-1">

@@ -4,12 +4,18 @@ import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
-import { api } from './api';
+import { notificationApi } from './api';
 import { getOrCreateDeviceId } from './device.service';
-import type { PushTokenPayload, AppNotification } from '@/types/notification.types';
+import type {
+  PushTokenPayload,
+  PaginatedNotificationsResponse,
+  MarkReadResponse,
+  MarkAllReadResponse,
+} from '@/types/notification.types';
 
 const PUSH_TOKEN_KEY = 'expo_push_token';
 const PERMISSION_DENIED_KEY = 'push_permission_denied';
+export let isRegistering = false;
 
 // ── Android Channels ──────────────────────────────────────────────────
 
@@ -63,11 +69,16 @@ export async function registerForPushNotifications(): Promise<string | null> {
     return null;
   }
 
-  const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId });
-  // console.log('📬 Expo Push Token:', token);
+  isRegistering = true;
+  try {
+    const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId });
+    // console.log('📬 Expo Push Token:', token);
 
-  await SecureStore.setItemAsync(PUSH_TOKEN_KEY, token);
-  return token;
+    await SecureStore.setItemAsync(PUSH_TOKEN_KEY, token);
+    return token;
+  } finally {
+    isRegistering = false;
+  }
 }
 
 export async function sendTokenToBackend(token: string): Promise<void> {
@@ -79,7 +90,7 @@ export async function sendTokenToBackend(token: string): Promise<void> {
       platform: Platform.OS as 'ios' | 'android',
     };
 
-    await api.post('/notifications/token', payload);
+    await notificationApi.post('/notifications/token', payload);
   } catch {
     // Backend endpoint may not be available yet — token is stored locally
     // and will be sent on next app foreground once the endpoint is ready
@@ -88,7 +99,7 @@ export async function sendTokenToBackend(token: string): Promise<void> {
 
 export async function removeTokenFromBackend(): Promise<void> {
   try {
-    await api.delete('/notifications/token');
+    await notificationApi.delete('/notifications/token');
   } catch {
     // Fire-and-forget — backend cleans up stale tokens via receipt checks
   }
@@ -100,28 +111,37 @@ export async function getStoredToken(): Promise<string | null> {
 
 // ── Notification History (in-app bell) ────────────────────────────────
 
-export async function getNotifications(): Promise<AppNotification[]> {
+export async function getNotifications(
+  page: number = 1,
+): Promise<PaginatedNotificationsResponse> {
   try {
-    const { data } = await api.get<AppNotification[]>('/notifications');
+    const { data } = await notificationApi.get<PaginatedNotificationsResponse>(
+      '/notifications',
+      { params: { page } },
+    );
     return data;
   } catch {
-    return [];
+    return { notifications: [], page: 1, page_size: 20, total: 0, has_next: false };
   }
 }
 
 export async function getUnreadCount(): Promise<number> {
   try {
-    const { data } = await api.get<{ count: number }>('/notifications/unread-count');
+    const { data } = await notificationApi.get<{ count: number }>('/notifications/unread-count');
     return data.count;
   } catch {
     return 0;
   }
 }
 
-export async function markAsRead(notificationId: string): Promise<void> {
-  await api.patch(`/notifications/${notificationId}/read`);
+export async function markAsRead(notificationId: string): Promise<MarkReadResponse> {
+  const { data } = await notificationApi.patch<MarkReadResponse>(
+    `/notifications/${notificationId}/read`,
+  );
+  return data;
 }
 
-export async function markAllAsRead(): Promise<void> {
-  await api.patch('/notifications/read-all');
+export async function markAllAsRead(): Promise<MarkAllReadResponse> {
+  const { data } = await notificationApi.patch<MarkAllReadResponse>('/notifications/read-all');
+  return data;
 }
