@@ -12,7 +12,11 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+import { useBiometricSignIn } from '@/hooks/use-biometric-sign-in';
 import { authService } from '@/services/auth.service';
+import { storeSignInCredentials } from '@/services/biometric.service';
 import { useAuthStore } from '@/stores/auth.store';
 
 const PRIMARY = '#472FF8';
@@ -24,6 +28,13 @@ export default function SignInScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const {
+    isBiometricSignInReady,
+    biometryType,
+    authenticating: biometricLoading,
+    signInWithBiometric,
+  } = useBiometricSignIn();
+
   const canSignIn = phone.trim().length > 0 && password.length > 0;
 
   const handleSignIn = async () => {
@@ -34,9 +45,15 @@ export default function SignInScreen() {
       const response = await authService.loginUser(phone.trim(), password);
 
       if (response.status === 'success' && response.access_token && response.refresh_token) {
-        const { setTokens, setUser } = useAuthStore.getState();
+        const { setTokens, setUser, biometricsEnabled } = useAuthStore.getState();
         setTokens(response.access_token, response.refresh_token);
         if (response.user) setUser(response.user);
+
+        // Cache credentials for biometric sign-in next time
+        if (biometricsEnabled) {
+          storeSignInCredentials(phone.trim(), password).catch(() => {});
+        }
+
         router.replace('/Dashboard' as any);
         return;
       }
@@ -139,7 +156,7 @@ export default function SignInScreen() {
               style={[styles.primaryBtn, !canSignIn && styles.disabledBtn]}
               onPress={handleSignIn}
               // onPress={()=> router.replace('/Dashboard' as any)}
-              disabled={!canSignIn || loading}
+              disabled={!canSignIn || loading || biometricLoading}
               activeOpacity={0.85}
 
             >
@@ -152,10 +169,52 @@ export default function SignInScreen() {
               )}
             </TouchableOpacity>
 
-            {/* <Text style={styles.biometricText}>
-              Sign In with fingerprint.{' '}
-              <Text style={styles.biometricLink}>Click here</Text>
-            </Text> */}
+            <TouchableOpacity
+              onPress={() => router.replace('/welcome')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.signUpText}>
+                Don't have an account?{' '}
+                <Text style={styles.signUpLink}>Sign up</Text>
+              </Text>
+            </TouchableOpacity>
+
+            {isBiometricSignInReady && (
+              <TouchableOpacity
+                style={styles.biometricBtn}
+                activeOpacity={0.7}
+                disabled={biometricLoading || loading}
+                onPress={async () => {
+                  setError('');
+                  const result = await signInWithBiometric();
+                  if (result.status === 'success') {
+                    router.replace('/Dashboard' as any);
+                  } else if (result.status === 'new_device') {
+                    router.push({
+                      pathname: '/(sign-in)/new-device-detected',
+                      params: { session_token: result.sessionToken },
+                    });
+                  } else {
+                    setError(result.error);
+                  }
+                }}
+              >
+                {biometricLoading ? (
+                  <ActivityIndicator size="small" color={PRIMARY} />
+                ) : (
+                  <MaterialCommunityIcons
+                    name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
+                    size={24}
+                    color={PRIMARY}
+                  />
+                )}
+                <Text style={styles.biometricText}>
+                  {biometricLoading
+                    ? 'Signing in...'
+                    : `Sign in with ${biometryType === 'FACE' ? 'Face ID' : 'fingerprint'}`}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </KeyboardAwareScrollView>
     </SafeAreaView>
@@ -266,14 +325,29 @@ const styles = StyleSheet.create({
   disabledBtnText: {
     color: '#9CA3AF',
   },
-  biometricText: {
-    textAlign: 'center',
-    fontSize: 13,
-    color: '#6B7280',
+  biometricBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+    borderRadius: 50,
+    paddingVertical: 14,
   },
-  biometricLink: {
+  biometricText: {
+    fontSize: 14,
+    color: '#374151',
+    fontWeight: '500',
+  },
+  signUpText: {
+    fontSize: 14,
+    color: '#6B7280',
+    textAlign: 'center' as const,
+  },
+  signUpLink: {
     color: PRIMARY,
-    fontWeight: '600',
+    fontWeight: '600' as const,
   },
 
 

@@ -13,6 +13,7 @@ import { router } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { PIN_LENGTH } from '@/constants';
+import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 
 function formatCurrency(amount: number): string {
   return '₦' + new Intl.NumberFormat('en-NG', {
@@ -106,6 +107,14 @@ function TimelineItem({ item, isLast }: { item: ScheduleItem; isLast: boolean })
 }
 
 export default function RepaymentScheduleScreen() {
+  const {
+    isBiometricReady,
+    biometryType,
+    authenticating,
+    authenticateWithBiometric,
+    onManualPinSuccess,
+  } = useBiometricAuth();
+
   const [modalType, setModalType] = useState<'now' | 'early' | null>(null);
   const [amount, setAmount] = useState('');
   const [pin, setPin] = useState('');
@@ -289,17 +298,46 @@ export default function RepaymentScheduleScreen() {
                 </TouchableOpacity>
               </View>
 
-              {/* Confirm */}
-              <TouchableOpacity
-                className={`rounded-full py-4 items-center mb-3 ${canConfirm ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
-                onPress={() => { if (canConfirm) closeModal(); }}
-                disabled={!canConfirm}
-                activeOpacity={0.85}
-              >
-                <Text className={`text-base font-semibold ${canConfirm ? 'text-white' : 'text-[#9CA3AF]'}`}>
-                  Confirm
-                </Text>
-              </TouchableOpacity>
+              {/* Confirm + Biometric */}
+              <View className="flex-row items-center gap-3 mb-3">
+                <TouchableOpacity
+                  className={`flex-1 rounded-full py-4 items-center ${canConfirm ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+                  onPress={async () => {
+                    if (canConfirm) {
+                      await onManualPinSuccess(pin);
+                      closeModal();
+                    }
+                  }}
+                  disabled={!canConfirm}
+                  activeOpacity={0.85}
+                >
+                  <Text className={`text-base font-semibold ${canConfirm ? 'text-white' : 'text-[#9CA3AF]'}`}>
+                    Confirm
+                  </Text>
+                </TouchableOpacity>
+
+                {isBiometricReady && (
+                  <TouchableOpacity
+                    className="w-14 h-14 rounded-full border border-[#E5E7EB] items-center justify-center"
+                    activeOpacity={0.7}
+                    onPress={async () => {
+                      if (authenticating) return;
+                      const storedPin = await authenticateWithBiometric();
+                      if (storedPin) {
+                        // TODO: submit payment API call with storedPin when endpoint is ready
+                        closeModal();
+                      }
+                    }}
+                    disabled={authenticating}
+                  >
+                    <MaterialCommunityIcons
+                      name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
+                      size={28}
+                      color="#472FF8"
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
 
               {/* Cancel */}
               <TouchableOpacity

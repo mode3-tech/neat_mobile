@@ -29,7 +29,7 @@ const DEFAULT_ICON: Omit<TransactionIconConfig, 'keywords'> = {
   iconColor: '#6B7280',
 };
 
-const STATUS_COLORS: Record<string, string> = {
+export const STATUS_COLORS: Record<string, string> = {
   successful: '#16A34A',
   pending: '#F59E0B',
   failed: '#EF4444',

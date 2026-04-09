@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-device-crypto/android/src/main/java/com/reactnativedevicecrypto/Authenticator.java b/node_modules/react-native-device-crypto/android/src/main/java/com/reactnativedevicecrypto/Authenticator.java
+index d87a7d0..90b84ea 100644
+--- a/node_modules/react-native-device-crypto/android/src/main/java/com/reactnativedevicecrypto/Authenticator.java
++++ b/node_modules/react-native-device-crypto/android/src/main/java/com/reactnativedevicecrypto/Authenticator.java
+@@ -55,6 +55,7 @@ public class Authenticator {
+                             .setTitle(title)
+                             .setSubtitle(subTitle)
+                             .setDescription(description)
++                            .setConfirmationRequired(false)
+                             .setNegativeButtonText("Cancel")
+                             .build();
+ 

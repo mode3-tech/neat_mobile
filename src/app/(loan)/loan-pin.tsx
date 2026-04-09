@@ -10,12 +10,20 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
+import { PIN_LENGTH } from '@/constants';
+import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { loanService } from '@/services/loan.service';
 import { useLoanStore } from '@/stores/loan.store';
-import { PIN_LENGTH } from '@/constants';
 
 export default function LoanPinScreen() {
   const store = useLoanStore();
+  const {
+    isBiometricReady,
+    biometryType,
+    authenticating,
+    authenticateWithBiometric,
+    onManualPinSuccess,
+  } = useBiometricAuth();
 
   const [pin, setPin] = useState('');
   const [showPin, setShowPin] = useState(false);
@@ -24,8 +32,7 @@ export default function LoanPinScreen() {
 
   const canConfirm = pin.length === PIN_LENGTH;
 
-  const handleConfirm = async () => {
-    if (!canConfirm || submitting) return;
+  const submitApplication = async (transactionPin: string) => {
     setSubmitting(true);
     setErrorMsg('');
     try {
@@ -35,9 +42,10 @@ export default function LoanPinScreen() {
         business_value: store.businessValue,
         loan_amount: store.loanAmount,
         loan_product_type: store.loanProductCode,
-        transaction_pin: pin,
+        transaction_pin: transactionPin,
       });
 
+      await onManualPinSuccess(transactionPin);
       store.setSummary(response.summary);
       store.setApplicationRef(response.application_ref);
       router.push('/(loan)/loan-success');
@@ -50,6 +58,22 @@ export default function LoanPinScreen() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleConfirm = () => {
+    if (!canConfirm || submitting) return;
+    submitApplication(pin);
+  };
+
+  const handleBiometric = async () => {
+    if (authenticating || submitting) return;
+    setErrorMsg('');
+    const storedPin = await authenticateWithBiometric();
+    if (!storedPin) {
+      setErrorMsg('Biometric authentication failed. Please use your PIN.');
+      return;
+    }
+    submitApplication(storedPin);
   };
 
   return (
@@ -96,9 +120,9 @@ export default function LoanPinScreen() {
 
       <View className="flex-1" />
 
-      <View className="pb-4">
+      <View className="flex-row items-center gap-3 pb-4">
         <TouchableOpacity
-          className={`rounded-full py-4 items-center ${canConfirm ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+          className={`flex-1 rounded-full py-4 items-center ${canConfirm ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
           onPress={handleConfirm}
           disabled={!canConfirm || submitting}
           activeOpacity={0.85}
@@ -111,6 +135,21 @@ export default function LoanPinScreen() {
             </Text>
           )}
         </TouchableOpacity>
+
+        {isBiometricReady && (
+          <TouchableOpacity
+            className="w-14 h-14 rounded-full border border-[#E5E7EB] items-center justify-center"
+            activeOpacity={0.7}
+            onPress={handleBiometric}
+            disabled={authenticating || submitting}
+          >
+            <MaterialCommunityIcons
+              name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
+              size={28}
+              color="#472FF8"
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </SafeAreaView>
   );

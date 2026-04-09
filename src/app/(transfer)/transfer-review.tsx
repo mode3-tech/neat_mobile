@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { PIN_LENGTH } from '@/constants';
+import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
 
@@ -55,6 +56,13 @@ function SummaryRow({
 
 export default function TransferReviewScreen() {
   const store = useTransferStore();
+  const {
+    isBiometricReady,
+    biometryType,
+    authenticating,
+    authenticateWithBiometric,
+    onManualPinSuccess,
+  } = useBiometricAuth();
 
   const [pin, setPin] = useState('');
   const [showPin, setShowPin] = useState(false);
@@ -72,21 +80,21 @@ export default function TransferReviewScreen() {
 
   const canConfirm = pin.length === PIN_LENGTH;
 
-  const handleConfirm = async () => {
-    if (!canConfirm || submitting) return;
+  const submitTransfer = async (transactionPin: string) => {
     setSubmitting(true);
     setErrorMsg('');
     try {
       const response = await walletService.transfer({
         amount: parsedAmount,
-        sortCode: store.bankCode,
-        accountNumber: store.accountNumber,
+        sort_code: store.bankCode,
+        account_number: store.accountNumber,
         narration: store.narration,
-        accountName: store.accountName,
+        account_name: store.accountName,
         metadata: {},
-        transaction_pin: pin,
+        transaction_pin: transactionPin,
       });
 
+      await onManualPinSuccess(transactionPin);
       store.setTransferResult(response.transfer);
       router.push('/(transfer)/transfer-success');
     } catch (err: any) {
@@ -98,6 +106,22 @@ export default function TransferReviewScreen() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleConfirm = () => {
+    if (!canConfirm || submitting) return;
+    submitTransfer(pin);
+  };
+
+  const handleBiometric = async () => {
+    if (authenticating || submitting) return;
+    setErrorMsg('');
+    const storedPin = await authenticateWithBiometric();
+    if (!storedPin) {
+      setErrorMsg('Biometric authentication failed. Please use your PIN.');
+      return;
+    }
+    submitTransfer(storedPin);
   };
 
   const handleCancel = () => {
@@ -203,17 +227,20 @@ export default function TransferReviewScreen() {
             )}
           </TouchableOpacity>
 
-          {/* Biometric placeholder */}
-          <TouchableOpacity
-            className="w-14 h-14 rounded-full border border-[#E5E7EB] items-center justify-center"
-            activeOpacity={0.7}
-          >
-            <MaterialCommunityIcons
-              name="fingerprint"
-              size={28}
-              color="#472FF8"
-            />
-          </TouchableOpacity>
+          {isBiometricReady && (
+            <TouchableOpacity
+              className="w-14 h-14 rounded-full border border-[#E5E7EB] items-center justify-center"
+              activeOpacity={0.7}
+              onPress={handleBiometric}
+              disabled={authenticating || submitting}
+            >
+              <MaterialCommunityIcons
+                name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
+                size={28}
+                color="#472FF8"
+              />
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Cancel */}

@@ -22,10 +22,10 @@ export type TransferType = 'neatpay' | 'other_bank';
 
 export interface TransferPayload {
   amount: number;
-  sortCode: string;
-  accountNumber: string;
+  sort_code: string;
+  account_number: string;
   narration: string;
-  accountName: string;
+  account_name: string;
   metadata: Record<string, unknown>;
   transaction_pin: string;
 }
