@@ -241,6 +241,9 @@ export default function BalanceCardCarousel({
               if (btn.label === 'Send Money') {
                 router.push('/(transfer)/send-money');
               }
+              if (btn.label === 'Deposit') {
+                router.push('/(savings)/add-money');
+              }
             }}
           >
             {btn.icon && (

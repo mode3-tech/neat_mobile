@@ -85,20 +85,17 @@ export const useAuthStore = create<AuthState>((set) => ({
       .then(({ removeTokenFromBackend }) => removeTokenFromBackend())
       .catch(() => {});
 
-    // Clear cached biometric data (PIN + sign-in credentials)
+    // Clear cached transaction PIN (security-sensitive).
+    // Sign-in credentials are preserved so biometric login remains available.
     import('@/services/biometric.service')
-      .then(({ clearStoredTransactionPin, clearStoredSignInCredentials }) => {
+      .then(({ clearStoredTransactionPin }) => {
         clearStoredTransactionPin();
-        clearStoredSignInCredentials();
       })
       .catch(() => {});
 
     setAccessToken(null);
-    SecureStore.deleteItemAsync('access_token').catch(() => {});
-    SecureStore.deleteItemAsync('refresh_token').catch(() => {});
-    // Note: biometrics_enabled is NOT deleted — it persists across logouts
-    // so the user doesn't lose their preference (no settings screen to re-enable).
-    // The stored transaction PIN IS cleared above for security.
+    // Tokens are kept in SecureStore so hasStoredTokens remains true on next
+    // app open (sign-in page, not welcome). They are overwritten on next login.
     set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
   },
 }));

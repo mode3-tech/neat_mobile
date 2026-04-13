@@ -9,6 +9,8 @@ export interface ActiveLoan {
 
 export interface AccountSummary {
   full_name: string;
+  bank_name: string;
+  wallet_id: string;
   account_number: string;
   available_balance: number;
   loan_balance: number;

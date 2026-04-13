@@ -37,7 +37,7 @@ async function storeTokens(tokens: AuthTokens): Promise<void> {
 export const authService = {
   verifyBvn: async (bvn: string): Promise<BvnData> => {
     try {
-      const response = await api.post<BvnData>('/auth/validate-bvn', { bvn });
+      const response = await api.post<BvnData>('/auth/validate/bvn', { bvn });
       return response.data;
     } catch (error) {
       extractErrorMessage(error, 'BVN verification failed');
@@ -46,7 +46,7 @@ export const authService = {
 
   verifyNin: async (nin: string, bvnVerificationId: string): Promise<NinData> => {
     try {
-      const response = await api.post<NinData>('/auth/validate-nin', { nin, bvn_validation_id: bvnVerificationId });
+      const response = await api.post<NinData>('/auth/validate/nin', { nin, bvn_verification_id: bvnVerificationId });
       return response.data;
     } catch (error) {
       extractErrorMessage(error, 'NIN verification failed');

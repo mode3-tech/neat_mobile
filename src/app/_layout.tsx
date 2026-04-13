@@ -49,7 +49,8 @@ export default function RootLayout(): React.JSX.Element {
     return () => subscription.remove();
   }, [router]);
 
-  // Register push token when user becomes authenticated
+  // Register push token when user becomes authenticated,
+  // redirect to sign-in when session is invalidated
   useEffect(() => {
     const unsubscribe = useAuthStore.subscribe(async (state, prevState) => {
       if (state.isAuthenticated && !prevState.isAuthenticated) {
@@ -58,9 +59,12 @@ export default function RootLayout(): React.JSX.Element {
         const token = await registerForPushNotifications();
         if (token) await sendTokenToBackend(token);
       }
+      if (!state.isAuthenticated && prevState.isAuthenticated) {
+        router.replace('/(sign-in)/sign-in' as any);
+      }
     });
     return unsubscribe;
-  }, []);
+  }, [router]);
 
   // Re-register token when app returns to foreground (tokens can change)
   useEffect(() => {
@@ -122,6 +126,7 @@ export default function RootLayout(): React.JSX.Element {
             />
             <Stack.Screen name="(loan)" />
             <Stack.Screen name="(transfer)" />
+            <Stack.Screen name="(savings)" />
             <Stack.Screen name="notifications" />
             <Stack.Screen
               name="modal"

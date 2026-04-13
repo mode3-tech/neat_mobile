@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/auth.store';
 const SESSION_TIMEOUT_MS = 3 * 60 * 1000; // 3 minutes
 
 export function useSessionTimeout(router: Router) {
+   return { onTouchActivity: () => false };
   const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const backgroundTimestampRef = useRef<number | null>(null);
   const isTimedOutRef = useRef(false);
@@ -24,7 +25,7 @@ export function useSessionTimeout(router: Router) {
     }
 
     useAuthStore.getState().clearAuth();
-    routerRef.current.replace('/(sign-in)/sign-in' as any);
+    // Navigation is handled by the auth guard in _layout.tsx
   }, []);
 
   const resetInactivityTimer = useCallback(() => {

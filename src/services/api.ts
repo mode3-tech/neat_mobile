@@ -8,22 +8,36 @@ import { getOrCreateDeviceId } from './device.service';
 
 let accessToken: string | null = null;
 let isRefreshing = false;
-let refreshSubscribers: Array<(token: string) => void> = [];
+let refreshSubscribers: Array<{
+  resolve: (value: unknown) => void;
+  reject: (reason?: unknown) => void;
+  request: InternalAxiosRequestConfig;
+}> = [];
 
-function onTokenRefreshed(token: string): void {
-  refreshSubscribers.forEach((cb) => cb(token));
+function onTokenRefreshed(token: string, instance: AxiosInstance): void {
+  refreshSubscribers.forEach(({ resolve, request }) => {
+    request.headers.Authorization = `Bearer ${token}`;
+    resolve(instance(request));
+  });
   refreshSubscribers = [];
 }
 
-function addRefreshSubscriber(cb: (token: string) => void): void {
-  refreshSubscribers.push(cb);
+function onRefreshFailed(error: unknown): void {
+  refreshSubscribers.forEach(({ reject }) => reject(error));
+  refreshSubscribers = [];
 }
 
 export const setAccessToken = (token: string | null): void => {
   accessToken = token;
 };
 
-function createApiInstance(baseURL: string): AxiosInstance {
+interface ApiInstanceOptions {
+  /** When true, a failed token refresh will call clearAuth() to end the session. Default: true. */
+  clearAuthOnFailure?: boolean;
+}
+
+function createApiInstance(baseURL: string, options: ApiInstanceOptions = {}): AxiosInstance {
+  const { clearAuthOnFailure = true } = options;
   const instance = axios.create({
     baseURL,
     headers: { 'Content-Type': 'application/json' },
@@ -55,7 +69,8 @@ function createApiInstance(baseURL: string): AxiosInstance {
         error.response?.status !== 401 ||
         !originalRequest ||
         originalRequest.url?.includes('/auth/refresh') ||
-        originalRequest._retry
+        originalRequest._retry ||
+        !accessToken // already logged out — don't attempt refresh
       ) {
         return Promise.reject(error);
       }
@@ -64,11 +79,8 @@ function createApiInstance(baseURL: string): AxiosInstance {
 
       // Another request is already refreshing — queue this one
       if (isRefreshing) {
-        return new Promise((resolve) => {
-          addRefreshSubscriber((newToken: string) => {
-            originalRequest.headers.Authorization = `Bearer ${newToken}`;
-            resolve(instance(originalRequest));
-          });
+        return new Promise((resolve, reject) => {
+          refreshSubscribers.push({ resolve, reject, request: originalRequest });
         });
       }
 
@@ -78,15 +90,22 @@ function createApiInstance(baseURL: string): AxiosInstance {
         const tokens = await authService.refreshToken();
         if (tokens) {
           setAccessToken(tokens.access_token);
-          onTokenRefreshed(tokens.access_token);
+          onTokenRefreshed(tokens.access_token, instance);
           originalRequest.headers.Authorization = `Bearer ${tokens.access_token}`;
           return instance(originalRequest);
         }
       } catch {
-        const { useAuthStore } = await import('@/stores/auth.store');
-        useAuthStore.getState().clearAuth();
+        // refresh threw — fall through to clearAuth
       } finally {
         isRefreshing = false;
+      }
+
+      // Refresh failed (returned null or threw) — reject queued requests
+      onRefreshFailed(error);
+
+      if (clearAuthOnFailure) {
+        const { useAuthStore } = await import('@/stores/auth.store');
+        useAuthStore.getState().clearAuth();
       }
 
       return Promise.reject(error);
@@ -97,6 +116,8 @@ function createApiInstance(baseURL: string): AxiosInstance {
 }
 
 const api = createApiInstance(process.env.EXPO_PUBLIC_API_URL!);
-const notificationApi = createApiInstance(process.env.EXPO_PUBLIC_NOTIFICATION_API_URL!);
+const notificationApi = createApiInstance(process.env.EXPO_PUBLIC_NOTIFICATION_API_URL!, {
+  clearAuthOnFailure: false,
+});
 
 export { api, notificationApi };
