@@ -41,7 +41,16 @@ export default function RootLayout(): React.JSX.Element {
   // Navigate to the correct screen when user taps a notification
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener(
-      () => {
+      (response) => {
+        const data = response.notification.request.content.data as
+          | { job_id?: string; event?: string }
+          | undefined;
+        if (data?.job_id && data.event === 'statement-ready') {
+          router.push(
+            `/(account)/statement?jobId=${encodeURIComponent(data.job_id)}` as any,
+          );
+          return;
+        }
         router.push('/notifications');
       },
     );
@@ -127,6 +136,7 @@ export default function RootLayout(): React.JSX.Element {
             <Stack.Screen name="(loan)" />
             <Stack.Screen name="(transfer)" />
             <Stack.Screen name="(savings)" />
+            <Stack.Screen name="(account)" />
             <Stack.Screen name="notifications" />
             <Stack.Screen
               name="modal"

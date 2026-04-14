@@ -14,7 +14,7 @@ const SERVICES: ServiceItem[][] = [
     { icon: 'qrcode-scan', label: 'QR Code' },
     { icon: 'cash-multiple', label: 'Loans', route: '/(loan)/loan-home' },
     { icon: 'piggy-bank', label: 'NeatSave' },
-    { icon: 'phone', label: 'Buy Airtime' },
+    { icon: 'file-document-outline', label: 'Statement', route: '/(account)/statement' },
   ],
   [
     { icon: 'wifi', label: 'Buy Data' },

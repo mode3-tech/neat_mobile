@@ -21,3 +21,24 @@ export interface AccountSummaryResponse {
   status: boolean;
   data: AccountSummary;
 }
+
+export type StatementFormat = 'csv' | 'pdf';
+export type StatementJobStatus = 'pending' | 'processing' | 'ready' | 'failed';
+
+export interface StatementRequestBody {
+  format: StatementFormat;
+  date_from: string;
+  date_to: string;
+}
+
+export interface StatementRequestResponse {
+  status: boolean;
+  message: string;
+  job_id: string;
+}
+
+export interface StatementJobStatusResponse {
+  status: boolean;
+  job_status: StatementJobStatus;
+  download_url?: string;
+}

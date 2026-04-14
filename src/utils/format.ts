@@ -99,3 +99,14 @@ export const formatTransactionDateTime = (iso: string): string => {
 export const formatPhoneNumber = (phone: string): string => {
   return phone.replace(/^\+234/, '0');
 };
+
+/**
+ * Format a Date as "13 Jan, 2026".
+ */
+export const formatDateShort = (date: Date): string => {
+  const months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+  return `${date.getDate()} ${months[date.getMonth()]}, ${date.getFullYear()}`;
+};

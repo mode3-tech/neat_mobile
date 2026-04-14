@@ -52,6 +52,7 @@ const baseConfig = {
         defaultChannel: 'transactions',
       },
     ],
+    '@react-native-community/datetimepicker',
   ],
   experiments: {
     typedRoutes: true,

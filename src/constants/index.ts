@@ -21,6 +21,7 @@ export const QUERY_KEYS = {
   BANKS: 'banks',
   TRANSACTIONS: 'transactions',
   RECENT_TRANSACTIONS: 'recent-transactions',
+  STATEMENT_JOB: 'statement-job',
 } as const;
 
 export const SESSION_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
