@@ -260,4 +260,46 @@ export const authService = {
       extractErrorMessage(error, 'OTP verification failed');
     }
   },
+
+  requestPinChange: async (): Promise<void> => {
+    try {
+      await api.post('/auth/pin/change/request');
+    } catch (error) {
+      extractErrorMessage(error, 'Failed to send OTP');
+    }
+  },
+
+  changePin: async (body: {
+    otp_code: string;
+    current_pin: string;
+    new_pin: string;
+    confirm_new_pin: string;
+  }): Promise<void> => {
+    try {
+      await api.patch('/auth/pin/change', body);
+    } catch (error) {
+      extractErrorMessage(error, 'Failed to change PIN');
+    }
+  },
+
+  requestPasswordChange: async (): Promise<void> => {
+    try {
+      await api.post('/auth/password/change/request');
+    } catch (error) {
+      extractErrorMessage(error, 'Failed to send OTP');
+    }
+  },
+
+  changePassword: async (body: {
+    otp_code: string;
+    current_password: string;
+    new_password: string;
+    confirm_new_password: string;
+  }): Promise<void> => {
+    try {
+      await api.patch('/auth/password/change', body);
+    } catch (error) {
+      extractErrorMessage(error, 'Failed to change password');
+    }
+  },
 };

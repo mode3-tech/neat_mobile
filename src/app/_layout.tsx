@@ -13,6 +13,7 @@ import 'react-native-reanimated';
 
 import { useSessionTimeout } from '@/hooks/use-session-timeout';
 import { useAuthStore } from '@/stores/auth.store';
+import { useProfileStore } from '@/stores/profile.store';
 
 // Show notifications as alerts when app is in foreground
 Notifications.setNotificationHandler({
@@ -37,6 +38,10 @@ export default function RootLayout(): React.JSX.Element {
   const router = useRouter();
   const { onTouchActivity } = useSessionTimeout(router);
   const appState = useRef(AppState.currentState);
+
+  useEffect(() => {
+    useProfileStore.getState().hydratePhotoUri();
+  }, []);
 
   // Navigate to the correct screen when user taps a notification
   useEffect(() => {
@@ -137,6 +142,7 @@ export default function RootLayout(): React.JSX.Element {
             <Stack.Screen name="(transfer)" />
             <Stack.Screen name="(savings)" />
             <Stack.Screen name="(account)" />
+            <Stack.Screen name="(profile)" />
             <Stack.Screen name="notifications" />
             <Stack.Screen
               name="modal"

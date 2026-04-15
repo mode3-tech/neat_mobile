@@ -9,12 +9,22 @@ export interface ActiveLoan {
 
 export interface AccountSummary {
   full_name: string;
+  phone_number: string;
+  dob: string;
+  address: string;
+  bvn: string;
+  email?: string;
   bank_name: string;
   wallet_id: string;
   account_number: string;
   available_balance: number;
   loan_balance: number;
   active_loans: ActiveLoan[];
+}
+
+export interface UpdateProfileBody {
+  email?: string;
+  address?: string;
 }
 
 export interface AccountSummaryResponse {

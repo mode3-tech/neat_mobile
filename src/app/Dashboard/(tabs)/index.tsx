@@ -8,6 +8,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants';
 import { useAuthStore } from '@/stores/auth.store';
 import { useNotificationStore } from '@/stores/notification.store';
+import { useProfileStore } from '@/stores/profile.store';
 import { getUnreadCount } from '@/services/notification.service';
 import { accountService } from '@/services/account.service';
 import BalanceCardCarousel from '@/components/features/dashboard/BalanceCardCarousel';
@@ -21,13 +22,14 @@ export default function HomeScreen() {
   const queryClient = useQueryClient();
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const photoUri = useProfileStore((s) => s.photoUri);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['unread-count'] }),
-        queryClient.invalidateQueries({ queryKey: ['account-summary'] }),
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] }),
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECENT_TRANSACTIONS] }),
       ]);
     } finally {
@@ -44,7 +46,7 @@ export default function HomeScreen() {
   });
 
   const { data: accountSummary } = useQuery({
-    queryKey: ['account-summary'],
+    queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
     queryFn: accountService.getSummary,
   });
 
@@ -67,8 +69,12 @@ export default function HomeScreen() {
         {/* Header */}
         <View className="flex-row justify-between items-center px-6 pt-2 pb-1">
           <View className="flex-row items-center gap-2.5">
-            <View className="w-12 h-12 rounded-full bg-[#472FF8] items-center justify-center">
-              <Text className="text-white text-base font-bold">{initial}</Text>
+            <View className="w-12 h-12 rounded-full bg-[#472FF8] items-center justify-center overflow-hidden">
+              {photoUri ? (
+                <Image source={{ uri: photoUri }} className="w-full h-full" />
+              ) : (
+                <Text className="text-white text-base font-bold">{initial}</Text>
+              )}
             </View>
             <View>
               {/* <Text className="text-xs font-normal text-gray-500">Welcome Back,</Text> */}
