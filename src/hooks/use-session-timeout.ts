@@ -7,7 +7,7 @@ import { useAuthStore } from '@/stores/auth.store';
 const SESSION_TIMEOUT_MS = 3 * 60 * 1000; // 3 minutes
 
 export function useSessionTimeout(router: Router) {
-  //  return { onTouchActivity: () => false };
+   return { onTouchActivity: () => false };
   const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const backgroundTimestampRef = useRef<number | null>(null);
   const isTimedOutRef = useRef(false);

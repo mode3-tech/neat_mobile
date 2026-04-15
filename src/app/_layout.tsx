@@ -48,11 +48,15 @@ export default function RootLayout(): React.JSX.Element {
     const subscription = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         const data = response.notification.request.content.data as
-          | { job_id?: string; event?: string }
+          | { job_id?: string; event?: string; format?: string }
           | undefined;
         if (data?.job_id && data.event === 'statement-ready') {
+          const formatParam =
+            data.format === 'pdf' || data.format === 'csv'
+              ? `&format=${data.format}`
+              : '';
           router.push(
-            `/(account)/statement?jobId=${encodeURIComponent(data.job_id)}` as any,
+            `/(account)/statement?jobId=${encodeURIComponent(data.job_id)}${formatParam}` as any,
           );
           return;
         }

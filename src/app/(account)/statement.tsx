@@ -21,6 +21,7 @@ import { File, Paths } from 'expo-file-system';
 import { QUERY_KEYS } from '@/constants';
 import { accountService } from '@/services/account.service';
 import type { StatementFormat } from '@/types/account.types';
+import { downloadToAndroidDownloads } from '@/utils/download';
 import { formatDateShort } from '@/utils/format';
 import { shareFile } from '@/utils/receipt';
 
@@ -36,25 +37,38 @@ const FILE_TYPE_OPTIONS: FileTypeOption[] = [
 ];
 
 function startOfDay(date: Date): Date {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  return d;
+  return new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0),
+  );
 }
 
 function endOfDay(date: Date): Date {
-  const d = new Date(date);
-  d.setHours(23, 59, 59, 999);
-  return d;
+  return new Date(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      23,
+      59,
+      59,
+      999,
+    ),
+  );
 }
 
 export default function StatementScreen() {
-  const params = useLocalSearchParams<{ jobId?: string | string[] }>();
+  const params = useLocalSearchParams<{
+    jobId?: string | string[];
+    format?: string | string[];
+  }>();
   const initialJobId =
     typeof params.jobId === 'string' && params.jobId ? params.jobId : null;
+  const initialFormat: StatementFormat | null =
+    params.format === 'pdf' || params.format === 'csv' ? params.format : null;
 
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [format, setFormat] = useState<StatementFormat | null>(null);
+  const [format, setFormat] = useState<StatementFormat | null>(initialFormat);
   const [jobId, setJobId] = useState<string | null>(initialJobId);
 
   const [showStartPicker, setShowStartPicker] = useState(false);
@@ -77,6 +91,7 @@ export default function StatementScreen() {
     queryFn: () => accountService.getStatementJobStatus(jobId!),
     enabled: !!jobId,
     refetchInterval: (query) => {
+      if (query.state.status === 'error') return false;
       const s = query.state.data?.job_status;
       if (s === 'ready' || s === 'failed') return false;
       return 3000;
@@ -86,7 +101,9 @@ export default function StatementScreen() {
   const jobStatus = jobQuery.data?.job_status;
   const downloadUrl = jobQuery.data?.download_url;
   const isProcessing =
-    !!jobId && (jobStatus === 'pending' || jobStatus === 'processing' || !jobStatus);
+    !!jobId &&
+    !jobQuery.isError &&
+    (jobStatus === 'pending' || jobStatus === 'processing' || !jobStatus);
 
   const selectedFileType = FILE_TYPE_OPTIONS.find((o) => o.value === format);
   const rangeInvalid =
@@ -124,11 +141,6 @@ export default function StatementScreen() {
 
   const handleGenerate = () => {
     if (!canGenerate) return;
-    generateMutation.mutate();
-  };
-
-  const handleRetry = () => {
-    if (!startDate || !endDate || !format || rangeInvalid) return;
     setJobId(null);
     generateMutation.reset();
     generateMutation.mutate();
@@ -141,10 +153,21 @@ export default function StatementScreen() {
       // On deep-link entry, `format` is unknown — fall back to csv so the file
       // still has a reasonable extension (it opens regardless of ext).
       const extension = format === 'pdf' ? 'pdf' : 'csv';
+      const mime = format === 'pdf' ? 'application/pdf' : 'text/csv';
       const filename = `neat-statement-${Date.now()}.${extension}`;
-      const destination = new File(Paths.cache, filename);
-      const downloaded = await File.downloadFileAsync(downloadUrl, destination);
-      await shareFile(downloaded.uri);
+
+      if (Platform.OS === 'android') {
+        await downloadToAndroidDownloads(
+          downloadUrl,
+          filename,
+          mime,
+          'Your Neat account statement',
+        );
+      } else {
+        const destination = new File(Paths.cache, filename);
+        const downloaded = await File.downloadFileAsync(downloadUrl, destination);
+        await shareFile(downloaded.uri);
+      }
     } catch {
       Alert.alert(
         'Download failed',
@@ -339,7 +362,7 @@ export default function StatementScreen() {
                   </View>
                   <TouchableOpacity
                     className="bg-[#472FF8] rounded-full py-3 items-center"
-                    onPress={handleRetry}
+                    onPress={handleGenerate}
                     activeOpacity={0.85}
                   >
                     <Text className="text-white text-sm font-semibold">
@@ -361,7 +384,9 @@ export default function StatementScreen() {
           )}
           <TouchableOpacity
             className={`rounded-full py-4 items-center ${
-              canGenerate ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+              canGenerate || generateMutation.isPending
+                ? 'bg-[#472FF8]'
+                : 'bg-[#E5E7EB]'
             }`}
             onPress={handleGenerate}
             disabled={!canGenerate}
