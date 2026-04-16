@@ -5,9 +5,7 @@ interface PinChangeDraft {
 }
 
 interface PasswordChangeDraft {
-  currentPassword: string;
-  newPassword: string;
-  confirmNewPassword: string;
+  verificationId: string;
 }
 
 interface SecurityChangeState {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -15,14 +15,12 @@ const RESEND_SECONDS = 30;
 
 export default function ChangePasswordOtpScreen() {
   const [otp, setOtp] = useState('');
+  const [otpId, setOtpId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
-  const [sessionExpired, setSessionExpired] = useState(false);
 
-  const passwordChange = useSecurityChangeStore((s) => s.passwordChange);
-  const clearPasswordChange = useSecurityChangeStore((s) => s.clearPasswordChange);
-  const hadPasswordChange = useRef(!!passwordChange);
+  const setPasswordChange = useSecurityChangeStore((s) => s.setPasswordChange);
 
   const { data: summary } = useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
@@ -30,9 +28,19 @@ export default function ChangePasswordOtpScreen() {
   });
 
   useEffect(() => {
-    if (!hadPasswordChange.current) {
-      setSessionExpired(true);
-    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const { otp_id } = await authService.requestPasswordChange();
+        if (!cancelled) setOtpId(otp_id);
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'Failed to send OTP');
+          setSeconds(0);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
@@ -42,34 +50,35 @@ export default function ChangePasswordOtpScreen() {
   }, [seconds]);
 
   const canResend = seconds === 0;
-  const canVerify = otp.length === OTP_LENGTH;
+  const canVerify = otp.length === OTP_LENGTH && !!otpId;
 
   const handleResend = async () => {
     if (!canResend) return;
     setSeconds(RESEND_SECONDS);
     setOtp('');
-    await authService.requestPasswordChange().catch(() => null);
+    setError('');
+    try {
+      const request = otpId
+        ? authService.resendPasswordChangeOtp()
+        : authService.requestPasswordChange();
+      const { otp_id } = await request;
+      setOtpId(otp_id);
+    } catch {
+      // silent fail, same as prior behavior
+    }
   };
 
   const handleVerify = async () => {
-    if (!canVerify || loading || !passwordChange) return;
+    if (!canVerify || loading) return;
     setLoading(true);
     setError('');
     try {
-      await authService.changePassword({
+      const { verification_id } = await authService.verifyPasswordChangeOtp({
+        otp_id: otpId!,
         otp_code: otp,
-        current_password: passwordChange.currentPassword,
-        new_password: passwordChange.newPassword,
-        confirm_new_password: passwordChange.confirmNewPassword,
       });
-      clearPasswordChange();
-      router.replace({
-        pathname: '/(profile)/success' as any,
-        params: {
-          title: 'Password Changed Successfully',
-          message: 'Your password has been updated. Use your new password the next time you sign in.',
-        },
-      });
+      setPasswordChange({ verificationId: verification_id });
+      router.push('/(profile)/change-password' as any);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'OTP verification failed');
     } finally {
@@ -78,26 +87,6 @@ export default function ChangePasswordOtpScreen() {
   };
 
   const timer = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
-
-  if (sessionExpired) {
-    return (
-      <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
-        <View className="bg-[#FEF2F2] rounded-2xl px-6 py-8 items-center w-full">
-          <Text className="text-lg font-bold text-[#1A1A1A] mb-2">Session Expired</Text>
-          <Text className="text-[13px] text-gray-500 text-center leading-5 mb-6">
-            Please start the password change again.
-          </Text>
-          <TouchableOpacity
-            className="bg-[#472FF8] rounded-full py-3.5 px-10"
-            onPress={() => router.back()}
-            activeOpacity={0.85}
-          >
-            <Text className="text-white text-sm font-semibold">Go Back</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">

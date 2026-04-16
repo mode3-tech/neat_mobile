@@ -1,8 +1,5 @@
 import { useState } from 'react';
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -10,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 
 import { useSignUpStore } from '@/stores/sign-up.store';
@@ -48,15 +46,12 @@ export default function CreatePasswordScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={20}
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
             <Text style={styles.backText}>Back</Text>
           </TouchableOpacity>
@@ -129,7 +124,9 @@ export default function CreatePasswordScreen() {
               <Text style={styles.errorText}>Passwords do not match</Text>
             )}
           </View>
-        </ScrollView>
+
+
+        <View style={styles.spacer} />
 
         <View style={styles.footer}>
           <TouchableOpacity
@@ -143,7 +140,7 @@ export default function CreatePasswordScreen() {
             </Text>
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -152,9 +149,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  flex: {
-    flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
@@ -254,7 +248,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   footer: {
-    paddingHorizontal: 24,
     paddingBottom: 16,
   },
   primaryBtn: {

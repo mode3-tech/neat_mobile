@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 
 import { useSignUpStore } from '@/stores/sign-up.store';
@@ -38,76 +39,83 @@ export default function TransactionPinScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-        <Text style={styles.backText}>Back</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.title}>Create Transaction PIN</Text>
-      <Text style={styles.subtitle}>Protect your transactions with a secure PIN.</Text>
-
-      {/* PIN field */}
-      <View style={styles.field}>
-        <Text style={styles.label}>Create 4-digit PIN</Text>
-        <View style={[styles.inputWrap, hasError && !isPinValid && styles.inputWrapError]}>
-          <TextInput
-            style={styles.input}
-            value={pin}
-            onChangeText={(t) => {
-              setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH));
-              setHasError(false);
-            }}
-            placeholder="—"
-            placeholderTextColor="#9CA3AF"
-            secureTextEntry={!showPin}
-            keyboardType="number-pad"
-            maxLength={PIN_LENGTH}
-          />
-          <TouchableOpacity onPress={() => setShowPin((v) => !v)}>
-            <Text style={styles.eyeIcon}>{showPin ? '👁' : '👁‍🗨'}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Confirm PIN field */}
-      <View style={styles.field}>
-        <Text style={styles.label}>Confirm PIN</Text>
-        <View style={[styles.inputWrap, hasError && !isMatch && styles.inputWrapError]}>
-          <TextInput
-            style={styles.input}
-            value={confirmPin}
-            onChangeText={(t) => {
-              setConfirmPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH));
-              setHasError(false);
-            }}
-            placeholder="—"
-            placeholderTextColor="#9CA3AF"
-            secureTextEntry={!showConfirm}
-            keyboardType="number-pad"
-            maxLength={PIN_LENGTH}
-          />
-          <TouchableOpacity onPress={() => setShowConfirm((v) => !v)}>
-            <Text style={styles.eyeIcon}>{showConfirm ? '👁' : '👁‍🗨'}</Text>
-          </TouchableOpacity>
-        </View>
-        {hasError && !isMatch && confirmPin.length > 0 && (
-          <Text style={styles.errorText}>PINs do not match</Text>
-        )}
-      </View>
-
-      <View style={styles.spacer} />
-
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.primaryBtn, !canProceed && styles.disabledBtn]}
-          onPress={handleProceed}
-          disabled={!canProceed}
-          activeOpacity={0.85}
-        >
-          <Text style={[styles.primaryBtnText, !canProceed && styles.disabledBtnText]}>
-            Proceed
-          </Text>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={20}
+      >
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
-      </View>
+
+        <Text style={styles.title}>Create Transaction PIN</Text>
+        <Text style={styles.subtitle}>Protect your transactions with a secure PIN.</Text>
+
+        {/* PIN field */}
+        <View style={styles.field}>
+          <Text style={styles.label}>Create 4-digit PIN</Text>
+          <View style={[styles.inputWrap, hasError && !isPinValid && styles.inputWrapError]}>
+            <TextInput
+              style={styles.input}
+              value={pin}
+              onChangeText={(t) => {
+                setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH));
+                setHasError(false);
+              }}
+              placeholder="—"
+              placeholderTextColor="#9CA3AF"
+              secureTextEntry={!showPin}
+              keyboardType="number-pad"
+              maxLength={PIN_LENGTH}
+            />
+            <TouchableOpacity onPress={() => setShowPin((v) => !v)}>
+              <Text style={styles.eyeIcon}>{showPin ? '👁' : '👁‍🗨'}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Confirm PIN field */}
+        <View style={styles.field}>
+          <Text style={styles.label}>Confirm PIN</Text>
+          <View style={[styles.inputWrap, hasError && !isMatch && styles.inputWrapError]}>
+            <TextInput
+              style={styles.input}
+              value={confirmPin}
+              onChangeText={(t) => {
+                setConfirmPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH));
+                setHasError(false);
+              }}
+              placeholder="—"
+              placeholderTextColor="#9CA3AF"
+              secureTextEntry={!showConfirm}
+              keyboardType="number-pad"
+              maxLength={PIN_LENGTH}
+            />
+            <TouchableOpacity onPress={() => setShowConfirm((v) => !v)}>
+              <Text style={styles.eyeIcon}>{showConfirm ? '👁' : '👁‍🗨'}</Text>
+            </TouchableOpacity>
+          </View>
+          {hasError && !isMatch && confirmPin.length > 0 && (
+            <Text style={styles.errorText}>PINs do not match</Text>
+          )}
+        </View>
+
+        <View style={styles.spacer} />
+
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={[styles.primaryBtn, !canProceed && styles.disabledBtn]}
+            onPress={handleProceed}
+            disabled={!canProceed}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.primaryBtnText, !canProceed && styles.disabledBtnText]}>
+              Proceed
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -116,7 +124,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 24,
+    paddingBottom: 24,
   },
   backBtn: {
     alignSelf: 'flex-start',

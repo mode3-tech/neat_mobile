@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 
 import { OtpInput } from '@/components/ui/otp-input';
@@ -60,57 +61,64 @@ export default function EmailOtpScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-        <Text style={styles.backText}>Back</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.title}>Enter OTP Code</Text>
-      <Text style={styles.subtitle}>
-        Enter the 6-digit code sent to{' '}
-        <Text style={styles.emailHighlight}>{email}</Text>
-      </Text>
-
-      <View style={styles.otpWrap}>
-        <OtpInput value={otp} onChange={(val) => { setOtp(val); setError(''); }} length={OTP_LENGTH} />
-      </View>
-
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-      {canVerify && (
-        <TouchableOpacity style={styles.changeEmailBtn} onPress={() => router.back()}>
-          <Text style={styles.changeEmailText}>Change email</Text>
-        </TouchableOpacity>
-      )}
-
-      <View style={styles.spacer} />
-
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.primaryBtn, !canVerify && styles.disabledBtn]}
-          onPress={handleVerify}
-          disabled={!canVerify || loading}
-          activeOpacity={0.85}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={[styles.primaryBtnText, !canVerify && styles.disabledBtnText]}>
-              Verify & Continue
-            </Text>
-          )}
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={20}
+      >
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
 
-        <View style={styles.resendRow}>
-          <Text style={styles.resendLabel}>Didn't get a code? </Text>
-          {canResend ? (
-            <TouchableOpacity onPress={handleResend}>
-              <Text style={styles.resendLink}>Resend code</Text>
-            </TouchableOpacity>
-          ) : (
-            <Text style={styles.timerText}>{timer}</Text>
-          )}
+        <Text style={styles.title}>Enter OTP Code</Text>
+        <Text style={styles.subtitle}>
+          Enter the 6-digit code sent to{' '}
+          <Text style={styles.emailHighlight}>{email}</Text>
+        </Text>
+
+        <View style={styles.otpWrap}>
+          <OtpInput value={otp} onChange={(val) => { setOtp(val); setError(''); }} length={OTP_LENGTH} />
         </View>
-      </View>
+
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+        {canVerify && (
+          <TouchableOpacity style={styles.changeEmailBtn} onPress={() => router.back()}>
+            <Text style={styles.changeEmailText}>Change email</Text>
+          </TouchableOpacity>
+        )}
+
+        <View style={styles.spacer} />
+
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={[styles.primaryBtn, !canVerify && styles.disabledBtn]}
+            onPress={handleVerify}
+            disabled={!canVerify || loading}
+            activeOpacity={0.85}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={[styles.primaryBtnText, !canVerify && styles.disabledBtnText]}>
+                Verify & Continue
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.resendRow}>
+            <Text style={styles.resendLabel}>Didn't get a code? </Text>
+            {canResend ? (
+              <TouchableOpacity onPress={handleResend}>
+                <Text style={styles.resendLink}>Resend code</Text>
+              </TouchableOpacity>
+            ) : (
+              <Text style={styles.timerText}>{timer}</Text>
+            )}
+          </View>
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -119,7 +127,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 24,
+    paddingBottom: 24,
   },
   backBtn: {
     alignSelf: 'flex-start',

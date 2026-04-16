@@ -93,6 +93,7 @@ export default function SignInScreen() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
+          bottomOffset={20}
         >
           <View style={styles.logoWrap}>
             <Image
@@ -314,7 +315,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   footer: {
-    paddingBottom: 16,
     gap: 16,
   },
   primaryBtn: {

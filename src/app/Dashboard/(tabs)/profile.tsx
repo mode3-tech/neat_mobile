@@ -128,7 +128,7 @@ export default function ProfileScreen() {
           <SettingsRow
             icon="lock-outline"
             label="Change Password"
-            onPress={() => router.push('/(profile)/change-password' as any)}
+            onPress={() => router.push('/(profile)/change-password-otp' as any)}
           />
           <SettingsRow
             icon="bell-outline"

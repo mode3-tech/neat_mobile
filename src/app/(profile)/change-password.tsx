@@ -1,15 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
@@ -65,7 +63,17 @@ export default function ChangePasswordScreen() {
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const setPasswordChange = useSecurityChangeStore((s) => s.setPasswordChange);
+  const [sessionExpired, setSessionExpired] = useState(false);
+
+  const passwordChange = useSecurityChangeStore((s) => s.passwordChange);
+  const clearPasswordChange = useSecurityChangeStore((s) => s.clearPasswordChange);
+  const hadPasswordChange = useRef(!!passwordChange);
+
+  useEffect(() => {
+    if (!hadPasswordChange.current) {
+      setSessionExpired(true);
+    }
+  }, []);
 
   const passedCount = REQUIREMENTS.filter((r) => r.test(newPassword)).length;
   const isValidNew = newPassword.length >= 8 && passedCount >= 3;
@@ -73,8 +81,8 @@ export default function ChangePasswordScreen() {
   const canProceed =
     currentPassword.length > 0 && newPassword.length > 0 && confirmNewPassword.length > 0;
 
-  const handleContinue = async () => {
-    if (!canProceed || loading) return;
+  const handleChangePassword = async () => {
+    if (!canProceed || loading || !passwordChange) return;
     if (!isValidNew || !isMatch) {
       setHasError(true);
       return;
@@ -85,34 +93,65 @@ export default function ChangePasswordScreen() {
       return;
     }
     setLoading(true);
+    setErrorMessage('');
     try {
-      await authService.requestPasswordChange();
-      setPasswordChange({ currentPassword, newPassword, confirmNewPassword });
-      router.push('/(profile)/change-password-otp' as any);
+      await authService.changePassword({
+        verification_id: passwordChange.verificationId,
+        current_password: currentPassword,
+        new_password: newPassword,
+        confirm_new_password: confirmNewPassword,
+      });
+      clearPasswordChange();
+      router.replace({
+        pathname: '/(profile)/success' as any,
+        params: {
+          title: 'Password Changed Successfully',
+          message: 'Your password has been updated. Use your new password the next time you sign in.',
+        },
+      });
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Please try again.');
+      setErrorMessage(err instanceof Error ? err.message : 'Failed to change password.');
     } finally {
       setLoading(false);
     }
   };
 
+  if (sessionExpired) {
+    return (
+      <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
+        <View className="bg-[#FEF2F2] rounded-2xl px-6 py-8 items-center w-full">
+          <Text className="text-lg font-bold text-[#1A1A1A] mb-2">Session Expired</Text>
+          <Text className="text-[13px] text-gray-500 text-center leading-5 mb-6">
+            Please start the password change again.
+          </Text>
+          <TouchableOpacity
+            className="bg-[#472FF8] rounded-full py-3.5 px-10"
+            onPress={() => router.back()}
+            activeOpacity={0.85}
+          >
+            <Text className="text-white text-sm font-semibold">Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingBottom: 24 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={20}
       >
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingBottom: 24 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
           <TouchableOpacity
             className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
             onPress={() => router.back()}
           >
             <Text className="text-sm text-gray-700 font-medium">Back</Text>
           </TouchableOpacity>
+
+          <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Change Password</Text>
 
           <PwField
             label="Current Password"
@@ -173,12 +212,14 @@ export default function ChangePasswordScreen() {
               <Text className="text-[13px] text-[#EF4444]">{errorMessage}</Text>
             </View>
           ) : null}
-        </ScrollView>
 
-        <View className="px-6 pb-4">
+
+        <View className="flex-1" />
+
+        <View className="pb-4">
           <TouchableOpacity
             className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
-            onPress={handleContinue}
+            onPress={handleChangePassword}
             disabled={!canProceed || loading}
             activeOpacity={0.85}
           >
@@ -191,7 +232,7 @@ export default function ChangePasswordScreen() {
             )}
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

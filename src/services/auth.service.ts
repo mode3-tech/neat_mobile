@@ -14,6 +14,8 @@ import type {
   AuthTokens,
   LoginResponse,
   OtpVerifyResponse,
+  PasswordChangeRequestResponse,
+  PasswordChangeVerifyResponse,
   PinChangeRequestResponse,
   PinChangeVerifyResponse,
   RegisterPayload,
@@ -303,16 +305,35 @@ export const authService = {
     }
   },
 
-  requestPasswordChange: async (): Promise<void> => {
+  requestPasswordChange: async (): Promise<PasswordChangeRequestResponse> => {
     try {
-      await api.post('/auth/password/change/request');
+      const response = await api.post<PasswordChangeRequestResponse>('/auth/password/change/request');
+      return response.data;
     } catch (error) {
-      extractErrorMessage(error, 'Failed to send OTP');
+      return extractErrorMessage(error, 'Failed to send OTP');
+    }
+  },
+
+  verifyPasswordChangeOtp: async (body: { otp_id: string; otp_code: string }): Promise<PasswordChangeVerifyResponse> => {
+    try {
+      const response = await api.post<PasswordChangeVerifyResponse>('/auth/password/change/verify', body);
+      return response.data;
+    } catch (error) {
+      return extractErrorMessage(error, 'OTP verification failed');
+    }
+  },
+
+  resendPasswordChangeOtp: async (): Promise<PasswordChangeRequestResponse> => {
+    try {
+      const response = await api.post<PasswordChangeRequestResponse>('/auth/password/change/resend');
+      return response.data;
+    } catch (error) {
+      return extractErrorMessage(error, 'Failed to resend OTP');
     }
   },
 
   changePassword: async (body: {
-    otp_code: string;
+    verification_id: string;
     current_password: string;
     new_password: string;
     confirm_new_password: string;

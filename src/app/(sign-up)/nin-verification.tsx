@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
@@ -57,95 +58,101 @@ export default function NinVerificationScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-        <Text style={styles.backText}>Back</Text>
-      </TouchableOpacity>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={20}
+      >
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <Text style={styles.backText}>Back</Text>
+        </TouchableOpacity>
 
-      <Text style={styles.title}>NIN Verification</Text>
-      <Text style={styles.subtitle}>
-        Enter your National Identification Number for verification
-      </Text>
+        <Text style={styles.title}>NIN Verification</Text>
+        <Text style={styles.subtitle}>
+          Enter your National Identification Number for verification
+        </Text>
 
-      <View style={styles.field}>
-        <Text style={styles.label}>NIN Number</Text>
-        <View style={[styles.inputWrap, isError && styles.inputWrapError]}>
-          <TextInput
-            style={styles.input}
-            value={nin}
-            onChangeText={(t) => {
-              setNin(t.replace(/\D/g, '').slice(0, NIN_LENGTH));
-              if (isError) setStatus('idle');
-            }}
-            placeholder="Enter 11-digit NIN"
-            placeholderTextColor="#9CA3AF"
-            keyboardType="number-pad"
-            maxLength={NIN_LENGTH}
-            editable={!isVerified}
-          />
-        </View>
-        {isError && <Text style={styles.errorText}>{errorMsg || 'Invalid NIN Number'}</Text>}
-        {!isVerified && (
-          <Text style={styles.helperText}>Your NIN is used to verify your identity</Text>
-        )}
-      </View>
-
-      {/* Info box — shown before verification */}
-      {!isVerified && (
-        <View style={styles.infoBox}>
-          <Text style={styles.infoBoxTitle}>Why we need your NIN:</Text>
-          {[
-            'Verify your identity.',
-            'Comply with financial regulations.',
-            'Protect your account from fraud.',
-            'Enable seamless banking services.',
-          ].map((item) => (
-            <View key={item} style={styles.bulletRow}>
-              <Text style={styles.bullet}>{'•'}</Text>
-              <Text style={styles.bulletText}>{item}</Text>
-            </View>
-          ))}
-        </View>
-      )}
-
-      {/* Success card — shown after verification */}
-      {isVerified && ninResult && (
-        <View style={styles.successCard}>
-          <View style={styles.successHeader}>
-            <View style={styles.checkCircle}>
-              <Text style={styles.checkMark}>✓</Text>
-            </View>
-            <Text style={styles.successTitle}>Details match BVN records</Text>
+        <View style={styles.field}>
+          <Text style={styles.label}>NIN Number</Text>
+          <View style={[styles.inputWrap, isError && styles.inputWrapError]}>
+            <TextInput
+              style={styles.input}
+              value={nin}
+              onChangeText={(t) => {
+                setNin(t.replace(/\D/g, '').slice(0, NIN_LENGTH));
+                if (isError) setStatus('idle');
+              }}
+              placeholder="Enter 11-digit NIN"
+              placeholderTextColor="#9CA3AF"
+              keyboardType="number-pad"
+              maxLength={NIN_LENGTH}
+              editable={!isVerified}
+            />
           </View>
-          <InfoRow label="Name:" value={ninResult.name} />
-          <InfoRow label="DOB:" value={ninResult.dob} />
+          {isError && <Text style={styles.errorText}>{errorMsg || 'Invalid NIN Number'}</Text>}
+          {!isVerified && (
+            <Text style={styles.helperText}>Your NIN is used to verify your identity</Text>
+          )}
         </View>
-      )}
 
-      <View style={styles.spacer} />
-
-      <View style={styles.footer}>
-        {isVerified ? (
-          <TouchableOpacity style={styles.primaryBtn}   onPress={handleConfirm}  activeOpacity={0.85}>
-            <Text style={styles.primaryBtnText}>Confirm & Continue</Text>
-          </TouchableOpacity>
-        
-        ) : (
-          <TouchableOpacity
-            style={[styles.primaryBtn, !isValid && styles.disabledBtn]}
-            onPress={handleVerify}
-            disabled={!isValid || isLoading}
-            activeOpacity={0.85}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
-                Verify NIN
-              </Text>
-            )}
-          </TouchableOpacity>
+        {/* Info box — shown before verification */}
+        {!isVerified && (
+          <View style={styles.infoBox}>
+            <Text style={styles.infoBoxTitle}>Why we need your NIN:</Text>
+            {[
+              'Verify your identity.',
+              'Comply with financial regulations.',
+              'Protect your account from fraud.',
+              'Enable seamless banking services.',
+            ].map((item) => (
+              <View key={item} style={styles.bulletRow}>
+                <Text style={styles.bullet}>{'•'}</Text>
+                <Text style={styles.bulletText}>{item}</Text>
+              </View>
+            ))}
+          </View>
         )}
-      </View>
+
+        {/* Success card — shown after verification */}
+        {isVerified && ninResult && (
+          <View style={styles.successCard}>
+            <View style={styles.successHeader}>
+              <View style={styles.checkCircle}>
+                <Text style={styles.checkMark}>✓</Text>
+              </View>
+              <Text style={styles.successTitle}>Details match BVN records</Text>
+            </View>
+            <InfoRow label="Name:" value={ninResult.name} />
+            <InfoRow label="DOB:" value={ninResult.dob} />
+          </View>
+        )}
+
+        <View style={styles.spacer} />
+
+        <View style={styles.footer}>
+          {isVerified ? (
+            <TouchableOpacity style={styles.primaryBtn} onPress={handleConfirm} activeOpacity={0.85}>
+              <Text style={styles.primaryBtnText}>Confirm & Continue</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={[styles.primaryBtn, !isValid && styles.disabledBtn]}
+              onPress={handleVerify}
+              disabled={!isValid || isLoading}
+              activeOpacity={0.85}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
+                  Verify NIN
+                </Text>
+              )}
+            </TouchableOpacity>
+          )}
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -163,7 +170,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 24,
+    paddingBottom: 24,
   },
   backBtn: {
     alignSelf: 'flex-start',

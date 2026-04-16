@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
@@ -45,53 +46,60 @@ export default function EmailValidationScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-        <Text style={styles.backText}>Back</Text>
-      </TouchableOpacity>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={20}
+      >
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <Text style={styles.backText}>Back</Text>
+        </TouchableOpacity>
 
-      <Text style={styles.title}>Email Validation</Text>
-      <Text style={styles.subtitle}>Enter your email address</Text>
+        <Text style={styles.title}>Email Validation</Text>
+        <Text style={styles.subtitle}>Enter your email address</Text>
 
-      <View style={styles.field}>
-        <Text style={styles.label}>Email Address</Text>
-        <View style={styles.inputWrap}>
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={(val) => { setEmail(val); setError(''); }}
-            placeholder="example@gmail.com"
-            placeholderTextColor="#9CA3AF"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
+        <View style={styles.field}>
+          <Text style={styles.label}>Email Address</Text>
+          <View style={styles.inputWrap}>
+            <TextInput
+              style={styles.input}
+              value={email}
+              onChangeText={(val) => { setEmail(val); setError(''); }}
+              placeholder="example@gmail.com"
+              placeholderTextColor="#9CA3AF"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          </View>
         </View>
-      </View>
 
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      <View style={styles.spacer} />
+        <View style={styles.spacer} />
 
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.primaryBtn, !isValid && styles.disabledBtn]}
-          onPress={handleProceed}
-          disabled={!isValid || loading}
-          activeOpacity={0.85}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
-              Proceed
-            </Text>
-          )}
-        </TouchableOpacity>
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={[styles.primaryBtn, !isValid && styles.disabledBtn]}
+            onPress={handleProceed}
+            disabled={!isValid || loading}
+            activeOpacity={0.85}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
+                Proceed
+              </Text>
+            )}
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.skipBtn} onPress={handleSkip}>
-          <Text style={styles.skipText}>Skip Now</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.skipBtn} onPress={handleSkip}>
+            <Text style={styles.skipText}>Skip Now</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -100,7 +108,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 24,
+    paddingBottom: 24,
   },
   backBtn: {
     alignSelf: 'flex-start',

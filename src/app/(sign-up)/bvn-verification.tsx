@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
@@ -55,71 +56,78 @@ export default function BvnVerificationScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-        <Text style={styles.backText}>Back</Text>
-      </TouchableOpacity>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={20}
+      >
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <Text style={styles.backText}>Back</Text>
+        </TouchableOpacity>
 
-      <Text style={styles.title}>BVN Verification</Text>
-      <Text style={styles.subtitle}>Your BVN is required for secure identity verification.</Text>
+        <Text style={styles.title}>BVN Verification</Text>
+        <Text style={styles.subtitle}>Your BVN is required for secure identity verification.</Text>
 
-      <View style={styles.field}>
-        <Text style={styles.label}>BVN Number</Text>
-        <View style={[styles.inputWrap, isError && styles.inputWrapError]}>
-          <TextInput
-            style={styles.input}
-            value={bvn}
-            onChangeText={(t) => {
-              setBvn(t.replace(/\D/g, '').slice(0, BVN_LENGTH));
-              if (isError) setStatus('idle');
-            }}
-            placeholder="Enter 11-digit BVN"
-            placeholderTextColor="#9CA3AF"
-            keyboardType="number-pad"
-            maxLength={BVN_LENGTH}
-            editable={!isVerified}
-          />
+        <View style={styles.field}>
+          <Text style={styles.label}>BVN Number</Text>
+          <View style={[styles.inputWrap, isError && styles.inputWrapError]}>
+            <TextInput
+              style={styles.input}
+              value={bvn}
+              onChangeText={(t) => {
+                setBvn(t.replace(/\D/g, '').slice(0, BVN_LENGTH));
+                if (isError) setStatus('idle');
+              }}
+              placeholder="Enter 11-digit BVN"
+              placeholderTextColor="#9CA3AF"
+              keyboardType="number-pad"
+              maxLength={BVN_LENGTH}
+              editable={!isVerified}
+            />
+          </View>
+          <View style={styles.helpRow}>
+            {/* {isError && <Text style={styles.errorText}>{errorMsg}</Text>} */}
+            <Text style={[styles.helpLink, !isError && { flex: 1, textAlign: 'right' }]}>
+              To check your BVN, dial *565*0#.
+            </Text>
+          </View>
         </View>
-        <View style={styles.helpRow}>
-          {/* {isError && <Text style={styles.errorText}>{errorMsg}</Text>} */}
-          <Text style={[styles.helpLink, !isError && { flex: 1, textAlign: 'right' }]}>
-            To check your BVN, dial *565*0#.
-          </Text>
-        </View>
-      </View>
-           {isError && <Text style={styles.errorText}>{errorMsg}</Text>}
+             {isError && <Text style={styles.errorText}>{errorMsg}</Text>}
 
-      {isVerified && bvnResult && (
-        <View style={styles.infoCard}>
-          <InfoRow label="Name:" value={bvnResult.name} />
-          <InfoRow label="DOB:" value={bvnResult.dob} />
-          <InfoRow label="Phone:" value={bvnResult.phone_number} />
-        </View>
-      )}
-
-      <View style={styles.spacer} />
-
-      <View style={styles.footer}>
-        {isVerified ? (
-          <TouchableOpacity style={styles.primaryBtn} onPress={handleConfirm} activeOpacity={0.85}>
-            <Text style={styles.primaryBtnText}>Confirm & Continue</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={[styles.primaryBtn, !isValid && styles.disabledBtn]}
-            onPress={handleVerify}
-            disabled={!isValid || isLoading}
-            activeOpacity={0.85}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
-                Verify BVN
-              </Text>
-            )}
-          </TouchableOpacity>
+        {isVerified && bvnResult && (
+          <View style={styles.infoCard}>
+            <InfoRow label="Name:" value={bvnResult.name} />
+            <InfoRow label="DOB:" value={bvnResult.dob} />
+            <InfoRow label="Phone:" value={bvnResult.phone_number} />
+          </View>
         )}
-      </View>
+
+        <View style={styles.spacer} />
+
+        <View style={styles.footer}>
+          {isVerified ? (
+            <TouchableOpacity style={styles.primaryBtn} onPress={handleConfirm} activeOpacity={0.85}>
+              <Text style={styles.primaryBtnText}>Confirm & Continue</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={[styles.primaryBtn, !isValid && styles.disabledBtn]}
+              onPress={handleVerify}
+              disabled={!isValid || isLoading}
+              activeOpacity={0.85}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
+                  Verify BVN
+                </Text>
+              )}
+            </TouchableOpacity>
+          )}
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -137,7 +145,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 24,
+    paddingBottom: 24,
   },
   backBtn: {
     alignSelf: 'flex-start',

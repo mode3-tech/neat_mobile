@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
@@ -89,57 +90,64 @@ export default function ChangePinOtpScreen() {
   const timer = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
+    <SafeAreaView className="flex-1 bg-white">
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingBottom: 24 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={20}
       >
-        <Text className="text-sm text-gray-700 font-medium">Back</Text>
-      </TouchableOpacity>
-
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-2">Enter OTP Code</Text>
-      <Text className="text-[13px] text-gray-500 leading-5 mb-8">
-        Please check the OTP that has been sent to your phone number{' '}
-        <Text className="text-[#472FF8] font-semibold">{maskPhone(summary?.phone_number)}</Text>.
-      </Text>
-
-      <OtpInput value={otp} onChange={(v) => { setOtp(v); setError(''); }} length={OTP_LENGTH} />
-
-      {error ? (
-        <View className="bg-[#FEF2F2] rounded-xl px-4 py-3 mt-3">
-          <Text className="text-[13px] text-[#EF4444]">{error}</Text>
-        </View>
-      ) : null}
-
-      <View className="flex-1" />
-
-      <View className="pb-4">
         <TouchableOpacity
-          className={`rounded-full py-4 items-center ${canVerify ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
-          onPress={handleVerify}
-          disabled={!canVerify || loading}
-          activeOpacity={0.85}
+          className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
+          onPress={() => router.back()}
         >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text className={`text-base font-semibold ${canVerify ? 'text-white' : 'text-gray-400'}`}>
-              Confirm
-            </Text>
-          )}
+          <Text className="text-sm text-gray-700 font-medium">Back</Text>
         </TouchableOpacity>
 
-        <View className="flex-row justify-center items-center mt-4">
-          <Text className="text-[13px] text-gray-500">Didn't get a code? </Text>
-          {canResend ? (
-            <TouchableOpacity onPress={handleResend}>
-              <Text className="text-[13px] text-[#472FF8] font-semibold">Resend code</Text>
-            </TouchableOpacity>
-          ) : (
-            <Text className="text-[13px] text-[#472FF8] font-semibold">{timer}</Text>
-          )}
+        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-2">Enter OTP Code</Text>
+        <Text className="text-[13px] text-gray-500 leading-5 mb-8">
+          Please check the OTP that has been sent to your phone number{' '}
+          <Text className="text-[#472FF8] font-semibold">{maskPhone(summary?.phone_number)}</Text>.
+        </Text>
+
+        <OtpInput value={otp} onChange={(v) => { setOtp(v); setError(''); }} length={OTP_LENGTH} />
+
+        {error ? (
+          <View className="bg-[#FEF2F2] rounded-xl px-4 py-3 mt-3">
+            <Text className="text-[13px] text-[#EF4444]">{error}</Text>
+          </View>
+        ) : null}
+
+        <View className="flex-1" />
+
+        <View className="pb-4">
+          <TouchableOpacity
+            className={`rounded-full py-4 items-center ${canVerify ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+            onPress={handleVerify}
+            disabled={!canVerify || loading}
+            activeOpacity={0.85}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text className={`text-base font-semibold ${canVerify ? 'text-white' : 'text-gray-400'}`}>
+                Confirm
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          <View className="flex-row justify-center items-center mt-4">
+            <Text className="text-[13px] text-gray-500">Didn't get a code? </Text>
+            {canResend ? (
+              <TouchableOpacity onPress={handleResend}>
+                <Text className="text-[13px] text-[#472FF8] font-semibold">Resend code</Text>
+              </TouchableOpacity>
+            ) : (
+              <Text className="text-[13px] text-[#472FF8] font-semibold">{timer}</Text>
+            )}
+          </View>
         </View>
-      </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

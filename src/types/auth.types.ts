@@ -79,3 +79,11 @@ export interface PinChangeRequestResponse {
 export interface PinChangeVerifyResponse {
   verification_id: string;
 }
+
+export interface PasswordChangeRequestResponse {
+  otp_id: string;
+}
+
+export interface PasswordChangeVerifyResponse {
+  verification_id: string;
+}
