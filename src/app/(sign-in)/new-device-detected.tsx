@@ -4,7 +4,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 
 export default function NewDeviceDetectedScreen() {
-  const params = useLocalSearchParams<{ session_token: string }>();
+  const params = useLocalSearchParams<{
+    session_token: string;
+    phone: string;
+    password: string;
+  }>();
   const sessionToken = Array.isArray(params.session_token)
     ? params.session_token[0]
     : params.session_token;
@@ -13,11 +17,15 @@ export default function NewDeviceDetectedScreen() {
     const timer = setTimeout(() => {
       router.replace({
         pathname: '/(sign-in)/new-device-otp',
-        params: { session_token: sessionToken },
+        params: {
+          session_token: sessionToken,
+          phone: params.phone,
+          password: params.password,
+        },
       });
     }, 4000);
     return () => clearTimeout(timer);
-  }, [sessionToken]);
+  }, [sessionToken, params.phone, params.password]);
 
   return ( 
     <View className="flex-1 bg-[#F5F5F5]">

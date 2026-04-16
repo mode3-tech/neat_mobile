@@ -14,6 +14,7 @@ import type {
   AuthTokens,
   LoginResponse,
   OtpVerifyResponse,
+  PinChangeRequestResponse,
   RegisterPayload,
   RegisterResponse,
 } from '@/types/auth.types';
@@ -261,16 +262,34 @@ export const authService = {
     }
   },
 
-  requestPinChange: async (): Promise<void> => {
+  requestPinChange: async (): Promise<PinChangeRequestResponse> => {
     try {
-      await api.post('/auth/pin/change/request');
+      const response = await api.post<PinChangeRequestResponse>('/auth/pin/change/request');
+      return response.data;
     } catch (error) {
-      extractErrorMessage(error, 'Failed to send OTP');
+      return extractErrorMessage(error, 'Failed to send OTP');
+    }
+  },
+
+  verifyPinChangeOtp: async (body: { otp_id: string; otp_code: string }): Promise<void> => {
+    try {
+      await api.post('/auth/pin/change/verify', body);
+    } catch (error) {
+      extractErrorMessage(error, 'OTP verification failed');
+    }
+  },
+
+  resendPinChangeOtp: async (): Promise<PinChangeRequestResponse> => {
+    try {
+      const response = await api.post<PinChangeRequestResponse>('/auth/pin/change/resend');
+      return response.data;
+    } catch (error) {
+      return extractErrorMessage(error, 'Failed to resend OTP');
     }
   },
 
   changePin: async (body: {
-    otp_code: string;
+    otp_id: string;
     current_pin: string;
     new_pin: string;
     confirm_new_pin: string;

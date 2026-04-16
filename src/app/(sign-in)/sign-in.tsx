@@ -45,12 +45,17 @@ export default function SignInScreen() {
       const response = await authService.loginUser(phone.trim(), password);
 
       if (response.status === 'success' && response.access_token && response.refresh_token) {
-        const { setTokens, setUser, biometricsEnabled } = useAuthStore.getState();
+        const { setTokens, setUser, setBiometricsEnabled, biometricsEnabled } = useAuthStore.getState();
         setTokens(response.access_token, response.refresh_token);
         if (response.user) setUser(response.user);
 
+        // Sync biometrics preference from backend (handles new device scenario)
+        if (response.is_biometrics_enabled) {
+          setBiometricsEnabled(true);
+        }
+
         // Cache credentials for biometric sign-in next time
-        if (biometricsEnabled) {
+        if (response.is_biometrics_enabled || biometricsEnabled) {
           storeSignInCredentials(phone.trim(), password).catch(() => {});
         }
 
@@ -65,7 +70,11 @@ export default function SignInScreen() {
         }
         router.push({
           pathname: '/(sign-in)/new-device-detected',
-          params: { session_token: response.session_token },
+          params: {
+            session_token: response.session_token,
+            phone: phone.trim(),
+            password,
+          },
         });
         return;
       }

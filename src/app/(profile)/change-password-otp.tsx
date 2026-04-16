@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -18,9 +18,11 @@ export default function ChangePasswordOtpScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   const passwordChange = useSecurityChangeStore((s) => s.passwordChange);
   const clearPasswordChange = useSecurityChangeStore((s) => s.clearPasswordChange);
+  const hadPasswordChange = useRef(!!passwordChange);
 
   const { data: summary } = useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
@@ -28,16 +30,9 @@ export default function ChangePasswordOtpScreen() {
   });
 
   useEffect(() => {
-    if (!passwordChange) {
-      Alert.alert('Session expired', 'Please start the password change again.');
-      router.back();
+    if (!hadPasswordChange.current) {
+      setSessionExpired(true);
     }
-  }, [passwordChange]);
-
-  useEffect(() => {
-    return () => {
-      useSecurityChangeStore.getState().clearPasswordChange();
-    };
   }, []);
 
   useEffect(() => {
@@ -84,6 +79,26 @@ export default function ChangePasswordOtpScreen() {
 
   const timer = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 
+  if (sessionExpired) {
+    return (
+      <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
+        <View className="bg-[#FEF2F2] rounded-2xl px-6 py-8 items-center w-full">
+          <Text className="text-lg font-bold text-[#1A1A1A] mb-2">Session Expired</Text>
+          <Text className="text-[13px] text-gray-500 text-center leading-5 mb-6">
+            Please start the password change again.
+          </Text>
+          <TouchableOpacity
+            className="bg-[#472FF8] rounded-full py-3.5 px-10"
+            onPress={() => router.back()}
+            activeOpacity={0.85}
+          >
+            <Text className="text-white text-sm font-semibold">Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
@@ -95,12 +110,17 @@ export default function ChangePasswordOtpScreen() {
 
       <Text className="text-[22px] font-bold text-[#1A1A1A] mb-2">Enter OTP Code</Text>
       <Text className="text-[13px] text-gray-500 leading-5 mb-8">
-        Please check the OTP that has been sent to your phone number {maskPhone(summary?.phone_number)}.
+        Please check the OTP that has been sent to your phone number{' '}
+        <Text className="text-[#472FF8] font-semibold">{maskPhone(summary?.phone_number)}</Text>.
       </Text>
 
       <OtpInput value={otp} onChange={(v) => { setOtp(v); setError(''); }} length={OTP_LENGTH} />
 
-      {error ? <Text className="text-[13px] text-[#EF4444] mt-2">{error}</Text> : null}
+      {error ? (
+        <View className="bg-[#FEF2F2] rounded-xl px-4 py-3 mt-3">
+          <Text className="text-[13px] text-[#EF4444]">{error}</Text>
+        </View>
+      ) : null}
 
       <View className="flex-1" />
 

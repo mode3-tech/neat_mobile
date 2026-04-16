@@ -12,6 +12,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { OtpInput } from '@/components/ui/otp-input';
 import { useSmsOtp } from '@/hooks/use-sms-otp';
 import { authService } from '@/services/auth.service';
+import { storeSignInCredentials } from '@/services/biometric.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { OTP_LENGTH } from '@/constants';
 
@@ -19,7 +20,11 @@ const PRIMARY = '#472FF8';
 const RESEND_SECONDS = 30;
 
 export default function NewDeviceOtpScreen() {
-  const params = useLocalSearchParams<{ session_token: string }>();
+  const params = useLocalSearchParams<{
+    session_token: string;
+    phone: string;
+    password: string;
+  }>();
   const session_token = Array.isArray(params.session_token)
     ? params.session_token[0]
     : params.session_token;
@@ -60,9 +65,17 @@ export default function NewDeviceOtpScreen() {
       const response = await authService.verifyNewDevice(otp, session_token);
 
       if (response.access_token && response.refresh_token) {
-        const { setTokens, setUser } = useAuthStore.getState();
+        const { setTokens, setUser, setBiometricsEnabled } = useAuthStore.getState();
         setTokens(response.access_token, response.refresh_token);
         if (response.user) setUser(response.user);
+
+        // Sync biometrics preference from backend
+        if (response.is_biometrics_enabled) {
+          setBiometricsEnabled(true);
+          if (params.phone && params.password) {
+            storeSignInCredentials(params.phone, params.password).catch(() => {});
+          }
+        }
       }
 
       router.replace('/(sign-in)/device-verified');

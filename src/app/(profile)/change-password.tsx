@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -64,6 +63,7 @@ export default function ChangePasswordScreen() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const setPasswordChange = useSecurityChangeStore((s) => s.setPasswordChange);
 
@@ -81,7 +81,7 @@ export default function ChangePasswordScreen() {
     }
     if (newPassword === currentPassword) {
       setHasError(true);
-      Alert.alert('Invalid password', 'New password must be different from current password.');
+      setErrorMessage('New password must be different from current password.');
       return;
     }
     setLoading(true);
@@ -90,7 +90,7 @@ export default function ChangePasswordScreen() {
       setPasswordChange({ currentPassword, newPassword, confirmNewPassword });
       router.push('/(profile)/change-password-otp' as any);
     } catch (err) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'Please try again.');
+      setErrorMessage(err instanceof Error ? err.message : 'Please try again.');
     } finally {
       setLoading(false);
     }
@@ -120,6 +120,7 @@ export default function ChangePasswordScreen() {
             onChangeText={(t) => {
               setCurrentPassword(t);
               setHasError(false);
+              setErrorMessage('');
             }}
             hasError={false}
             placeholder="Enter current password"
@@ -131,6 +132,7 @@ export default function ChangePasswordScreen() {
             onChangeText={(t) => {
               setNewPassword(t);
               setHasError(false);
+              setErrorMessage('');
             }}
             hasError={hasError && !isValidNew}
             placeholder="Enter new password"
@@ -158,6 +160,7 @@ export default function ChangePasswordScreen() {
             onChangeText={(t) => {
               setConfirmNewPassword(t);
               setHasError(false);
+              setErrorMessage('');
             }}
             hasError={hasError && !isMatch}
             placeholder="Re-enter new password"
@@ -165,6 +168,11 @@ export default function ChangePasswordScreen() {
           {hasError && !isMatch && confirmNewPassword.length > 0 && (
             <Text className="text-xs text-[#EF4444] -mt-3">Passwords do not match</Text>
           )}
+          {errorMessage ? (
+            <View className="bg-[#FEF2F2] rounded-xl px-4 py-3 mt-2">
+              <Text className="text-[13px] text-[#EF4444]">{errorMessage}</Text>
+            </View>
+          ) : null}
         </ScrollView>
 
         <View className="px-6 pb-4">

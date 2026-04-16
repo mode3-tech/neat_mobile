@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Text,
@@ -57,35 +56,78 @@ export default function ChangePinScreen() {
   const [confirmNewPin, setConfirmNewPin] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorField, setErrorField] = useState<'current' | 'new' | 'confirm' | null>(null);
-  const setPinChange = useSecurityChangeStore((s) => s.setPinChange);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [sessionExpired, setSessionExpired] = useState(false);
+
+  const pinChange = useSecurityChangeStore((s) => s.pinChange);
+  const clearPinChange = useSecurityChangeStore((s) => s.clearPinChange);
+  const hadPinChange = useRef(!!pinChange);
+
+  useEffect(() => {
+    if (!hadPinChange.current) {
+      setSessionExpired(true);
+    }
+  }, []);
 
   const canProceed =
     currentPin.length === PIN_LENGTH &&
     newPin.length === PIN_LENGTH &&
     confirmNewPin.length === PIN_LENGTH;
 
-  const handleContinue = async () => {
-    if (!canProceed || loading) return;
+  const handleChangePin = async () => {
+    if (!canProceed || loading || !pinChange) return;
     if (newPin !== confirmNewPin) {
       setErrorField('confirm');
       return;
     }
     if (newPin === currentPin) {
       setErrorField('new');
-      Alert.alert('Invalid PIN', 'New PIN must be different from current PIN.');
+      setErrorMessage('New PIN must be different from current PIN.');
       return;
     }
     setLoading(true);
+    setErrorMessage('');
     try {
-      await authService.requestPinChange();
-      setPinChange({ currentPin, newPin, confirmNewPin });
-      router.push('/(profile)/change-pin-otp' as any);
+      await authService.changePin({
+        otp_id: pinChange.otpId,
+        current_pin: currentPin,
+        new_pin: newPin,
+        confirm_new_pin: confirmNewPin,
+      });
+      clearPinChange();
+      router.replace({
+        pathname: '/(profile)/success' as any,
+        params: {
+          title: 'PIN Changed Successfully',
+          message: 'Your transaction PIN has been updated. Use your new PIN for future transactions.',
+        },
+      });
     } catch (err) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'Please try again.');
+      setErrorMessage(err instanceof Error ? err.message : 'Failed to change PIN.');
     } finally {
       setLoading(false);
     }
   };
+
+  if (sessionExpired) {
+    return (
+      <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
+        <View className="bg-[#FEF2F2] rounded-2xl px-6 py-8 items-center w-full">
+          <Text className="text-lg font-bold text-[#1A1A1A] mb-2">Session Expired</Text>
+          <Text className="text-[13px] text-gray-500 text-center leading-5 mb-6">
+            Please start the PIN change again.
+          </Text>
+          <TouchableOpacity
+            className="bg-[#472FF8] rounded-full py-3.5 px-10"
+            onPress={() => router.back()}
+            activeOpacity={0.85}
+          >
+            <Text className="text-white text-sm font-semibold">Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -108,6 +150,7 @@ export default function ChangePinScreen() {
           onChangeText={(t) => {
             setCurrentPin(t);
             setErrorField(null);
+            setErrorMessage('');
           }}
           hasError={errorField === 'current'}
         />
@@ -117,6 +160,7 @@ export default function ChangePinScreen() {
           onChangeText={(t) => {
             setNewPin(t);
             setErrorField(null);
+            setErrorMessage('');
           }}
           hasError={errorField === 'new'}
         />
@@ -126,19 +170,25 @@ export default function ChangePinScreen() {
           onChangeText={(t) => {
             setConfirmNewPin(t);
             setErrorField(null);
+            setErrorMessage('');
           }}
           hasError={errorField === 'confirm'}
         />
         {errorField === 'confirm' && (
           <Text className="text-xs text-[#EF4444] -mt-3 mb-2">PINs do not match</Text>
         )}
+        {errorMessage ? (
+          <View className="bg-[#FEF2F2] rounded-xl px-4 py-3 mt-2">
+            <Text className="text-[13px] text-[#EF4444]">{errorMessage}</Text>
+          </View>
+        ) : null}
 
         <View className="flex-1" />
 
         <View className="pb-4">
           <TouchableOpacity
             className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
-            onPress={handleContinue}
+            onPress={handleChangePin}
             disabled={!canProceed || loading}
             activeOpacity={0.85}
           >
@@ -146,7 +196,7 @@ export default function ChangePinScreen() {
               <ActivityIndicator color="#fff" />
             ) : (
               <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-gray-400'}`}>
-                Continue
+                Change PIN
               </Text>
             )}
           </TouchableOpacity>

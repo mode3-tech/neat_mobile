@@ -1,36 +1,12 @@
-import { useState } from 'react';
 import { Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
-interface ToggleCardProps {
-  title: string;
-  description: string;
-  value: boolean;
-  onValueChange: (v: boolean) => void;
-}
-
-function ToggleCard({ title, description, value, onValueChange }: ToggleCardProps) {
-  return (
-    <View className="bg-[#F5F5F5] rounded-2xl px-4 py-4 flex-row items-center mb-4">
-      <View className="flex-1 pr-3">
-        <Text className="text-[15px] font-semibold text-[#1A1A1A]">{title}</Text>
-        <Text className="text-[12px] text-gray-500 mt-0.5">{description}</Text>
-      </View>
-      <Switch
-        value={value}
-        onValueChange={onValueChange}
-        trackColor={{ false: '#E5E7EB', true: '#472FF8' }}
-        thumbColor="#fff"
-        ios_backgroundColor="#E5E7EB"
-      />
-    </View>
-  );
-}
+import { useAuthStore } from '@/stores/auth.store';
 
 export default function BiometricsScreen() {
-  const [loginBio, setLoginBio] = useState(true);
-  const [txnBio, setTxnBio] = useState(true);
+  const enabled = useAuthStore((s) => s.biometricsEnabled);
+  const setEnabled = useAuthStore((s) => s.setBiometricsEnabled);
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
@@ -43,18 +19,21 @@ export default function BiometricsScreen() {
 
       <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Biometric Settings</Text>
 
-      <ToggleCard
-        title="Enable Login with Biometrics"
-        description="Use fingerprint or Face ID"
-        value={loginBio}
-        onValueChange={setLoginBio}
-      />
-      <ToggleCard
-        title="Enable Transaction Biometrics"
-        description="Require biometric auth for sensitive transactions"
-        value={txnBio}
-        onValueChange={setTxnBio}
-      />
+      <View className="bg-[#F5F5F5] rounded-2xl px-4 py-4 flex-row items-center">
+        <View className="flex-1 pr-3">
+          <Text className="text-[15px] font-semibold text-[#1A1A1A]">Enable Biometrics</Text>
+          <Text className="text-[12px] text-gray-500 mt-0.5">
+            Use fingerprint or Face ID for sign-in and transactions
+          </Text>
+        </View>
+        <Switch
+          value={enabled}
+          onValueChange={setEnabled}
+          trackColor={{ false: '#E5E7EB', true: '#472FF8' }}
+          thumbColor="#fff"
+          ios_backgroundColor="#E5E7EB"
+        />
+      </View>
     </SafeAreaView>
   );
 }

@@ -47,6 +47,7 @@ export interface LoginResponse {
   refresh_token?: string;
   challenge?: string;
   session_token?: string;
+  is_biometrics_enabled?: boolean;
 }
 
 export interface VerifyDevicePayload {
@@ -69,4 +70,8 @@ export interface VerifyNewDevicePayload {
 export interface ResendNewDeviceOtpPayload {
   device_id: string;
   session_token: string;
+}
+
+export interface PinChangeRequestResponse {
+  otp_id: string;
 }

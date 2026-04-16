@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -15,12 +15,13 @@ const RESEND_SECONDS = 30;
 
 export default function ChangePinOtpScreen() {
   const [otp, setOtp] = useState('');
+  const [otpId, setOtpId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [requesting, setRequesting] = useState(true);
   const [error, setError] = useState('');
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
 
-  const pinChange = useSecurityChangeStore((s) => s.pinChange);
-  const clearPinChange = useSecurityChangeStore((s) => s.clearPinChange);
+  const setPinChange = useSecurityChangeStore((s) => s.setPinChange);
 
   const { data: summary } = useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
@@ -28,53 +29,58 @@ export default function ChangePinOtpScreen() {
   });
 
   useEffect(() => {
-    if (!pinChange) {
-      Alert.alert('Session expired', 'Please start the PIN change again.');
-      router.back();
-    }
-  }, [pinChange]);
-
-  useEffect(() => {
-    return () => {
-      useSecurityChangeStore.getState().clearPinChange();
-    };
+    let cancelled = false;
+    (async () => {
+      try {
+        const { otp_id } = await authService.requestPinChange();
+        if (!cancelled) {
+          setOtpId(otp_id);
+          setRequesting(false);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'Failed to send OTP');
+          setSeconds(0);
+          setRequesting(false);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
-    if (seconds === 0) return;
+    if (seconds === 0 || requesting) return;
     const t = setInterval(() => setSeconds((s) => s - 1), 1000);
     return () => clearInterval(t);
-  }, [seconds]);
+  }, [seconds, requesting]);
 
   const canResend = seconds === 0;
-  const canVerify = otp.length === OTP_LENGTH;
+  const canVerify = otp.length === OTP_LENGTH && !!otpId;
 
   const handleResend = async () => {
     if (!canResend) return;
     setSeconds(RESEND_SECONDS);
     setOtp('');
-    await authService.requestPinChange().catch(() => null);
+    setError('');
+    try {
+      const request = otpId
+        ? authService.resendPinChangeOtp()
+        : authService.requestPinChange();
+      const { otp_id } = await request;
+      setOtpId(otp_id);
+    } catch {
+      // silent fail, same as prior behavior
+    }
   };
 
   const handleVerify = async () => {
-    if (!canVerify || loading || !pinChange) return;
+    if (!canVerify || loading) return;
     setLoading(true);
     setError('');
     try {
-      await authService.changePin({
-        otp_code: otp,
-        current_pin: pinChange.currentPin,
-        new_pin: pinChange.newPin,
-        confirm_new_pin: pinChange.confirmNewPin,
-      });
-      clearPinChange();
-      router.replace({
-        pathname: '/(profile)/success' as any,
-        params: {
-          title: 'PIN Changed Successfully',
-          message: 'Your transaction PIN has been updated. Use your new PIN for future transactions.',
-        },
-      });
+      await authService.verifyPinChangeOtp({ otp_id: otpId!, otp_code: otp });
+      setPinChange({ otpId: otpId! });
+      router.push('/(profile)/change-pin' as any);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'OTP verification failed');
     } finally {
@@ -83,6 +89,15 @@ export default function ChangePinOtpScreen() {
   };
 
   const timer = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+
+  if (requesting) {
+    return (
+      <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
+        <ActivityIndicator size="large" color="#472FF8" />
+        <Text className="text-[13px] text-gray-500 mt-4">Sending OTP...</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
@@ -95,12 +110,17 @@ export default function ChangePinOtpScreen() {
 
       <Text className="text-[22px] font-bold text-[#1A1A1A] mb-2">Enter OTP Code</Text>
       <Text className="text-[13px] text-gray-500 leading-5 mb-8">
-        Please check the OTP that has been sent to your phone number {maskPhone(summary?.phone_number)}.
+        Please check the OTP that has been sent to your phone number{' '}
+        <Text className="text-[#472FF8] font-semibold">{maskPhone(summary?.phone_number)}</Text>.
       </Text>
 
       <OtpInput value={otp} onChange={(v) => { setOtp(v); setError(''); }} length={OTP_LENGTH} />
 
-      {error ? <Text className="text-[13px] text-[#EF4444] mt-2">{error}</Text> : null}
+      {error ? (
+        <View className="bg-[#FEF2F2] rounded-xl px-4 py-3 mt-3">
+          <Text className="text-[13px] text-[#EF4444]">{error}</Text>
+        </View>
+      ) : null}
 
       <View className="flex-1" />
 

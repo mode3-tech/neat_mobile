@@ -99,7 +99,7 @@ export default function ProfileScreen() {
           <Text className="mt-3 text-base font-semibold text-[#1A1A1A]">
             {fullName || 'Loading...'}
           </Text>
-          <Text className="text-sm text-[#16A34A] font-medium">Verified</Text>
+          {/* <Text className="text-sm text-[#16A34A] font-medium">Verified</Text> */}
         </View>
 
         {/* PROFILE section */}
@@ -123,7 +123,7 @@ export default function ProfileScreen() {
           <SettingsRow
             icon="key-outline"
             label="Change Transaction PIN"
-            onPress={() => router.push('/(profile)/change-pin' as any)}
+            onPress={() => router.push('/(profile)/change-pin-otp' as any)}
           />
           <SettingsRow
             icon="lock-outline"
