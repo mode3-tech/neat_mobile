@@ -15,6 +15,7 @@ import type {
   LoginResponse,
   OtpVerifyResponse,
   PinChangeRequestResponse,
+  PinChangeVerifyResponse,
   RegisterPayload,
   RegisterResponse,
 } from '@/types/auth.types';
@@ -271,11 +272,12 @@ export const authService = {
     }
   },
 
-  verifyPinChangeOtp: async (body: { otp_id: string; otp_code: string }): Promise<void> => {
+  verifyPinChangeOtp: async (body: { otp_id: string; otp_code: string }): Promise<PinChangeVerifyResponse> => {
     try {
-      await api.post('/auth/pin/change/verify', body);
+      const response = await api.post<PinChangeVerifyResponse>('/auth/pin/change/verify', body);
+      return response.data;
     } catch (error) {
-      extractErrorMessage(error, 'OTP verification failed');
+      return extractErrorMessage(error, 'OTP verification failed');
     }
   },
 
@@ -289,7 +291,7 @@ export const authService = {
   },
 
   changePin: async (body: {
-    otp_id: string;
+    verification_id: string;
     current_pin: string;
     new_pin: string;
     confirm_new_pin: string;

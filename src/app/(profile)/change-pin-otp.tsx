@@ -17,7 +17,6 @@ export default function ChangePinOtpScreen() {
   const [otp, setOtp] = useState('');
   const [otpId, setOtpId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [requesting, setRequesting] = useState(true);
   const [error, setError] = useState('');
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
 
@@ -33,15 +32,11 @@ export default function ChangePinOtpScreen() {
     (async () => {
       try {
         const { otp_id } = await authService.requestPinChange();
-        if (!cancelled) {
-          setOtpId(otp_id);
-          setRequesting(false);
-        }
+        if (!cancelled) setOtpId(otp_id);
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : 'Failed to send OTP');
           setSeconds(0);
-          setRequesting(false);
         }
       }
     })();
@@ -49,10 +44,10 @@ export default function ChangePinOtpScreen() {
   }, []);
 
   useEffect(() => {
-    if (seconds === 0 || requesting) return;
+    if (seconds === 0) return;
     const t = setInterval(() => setSeconds((s) => s - 1), 1000);
     return () => clearInterval(t);
-  }, [seconds, requesting]);
+  }, [seconds]);
 
   const canResend = seconds === 0;
   const canVerify = otp.length === OTP_LENGTH && !!otpId;
@@ -78,8 +73,11 @@ export default function ChangePinOtpScreen() {
     setLoading(true);
     setError('');
     try {
-      await authService.verifyPinChangeOtp({ otp_id: otpId!, otp_code: otp });
-      setPinChange({ otpId: otpId! });
+      const { verification_id } = await authService.verifyPinChangeOtp({
+        otp_id: otpId!,
+        otp_code: otp,
+      });
+      setPinChange({ verificationId: verification_id });
       router.push('/(profile)/change-pin' as any);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'OTP verification failed');
@@ -89,15 +87,6 @@ export default function ChangePinOtpScreen() {
   };
 
   const timer = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
-
-  if (requesting) {
-    return (
-      <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
-        <ActivityIndicator size="large" color="#472FF8" />
-        <Text className="text-[13px] text-gray-500 mt-4">Sending OTP...</Text>
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">

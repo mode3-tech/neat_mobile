@@ -89,7 +89,7 @@ export default function ChangePinScreen() {
     setErrorMessage('');
     try {
       await authService.changePin({
-        otp_id: pinChange.otpId,
+        verification_id: pinChange.verificationId,
         current_pin: currentPin,
         new_pin: newPin,
         confirm_new_pin: confirmNewPin,

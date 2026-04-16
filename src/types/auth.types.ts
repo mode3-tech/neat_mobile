@@ -75,3 +75,7 @@ export interface ResendNewDeviceOtpPayload {
 export interface PinChangeRequestResponse {
   otp_id: string;
 }
+
+export interface PinChangeVerifyResponse {
+  verification_id: string;
+}

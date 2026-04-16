@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 interface PinChangeDraft {
-  otpId: string;
+  verificationId: string;
 }
 
 interface PasswordChangeDraft {
