@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Animated, Image, StyleSheet, View } from 'react-native';
+import { Animated, Image, Text, View } from 'react-native';
 
 export function SplashScreenComponent(): React.JSX.Element {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -22,38 +22,23 @@ export function SplashScreenComponent(): React.JSX.Element {
   }, [fadeAnim, scaleAnim]);
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-[#472FF8] items-center justify-center">
       <Animated.View
-        style={[
-          styles.iconContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ scale: scaleAnim }],
-          },
-        ]}
+        className="items-center"
+        style={{
+          opacity: fadeAnim,
+          transform: [{ scale: scaleAnim }],
+        }}
       >
         <Image
-          source={require('../../../assets/images/home-logo.png')}
-          style={styles.logo}
+          source={require('../../../assets/images/adap-ic.png')}
+          className="w-[100px] h-[100px]"
           resizeMode="contain"
         />
+        <Text className="text-white text-3xl font-semibold mt-3">
+          Neatpay
+        </Text>
       </Animated.View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E8EAFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconContainer: {
-    alignItems: 'center',
-  },
-  logo: {
-    width: 200,
-    height: 200,
-  },
-});
