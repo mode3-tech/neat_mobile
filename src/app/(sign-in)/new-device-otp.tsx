@@ -20,11 +20,7 @@ const PRIMARY = '#472FF8';
 const RESEND_SECONDS = 30;
 
 export default function NewDeviceOtpScreen() {
-  const params = useLocalSearchParams<{
-    session_token: string;
-    phone: string;
-    password: string;
-  }>();
+  const params = useLocalSearchParams<{ session_token: string }>();
   const session_token = Array.isArray(params.session_token)
     ? params.session_token[0]
     : params.session_token;
@@ -65,17 +61,31 @@ export default function NewDeviceOtpScreen() {
       const response = await authService.verifyNewDevice(otp, session_token);
 
       if (response.access_token && response.refresh_token) {
-        const { setTokens, setUser, setBiometricsEnabled } = useAuthStore.getState();
+        const {
+          setTokens,
+          setUser,
+          setBiometricsEnabled,
+          setPendingCredentials,
+          pendingCredentials,
+        } = useAuthStore.getState();
         setTokens(response.access_token, response.refresh_token);
         if (response.user) setUser(response.user);
 
-        // Sync biometrics preference from backend
-        if (response.is_biometrics_enabled) {
-          setBiometricsEnabled(true);
-          if (params.phone && params.password) {
-            storeSignInCredentials(params.phone, params.password).catch(() => {});
-          }
+        // Sync biometrics preference from backend (source of truth)
+        if (typeof response.is_biometrics_enabled === 'boolean') {
+          setBiometricsEnabled(response.is_biometrics_enabled);
         }
+
+        // Cache credentials for biometric login if backend confirms
+        if (response.is_biometrics_enabled && pendingCredentials) {
+          storeSignInCredentials(
+            pendingCredentials.phone,
+            pendingCredentials.password,
+          ).catch(() => {});
+        }
+
+        // Consume pending credentials regardless of outcome
+        setPendingCredentials(null);
       }
 
       router.replace('/(sign-in)/device-verified');

@@ -45,17 +45,17 @@ export default function SignInScreen() {
       const response = await authService.loginUser(phone.trim(), password);
 
       if (response.status === 'success' && response.access_token && response.refresh_token) {
-        const { setTokens, setUser, setBiometricsEnabled, biometricsEnabled } = useAuthStore.getState();
+        const { setTokens, setUser, setBiometricsEnabled } = useAuthStore.getState();
         setTokens(response.access_token, response.refresh_token);
         if (response.user) setUser(response.user);
 
-        // Sync biometrics preference from backend (handles new device scenario)
-        if (response.is_biometrics_enabled) {
-          setBiometricsEnabled(true);
+        // Sync biometrics preference from backend (source of truth)
+        if (typeof response.is_biometrics_enabled === 'boolean') {
+          setBiometricsEnabled(response.is_biometrics_enabled);
         }
 
-        // Cache credentials for biometric sign-in next time
-        if (response.is_biometrics_enabled || biometricsEnabled) {
+        // Cache credentials only if biometrics is enabled per backend
+        if (response.is_biometrics_enabled) {
           storeSignInCredentials(phone.trim(), password).catch(() => {});
         }
 
@@ -68,13 +68,15 @@ export default function SignInScreen() {
           setError('Server error: missing session token');
           return;
         }
+        // Stash credentials in-memory (never persisted) so the OTP screen
+        // can cache them for biometric login if the backend confirms.
+        useAuthStore.getState().setPendingCredentials({
+          phone: phone.trim(),
+          password,
+        });
         router.push({
           pathname: '/(sign-in)/new-device-detected',
-          params: {
-            session_token: response.session_token,
-            phone: phone.trim(),
-            password,
-          },
+          params: { session_token: response.session_token },
         });
         return;
       }
@@ -180,7 +182,7 @@ export default function SignInScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => router.replace('/welcome')}
+              onPress={() => router.replace('/(sign-up)/bvn-verification')}
               activeOpacity={0.7}
             >
               <Text style={styles.signUpText}>

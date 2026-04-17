@@ -4,6 +4,11 @@ import * as SecureStore from 'expo-secure-store';
 import { setAccessToken } from '@/services/api';
 import type { AuthUser } from '@/types/auth.types';
 
+interface PendingCredentials {
+  phone: string;
+  password: string;
+}
+
 interface AuthState {
   user: AuthUser | null;
   accessToken: string | null;
@@ -13,9 +18,13 @@ interface AuthState {
   biometricsHydrated: boolean;
   tokensHydrated: boolean;
   hasStoredTokens: boolean;
+  // In-memory only — never persisted. Holds credentials between sign-in and
+  // new-device-OTP so we can cache them for biometric login on success.
+  pendingCredentials: PendingCredentials | null;
   setTokens: (accessToken: string, refreshToken: string) => void;
   setUser: (user: AuthUser) => void;
   setBiometricsEnabled: (enabled: boolean) => void;
+  setPendingCredentials: (creds: PendingCredentials | null) => void;
   hydrateTokens: () => Promise<void>;
   hydrateBiometrics: () => Promise<void>;
   clearAuth: () => void;
@@ -30,6 +39,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   biometricsHydrated: false,
   tokensHydrated: false,
   hasStoredTokens: false,
+  pendingCredentials: null,
 
   setTokens: (access, refresh) => {
     setAccessToken(access);
@@ -37,6 +47,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   setUser: (user) => set({ user }),
+
+  setPendingCredentials: (creds) => set({ pendingCredentials: creds }),
 
   setBiometricsEnabled: (enabled) => {
     SecureStore.setItemAsync('biometrics_enabled', JSON.stringify(enabled)).catch(() => {});
@@ -96,6 +108,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     setAccessToken(null);
     // Tokens are kept in SecureStore so hasStoredTokens remains true on next
     // app open (sign-in page, not welcome). They are overwritten on next login.
-    set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
+    set({
+      user: null,
+      accessToken: null,
+      refreshToken: null,
+      isAuthenticated: false,
+      pendingCredentials: null,
+    });
   },
 }));

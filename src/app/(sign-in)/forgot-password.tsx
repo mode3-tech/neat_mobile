@@ -18,19 +18,22 @@ import { authService } from '@/services/auth.service';
 const PRIMARY = '#472FF8';
 
 export default function ForgotPasswordScreen() {
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const canSubmit = email.trim().length > 0;
+  const canSubmit = phone.trim().length > 0;
 
   const handleSubmit = async () => {
     if (!canSubmit || loading) return;
     setLoading(true);
     setError('');
     try {
-      await authService.forgotPassword(email.trim());
-      router.push({ pathname: '/(sign-in)/forgot-password-otp', params: { email: email.trim() } });
+      const { otp_id } = await authService.forgotPassword(phone.trim());
+      router.push({
+        pathname: '/(sign-in)/forgot-password-otp',
+        params: { phone: phone.trim(), otp_id },
+      });
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -56,16 +59,15 @@ export default function ForgotPasswordScreen() {
           <Text style={styles.title}>Forgot Password</Text>
 
           <View style={styles.field}>
-            <Text style={styles.label}>Email address</Text>
+            <Text style={styles.label}>Phone number</Text>
             <View style={styles.inputWrap}>
               <TextInput
                 style={styles.input}
-                value={email}
-                onChangeText={(val) => { setEmail(val); setError(''); }}
-                placeholder="Enter your email"
+                value={phone}
+                onChangeText={(val) => { setPhone(val); setError(''); }}
+                placeholder="Enter your phone number"
                 placeholderTextColor="#9CA3AF"
-                keyboardType="email-address"
-                autoCapitalize="none"
+                keyboardType="phone-pad"
                 autoCorrect={false}
                 autoFocus
               />

@@ -12,6 +12,8 @@ import {
 import type { BvnData, NinData } from '@/types/sign-up.types';
 import type {
   AuthTokens,
+  ForgotPasswordResponse,
+  ForgotPasswordVerifyResponse,
   LoginResponse,
   OtpVerifyResponse,
   PasswordChangeRequestResponse,
@@ -249,19 +251,43 @@ export const authService = {
     }
   },
 
-  forgotPassword: async (email: string): Promise<void> => {
+  forgotPassword: async (phone: string): Promise<ForgotPasswordResponse> => {
     try {
-      await api.post('/auth/otp/request', { purpose: 'reset-password', channel: 'email', destination: email });
+      const response = await api.post<ForgotPasswordResponse>('/auth/password/forgot', { phone });
+      return response.data;
     } catch (error) {
       extractErrorMessage(error, 'Failed to send OTP');
     }
   },
 
-  verifyForgotPasswordOtp: async (email: string, otp: string): Promise<void> => {
+  verifyForgotPasswordOtp: async (body: { otp_id: string; otp_code: string }): Promise<ForgotPasswordVerifyResponse> => {
     try {
-      await api.post('/auth/otp/verify', { purpose: 'reset-password', channel: 'email', destination: email, otp });
+      const response = await api.post<ForgotPasswordVerifyResponse>('/auth/password/forgot/verify', body);
+      return response.data;
     } catch (error) {
       extractErrorMessage(error, 'OTP verification failed');
+    }
+  },
+
+  resendForgotPasswordOtp: async (phone: string): Promise<ForgotPasswordResponse> => {
+    try {
+      const response = await api.post<ForgotPasswordResponse>('/auth/password/forgot/resend', { phone });
+      return response.data;
+    } catch (error) {
+      extractErrorMessage(error, 'Failed to resend OTP');
+    }
+  },
+
+  resetPassword: async (body: {
+    phone: string;
+    verification_id: string;
+    new_password: string;
+    confirm_new_password: string;
+  }): Promise<void> => {
+    try {
+      await api.patch('/auth/password/reset', body);
+    } catch (error) {
+      extractErrorMessage(error, 'Failed to reset password');
     }
   },
 
@@ -342,6 +368,14 @@ export const authService = {
       await api.patch('/auth/password/change', body);
     } catch (error) {
       extractErrorMessage(error, 'Failed to change password');
+    }
+  },
+
+  updateBiometricsPreference: async (enabled: boolean): Promise<void> => {
+    try {
+      await api.patch('/auth/biometrics/toggle', { is_enabled: enabled });
+    } catch (error) {
+      extractErrorMessage(error, 'Failed to update biometrics preference');
     }
   },
 };

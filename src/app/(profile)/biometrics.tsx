@@ -1,12 +1,31 @@
+import { useState } from 'react';
 import { Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
+import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 
 export default function BiometricsScreen() {
   const enabled = useAuthStore((s) => s.biometricsEnabled);
   const setEnabled = useAuthStore((s) => s.setBiometricsEnabled);
+
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleToggle = async (value: boolean) => {
+    if (pending) return;
+    setPending(true);
+    setError('');
+    try {
+      await authService.updateBiometricsPreference(value);
+      setEnabled(value);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to update');
+    } finally {
+      setPending(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
@@ -28,12 +47,17 @@ export default function BiometricsScreen() {
         </View>
         <Switch
           value={enabled}
-          onValueChange={setEnabled}
+          onValueChange={handleToggle}
+          disabled={pending}
           trackColor={{ false: '#E5E7EB', true: '#472FF8' }}
           thumbColor="#fff"
           ios_backgroundColor="#E5E7EB"
         />
       </View>
+
+      {error ? (
+        <Text className="text-[12px] text-[#EF4444] mt-3">{error}</Text>
+      ) : null}
     </SafeAreaView>
   );
 }

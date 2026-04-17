@@ -28,9 +28,8 @@ const baseConfig = {
   android: {
     googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? './google-services.json',
     adaptiveIcon: {
-      backgroundColor: '#E6F4FE',
-      foregroundImage: './assets/images/adap-ic.png',
-      backgroundImage: './assets/images/adap-ic.png',
+      backgroundColor: '#FFFFFF',
+      foregroundImage: './assets/images/adap-ic-foreground.png',
       monochromeImage: './assets/images/android-icon-monochrome.png',
     },
     edgeToEdgeEnabled: true,
@@ -44,6 +43,15 @@ const baseConfig = {
   },
   plugins: [
     'expo-router',
+    [
+      'expo-splash-screen',
+      {
+        image: './assets/images/splash-logo.png',
+        imageWidth: 340,
+        resizeMode: 'contain',
+        backgroundColor: '#472FF8',
+      },
+    ],
     [
       'expo-notifications',
       {

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -18,7 +17,10 @@ const PRIMARY = '#472FF8';
 const RESEND_SECONDS = 30;
 
 export default function ForgotPasswordOtpScreen() {
-  const { email } = useLocalSearchParams<{ email: string }>();
+  const params = useLocalSearchParams<{ phone: string; otp_id: string }>();
+  const phone = Array.isArray(params.phone) ? params.phone[0] : params.phone;
+  const [otpId, setOtpId] = useState(Array.isArray(params.otp_id) ? params.otp_id[0] : params.otp_id);
+
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -37,7 +39,12 @@ export default function ForgotPasswordOtpScreen() {
     if (!canResend) return;
     setSeconds(RESEND_SECONDS);
     setOtp('');
-    await authService.forgotPassword(email).catch(() => null);
+    try {
+      const { otp_id } = await authService.resendForgotPasswordOtp(phone);
+      setOtpId(otp_id);
+    } catch {
+      // silently fail resend
+    }
   };
 
   const handleVerify = async () => {
@@ -45,10 +52,14 @@ export default function ForgotPasswordOtpScreen() {
     setLoading(true);
     setError('');
     try {
-      await authService.verifyForgotPasswordOtp(email, otp);
-      Alert.alert('Success', 'Your password has been reset successfully', [
-        { text: 'OK', onPress: () => router.replace('/(sign-in)/sign-in') },
-      ]);
+      const { verification_id } = await authService.verifyForgotPasswordOtp({
+        otp_id: otpId,
+        otp_code: otp,
+      });
+      router.push({
+        pathname: '/(sign-in)/reset-password',
+        params: { phone, verification_id },
+      });
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -67,7 +78,7 @@ export default function ForgotPasswordOtpScreen() {
       <Text style={styles.title}>Enter OTP Code</Text>
       <Text style={styles.subtitle}>
         Enter the 6-digit code sent to{' '}
-        <Text style={styles.emailHighlight}>{email}</Text>
+        <Text style={styles.phoneHighlight}>{phone}</Text>
       </Text>
 
       <View style={styles.otpWrap}>
@@ -76,8 +87,8 @@ export default function ForgotPasswordOtpScreen() {
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      <TouchableOpacity style={styles.changeEmailBtn} onPress={() => router.back()}>
-        <Text style={styles.changeEmailText}>Change email</Text>
+      <TouchableOpacity style={styles.changePhoneBtn} onPress={() => router.back()}>
+        <Text style={styles.changePhoneText}>Change phone number</Text>
       </TouchableOpacity>
 
       <View style={styles.spacer} />
@@ -146,7 +157,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 32,
   },
-  emailHighlight: {
+  phoneHighlight: {
     color: '#1A1A1A',
     fontWeight: '500',
   },
@@ -158,10 +169,10 @@ const styles = StyleSheet.create({
     color: '#EF4444',
     marginBottom: 4,
   },
-  changeEmailBtn: {
+  changePhoneBtn: {
     alignSelf: 'center',
   },
-  changeEmailText: {
+  changePhoneText: {
     fontSize: 13,
     color: PRIMARY,
     fontWeight: '600',

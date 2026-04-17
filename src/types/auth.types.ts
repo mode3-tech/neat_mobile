@@ -87,3 +87,13 @@ export interface PasswordChangeRequestResponse {
 export interface PasswordChangeVerifyResponse {
   verification_id: string;
 }
+
+export interface ForgotPasswordResponse {
+  message: string;
+  otp_id: string;
+}
+
+export interface ForgotPasswordVerifyResponse {
+  message: string;
+  verification_id: string;
+}
