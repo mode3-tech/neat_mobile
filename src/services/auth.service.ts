@@ -12,6 +12,7 @@ import {
 import type { BvnData, NinData } from '@/types/sign-up.types';
 import type {
   AuthTokens,
+  ChallengeRequestResponse,
   ForgotPasswordResponse,
   ForgotPasswordVerifyResponse,
   LoginResponse,
@@ -167,6 +168,21 @@ export const authService = {
       //   console.error('Login non-axios error:', error);
       // }
       extractErrorMessage(error, 'Login failed');
+    }
+  },
+
+  requestChallenge: async (): Promise<ChallengeRequestResponse> => {
+    try {
+      const refreshTokenValue = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+      if (!refreshTokenValue) {
+        throw new Error('No session found. Please sign in with your password.');
+      }
+      const response = await api.post<ChallengeRequestResponse>('/auth/challenge/request', {
+        refresh_token: refreshTokenValue,
+      });
+      return response.data;
+    } catch (error) {
+      extractErrorMessage(error, 'Failed to request challenge');
     }
   },
 
@@ -368,6 +384,20 @@ export const authService = {
       await api.patch('/auth/password/change', body);
     } catch (error) {
       extractErrorMessage(error, 'Failed to change password');
+    }
+  },
+
+  logoutUser: async (): Promise<void> => {
+    const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+    if (!refreshToken) return;
+    try {
+      await api.post('/auth/logout', { refresh_token: refreshToken });
+      await Promise.all([
+        SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY),
+        SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY),
+      ]);
+    } catch (error) {
+      extractErrorMessage(error, 'Failed to log out');
     }
   },
 

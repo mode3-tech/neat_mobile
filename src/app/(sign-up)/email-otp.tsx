@@ -14,6 +14,7 @@ import { OtpInput } from '@/components/ui/otp-input';
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
 import { OTP_LENGTH } from '@/constants';
+import { maskEmail } from '@/utils/mask';
 
 const PRIMARY = '#472FF8';
 const RESEND_SECONDS = 30;
@@ -74,7 +75,7 @@ export default function EmailOtpScreen() {
         <Text style={styles.title}>Enter OTP Code</Text>
         <Text style={styles.subtitle}>
           Enter the 6-digit code sent to{' '}
-          <Text style={styles.emailHighlight}>{email}</Text>
+          <Text style={styles.emailHighlight}>{maskEmail(email)}</Text>
         </Text>
 
         <View style={styles.otpWrap}>

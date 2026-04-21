@@ -3,8 +3,9 @@ import * as Device from 'expo-device';
 import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
+import axios from 'axios';
 
-import { notificationApi } from './api';
+import { api } from './api';
 import { getOrCreateDeviceId } from './device.service';
 import type {
   PushTokenPayload,
@@ -16,6 +17,13 @@ import type {
 const PUSH_TOKEN_KEY = 'expo_push_token';
 const PERMISSION_DENIED_KEY = 'push_permission_denied';
 export let isRegistering = false;
+
+function extractErrorMessage(error: unknown, fallback: string): never {
+  if (axios.isAxiosError(error) && error.response?.data?.error) {
+    throw new Error(error.response.data.error);
+  }
+  throw new Error(fallback);
+}
 
 // ── Android Channels ──────────────────────────────────────────────────
 
@@ -90,7 +98,7 @@ export async function sendTokenToBackend(token: string): Promise<void> {
       platform: Platform.OS as 'ios' | 'android',
     };
 
-    await notificationApi.post('/notifications/token', payload);
+    await api.post('/notifications/token', payload);
   } catch {
     // Backend endpoint may not be available yet — token is stored locally
     // and will be sent on next app foreground once the endpoint is ready
@@ -99,7 +107,7 @@ export async function sendTokenToBackend(token: string): Promise<void> {
 
 export async function removeTokenFromBackend(): Promise<void> {
   try {
-    await notificationApi.delete('/notifications/token');
+    await api.delete('/notifications/token');
   } catch {
     // Fire-and-forget — backend cleans up stale tokens via receipt checks
   }
@@ -115,7 +123,7 @@ export async function getNotifications(
   page: number = 1,
 ): Promise<PaginatedNotificationsResponse> {
   try {
-    const { data } = await notificationApi.get<PaginatedNotificationsResponse>(
+    const { data } = await api.get<PaginatedNotificationsResponse>(
       '/notifications',
       { params: { page } },
     );
@@ -127,7 +135,7 @@ export async function getNotifications(
 
 export async function getUnreadCount(): Promise<number> {
   try {
-    const { data } = await notificationApi.get<{ count: number }>('/notifications/unread-count');
+    const { data } = await api.get<{ count: number }>('/notifications/unread-count');
     return data.count;
   } catch {
     return 0;
@@ -135,13 +143,21 @@ export async function getUnreadCount(): Promise<number> {
 }
 
 export async function markAsRead(notificationId: string): Promise<MarkReadResponse> {
-  const { data } = await notificationApi.patch<MarkReadResponse>(
+  const { data } = await api.patch<MarkReadResponse>(
     `/notifications/${notificationId}/read`,
   );
   return data;
 }
 
 export async function markAllAsRead(): Promise<MarkAllReadResponse> {
-  const { data } = await notificationApi.patch<MarkAllReadResponse>('/notifications/read-all');
+  const { data } = await api.patch<MarkAllReadResponse>('/notifications/read-all');
   return data;
+}
+
+export async function toggleNotifications(enabled: boolean): Promise<void> {
+  try {
+    await api.post('/notifications/toggle', { is_enabled: enabled });
+  } catch (error) {
+    extractErrorMessage(error, 'Failed to update notification settings');
+  }
 }

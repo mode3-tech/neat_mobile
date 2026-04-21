@@ -14,8 +14,8 @@ export function SplashScreenComponent(): React.JSX.Element {
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
-        tension: 10,
-        friction: 2,
+        tension: 40,
+        friction: 7,
         useNativeDriver: true,
       }),
     ]).start();

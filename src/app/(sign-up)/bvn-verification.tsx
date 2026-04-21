@@ -15,6 +15,7 @@ import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
 import { BVN_LENGTH } from '@/constants';
 import type { BvnData } from '@/types/sign-up.types';
+import { maskPhone } from '@/utils/mask';
 
 const PRIMARY = '#472FF8';
 const ERROR_COLOR = '#EF4444';
@@ -99,7 +100,7 @@ export default function BvnVerificationScreen() {
           <View style={styles.infoCard}>
             <InfoRow label="Name:" value={bvnResult.name} />
             <InfoRow label="DOB:" value={bvnResult.dob} />
-            <InfoRow label="Phone:" value={bvnResult.phone_number} />
+            <InfoRow label="Phone:" value={maskPhone(bvnResult.phone_number)} />
           </View>
         )}
 

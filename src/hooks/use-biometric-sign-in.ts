@@ -1,20 +1,36 @@
 import { useCallback, useEffect, useState } from 'react';
+import * as SecureStore from 'expo-secure-store';
 
 import {
   type BiometryType,
   getBiometricType,
-  getStoredSignInCredentials,
-  hasStoredSignInCredentials,
   isBiometricAvailable,
-  promptBiometric,
 } from '@/services/biometric.service';
 import { authService } from '@/services/auth.service';
+import { getOrCreateDeviceId, signChallenge } from '@/services/device.service';
 import { useAuthStore } from '@/stores/auth.store';
 
 type SignInResult =
   | { status: 'success' }
   | { status: 'new_device'; sessionToken: string }
   | { status: 'failed'; error: string };
+
+function classifySignError(err: unknown): string {
+  const message = err instanceof Error ? err.message : String(err ?? '');
+  const code = (err as { code?: unknown })?.code;
+  const haystack = `${typeof code === 'string' ? code : ''} ${message}`.toLowerCase();
+
+  if (haystack.includes('cancel')) {
+    return 'Biometric authentication cancelled';
+  }
+  if (haystack.includes('lockout') || haystack.includes('locked')) {
+    return 'Too many attempts. Please try again in a moment.';
+  }
+  if (haystack.includes('invalidated')) {
+    return 'Biometric key is no longer valid. Please sign in with your password.';
+  }
+  return 'Biometric authentication failed';
+}
 
 interface UseBiometricSignInReturn {
   /** Whether the biometric sign-in button should be shown */
@@ -23,7 +39,7 @@ interface UseBiometricSignInReturn {
   biometryType: BiometryType;
   /** Whether a biometric sign-in is currently in progress */
   authenticating: boolean;
-  /** Triggers biometric prompt then auto-login. Returns result for the screen to handle navigation. */
+  /** Requests a challenge, signs it with the device key (triggers biometric prompt), then verifies. */
   signInWithBiometric: () => Promise<SignInResult>;
 }
 
@@ -41,15 +57,15 @@ export function useBiometricSignIn(): UseBiometricSignInReturn {
     let cancelled = false;
 
     async function check() {
-      const [available, type, hasCreds] = await Promise.all([
+      const [available, type, refreshToken] = await Promise.all([
         isBiometricAvailable(),
         getBiometricType(),
-        hasStoredSignInCredentials(),
+        SecureStore.getItemAsync('refresh_token'),
       ]);
 
       if (cancelled) return;
       setBiometryType(type);
-      setIsBiometricSignInReady(biometricsEnabled && available && hasCreds);
+      setIsBiometricSignInReady(biometricsEnabled && available && !!refreshToken);
     }
 
     check();
@@ -59,22 +75,28 @@ export function useBiometricSignIn(): UseBiometricSignInReturn {
   const signInWithBiometric = useCallback(async (): Promise<SignInResult> => {
     setAuthenticating(true);
     try {
-      const passed = await promptBiometric({
-        title: 'Sign in to NEAT',
-        subtitle: 'Verify your identity',
-        description: 'Authenticate to sign in',
-      });
-      if (!passed) return { status: 'failed', error: 'Biometric authentication cancelled' };
+      const { challenge } = await authService.requestChallenge();
+      if (!challenge) {
+        return { status: 'failed', error: 'Invalid challenge from server' };
+      }
 
-      const credentials = await getStoredSignInCredentials();
-      if (!credentials) return { status: 'failed', error: 'No stored credentials found' };
+      let signature: string;
+      try {
+        signature = await signChallenge(challenge);
+      } catch (err) {
+        return { status: 'failed', error: classifySignError(err) };
+      }
 
-      const response = await authService.loginUser(credentials.phone, credentials.password);
+      const deviceId = await getOrCreateDeviceId();
+      const response = await authService.verifyDevice(challenge, signature, deviceId);
 
-      if (response.status === 'success' && response.access_token && response.refresh_token) {
-        const { setTokens, setUser } = useAuthStore.getState();
+      if (response.access_token && response.refresh_token) {
+        const { setTokens, setUser, setBiometricsEnabled } = useAuthStore.getState();
         setTokens(response.access_token, response.refresh_token);
         if (response.user) setUser(response.user);
+        if (typeof response.is_biometrics_enabled === 'boolean') {
+          setBiometricsEnabled(response.is_biometrics_enabled);
+        }
         return { status: 'success' };
       }
 

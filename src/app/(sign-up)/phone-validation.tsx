@@ -12,6 +12,7 @@ import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
+import { maskPhone } from '@/utils/mask';
 
 const PRIMARY = '#472FF8';
 
@@ -42,7 +43,7 @@ export default function PhoneValidationScreen() {
       <Text style={styles.title}>Phone Validation</Text>
       <Text style={styles.subtitle}>
         We'll send an OTP to:{' '}
-        <Text style={styles.phoneHighlight}>{phone}</Text>
+        <Text style={styles.phoneHighlight}>{maskPhone(phone)}</Text>
       </Text>
 
       <View style={styles.body}>

@@ -4,11 +4,6 @@ import * as SecureStore from 'expo-secure-store';
 import { setAccessToken } from '@/services/api';
 import type { AuthUser } from '@/types/auth.types';
 
-interface PendingCredentials {
-  phone: string;
-  password: string;
-}
-
 interface AuthState {
   user: AuthUser | null;
   accessToken: string | null;
@@ -18,13 +13,9 @@ interface AuthState {
   biometricsHydrated: boolean;
   tokensHydrated: boolean;
   hasStoredTokens: boolean;
-  // In-memory only — never persisted. Holds credentials between sign-in and
-  // new-device-OTP so we can cache them for biometric login on success.
-  pendingCredentials: PendingCredentials | null;
   setTokens: (accessToken: string, refreshToken: string) => void;
   setUser: (user: AuthUser) => void;
   setBiometricsEnabled: (enabled: boolean) => void;
-  setPendingCredentials: (creds: PendingCredentials | null) => void;
   hydrateTokens: () => Promise<void>;
   hydrateBiometrics: () => Promise<void>;
   clearAuth: () => void;
@@ -39,7 +30,6 @@ export const useAuthStore = create<AuthState>((set) => ({
   biometricsHydrated: false,
   tokensHydrated: false,
   hasStoredTokens: false,
-  pendingCredentials: null,
 
   setTokens: (access, refresh) => {
     setAccessToken(access);
@@ -48,15 +38,12 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   setUser: (user) => set({ user }),
 
-  setPendingCredentials: (creds) => set({ pendingCredentials: creds }),
-
   setBiometricsEnabled: (enabled) => {
     SecureStore.setItemAsync('biometrics_enabled', JSON.stringify(enabled)).catch(() => {});
     if (!enabled) {
       import('@/services/biometric.service')
-        .then(({ clearStoredTransactionPin, clearStoredSignInCredentials }) => {
+        .then(({ clearStoredTransactionPin }) => {
           clearStoredTransactionPin();
-          clearStoredSignInCredentials();
         })
         .catch(() => {});
     }
@@ -98,7 +85,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       .catch(() => {});
 
     // Clear cached transaction PIN (security-sensitive).
-    // Sign-in credentials are preserved so biometric login remains available.
     import('@/services/biometric.service')
       .then(({ clearStoredTransactionPin }) => {
         clearStoredTransactionPin();
@@ -113,7 +99,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
-      pendingCredentials: null,
     });
   },
 }));

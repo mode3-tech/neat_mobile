@@ -2,8 +2,6 @@ import * as SecureStore from 'expo-secure-store';
 import DeviceCrypto, { BiometryType } from 'react-native-device-crypto';
 
 const TRANSACTION_PIN_KEY = 'transaction_pin_biometric';
-const PASSWORD_KEY = 'biometric_password';
-const PHONE_KEY = 'biometric_phone';
 
 export { BiometryType };
 
@@ -56,37 +54,4 @@ export async function clearStoredTransactionPin(): Promise<void> {
 export async function hasStoredTransactionPin(): Promise<boolean> {
   const pin = await SecureStore.getItemAsync(TRANSACTION_PIN_KEY);
   return pin !== null;
-}
-
-// --- Sign-in credential storage ---
-
-export async function storeSignInCredentials(phone: string, password: string): Promise<void> {
-  await Promise.all([
-    SecureStore.setItemAsync(PHONE_KEY, phone),
-    SecureStore.setItemAsync(PASSWORD_KEY, password),
-  ]);
-}
-
-export async function getStoredSignInCredentials(): Promise<{ phone: string; password: string } | null> {
-  const [phone, password] = await Promise.all([
-    SecureStore.getItemAsync(PHONE_KEY),
-    SecureStore.getItemAsync(PASSWORD_KEY),
-  ]);
-  if (!phone || !password) return null;
-  return { phone, password };
-}
-
-export async function clearStoredSignInCredentials(): Promise<void> {
-  await Promise.all([
-    SecureStore.deleteItemAsync(PHONE_KEY),
-    SecureStore.deleteItemAsync(PASSWORD_KEY),
-  ]);
-}
-
-export async function hasStoredSignInCredentials(): Promise<boolean> {
-  const [phone, password] = await Promise.all([
-    SecureStore.getItemAsync(PHONE_KEY),
-    SecureStore.getItemAsync(PASSWORD_KEY),
-  ]);
-  return phone !== null && password !== null;
 }

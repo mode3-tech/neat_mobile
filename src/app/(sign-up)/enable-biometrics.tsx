@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
-import { storeSignInCredentials, storeTransactionPin } from '@/services/biometric.service';
+import { storeTransactionPin } from '@/services/biometric.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
 import { useAuthStore } from '@/stores/auth.store';
 
@@ -50,10 +50,7 @@ export default function EnableBiometricsScreen() {
 
       if (enabled) {
         try {
-          await Promise.all([
-            storeTransactionPin(store.transactionPin),
-            storeSignInCredentials(store.phone, store.password),
-          ]);
+          await storeTransactionPin(store.transactionPin);
         } catch {
           // Non-blocking — biometrics just won't be available until next manual login
         }

@@ -16,7 +16,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useBiometricSignIn } from '@/hooks/use-biometric-sign-in';
 import { authService } from '@/services/auth.service';
-import { storeSignInCredentials } from '@/services/biometric.service';
 import { useAuthStore } from '@/stores/auth.store';
 
 const PRIMARY = '#472FF8';
@@ -54,11 +53,6 @@ export default function SignInScreen() {
           setBiometricsEnabled(response.is_biometrics_enabled);
         }
 
-        // Cache credentials only if biometrics is enabled per backend
-        if (response.is_biometrics_enabled) {
-          storeSignInCredentials(phone.trim(), password).catch(() => {});
-        }
-
         router.replace('/Dashboard' as any);
         return;
       }
@@ -68,12 +62,6 @@ export default function SignInScreen() {
           setError('Server error: missing session token');
           return;
         }
-        // Stash credentials in-memory (never persisted) so the OTP screen
-        // can cache them for biometric login if the backend confirms.
-        useAuthStore.getState().setPendingCredentials({
-          phone: phone.trim(),
-          password,
-        });
         router.push({
           pathname: '/(sign-in)/new-device-detected',
           params: { session_token: response.session_token },

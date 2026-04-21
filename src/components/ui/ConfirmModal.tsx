@@ -1,4 +1,4 @@
-import { Modal, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Modal, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface ConfirmModalProps {
@@ -9,6 +9,7 @@ interface ConfirmModalProps {
   onConfirm: () => void;
   onCancel: () => void;
   confirmStyle?: 'primary' | 'danger';
+  loading?: boolean;
 }
 
 export function ConfirmModal({
@@ -19,17 +20,22 @@ export function ConfirmModal({
   onConfirm,
   onCancel,
   confirmStyle = 'primary',
+  loading = false,
 }: ConfirmModalProps) {
   const insets = useSafeAreaInsets();
+  const noop = () => {};
 
   return (
     <Modal
       visible={visible}
       transparent
       animationType="slide"
-      onRequestClose={onCancel}
+      onRequestClose={loading ? noop : onCancel}
     >
-      <Pressable className="flex-1 bg-black/50 justify-end" onPress={onCancel}>
+      <Pressable
+        className="flex-1 bg-black/50 justify-end"
+        onPress={loading ? noop : onCancel}
+      >
         <Pressable
           className="bg-white rounded-t-3xl px-6 pt-4"
           style={{ paddingBottom: 20 + insets.bottom }}
@@ -46,17 +52,25 @@ export function ConfirmModal({
               confirmStyle === 'danger' ? 'bg-[#EF4444]' : 'bg-[#472FF8]'
             }`}
             onPress={onConfirm}
+            disabled={loading}
             activeOpacity={0.85}
           >
-            <Text className="text-white text-base font-semibold">{confirmLabel}</Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text className="text-white text-base font-semibold">{confirmLabel}</Text>
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity
             className="rounded-full py-4 items-center bg-[#F3F4F6]"
             onPress={onCancel}
+            disabled={loading}
             activeOpacity={0.85}
           >
-            <Text className="text-[#472FF8] text-base font-semibold">{cancelLabel}</Text>
+            <Text className={`text-base font-semibold ${loading ? 'text-gray-400' : 'text-[#472FF8]'}`}>
+              {cancelLabel}
+            </Text>
           </TouchableOpacity>
         </Pressable>
       </Pressable>

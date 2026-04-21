@@ -31,13 +31,7 @@ export const setAccessToken = (token: string | null): void => {
   accessToken = token;
 };
 
-interface ApiInstanceOptions {
-  /** When true, a failed token refresh will call clearAuth() to end the session. Default: true. */
-  clearAuthOnFailure?: boolean;
-}
-
-function createApiInstance(baseURL: string, options: ApiInstanceOptions = {}): AxiosInstance {
-  const { clearAuthOnFailure = true } = options;
+function createApiInstance(baseURL: string): AxiosInstance {
   const instance = axios.create({
     baseURL,
     headers: { 'Content-Type': 'application/json' },
@@ -103,10 +97,8 @@ function createApiInstance(baseURL: string, options: ApiInstanceOptions = {}): A
       // Refresh failed (returned null or threw) — reject queued requests
       onRefreshFailed(error);
 
-      if (clearAuthOnFailure) {
-        const { useAuthStore } = await import('@/stores/auth.store');
-        useAuthStore.getState().clearAuth();
-      }
+      const { useAuthStore } = await import('@/stores/auth.store');
+      useAuthStore.getState().clearAuth();
 
       return Promise.reject(error);
     },
@@ -116,8 +108,5 @@ function createApiInstance(baseURL: string, options: ApiInstanceOptions = {}): A
 }
 
 const api = createApiInstance(process.env.EXPO_PUBLIC_API_URL!);
-const notificationApi = createApiInstance(process.env.EXPO_PUBLIC_NOTIFICATION_API_URL!, {
-  clearAuthOnFailure: false,
-});
 
-export { api, notificationApi };
+export { api };

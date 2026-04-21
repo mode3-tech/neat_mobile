@@ -3,10 +3,12 @@ import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import * as Haptics from 'expo-haptics';
 
 import { QUERY_KEYS } from '@/constants';
 import { accountService } from '@/services/account.service';
+import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { useProfileStore } from '@/stores/profile.store';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
@@ -44,6 +46,7 @@ export default function ProfileScreen() {
   const photoUri = useProfileStore((s) => s.photoUri);
   const setPhotoUri = useProfileStore((s) => s.setPhotoUri);
   const clearAuth = useAuthStore((s) => s.clearAuth);
+  const queryClient = useQueryClient();
 
   const { data: summary } = useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
@@ -53,10 +56,22 @@ export default function ProfileScreen() {
   const fullName = summary?.full_name ?? '';
   const initial = fullName.charAt(0).toUpperCase() || 'U';
 
+  const logoutMutation = useMutation({
+    mutationFn: authService.logoutUser,
+    onSuccess: () => {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    },
+    onSettled: () => {
+      queryClient.clear();
+      clearAuth();
+      setLogoutVisible(false);
+      router.replace('/welcome');
+    },
+  });
+
   const handleLogout = () => {
-    setLogoutVisible(false);
-    clearAuth();
-    router.replace('/welcome');
+    if (logoutMutation.isPending) return;
+    logoutMutation.mutate();
   };
 
   return (
@@ -112,7 +127,7 @@ export default function ProfileScreen() {
             label="Change Personal Data"
             onPress={() => router.push('/(profile)/personal-data' as any)}
           />
-          <SettingsRow icon="card-account-details-outline" label="Account Details" disabled />
+          {/* <SettingsRow icon="card-account-details-outline" label="Account Details" disabled /> */}
         </View>
 
         {/* SECURITY section */}
@@ -160,6 +175,7 @@ export default function ProfileScreen() {
         title="Do you really want to log out?"
         onConfirm={handleLogout}
         onCancel={() => setLogoutVisible(false)}
+        loading={logoutMutation.isPending}
       />
 
       <PhotoPickerSheet

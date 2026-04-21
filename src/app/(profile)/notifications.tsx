@@ -1,10 +1,40 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
+import { toggleNotifications } from '@/services/notification.service';
+
 export default function NotificationsScreen() {
   const [enabled, setEnabled] = useState(true);
+  const [displayEnabled, setDisplayEnabled] = useState(true);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState('');
+
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  const handleToggle = async (value: boolean) => {
+    if (pending) return;
+    setDisplayEnabled(value);
+    setPending(true);
+    setError('');
+    try {
+      await toggleNotifications(value);
+      if (!mountedRef.current) return;
+      setEnabled(value);
+    } catch (err: unknown) {
+      if (!mountedRef.current) return;
+      setDisplayEnabled(enabled);
+      setError(err instanceof Error ? err.message : 'Failed to update notification settings');
+    } finally {
+      if (mountedRef.current) setPending(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
@@ -23,13 +53,18 @@ export default function NotificationsScreen() {
           <Text className="text-[12px] text-gray-500 mt-0.5">Get notified on your activities</Text>
         </View>
         <Switch
-          value={enabled}
-          onValueChange={setEnabled}
+          value={displayEnabled}
+          onValueChange={handleToggle}
+          disabled={pending}
           trackColor={{ false: '#E5E7EB', true: '#472FF8' }}
           thumbColor="#fff"
           ios_backgroundColor="#E5E7EB"
         />
       </View>
+
+      {error ? (
+        <Text className="text-[12px] text-[#EF4444] mt-3">{error}</Text>
+      ) : null}
     </SafeAreaView>
   );
 }

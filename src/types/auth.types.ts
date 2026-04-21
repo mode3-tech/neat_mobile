@@ -56,6 +56,11 @@ export interface VerifyDevicePayload {
   device_id: string;
 }
 
+export interface ChallengeRequestResponse {
+  challenge: string;
+  expires_at: string;
+}
+
 export interface OtpVerifyResponse {
   message: string;
   verification_id: string;

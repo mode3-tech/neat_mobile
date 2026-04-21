@@ -12,7 +12,6 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { OtpInput } from '@/components/ui/otp-input';
 import { useSmsOtp } from '@/hooks/use-sms-otp';
 import { authService } from '@/services/auth.service';
-import { storeSignInCredentials } from '@/services/biometric.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { OTP_LENGTH } from '@/constants';
 
@@ -61,13 +60,7 @@ export default function NewDeviceOtpScreen() {
       const response = await authService.verifyNewDevice(otp, session_token);
 
       if (response.access_token && response.refresh_token) {
-        const {
-          setTokens,
-          setUser,
-          setBiometricsEnabled,
-          setPendingCredentials,
-          pendingCredentials,
-        } = useAuthStore.getState();
+        const { setTokens, setUser, setBiometricsEnabled } = useAuthStore.getState();
         setTokens(response.access_token, response.refresh_token);
         if (response.user) setUser(response.user);
 
@@ -75,17 +68,6 @@ export default function NewDeviceOtpScreen() {
         if (typeof response.is_biometrics_enabled === 'boolean') {
           setBiometricsEnabled(response.is_biometrics_enabled);
         }
-
-        // Cache credentials for biometric login if backend confirms
-        if (response.is_biometrics_enabled && pendingCredentials) {
-          storeSignInCredentials(
-            pendingCredentials.phone,
-            pendingCredentials.password,
-          ).catch(() => {});
-        }
-
-        // Consume pending credentials regardless of outcome
-        setPendingCredentials(null);
       }
 
       router.replace('/(sign-in)/device-verified');

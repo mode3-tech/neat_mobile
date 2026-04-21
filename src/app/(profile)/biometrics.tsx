@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -7,23 +7,41 @@ import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 
 export default function BiometricsScreen() {
-  const enabled = useAuthStore((s) => s.biometricsEnabled);
+  const storeEnabled = useAuthStore((s) => s.biometricsEnabled);
   const setEnabled = useAuthStore((s) => s.setBiometricsEnabled);
 
+  const [displayEnabled, setDisplayEnabled] = useState(storeEnabled);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
 
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  // Keep the Switch in sync with the store when no toggle is in flight
+  // (e.g., if the flag changes from a login sync while this screen is open).
+  useEffect(() => {
+    if (!pending) setDisplayEnabled(storeEnabled);
+  }, [storeEnabled, pending]);
+
   const handleToggle = async (value: boolean) => {
     if (pending) return;
+    setDisplayEnabled(value);
     setPending(true);
     setError('');
     try {
       await authService.updateBiometricsPreference(value);
+      // Store update is safe to run even after unmount — it's global state.
       setEnabled(value);
     } catch (err: unknown) {
+      if (!mountedRef.current) return;
+      setDisplayEnabled(storeEnabled);
       setError(err instanceof Error ? err.message : 'Failed to update');
     } finally {
-      setPending(false);
+      if (mountedRef.current) setPending(false);
     }
   };
 
@@ -46,7 +64,7 @@ export default function BiometricsScreen() {
           </Text>
         </View>
         <Switch
-          value={enabled}
+          value={displayEnabled}
           onValueChange={handleToggle}
           disabled={pending}
           trackColor={{ false: '#E5E7EB', true: '#472FF8' }}

@@ -7,7 +7,7 @@ import { useAuthStore } from '@/stores/auth.store';
 
 SplashScreen.preventAutoHideAsync();
 
-const SPLASH_MIN_DURATION = 5000;
+const SPLASH_MIN_DURATION = 1500;
 
 function minDelay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
