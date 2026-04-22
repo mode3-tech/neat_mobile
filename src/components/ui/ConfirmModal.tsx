@@ -10,6 +10,8 @@ interface ConfirmModalProps {
   onCancel: () => void;
   confirmStyle?: 'primary' | 'danger';
   loading?: boolean;
+  /** Hides the cancel button — for info-only acknowledgements. */
+  hideCancel?: boolean;
 }
 
 export function ConfirmModal({
@@ -21,6 +23,7 @@ export function ConfirmModal({
   onCancel,
   confirmStyle = 'primary',
   loading = false,
+  hideCancel = false,
 }: ConfirmModalProps) {
   const insets = useSafeAreaInsets();
   const noop = () => {};
@@ -48,7 +51,7 @@ export function ConfirmModal({
           </Text>
 
           <TouchableOpacity
-            className={`rounded-full py-4 items-center mb-3 ${
+            className={`rounded-full py-4 items-center ${hideCancel ? '' : 'mb-3'} ${
               confirmStyle === 'danger' ? 'bg-[#EF4444]' : 'bg-[#472FF8]'
             }`}
             onPress={onConfirm}
@@ -62,16 +65,18 @@ export function ConfirmModal({
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity
-            className="rounded-full py-4 items-center bg-[#F3F4F6]"
-            onPress={onCancel}
-            disabled={loading}
-            activeOpacity={0.85}
-          >
-            <Text className={`text-base font-semibold ${loading ? 'text-gray-400' : 'text-[#472FF8]'}`}>
-              {cancelLabel}
-            </Text>
-          </TouchableOpacity>
+          {!hideCancel && (
+            <TouchableOpacity
+              className="rounded-full py-4 items-center bg-[#F3F4F6]"
+              onPress={onCancel}
+              disabled={loading}
+              activeOpacity={0.85}
+            >
+              <Text className={`text-base font-semibold ${loading ? 'text-gray-400' : 'text-[#472FF8]'}`}>
+                {cancelLabel}
+              </Text>
+            </TouchableOpacity>
+          )}
         </Pressable>
       </Pressable>
     </Modal>

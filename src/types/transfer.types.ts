@@ -67,3 +67,31 @@ export interface BeneficiariesResponse {
   message: string;
   beneficiaries: Beneficiary[];
 }
+
+export interface BulkRecipient {
+  id: string;
+  transferType: TransferType;
+  amount: number;
+  sort_code: string;
+  account_number: string;
+  account_name: string;
+  bank_name: string;
+  narration: string;
+}
+
+export interface BulkTransferPayload {
+  recipient_info: Array<{
+    amount: number;
+    sort_code: string;
+    narration: string;
+    account_number: string;
+    account_name: string;
+    metadata: Record<string, unknown>;
+  }>;
+  transaction_pin: string;
+}
+
+export interface BulkTransferResponse {
+  status: boolean;
+  message: string;
+}

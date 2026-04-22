@@ -6,7 +6,7 @@ export const NIN_LENGTH = 11;
 export const OTP_LENGTH = 6;
 export const PIN_LENGTH = 4;
 export const ACCOUNT_NUMBER_LENGTH = 10;
-export const MAX_TRANSFER_AMOUNT = 250_000;
+export const NEAT_BANK_CODE = '100040';
 
 export const TOKEN_KEYS = {
   ACCESS: 'neat_access_token',

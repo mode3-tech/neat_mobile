@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -17,18 +17,28 @@ import { useQuery } from '@tanstack/react-query';
 import { ACCOUNT_NUMBER_LENGTH, NEAT_BANK_CODE } from '@/constants';
 import { accountService } from '@/services/account.service';
 import { walletService } from '@/services/wallet.service';
-import { useAuthStore } from '@/stores/auth.store';
-import { useTransferStore } from '@/stores/transfer.store';
-import type { Bank, Beneficiary, TransferType } from '@/types/transfer.types';
+import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
+import type { Bank, BulkRecipient, TransferType } from '@/types/transfer.types';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 
 const TABS: { key: TransferType; label: string }[] = [
   { key: 'neatpay', label: 'NEAT Microcredit' },
   { key: 'other_bank', label: 'Other Banks Transfers' },
 ];
 
-export default function SendMoneyScreen() {
-  const store = useTransferStore();
-  const user = useAuthStore((s) => s.user);
+function formatNaira(amount: number): string {
+  return (
+    '₦' +
+    new Intl.NumberFormat('en-NG', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount)
+  );
+}
+
+export default function BulkAddRecipientScreen() {
+  const { recipients, addRecipient, removeRecipient } = useBulkTransferStore();
+
   const { data: accountSummary } = useQuery({
     queryKey: ['account-summary'],
     queryFn: accountService.getSummary,
@@ -49,16 +59,16 @@ export default function SendMoneyScreen() {
   const [validating, setValidating] = useState(false);
   const [validationError, setValidationError] = useState('');
 
-  // Beneficiary selection
-  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
-  const [beneficiariesLoading, setBeneficiariesLoading] = useState(false);
-  const [beneficiaryModalVisible, setBeneficiaryModalVisible] = useState(false);
-  const [beneficiarySearch, setBeneficiarySearch] = useState('');
-  const prefilled = useRef(false);
-
   // Amount & narration
   const [amount, setAmount] = useState('');
   const [narration, setNarration] = useState('');
+
+  // Pending recipient removal (drives the confirm modal)
+  const [pendingRemoval, setPendingRemoval] = useState<BulkRecipient | null>(
+    null,
+  );
+  // Drives the "already added" info modal
+  const [duplicateAlertVisible, setDuplicateAlertVisible] = useState(false);
 
   const validationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Monotonic id incremented on every validation attempt. Stale responses that
@@ -66,7 +76,6 @@ export default function SendMoneyScreen() {
   // pin the wrong account name to the current input.
   const validationRequestId = useRef(0);
 
-  // Fetch banks on first switch to Other Banks tab
   const fetchBanks = useCallback(async () => {
     if (banks.length > 0) return;
     setBanksLoading(true);
@@ -79,20 +88,6 @@ export default function SendMoneyScreen() {
       setBanksLoading(false);
     }
   }, [banks.length]);
-
-  // Fetch beneficiaries
-  const fetchBeneficiaries = useCallback(async () => {
-    if (beneficiaries.length > 0) return;
-    setBeneficiariesLoading(true);
-    try {
-      const result = await walletService.getBeneficiaries();
-      setBeneficiaries(result);
-    } catch {
-      // silent — user can retry by reopening modal
-    } finally {
-      setBeneficiariesLoading(false);
-    }
-  }, [beneficiaries.length]);
 
   // Reset account fields when tab changes
   useEffect(() => {
@@ -113,14 +108,6 @@ export default function SendMoneyScreen() {
 
     const bankCode =
       activeTab === 'neatpay' ? NEAT_BANK_CODE : selectedBank?.code;
-
-    // Skip validation if prefilled from beneficiary — the beneficiary already
-    // has a verified account name we want to keep displayed.
-    if (prefilled.current) {
-      prefilled.current = false;
-      setValidating(false);
-      return;
-    }
 
     // Clear stale results synchronously on every keystroke so the previous
     // validation's name can't sit alongside a newly-edited account number,
@@ -163,80 +150,78 @@ export default function SendMoneyScreen() {
     b.name.toLowerCase().includes(bankSearch.toLowerCase()),
   );
 
-  const filteredBeneficiaries = beneficiaries.filter((b) => {
-    const isNeat = b.bank_code === NEAT_BANK_CODE || b.bank_code === '';
-    if (activeTab === 'neatpay' ? !isNeat : isNeat) return false;
-    const search = beneficiarySearch.toLowerCase();
-    return (
-      b.account_name.toLowerCase().includes(search) ||
-      b.account_number.includes(search)
-    );
-  });
-
-  const getBankName = (bankCode: string) =>
-    banks.find((b) => b.code === bankCode)?.name ?? bankCode;
-
   const parsedAmount = parseInt(amount, 10) || 0;
 
-  const canProceed =
-    activeTab === 'neatpay'
-      ? accountNumber.length === ACCOUNT_NUMBER_LENGTH &&
-        accountName !== '' &&
-        parsedAmount > 0
-      : accountNumber.length === ACCOUNT_NUMBER_LENGTH &&
-        accountName !== '' &&
-        selectedBank !== null &&
-        parsedAmount > 0;
+  const totalPayment = useMemo(
+    () => recipients.reduce((sum, r) => sum + r.amount, 0),
+    [recipients],
+  );
+
+  const availableBalance = accountSummary?.available_balance ?? 0;
+  const exceedsBalance =
+    availableBalance > 0 && totalPayment > availableBalance;
+
+  const canAdd =
+    parsedAmount > 0 &&
+    accountNumber.length === ACCOUNT_NUMBER_LENGTH &&
+    accountName !== '' &&
+    (activeTab === 'neatpay' ? true : selectedBank !== null);
+
+  const handleAddRecipient = () => {
+    if (!canAdd) return;
+
+    const newSortCode =
+      activeTab === 'other_bank'
+        ? selectedBank?.code ?? ''
+        : NEAT_BANK_CODE;
+    const isDuplicate = recipients.some(
+      (r) =>
+        r.account_number === accountNumber && r.sort_code === newSortCode,
+    );
+    if (isDuplicate) {
+      setDuplicateAlertVisible(true);
+      return;
+    }
+
+    const recipient: BulkRecipient = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      transferType: activeTab,
+      amount: parsedAmount,
+      sort_code: newSortCode,
+      account_number: accountNumber,
+      account_name: accountName,
+      bank_name:
+        activeTab === 'other_bank' ? selectedBank?.name ?? '' : 'Neatpay',
+      narration,
+    };
+    addRecipient(recipient);
+    setAccountNumber('');
+    setAccountName('');
+    setValidationError('');
+    setAmount('');
+    setNarration('');
+  };
 
   const handleProceed = () => {
-    if (!canProceed) return;
-    store.setTransferType(activeTab);
-    if (activeTab === 'other_bank' && selectedBank) {
-      store.setBank(selectedBank.code, selectedBank.name);
-    } else {
-      store.setBank(NEAT_BANK_CODE, 'Neatpay');
-    }
-    store.setAccountDetails(accountNumber, accountName);
-    store.setAmount(amount);
-    store.setNarration(narration);
-    store.setSenderPhone(user?.phone ?? '');
-    store.setSenderName(accountSummary?.full_name ?? '');
-    router.push('/(transfer)/transfer-review');
+    if (recipients.length === 0 || exceedsBalance) return;
+    router.push('/(transfer)/bulk-transfer-review');
   };
 
-  const handleSelectBeneficiary = async (beneficiary: Beneficiary) => {
-    prefilled.current = true;
-    setAccountNumber(beneficiary.account_number);
-    setAccountName(beneficiary.account_name);
-    setBeneficiaryModalVisible(false);
-    setBeneficiarySearch('');
-
-    if (activeTab === 'other_bank') {
-      // Ensure banks are loaded so we can find the matching bank
-      let bankList = banks;
-      if (bankList.length === 0) {
-        try {
-          const result = await walletService.getBanks();
-          setBanks(result);
-          bankList = result;
-        } catch {
-          // fallback — set bank code directly
-        }
-      }
-      const matchedBank = bankList.find(
-        (b) => b.code === beneficiary.bank_code,
-      );
-      setSelectedBank(
-        matchedBank ?? { code: beneficiary.bank_code, name: beneficiary.bank_code },
-      );
-    }
+  const handleRemove = (recipient: BulkRecipient) => {
+    setPendingRemoval(recipient);
   };
+
+  const confirmRemove = () => {
+    if (pendingRemoval) removeRecipient(pendingRemoval.id);
+    setPendingRemoval(null);
+  };
+
+  const cancelRemove = () => setPendingRemoval(null);
 
   const handleSelectBank = (bank: Bank) => {
     setSelectedBank(bank);
     setBankModalVisible(false);
     setBankSearch('');
-    // Reset account validation when bank changes
     setAccountName('');
     setValidationError('');
   };
@@ -248,55 +233,87 @@ export default function SendMoneyScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 px-6">
-        {/* Back button */}
         <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-12"
+          className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-6"
           onPress={() => router.back()}
         >
           <Text className="text-sm font-medium text-[#374151]">Back</Text>
         </TouchableOpacity>
 
-        <Text className="text-[20px] font-medium text-[#1A1A1A] mb-8">
-          Send Money
+        <Text className="text-[20px] font-medium text-[#1A1A1A] mb-5">
+          Add recipient
         </Text>
 
-        {/* Transfer Type label */}
-        <Text className="text-sm font-semibold text-[#1A1A1A] mb-6">
-          Transfer to:
-        </Text>
-
-        {/* Tab pills */}
-        <View className="flex-row bg-[#F3F3F4] rounded-full py-3 px-3 mb-6">
-          {TABS.map((tab) => (
-            <TouchableOpacity
-              key={tab.key}
-              className={`flex-1 py-3 rounded-full items-center ${
-                activeTab === tab.key ? 'bg-[#472FF8]' : ''
+        {/* Summary tile */}
+        <View
+          className={`rounded-xl p-4 border mb-2 ${
+            exceedsBalance
+              ? 'bg-[#FEF2F2] border-[#EF4444]/40'
+              : 'bg-[#EEF0FF] border-[#472FF8]/30'
+          }`}
+        >
+          <View className="flex-row justify-between items-center mb-2">
+            <Text className="text-[13px] text-[#1A1A1A]">Available Balance</Text>
+            <Text className="text-[13px] font-semibold text-[#1A1A1A]">
+              {formatNaira(availableBalance)}
+            </Text>
+          </View>
+          <View className="flex-row justify-between items-center">
+            <Text className="text-[13px] text-[#1A1A1A]">
+              Total Payment Amount
+            </Text>
+            <Text
+              className={`text-[13px] font-semibold ${
+                exceedsBalance ? 'text-[#EF4444]' : 'text-[#1A1A1A]'
               }`}
-              onPress={() => {
-                setActiveTab(tab.key);
-                if (tab.key === 'other_bank') fetchBanks();
-              }}
-              activeOpacity={0.85}
             >
-              <Text
-                className={`text-[13px] font-semibold ${
-                  activeTab === tab.key ? 'text-white' : 'text-[#6B7280]'
-                }`}
-              >
-                {tab.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
+              {formatNaira(totalPayment)}
+            </Text>
+          </View>
         </View>
+        {exceedsBalance && (
+          <Text className="text-xs text-red-500 mb-4">
+            Total payment exceeds your available balance.
+          </Text>
+        )}
+        {!exceedsBalance && <View className="mb-4" />}
 
         <KeyboardAwareScrollView
           className="flex-1"
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
+          <Text className="text-sm font-semibold text-[#1A1A1A] mb-3">
+            Transfer to:
+          </Text>
+
+          {/* Tab pills */}
+          <View className="flex-row bg-[#F3F3F4] rounded-full py-2 px-2 mb-5">
+            {TABS.map((tab) => (
+              <TouchableOpacity
+                key={tab.key}
+                className={`flex-1 py-2.5 rounded-full items-center ${
+                  activeTab === tab.key ? 'bg-[#472FF8]' : ''
+                }`}
+                onPress={() => {
+                  setActiveTab(tab.key);
+                  if (tab.key === 'other_bank') fetchBanks();
+                }}
+                activeOpacity={0.85}
+              >
+                <Text
+                  className={`text-[12px] font-semibold ${
+                    activeTab === tab.key ? 'text-white' : 'text-[#6B7280]'
+                  }`}
+                >
+                  {tab.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
           {activeTab === 'other_bank' && (
-            <View className="mb-5">
+            <View className="mb-4">
               <Text className="text-[13px] font-semibold text-[#374151] mb-2">
                 Bank
               </Text>
@@ -324,7 +341,7 @@ export default function SendMoneyScreen() {
           )}
 
           {/* Account Number */}
-          <View className="mb-5">
+          <View className="mb-4">
             <Text className="text-[13px] font-semibold text-[#374151] mb-2">
               Account Number
             </Text>
@@ -337,7 +354,9 @@ export default function SendMoneyScreen() {
                 className="flex-1 text-[15px] text-[#1A1A1A] p-0"
                 value={accountNumber}
                 onChangeText={(t) =>
-                  setAccountNumber(t.replace(/\D/g, '').slice(0, ACCOUNT_NUMBER_LENGTH))
+                  setAccountNumber(
+                    t.replace(/\D/g, '').slice(0, ACCOUNT_NUMBER_LENGTH),
+                  )
                 }
                 placeholder="Enter account number"
                 placeholderTextColor="#9CA3AF"
@@ -356,29 +375,10 @@ export default function SendMoneyScreen() {
                 {validationError}
               </Text>
             )}
-            {accountNumber === '' && (
-              <TouchableOpacity
-                className="flex-row items-center mt-3"
-                onPress={() => {
-                  fetchBanks();
-                  fetchBeneficiaries();
-                  setBeneficiaryModalVisible(true);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name="account-circle-outline"
-                  size={20}
-                  color="#472FF8"
-                />
-                <Text className="text-[13px] font-medium text-[#472FF8] ml-1.5">
-                  Select from Beneficiary
-                </Text>
-              </TouchableOpacity>
-            )}
           </View>
 
           {/* Amount */}
-          <View className="mb-5">
+          <View className="mb-4">
             <Text className="text-[13px] font-semibold text-[#374151] mb-2">
               Amount
             </Text>
@@ -410,27 +410,109 @@ export default function SendMoneyScreen() {
               />
             </View>
           </View>
-        </KeyboardAwareScrollView>
 
-        {/* Proceed button */}
-        <View className="pb-4">
+          {/* Add recipient button */}
           <TouchableOpacity
-            className={`rounded-full py-4 items-center ${
-              canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+            className={`rounded-full py-4 items-center flex-row justify-center border-[1.5px] mb-6 ${
+              canAdd ? 'border-[#472FF8]' : 'border-[#E5E7EB]'
             }`}
-            onPress={handleProceed}
-            disabled={!canProceed}
+            onPress={handleAddRecipient}
+            disabled={!canAdd}
             activeOpacity={0.85}
           >
+            <MaterialCommunityIcons
+              name="plus"
+              size={18}
+              color={canAdd ? '#472FF8' : '#9CA3AF'}
+            />
             <Text
-              className={`text-base font-semibold ${
-                canProceed ? 'text-white' : 'text-[#9CA3AF]'
+              className={`text-base font-semibold ml-1 ${
+                canAdd ? 'text-[#472FF8]' : 'text-[#9CA3AF]'
               }`}
             >
-              Proceed
+              Add recipient
             </Text>
           </TouchableOpacity>
-        </View>
+
+          {recipients.length > 0 && (
+            <>
+              <Text className="text-base font-semibold text-[#1A1A1A] mt-2 mb-3">
+                Added Recipients ({recipients.length})
+              </Text>
+              <View className="mb-4">
+                {recipients.map((r, i) => (
+                  <View
+                    key={r.id}
+                    className="flex-row items-start py-4 border-b border-[#F3F4F6]"
+                  >
+                    <View className="w-8 h-8 rounded-full bg-[#F59E0B] items-center justify-center mr-3 mt-0.5">
+                      <Text className="text-white text-[13px] font-bold">
+                        {i + 1}
+                      </Text>
+                    </View>
+                    <View className="flex-1 pr-2">
+                      <Text
+                        className="text-[14px] font-bold text-[#1A1A1A]"
+                        numberOfLines={1}
+                      >
+                        {r.account_name}
+                      </Text>
+                      <Text
+                        className="text-[12px] text-[#6B7280] mt-0.5"
+                        numberOfLines={1}
+                      >
+                        {r.account_number}
+                      </Text>
+                      <Text
+                        className="text-[12px] text-[#472FF8] mt-0.5"
+                        numberOfLines={2}
+                      >
+                        {r.bank_name}
+                      </Text>
+                    </View>
+                    <View className="items-end">
+                      <Text className="text-[14px] font-bold text-[#16A34A]">
+                        {formatNaira(r.amount)}
+                      </Text>
+                      <TouchableOpacity
+                        className="mt-2 p-1"
+                        onPress={() => handleRemove(r)}
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      >
+                        <MaterialCommunityIcons
+                          name="trash-can-outline"
+                          size={18}
+                          color="#EF4444"
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </>
+          )}
+        </KeyboardAwareScrollView>
+
+        {recipients.length > 0 && (
+          <View className="pb-4">
+            <TouchableOpacity
+              className={`rounded-full py-4 items-center ${
+                exceedsBalance ? 'bg-[#E5E7EB]' : 'bg-[#472FF8]'
+              }`}
+              onPress={handleProceed}
+              disabled={exceedsBalance}
+              activeOpacity={0.85}
+            >
+              <Text
+                className={`text-base font-semibold ${
+                  exceedsBalance ? 'text-[#9CA3AF]' : 'text-white'
+                }`}
+              >
+                Proceed
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       {/* Bank selection modal */}
@@ -450,7 +532,6 @@ export default function SendMoneyScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Search */}
             <View className="px-6 mb-3">
               <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
                 <MaterialCommunityIcons
@@ -503,83 +584,24 @@ export default function SendMoneyScreen() {
         </View>
       </Modal>
 
-      {/* Beneficiary selection modal */}
-      <Modal visible={beneficiaryModalVisible} animationType="slide" transparent>
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className="bg-white rounded-t-3xl flex-1 mt-[30%] pt-4 pb-8">
-            <View className="flex-row items-center justify-between px-6 mb-4">
-              <Text className="text-lg font-bold text-[#1A1A1A]">
-                Select Beneficiary
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  setBeneficiaryModalVisible(false);
-                  setBeneficiarySearch('');
-                }}
-              >
-                <MaterialCommunityIcons
-                  name="close"
-                  size={24}
-                  color="#374151"
-                />
-              </TouchableOpacity>
-            </View>
+      <ConfirmModal
+        visible={pendingRemoval !== null}
+        title={`Remove ${pendingRemoval?.account_name ?? ''} from the list?`}
+        confirmLabel="Remove"
+        cancelLabel="Cancel"
+        confirmStyle="danger"
+        onConfirm={confirmRemove}
+        onCancel={cancelRemove}
+      />
 
-            {/* Search */}
-            <View className="px-6 mb-3">
-              <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
-                <MaterialCommunityIcons
-                  name="magnify"
-                  size={20}
-                  color="#9CA3AF"
-                />
-                <TextInput
-                  className="flex-1 text-[15px] text-[#1A1A1A] ml-2 p-0"
-                  value={beneficiarySearch}
-                  onChangeText={setBeneficiarySearch}
-                  placeholder="Search beneficiary"
-                  placeholderTextColor="#9CA3AF"
-                  autoFocus
-                />
-              </View>
-            </View>
-
-            {beneficiariesLoading ? (
-              <ActivityIndicator
-                size="large"
-                color="#472FF8"
-                className="mt-8"
-              />
-            ) : (
-              <FlatList
-                data={filteredBeneficiaries}
-                keyExtractor={(item) =>
-                  `${item.bank_code}-${item.account_number}`
-                }
-                keyboardShouldPersistTaps="handled"
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    className="px-6 py-4 bg-gray-100 border-b border-[#F3F4F6]"
-                    onPress={() => handleSelectBeneficiary(item)}
-                  >
-                    <Text className="text-[20px] font-bold text-[#1A1A1A]">
-                      {item.account_name}
-                    </Text>
-                    <Text className="text-[13px] text-[#6B7280] mt-0.5">
-                      {getBankName(item.bank_code)}  •  {item.account_number}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                ListEmptyComponent={
-                  <Text className="text-center text-[#9CA3AF] mt-8">
-                    No beneficiaries found
-                  </Text>
-                }
-              />
-            )}
-          </View>
-        </View>
-      </Modal>
+      <ConfirmModal
+        visible={duplicateAlertVisible}
+        title="This account is already in the recipients list."
+        confirmLabel="Got it"
+        hideCancel
+        onConfirm={() => setDuplicateAlertVisible(false)}
+        onCancel={() => setDuplicateAlertVisible(false)}
+      />
     </SafeAreaView>
   );
 }

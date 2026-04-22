@@ -10,7 +10,7 @@ interface ServiceItem {
 
 const SERVICES: ServiceItem[][] = [
   [
-    { icon: 'send', label: 'Send Bulk' },
+    { icon: 'send', label: 'Send Bulk', route: '/(transfer)/bulk-transfer' },
     { icon: 'qrcode-scan', label: 'QR Code' },
     { icon: 'cash-multiple', label: 'Loans', route: '/(loan)/loan-home' },
     { icon: 'piggy-bank', label: 'NeatSave' },

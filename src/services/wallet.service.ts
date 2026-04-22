@@ -4,6 +4,8 @@ import type {
   Beneficiary,
   Bank,
   BanksResponse,
+  BulkTransferPayload,
+  BulkTransferResponse,
   TransferPayload,
   TransferResponse,
   ValidateAccountResponse,
@@ -31,6 +33,16 @@ export const walletService = {
   transfer: async (payload: TransferPayload): Promise<TransferResponse> => {
     const { data } = await api.post<TransferResponse>(
       '/wallet/transfer',
+      payload,
+    );
+    return data;
+  },
+
+  transferBulk: async (
+    payload: BulkTransferPayload,
+  ): Promise<BulkTransferResponse> => {
+    const { data } = await api.post<BulkTransferResponse>(
+      '/wallet/transfer/bulk',
       payload,
     );
     return data;
