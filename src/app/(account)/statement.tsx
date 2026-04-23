@@ -32,7 +32,7 @@ interface FileTypeOption {
 }
 
 const FILE_TYPE_OPTIONS: FileTypeOption[] = [
-  { label: 'Excel', value: 'csv', icon: 'file-excel-box' },
+  { label: 'Excel', value: 'xlsx', icon: 'file-excel-box' },
   { label: 'PDF', value: 'pdf', icon: 'file-pdf-box' },
 ];
 
@@ -64,7 +64,7 @@ export default function StatementScreen() {
   const initialJobId =
     typeof params.jobId === 'string' && params.jobId ? params.jobId : null;
   const initialFormat: StatementFormat | null =
-    params.format === 'pdf' || params.format === 'csv' ? params.format : null;
+    params.format === 'pdf' || params.format === 'xlsx' ? params.format : null;
 
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -150,10 +150,13 @@ export default function StatementScreen() {
     if (!downloadUrl || downloading) return;
     setDownloading(true);
     try {
-      // On deep-link entry, `format` is unknown — fall back to csv so the file
+      // On deep-link entry, `format` is unknown — fall back to xlsx so the file
       // still has a reasonable extension (it opens regardless of ext).
-      const extension = format === 'pdf' ? 'pdf' : 'csv';
-      const mime = format === 'pdf' ? 'application/pdf' : 'text/csv';
+      const extension = format === 'pdf' ? 'pdf' : 'xlsx';
+      const mime =
+        format === 'pdf'
+          ? 'application/pdf'
+          : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
       const filename = `neat-statement-${Date.now()}.${extension}`;
 
       if (Platform.OS === 'android') {

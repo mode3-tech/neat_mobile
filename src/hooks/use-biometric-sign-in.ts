@@ -12,24 +12,25 @@ import { useAuthStore } from '@/stores/auth.store';
 
 type SignInResult =
   | { status: 'success' }
+  | { status: 'cancelled' }
   | { status: 'new_device'; sessionToken: string }
   | { status: 'failed'; error: string };
 
-function classifySignError(err: unknown): string {
+function classifySignError(err: unknown): SignInResult {
   const message = err instanceof Error ? err.message : String(err ?? '');
   const code = (err as { code?: unknown })?.code;
   const haystack = `${typeof code === 'string' ? code : ''} ${message}`.toLowerCase();
 
   if (haystack.includes('cancel')) {
-    return 'Biometric authentication cancelled';
+    return { status: 'cancelled' };
   }
   if (haystack.includes('lockout') || haystack.includes('locked')) {
-    return 'Too many attempts. Please try again in a moment.';
+    return { status: 'failed', error: 'Too many attempts. Please try again in a moment.' };
   }
   if (haystack.includes('invalidated')) {
-    return 'Biometric key is no longer valid. Please sign in with your password.';
+    return { status: 'failed', error: 'Biometric key is no longer valid. Please sign in with your password.' };
   }
-  return 'Biometric authentication failed';
+  return { status: 'failed', error: 'Biometric authentication failed' };
 }
 
 interface UseBiometricSignInReturn {
@@ -84,7 +85,7 @@ export function useBiometricSignIn(): UseBiometricSignInReturn {
       try {
         signature = await signChallenge(challenge);
       } catch (err) {
-        return { status: 'failed', error: classifySignError(err) };
+        return classifySignError(err);
       }
 
       const deviceId = await getOrCreateDeviceId();

@@ -32,7 +32,7 @@ export interface AccountSummaryResponse {
   data: AccountSummary;
 }
 
-export type StatementFormat = 'csv' | 'pdf';
+export type StatementFormat = 'xlsx' | 'pdf';
 export type StatementJobStatus = 'pending' | 'processing' | 'ready' | 'failed';
 
 export interface StatementRequestBody {

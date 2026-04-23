@@ -167,22 +167,37 @@ export const authService = {
       // } else {
       //   console.error('Login non-axios error:', error);
       // }
-      extractErrorMessage(error, 'Login failed');
+      extractErrorMessage(error, 'Login failed. Please, try again');
     }
   },
 
   requestChallenge: async (): Promise<ChallengeRequestResponse> => {
+    const refreshTokenValue = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+    if (!refreshTokenValue) {
+      throw new Error('No session found. Please sign in with your password.');
+    }
     try {
-      const refreshTokenValue = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
-      if (!refreshTokenValue) {
-        throw new Error('No session found. Please sign in with your password.');
-      }
       const response = await api.post<ChallengeRequestResponse>('/auth/challenge/request', {
         refresh_token: refreshTokenValue,
       });
       return response.data;
     } catch (error) {
-      extractErrorMessage(error, 'Failed to request challenge');
+      if (axios.isAxiosError(error)) {
+        // No HTTP response → network/DNS/timeout
+        if (!error.response) {
+          throw new Error("We couldn't reach the server. Please check your connection and try again.");
+        }
+        const status = error.response.status;
+        if (status >= 500) {
+          throw new Error('Service temporarily unavailable. Please try again in a moment.');
+        }
+        const serverMessage = error.response.data?.error;
+        if (serverMessage) {
+          throw new Error(serverMessage);
+        }
+        throw new Error("Couldn't start biometric sign-in. Please sign in with your password.");
+      }
+      throw new Error("Couldn't start biometric sign-in. Please sign in with your password.");
     }
   },
 

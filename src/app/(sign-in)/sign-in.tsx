@@ -194,7 +194,7 @@ export default function SignInScreen() {
                       pathname: '/(sign-in)/new-device-detected',
                       params: { session_token: result.sessionToken },
                     });
-                  } else {
+                  } else if (result.status === 'failed') {
                     setError(result.error);
                   }
                 }}

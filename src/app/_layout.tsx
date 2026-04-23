@@ -52,7 +52,7 @@ export default function RootLayout(): React.JSX.Element {
           | undefined;
         if (data?.job_id && data.event === 'statement-ready') {
           const formatParam =
-            data.format === 'pdf' || data.format === 'csv'
+            data.format === 'pdf' || data.format === 'xlsx'
               ? `&format=${data.format}`
               : '';
           router.push(
