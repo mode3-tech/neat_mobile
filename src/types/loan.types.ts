@@ -46,3 +46,14 @@ export interface LoanApplyResponse {
   message: string;
   summary: LoanApplySummary;
 }
+
+export interface Loan {
+  loan_id: string;
+  loan_number: string;
+  principal_amount: number;
+  disbursed_amount: number;
+  outstanding_balance: number;
+  status: string;
+  next_due_date: string;
+  next_due_amount: number;
+}

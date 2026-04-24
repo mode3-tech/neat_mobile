@@ -1,5 +1,13 @@
-import { useCallback, useEffect } from 'react';
-import { FlatList, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { useCallback, useEffect, useRef } from 'react';
+import {
+  FlatList,
+  SectionList,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+  type ViewToken,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -43,51 +51,75 @@ function formatRelativeTime(dateStr: string): string {
   });
 }
 
-function NotificationItem({
-  item,
-  onPress,
-}: {
-  item: AppNotification;
-  onPress: () => void;
-}) {
+function groupByDate(
+  items: AppNotification[],
+): { title: string; data: AppNotification[] }[] {
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const todayMs = startOfToday.getTime();
+  const yesterdayMs = todayMs - 86_400_000;
+  const weekAgoMs = todayMs - 6 * 86_400_000;
+
+  const buckets: Record<string, AppNotification[]> = {
+    Today: [],
+    Yesterday: [],
+    'This week': [],
+    Earlier: [],
+  };
+
+  for (const item of items) {
+    const t = new Date(item.CreatedAt).getTime();
+    if (t >= todayMs) buckets.Today.push(item);
+    else if (t >= yesterdayMs) buckets.Yesterday.push(item);
+    else if (t >= weekAgoMs) buckets['This week'].push(item);
+    else buckets.Earlier.push(item);
+  }
+
+  return Object.entries(buckets)
+    .filter(([, data]) => data.length > 0)
+    .map(([title, data]) => ({ title, data }));
+}
+
+function NotificationItem({ item }: { item: AppNotification }) {
   const icon = TYPE_ICONS[item.Type] ?? TYPE_ICONS.promo;
 
   return (
-    <TouchableOpacity
-      className={`flex-row items-start gap-3 px-6 py-4 ${!item.IsRead ? 'bg-[#F9FAFB]' : ''}`}
-      onPress={onPress}
-      activeOpacity={0.7}
+    <View
+      className="flex-row items-start gap-3 mx-6 mb-3 p-4 rounded-2xl bg-[#F9FAFB] border border-[#F3F4F6]"
     >
       <View
-        className="w-10 h-10 rounded-full items-center justify-center"
-        style={{ backgroundColor: icon.bg }}
+        className="w-11 h-11 rounded-full items-center justify-center"
+        style={{
+          backgroundColor: icon.bg,
+          borderWidth: 1,
+          borderColor: icon.color + '20',
+        }}
       >
         <MaterialCommunityIcons
           name={icon.name as any}
-          size={20}
+          size={22}
           color={icon.color}
         />
       </View>
       <View className="flex-1">
-        <View className="flex-row items-center justify-between mb-0.5">
-          <Text
-            className={`text-[14px] ${!item.IsRead ? 'font-bold' : 'font-medium'} text-[#1A1A1A] flex-1`}
-            numberOfLines={1}
-          >
-            {item.Title}
+        <View className="flex-row items-center justify-between mb-1">
+          <Text className="text-[11px] text-[#9CA3AF]">
+            {formatRelativeTime(item.CreatedAt)}
           </Text>
           {!item.IsRead && (
-            <View className="w-2 h-2 rounded-full bg-[#472FF8] ml-2" />
+            <View className="w-2 h-2 rounded-full bg-[#472FF8]" />
           )}
         </View>
-        <Text className="text-[13px] text-[#6B7280] mb-1" numberOfLines={2}>
+        <Text
+          className={`text-[14px] ${!item.IsRead ? 'font-bold' : 'font-semibold'} text-[#1A1A1A] mb-1`}
+        >
+          {item.Title}
+        </Text>
+        <Text className="text-[13px] text-[#6B7280] leading-[18px]">
           {item.Body}
         </Text>
-        <Text className="text-[11px] text-[#9CA3AF]">
-          {formatRelativeTime(item.CreatedAt)}
-        </Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 
@@ -164,7 +196,18 @@ export default function NotificationsScreen() {
     mutationFn: markAsRead,
     onSuccess: (_, notificationId) => {
       markStoreRead(notificationId);
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.setQueryData(['notifications'], (old: any) => {
+        if (!old?.pages) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            notifications: page.notifications.map((n: AppNotification) =>
+              n.ID === notificationId ? { ...n, IsRead: true } : n,
+            ),
+          })),
+        };
+      });
       queryClient.invalidateQueries({ queryKey: ['unread-count'] });
     },
   });
@@ -178,14 +221,27 @@ export default function NotificationsScreen() {
     },
   });
 
-  const handlePress = (item: AppNotification) => {
-    if (!item.IsRead) {
-      markReadMutation.mutate(item.ID);
-    }
+  const viewedIdsRef = useRef(new Set<string>());
 
-  };
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 60,
+    minimumViewTime: 500,
+  });
+
+  const onViewableItemsChanged = useRef(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      for (const entry of viewableItems) {
+        const n = entry.item as AppNotification | null;
+        if (!entry.isViewable || !n?.ID || n.IsRead) continue;
+        if (viewedIdsRef.current.has(n.ID)) continue;
+        viewedIdsRef.current.add(n.ID);
+        markReadMutation.mutate(n.ID);
+      }
+    },
+  );
 
   const handleRefresh = useCallback(() => {
+    viewedIdsRef.current.clear();
     queryClient.resetQueries({ queryKey: ['notifications'] });
   }, [queryClient]);
 
@@ -195,6 +251,7 @@ export default function NotificationsScreen() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  const sections = groupByDate(notifications);
   const hasUnread = notifications.some((n) => !n.IsRead);
 
   const errorMessage = isError
@@ -246,12 +303,20 @@ export default function NotificationsScreen() {
           onRefresh={handleRefresh}
         />
       ) : (
-        <FlatList
-          data={notifications}
+        <SectionList
+          sections={sections}
           keyExtractor={(item, index) => item.ID ?? `notif-${index}`}
-          renderItem={({ item }) => (
-            <NotificationItem item={item} onPress={() => handlePress(item)} />
+          renderItem={({ item }) => <NotificationItem item={item} />}
+          renderSectionHeader={({ section: { title } }) => (
+            <View className="bg-white px-6 pt-5 pb-3">
+              <Text className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-[1.5px]">
+                {title}
+              </Text>
+            </View>
           )}
+          stickySectionHeadersEnabled={false}
+          onViewableItemsChanged={onViewableItemsChanged.current}
+          viewabilityConfig={viewabilityConfig.current}
           ListEmptyComponent={EmptyState}
           contentContainerStyle={
             notifications.length === 0 ? { flex: 1 } : undefined

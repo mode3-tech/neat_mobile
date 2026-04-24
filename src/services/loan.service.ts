@@ -1,4 +1,5 @@
 import type {
+  Loan,
   LoanApplyPayload,
   LoanApplyResponse,
   LoanEligibility,
@@ -17,6 +18,11 @@ export const loanService = {
   getLoanProducts: async (): Promise<LoanProduct[]> => {
     const { data } = await api.get<{ message: string; products: LoanProduct[] }>('/loan');
     return data.products;
+  },
+
+  getLoans: async (): Promise<Loan[]> => {
+    const { data } = await api.get<{ message: string; loans: Loan[] }>('/loan/loans');
+    return data.loans;
   },
 
   submitApplication: async (payload: LoanApplyPayload): Promise<LoanApplyResponse> => {
