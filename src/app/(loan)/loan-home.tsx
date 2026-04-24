@@ -11,28 +11,43 @@ import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
 import { loanService } from '@/services/loan.service';
+import { accountService } from '@/services/account.service';
 import { QUERY_KEYS } from '@/constants';
 import { formatNairaWhole, formatDateSlash } from '@/utils/format';
-import type { Loan } from '@/types/loan.types';
+import type { ActiveLoan } from '@/types/loan.types';
 
 interface ActionItemProps {
   icon: string;
   label: string;
   onPress?: () => void;
+  disabled?: boolean;
 }
 
-function ActionItem({ icon, label, onPress }: ActionItemProps) {
+function ActionItem({ icon, label, onPress, disabled }: ActionItemProps) {
   return (
     <TouchableOpacity
-      className="flex-row items-center justify-between bg-[#F9FAFB] rounded-[14px] px-4 py-[18px]"
-      onPress={onPress}
-      activeOpacity={0.7}
+      className={`flex-row items-center justify-between rounded-[14px] px-4 py-[18px] ${
+        disabled ? 'bg-[#F3F4F6]' : 'bg-[#F9FAFB]'
+      }`}
+      onPress={disabled ? undefined : onPress}
+      activeOpacity={disabled ? 1 : 0.7}
+      disabled={disabled}
     >
       <View className="flex-row items-center gap-[14px]">
-        <Text className="text-xl">{icon}</Text>
-        <Text className="text-[15px] font-medium text-[#1A1A1A]">{label}</Text>
+        <Text className={`text-xl ${disabled ? 'opacity-40' : ''}`}>{icon}</Text>
+        <Text
+          className={`text-[15px] font-medium ${
+            disabled ? 'text-[#9CA3AF]' : 'text-[#1A1A1A]'
+          }`}
+        >
+          {label}
+        </Text>
       </View>
-      <MaterialCommunityIcons name="chevron-right" size={22} color="#472FF8" />
+      <MaterialCommunityIcons
+        name="chevron-right"
+        size={22}
+        color={disabled ? '#D1D5DB' : '#472FF8'}
+      />
     </TouchableOpacity>
   );
 }
@@ -53,7 +68,7 @@ function EmptyBalanceCard() {
   );
 }
 
-function ActiveBalanceCard({ loan }: { loan: Loan }) {
+function ActiveBalanceCard({ loan }: { loan: ActiveLoan }) {
   return (
     <View className="bg-[#472FF8] rounded-2xl p-6 mb-7">
       <View className="flex-row items-start justify-between">
@@ -74,13 +89,13 @@ function ActiveBalanceCard({ loan }: { loan: Loan }) {
         <View className="flex-1">
           <Text className="text-xs text-white/80 mb-1">Next Payment</Text>
           <Text className="text-sm font-semibold text-white">
-            {formatNairaWhole(loan.next_due_amount)}
+            {formatNairaWhole(loan.next_payment)}
           </Text>
         </View>
         <View className="flex-1">
           <Text className="text-xs text-white/80 mb-1">Due Date</Text>
           <Text className="text-sm font-semibold text-white">
-            {formatDateSlash(loan.next_due_date)}
+            {formatDateSlash(loan.due_date)}
           </Text>
         </View>
       </View>
@@ -99,11 +114,17 @@ function ActiveBalanceCard({ loan }: { loan: Loan }) {
 export default function LoanHomeScreen() {
   const { data, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.LOANS],
-    queryFn: loanService.getLoans,
+    queryFn: loanService.getActiveLoans,
+  });
+
+  const { data: accountSummary } = useQuery({
+    queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
+    queryFn: accountService.getSummary,
   });
 
   const loan = data?.[0];
-  const hasLoan = !!loan && loan.status?.toLowerCase() === 'active';
+  const hasLoan = !!loan;
+  const activeLoanId = accountSummary?.active_loans?.[0]?.loan_id;
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
@@ -136,9 +157,20 @@ export default function LoanHomeScreen() {
         <ActionItem
           icon="📅"
           label="Repayment Schedule"
-          onPress={() => router.push('/(loan)/repayment-schedule')}
+          disabled={!activeLoanId}
+          onPress={() => {
+            if (!activeLoanId) return;
+            router.push({
+              pathname: '/(loan)/repayment-schedule',
+              params: { loanId: activeLoanId },
+            });
+          }}
         />
-        {hasLoan && <ActionItem icon="📊" label="Loan Status" />}
+        <ActionItem
+          icon="📊"
+          label="Loan Status"
+          onPress={() => router.push('/(loan)/loan-status')}
+        />
         <ActionItem icon="💰" label="Loan History" />
       </View>
     </SafeAreaView>

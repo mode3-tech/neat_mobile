@@ -17,6 +17,7 @@ export const QUERY_KEYS = {
   USER: 'user',
   LOAN: 'loan',
   LOANS: 'loans',
+  LOAN_STATUS: 'loan-status',
   REPAYMENT: 'repayment',
   BANKS: 'banks',
   TRANSACTIONS: 'transactions',

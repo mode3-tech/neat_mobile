@@ -47,13 +47,42 @@ export interface LoanApplyResponse {
   summary: LoanApplySummary;
 }
 
-export interface Loan {
+export interface ActiveLoan {
   loan_id: string;
-  loan_number: string;
-  principal_amount: number;
-  disbursed_amount: number;
   outstanding_balance: number;
+  next_payment: number;
+  due_date: string;
+}
+
+export interface LoanRepayment {
+  loan_product_type: string;
+  loan_amount: number;
+  total_repayment: number;
+  periodic_repayment: number;
+  loan_duration: string;
+  amount_paid: number;
+  yet_to_pay: number;
+  interest_rate: number;
+}
+
+export interface LoanRepaymentResponse {
   status: string;
-  next_due_date: string;
-  next_due_amount: number;
+  message: string;
+  repayment: LoanRepayment;
+}
+
+export interface LoanStatusItem {
+  loan_id: string;
+  loan_amount: number;
+  balance_remaining: number;
+  periodic_payment: number;
+  tenure: string;
+  interest_rate: number;
+  status: string;
+}
+
+export interface LoanStatusResponse {
+  status: string;
+  message: string;
+  loans: LoanStatusItem[];
 }

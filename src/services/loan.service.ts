@@ -1,9 +1,13 @@
 import type {
-  Loan,
+  ActiveLoan,
   LoanApplyPayload,
   LoanApplyResponse,
   LoanEligibility,
   LoanProduct,
+  LoanRepayment,
+  LoanRepaymentResponse,
+  LoanStatusItem,
+  LoanStatusResponse,
 } from '@/types/loan.types';
 import { api } from './api';
 
@@ -20,9 +24,23 @@ export const loanService = {
     return data.products;
   },
 
-  getLoans: async (): Promise<Loan[]> => {
-    const { data } = await api.get<{ message: string; loans: Loan[] }>('/loan/loans');
+  getActiveLoans: async (): Promise<ActiveLoan[]> => {
+    const { data } = await api.get<{ status: string; message: string; loans: ActiveLoan[] }>(
+      '/loan/loans/active',
+    );
     return data.loans;
+  },
+
+  getAllLoans: async (): Promise<LoanStatusItem[]> => {
+    const { data } = await api.get<LoanStatusResponse>('/loan/loans');
+    return data.loans;
+  },
+
+  getRepaymentSchedule: async (loanId: string): Promise<LoanRepayment> => {
+    const { data } = await api.get<LoanRepaymentResponse>(
+      `/loan/repayment-schedule/${encodeURIComponent(loanId)}`,
+    );
+    return data.repayment;
   },
 
   submitApplication: async (payload: LoanApplyPayload): Promise<LoanApplyResponse> => {
