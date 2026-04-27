@@ -2,11 +2,20 @@ import { useEffect, useRef, useState } from 'react';
 import { Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { QUERY_KEYS } from '@/constants';
+import { accountService } from '@/services/account.service';
 import { toggleNotifications } from '@/services/notification.service';
+import type { AccountSummary } from '@/types/account.types';
 
 export default function NotificationsScreen() {
-  const [enabled, setEnabled] = useState(true);
+  const queryClient = useQueryClient();
+  const { data: accountSummary, isLoading } = useQuery({
+    queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
+    queryFn: accountService.getSummary,
+  });
+
   const [displayEnabled, setDisplayEnabled] = useState(true);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
@@ -18,23 +27,36 @@ export default function NotificationsScreen() {
     };
   }, []);
 
+  useEffect(() => {
+    if (pending) return;
+    if (accountSummary) {
+      setDisplayEnabled(accountSummary.is_notifications_enabled);
+    }
+  }, [accountSummary, pending]);
+
   const handleToggle = async (value: boolean) => {
     if (pending) return;
+    const previous = accountSummary?.is_notifications_enabled ?? true;
     setDisplayEnabled(value);
     setPending(true);
     setError('');
     try {
       await toggleNotifications(value);
       if (!mountedRef.current) return;
-      setEnabled(value);
+      queryClient.setQueryData<AccountSummary>(
+        [QUERY_KEYS.ACCOUNT_SUMMARY],
+        (prev) => (prev ? { ...prev, is_notifications_enabled: value } : prev),
+      );
     } catch (err: unknown) {
       if (!mountedRef.current) return;
-      setDisplayEnabled(enabled);
+      setDisplayEnabled(previous);
       setError(err instanceof Error ? err.message : 'Failed to update notification settings');
     } finally {
       if (mountedRef.current) setPending(false);
     }
   };
+
+  const switchDisabled = pending || (isLoading && !accountSummary);
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
@@ -55,7 +77,7 @@ export default function NotificationsScreen() {
         <Switch
           value={displayEnabled}
           onValueChange={handleToggle}
-          disabled={pending}
+          disabled={switchDisabled}
           trackColor={{ false: '#E5E7EB', true: '#472FF8' }}
           thumbColor="#fff"
           ios_backgroundColor="#E5E7EB"

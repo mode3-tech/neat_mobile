@@ -20,6 +20,7 @@ export interface AccountSummary {
   available_balance: number;
   loan_balance: number;
   active_loans: ActiveLoan[];
+  is_notifications_enabled: boolean;
 }
 
 export interface UpdateProfileBody {

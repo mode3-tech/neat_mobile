@@ -99,7 +99,7 @@ export default function BvnVerificationScreen() {
         {isVerified && bvnResult && (
           <View style={styles.infoCard}>
             <InfoRow label="Name:" value={bvnResult.name} />
-            <InfoRow label="DOB:" value={bvnResult.dob} />
+            {/* <InfoRow label="DOB:" value={bvnResult.dob} /> */}
             <InfoRow label="Phone:" value={maskPhone(bvnResult.phone_number)} />
           </View>
         )}

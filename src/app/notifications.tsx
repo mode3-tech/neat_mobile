@@ -103,7 +103,7 @@ function NotificationItem({ item }: { item: AppNotification }) {
       </View>
       <View className="flex-1">
         <View className="flex-row items-center justify-between mb-1">
-          <Text className="text-[11px] text-[#9CA3AF]">
+          <Text className="text-[11px] text-[#29292a]">
             {formatRelativeTime(item.CreatedAt)}
           </Text>
           {!item.IsRead && (
@@ -111,11 +111,11 @@ function NotificationItem({ item }: { item: AppNotification }) {
           )}
         </View>
         <Text
-          className={`text-[14px] ${!item.IsRead ? 'font-bold' : 'font-semibold'} text-[#1A1A1A] mb-1`}
+          className={`text-[14px] ${!item.IsRead ? 'font-bold' : 'font-semibold'} text-[#272626] mb-1`}
         >
           {item.Title}
         </Text>
-        <Text className="text-[13px] text-[#6B7280] leading-[18px]">
+        <Text className="text-[13px] text-[#161617] leading-[18px]">
           {item.Body}
         </Text>
       </View>
@@ -309,7 +309,7 @@ export default function NotificationsScreen() {
           renderItem={({ item }) => <NotificationItem item={item} />}
           renderSectionHeader={({ section: { title } }) => (
             <View className="bg-white px-6 pt-5 pb-3">
-              <Text className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-[1.5px]">
+              <Text className="text-[11px] font-semibold text-[#2c2d2d] uppercase tracking-[1.5px]">
                 {title}
               </Text>
             </View>

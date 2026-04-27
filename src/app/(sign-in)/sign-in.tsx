@@ -170,7 +170,7 @@ export default function SignInScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => router.replace('/(sign-up)/bvn-verification')}
+              onPress={() => router.push('/(sign-up)/bvn-verification')}
               activeOpacity={0.7}
             >
               <Text style={styles.signUpText}>
