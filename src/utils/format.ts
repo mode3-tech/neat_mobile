@@ -111,6 +111,19 @@ export const formatDateSlash = (iso: string): string => {
 };
 
 /**
+ * Format an ISO date string as "March 21, 2026".
+ */
+export const formatDateLong = (iso: string): string => {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
+  ];
+  return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+};
+
+/**
  * Format a Date as "13 Jan, 2026".
  */
 export const formatDateShort = (date: Date): string => {

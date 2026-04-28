@@ -91,6 +91,14 @@ export const useAuthStore = create<AuthState>((set) => ({
       })
       .catch(() => {});
 
+    // Drop the locally cached profile photo so the next user on this device
+    // doesn't inherit the previous account's avatar.
+    import('@/stores/profile.store')
+      .then(({ useProfileStore }) => {
+        useProfileStore.getState().clearPhoto();
+      })
+      .catch(() => {});
+
     setAccessToken(null);
     // Tokens are kept in SecureStore so hasStoredTokens remains true on next
     // app open (sign-in page, not welcome). They are overwritten on next login.

@@ -31,6 +31,8 @@ export const setAccessToken = (token: string | null): void => {
   accessToken = token;
 };
 
+export const getAccessToken = (): string | null => accessToken;
+
 function createApiInstance(baseURL: string): AxiosInstance {
   const instance = axios.create({
     baseURL,

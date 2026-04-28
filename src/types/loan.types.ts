@@ -86,3 +86,34 @@ export interface LoanStatusResponse {
   message: string;
   loans: LoanStatusItem[];
 }
+
+export type LoanHistoryStatus = 'paid' | 'upcoming' | 'overdue';
+
+export interface LoanHistoryItem {
+  loan_id: string;
+  loan_amount: number;
+  payment_date: string;
+  status: LoanHistoryStatus;
+  amount_paid: number;
+}
+
+export interface LoanHistoryResponse {
+  status: string;
+  message: string;
+  history: LoanHistoryItem[];
+}
+
+export interface LoanDetails {
+  total_loan_amount: number;
+  amount_repaid: number;
+  outstanding_balance: number;
+  due_date: string;
+}
+
+export interface LoanDetailsResponse {
+  status: string;
+  message: string;
+  details: LoanDetails & {
+    repayment_history?: LoanHistoryItem[];
+  };
+}

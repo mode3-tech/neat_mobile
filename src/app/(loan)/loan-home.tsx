@@ -171,7 +171,11 @@ export default function LoanHomeScreen() {
           label="Loan Status"
           onPress={() => router.push('/(loan)/loan-status')}
         />
-        <ActionItem icon="💰" label="Loan History" />
+        <ActionItem
+          icon="💰"
+          label="Loan History"
+          onPress={() => router.push('/(loan)/loan-history')}
+        />
       </View>
     </SafeAreaView>
   );

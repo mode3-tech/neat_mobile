@@ -21,11 +21,13 @@ export interface AccountSummary {
   loan_balance: number;
   active_loans: ActiveLoan[];
   is_notifications_enabled: boolean;
+  profile_picture?: string;
 }
 
 export interface UpdateProfileBody {
   email?: string;
   address?: string;
+  profile_picture_uri?: string;
 }
 
 export interface AccountSummaryResponse {

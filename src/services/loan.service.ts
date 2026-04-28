@@ -2,7 +2,11 @@ import type {
   ActiveLoan,
   LoanApplyPayload,
   LoanApplyResponse,
+  LoanDetails,
+  LoanDetailsResponse,
   LoanEligibility,
+  LoanHistoryItem,
+  LoanHistoryResponse,
   LoanProduct,
   LoanRepayment,
   LoanRepaymentResponse,
@@ -46,5 +50,24 @@ export const loanService = {
   submitApplication: async (payload: LoanApplyPayload): Promise<LoanApplyResponse> => {
     const { data } = await api.post<LoanApplyResponse>('/loan/apply', payload);
     return data;
+  },
+
+  getLoanHistory: async (): Promise<LoanHistoryItem[]> => {
+    const { data } = await api.get<LoanHistoryResponse>('/loan/history');
+    return data.history;
+  },
+
+  getLoanDetails: async (loanId: string): Promise<LoanDetails> => {
+    const { data } = await api.get<LoanDetailsResponse>(
+      `/loan/loans/${encodeURIComponent(loanId)}`,
+    );
+    return data.details;
+  },
+
+  getLoanHistoryById: async (loanId: string): Promise<LoanHistoryItem[]> => {
+    const { data } = await api.get<LoanHistoryResponse>(
+      `/loan/history/${encodeURIComponent(loanId)}`,
+    );
+    return data.history;
   },
 };

@@ -23,6 +23,8 @@ export default function HomeScreen() {
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const photoUri = useProfileStore((s) => s.photoUri);
+  const photoCacheBuster = useProfileStore((s) => s.photoCacheBuster);
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -45,7 +47,7 @@ export default function HomeScreen() {
     queryFn: getUnreadCount,
   });
 
-  const { data: accountSummary } = useQuery({
+  const { data: accountSummary, dataUpdatedAt: summaryUpdatedAt } = useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
     queryFn: accountService.getSummary,
   });
@@ -54,8 +56,27 @@ export default function HomeScreen() {
     if (fetchedCount !== undefined) setUnreadCount(fetchedCount);
   }, [fetchedCount, setUnreadCount]);
 
-  const firstName = accountSummary?.full_name?.split(' ')[0] ?? user?.firstName ?? 'MJ';
-  const initial = firstName.charAt(0).toUpperCase();
+  const fullName = accountSummary?.full_name ?? user?.firstName ?? '';
+  const nameParts = fullName.trim().split(/\s+/).filter(Boolean);
+  const firstName = nameParts[0] ?? '';
+  const initials =
+    nameParts.length >= 2
+      ? `${nameParts[0]!.charAt(0)}${nameParts[nameParts.length - 1]!.charAt(0)}`.toUpperCase()
+      : firstName.charAt(0).toUpperCase() || 'U';
+
+  const rawAvatarUri: string | null = accountSummary?.profile_picture || photoUri || null;
+  const avatarUri = (() => {
+    if (!rawAvatarUri) return null;
+    if (!/^https?:\/\//.test(rawAvatarUri) || photoCacheBuster === 0) {
+      return rawAvatarUri;
+    }
+    const sep = rawAvatarUri.includes('?') ? '&' : '?';
+    return `${rawAvatarUri}${sep}v=${photoCacheBuster}`;
+  })();
+
+  useEffect(() => {
+    setImageLoadFailed(false);
+  }, [avatarUri, summaryUpdatedAt]);
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
@@ -70,15 +91,21 @@ export default function HomeScreen() {
         <View className="flex-row justify-between items-center px-6 pt-2 pb-1">
           <View className="flex-row items-center gap-2.5">
             <View className="w-12 h-12 rounded-full bg-[#472FF8] items-center justify-center overflow-hidden">
-              {photoUri ? (
-                <Image source={{ uri: photoUri }} className="w-full h-full" />
+              {avatarUri && !imageLoadFailed ? (
+                <Image
+                  source={{ uri: avatarUri }}
+                  className="w-full h-full"
+                  onError={() => setImageLoadFailed(true)}
+                />
               ) : (
-                <Text className="text-white text-base font-bold">{initial}</Text>
+                <Text className="text-white text-base font-bold">{initials}</Text>
               )}
             </View>
             <View>
               {/* <Text className="text-xs font-normal text-gray-500">Welcome Back,</Text> */}
-              <Text className="text-base font-bold text-gray-900">Hi, {firstName} 👋</Text>
+              <Text className="text-base font-bold text-gray-900">
+                {firstName ? `Hi, ${firstName} 👋` : 'Hi 👋'}
+              </Text>
             </View>
           </View>
           <View className="flex-row items-center gap-3">

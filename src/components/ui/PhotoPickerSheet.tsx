@@ -11,16 +11,8 @@ interface PhotoPickerSheetProps {
   onSelect: (uri: string) => void;
 }
 
-function persistToDocuments(pickedUri: string, previousUri: string | null): string {
+function persistToDocuments(pickedUri: string): string {
   try {
-    if (previousUri && previousUri.startsWith('file://')) {
-      try {
-        const oldFile = new File(previousUri);
-        if (oldFile.exists) oldFile.delete();
-      } catch {
-        // Ignore — old file may already be gone
-      }
-    }
     const rawExt = pickedUri.split('.').pop()?.toLowerCase() ?? 'jpg';
     const ext = ['jpg', 'jpeg', 'png', 'heic'].includes(rawExt) ? rawExt : 'jpg';
     const dest = new File(Paths.document, `profile-photo-${Date.now()}.${ext}`);
@@ -41,7 +33,7 @@ export function PhotoPickerSheet({
   const insets = useSafeAreaInsets();
 
   const handlePicked = (pickedUri: string) => {
-    const stableUri = persistToDocuments(pickedUri, currentPhotoUri);
+    const stableUri = persistToDocuments(pickedUri);
     onSelect(stableUri);
     onClose();
   };

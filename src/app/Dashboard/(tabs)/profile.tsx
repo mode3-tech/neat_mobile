@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
+import { File } from 'expo-file-system';
 
 import { QUERY_KEYS } from '@/constants';
 import { accountService } from '@/services/account.service';
@@ -45,16 +46,68 @@ export default function ProfileScreen() {
   const [photoSheetVisible, setPhotoSheetVisible] = useState(false);
   const photoUri = useProfileStore((s) => s.photoUri);
   const setPhotoUri = useProfileStore((s) => s.setPhotoUri);
+  const photoCacheBuster = useProfileStore((s) => s.photoCacheBuster);
+  const bumpPhotoCacheBuster = useProfileStore((s) => s.bumpPhotoCacheBuster);
+  const clearPhoto = useProfileStore((s) => s.clearPhoto);
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const queryClient = useQueryClient();
 
-  const { data: summary } = useQuery({
+  const { data: summary, dataUpdatedAt: summaryUpdatedAt } = useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
     queryFn: accountService.getSummary,
   });
 
   const fullName = summary?.full_name ?? '';
-  const initial = fullName.charAt(0).toUpperCase() || 'U';
+  const nameParts = fullName.trim().split(/\s+/).filter(Boolean);
+  const initials =
+    nameParts.length >= 2
+      ? `${nameParts[0]!.charAt(0)}${nameParts[nameParts.length - 1]!.charAt(0)}`.toUpperCase()
+      : fullName.charAt(0).toUpperCase() || 'U';
+  const rawAvatarUri: string | null = summary?.profile_picture || photoUri || null;
+  // Append a cache buster to remote URLs so RN's image cache fetches fresh
+  // bytes after an upload, even if the backend reuses the same URL.
+  const avatarUri = (() => {
+    if (!rawAvatarUri) return null;
+    if (!/^https?:\/\//.test(rawAvatarUri) || photoCacheBuster === 0) {
+      return rawAvatarUri;
+    }
+    const sep = rawAvatarUri.includes('?') ? '&' : '?';
+    return `${rawAvatarUri}${sep}v=${photoCacheBuster}`;
+  })();
+
+  useEffect(() => {
+    setImageLoadFailed(false);
+  }, [avatarUri, summaryUpdatedAt]);
+
+  const uploadPhotoMutation = useMutation({
+    mutationFn: (uri: string) =>
+      accountService.updateProfile({ profile_picture_uri: uri }),
+    onMutate: (newUri: string) => {
+      const prev = useProfileStore.getState().photoUri;
+      setPhotoUri(newUri);
+      return { prev };
+    },
+    onSuccess: (_data, newUri, ctx) => {
+      if (ctx?.prev && ctx.prev.startsWith('file://') && ctx.prev !== newUri) {
+        try { new File(ctx.prev).delete(); } catch {}
+      }
+      bumpPhotoCacheBuster();
+      setImageLoadFailed(false);
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    },
+    onError: (err, newUri, ctx) => {
+      setPhotoUri(ctx?.prev ?? null);
+      if (newUri.startsWith('file://')) {
+        try { new File(newUri).delete(); } catch {}
+      }
+      Alert.alert(
+        'Upload failed',
+        err instanceof Error ? err.message : 'Please try again.',
+      );
+    },
+  });
 
   const logoutMutation = useMutation({
     mutationFn: authService.logoutUser,
@@ -64,6 +117,7 @@ export default function ProfileScreen() {
     onSettled: () => {
       queryClient.clear();
       clearAuth();
+      clearPhoto();
       setLogoutVisible(false);
       router.replace('/welcome');
     },
@@ -97,16 +151,26 @@ export default function ProfileScreen() {
         <View className="items-center mb-4">
           <View className="relative">
             <View className="w-24 h-24 rounded-full bg-[#472FF8] items-center justify-center overflow-hidden">
-              {photoUri ? (
-                <Image source={{ uri: photoUri }} className="w-full h-full" />
+              {avatarUri && !imageLoadFailed ? (
+                <Image
+                  source={{ uri: avatarUri }}
+                  className="w-full h-full"
+                  onError={() => setImageLoadFailed(true)}
+                />
               ) : (
-                <Text className="text-white text-3xl font-bold">{initial}</Text>
+                <Text className="text-white text-3xl font-bold">{initials}</Text>
+              )}
+              {uploadPhotoMutation.isPending && (
+                <View className="absolute inset-0 bg-black/40 items-center justify-center">
+                  <ActivityIndicator color="#fff" />
+                </View>
               )}
             </View>
             <TouchableOpacity
               className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#472FF8] items-center justify-center border-2 border-white"
               onPress={() => setPhotoSheetVisible(true)}
               activeOpacity={0.85}
+              disabled={uploadPhotoMutation.isPending}
             >
               <MaterialCommunityIcons name="camera" size={16} color="#fff" />
             </TouchableOpacity>
@@ -180,9 +244,9 @@ export default function ProfileScreen() {
 
       <PhotoPickerSheet
         visible={photoSheetVisible}
-        currentPhotoUri={photoUri}
+        currentPhotoUri={avatarUri}
         onClose={() => setPhotoSheetVisible(false)}
-        onSelect={(uri) => setPhotoUri(uri)}
+        onSelect={(uri) => uploadPhotoMutation.mutate(uri)}
       />
     </SafeAreaView>
   );
