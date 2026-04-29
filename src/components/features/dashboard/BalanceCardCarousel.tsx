@@ -24,6 +24,8 @@ interface BalanceCardCarouselProps {
   accountNumber?: string;
   availableBalance?: number;
   loanBalance?: number;
+  hasActiveLoan: boolean;
+  onMakeRepayment: () => void;
 }
 
 interface CardData {
@@ -43,6 +45,7 @@ function buildCards(
   accountNumber: string,
   availableBalance: number | undefined,
   loanBalance: number | undefined,
+  hasActiveLoan: boolean,
 ): CardData[] {
   const fmtBalance = (val: number | undefined) =>
     val !== undefined
@@ -79,7 +82,7 @@ function buildCards(
       accountNumber,
       title: 'Loan Balance',
       amount: fmtBalance(loanBalance),
-      buttons: [{ label: 'Make Repayment' }],
+      buttons: hasActiveLoan ? [{ label: 'Make Repayment' }] : [],
       image: require('../../../../assets/images/dashboard/barg.png'),
       imageSize: { width: 80, height: 70 },
     },
@@ -92,13 +95,15 @@ export default function BalanceCardCarousel({
   accountNumber = '---',
   availableBalance,
   loanBalance,
+  hasActiveLoan,
+  onMakeRepayment,
 }: BalanceCardCarouselProps) {
   const { width: screenWidth } = useWindowDimensions();
   const cardWidth = screenWidth - CARD_MARGIN * 2;
 
   const CARDS = useMemo(
-    () => buildCards(accountNumber, availableBalance, loanBalance),
-    [accountNumber, availableBalance, loanBalance],
+    () => buildCards(accountNumber, availableBalance, loanBalance, hasActiveLoan),
+    [accountNumber, availableBalance, loanBalance, hasActiveLoan],
   );
   const EXTENDED_CARDS = useMemo(
     () => [...CARDS, CARDS[0]],
@@ -243,6 +248,9 @@ export default function BalanceCardCarousel({
               }
               if (btn.label === 'Deposit') {
                 router.push('/(savings)/add-money');
+              }
+              if (btn.label === 'Make Repayment') {
+                onMakeRepayment();
               }
             }}
           >

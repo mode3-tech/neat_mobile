@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs, router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -55,8 +55,14 @@ export default function TabsLayout() {
             <MaterialCommunityIcons name="wallet" size={size} color={color} />
           ),
         }}
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push('/(loan)/loan-home');
+          },
+        }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="support"
         options={{
           title: 'Support',
@@ -64,7 +70,7 @@ export default function TabsLayout() {
             <MaterialCommunityIcons name="phone" size={size} color={color} />
           ),
         }}
-      />
+      /> */}
       <Tabs.Screen
         name="profile"
         options={{

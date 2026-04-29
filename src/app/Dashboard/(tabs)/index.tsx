@@ -16,12 +16,14 @@ import ServicesGrid from '@/components/features/dashboard/ServicesGrid';
 import PromoCard from '@/components/features/dashboard/PromoCard';
 import RecentTransactions from '@/components/features/dashboard/RecentTransactions';
 import ActiveLoanCard from '@/components/features/dashboard/ActiveLoanCard';
+import RepaymentBottomSheet from '@/components/features/loans/RepaymentBottomSheet';
 
 export default function HomeScreen() {
   const user = useAuthStore((s) => s.user);
   const queryClient = useQueryClient();
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [repaymentOpen, setRepaymentOpen] = useState(false);
   const photoUri = useProfileStore((s) => s.photoUri);
   const photoCacheBuster = useProfileStore((s) => s.photoCacheBuster);
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
@@ -63,6 +65,8 @@ export default function HomeScreen() {
     nameParts.length >= 2
       ? `${nameParts[0]!.charAt(0)}${nameParts[nameParts.length - 1]!.charAt(0)}`.toUpperCase()
       : firstName.charAt(0).toUpperCase() || 'U';
+
+  const hasActiveLoan = (accountSummary?.active_loans?.length ?? 0) > 0;
 
   const rawAvatarUri: string | null = accountSummary?.profile_picture || photoUri || null;
   const avatarUri = (() => {
@@ -137,6 +141,8 @@ export default function HomeScreen() {
           accountNumber={accountSummary?.account_number}
           availableBalance={accountSummary?.available_balance}
           loanBalance={accountSummary?.loan_balance}
+          hasActiveLoan={hasActiveLoan}
+          onMakeRepayment={() => setRepaymentOpen(true)}
         />
 
         {/* Services */}
@@ -159,6 +165,13 @@ export default function HomeScreen() {
 
         <RecentTransactions />
       </ScrollView>
+
+      <RepaymentBottomSheet
+        visible={repaymentOpen}
+        onClose={() => setRepaymentOpen(false)}
+        loan={accountSummary?.active_loans?.[0]}
+        availableBalance={accountSummary?.available_balance ?? 0}
+      />
     </SafeAreaView>
   );
 }
