@@ -23,10 +23,13 @@ const ERROR_COLOR = '#EF4444';
 type Status = 'idle' | 'loading' | 'error' | 'verified';
 
 export default function BvnVerificationScreen() {
-  const [bvn, setBvn] = useState('');
-  const [status, setStatus] = useState<Status>('idle');
-  const [bvnResult, setBvnResult] = useState<BvnData | null>(null);
+  const storedBvn = useSignUpStore((s) => s.bvn);
+  const storedBvnData = useSignUpStore((s) => s.bvnData);
   const storeBvnData = useSignUpStore((s) => s.setBvnData);
+
+  const [bvn, setBvn] = useState(storedBvn);
+  const [status, setStatus] = useState<Status>(storedBvnData ? 'verified' : 'idle');
+  const [bvnResult, setBvnResult] = useState<BvnData | null>(storedBvnData);
 
   const isValid = bvn.length === BVN_LENGTH;
   const isLoading = status === 'loading';

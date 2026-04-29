@@ -17,18 +17,34 @@ const PRIMARY = '#472FF8';
 const ERROR_COLOR = '#EF4444';
 
 export default function TransactionPinScreen() {
+  const storedPin = useSignUpStore((s) => s.transactionPin);
+  const storePin = useSignUpStore((s) => s.setTransactionPin);
+
+  const [editing, setEditing] = useState(!storedPin);
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [showPin, setShowPin] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const storePin = useSignUpStore((s) => s.setTransactionPin);
 
   const isPinValid = pin.length === PIN_LENGTH;
   const isMatch = pin === confirmPin && confirmPin.length === PIN_LENGTH;
-  const canProceed = pin.length > 0 && confirmPin.length > 0;
+  const canProceed = editing
+    ? pin.length > 0 && confirmPin.length > 0
+    : true;
+
+  const handleStartEditing = () => {
+    setEditing(true);
+    setPin('');
+    setConfirmPin('');
+    setHasError(false);
+  };
 
   const handleProceed = () => {
+    if (!editing) {
+      router.push('/(sign-up)/enable-biometrics');
+      return;
+    }
     if (!isPinValid || !isMatch) {
       setHasError(true);
       return;
@@ -52,6 +68,25 @@ export default function TransactionPinScreen() {
         <Text style={styles.title}>Create Transaction PIN</Text>
         <Text style={styles.subtitle}>Protect your transactions with a secure PIN.</Text>
 
+        {!editing && (
+          <View style={styles.setCard}>
+            <View style={styles.setHeader}>
+              <View style={styles.checkCircle}>
+                <Text style={styles.checkMark}>✓</Text>
+              </View>
+              <Text style={styles.setTitle}>PIN set</Text>
+            </View>
+            <Text style={styles.setBody}>
+              Your PIN is saved. Tap proceed to continue, or change it below.
+            </Text>
+            <TouchableOpacity onPress={handleStartEditing} activeOpacity={0.7}>
+              <Text style={styles.changeLink}>Change PIN</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {editing && (
+        <>
         {/* PIN field */}
         <View style={styles.field}>
           <Text style={styles.label}>Create 4-digit PIN</Text>
@@ -100,6 +135,8 @@ export default function TransactionPinScreen() {
             <Text style={styles.errorText}>PINs do not match</Text>
           )}
         </View>
+        </>
+        )}
 
         <View style={styles.spacer} />
 
@@ -217,5 +254,46 @@ const styles = StyleSheet.create({
   },
   disabledBtnText: {
     color: '#9CA3AF',
+  },
+  setCard: {
+    backgroundColor: '#EEF0FF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    gap: 8,
+  },
+  setHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  checkCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#16A34A',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkMark: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  setTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1A1A1A',
+  },
+  setBody: {
+    fontSize: 13,
+    color: '#374151',
+    lineHeight: 18,
+  },
+  changeLink: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: PRIMARY,
+    marginTop: 4,
   },
 });

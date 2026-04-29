@@ -23,11 +23,14 @@ const SUCCESS_COLOR = '#16A34A';
 type Status = 'idle' | 'loading' | 'error' | 'verified';
 
 export default function NinVerificationScreen() {
-  const [nin, setNin] = useState('');
-  const [status, setStatus] = useState<Status>('idle');
-  const [ninResult, setNinResult] = useState<NinData | null>(null);
+  const storedNin = useSignUpStore((s) => s.nin);
+  const storedNinData = useSignUpStore((s) => s.ninData);
   const storeNinData = useSignUpStore((s) => s.setNinData);
   const bvnData = useSignUpStore((s) => s.bvnData);
+
+  const [nin, setNin] = useState(storedNin);
+  const [status, setStatus] = useState<Status>(storedNinData ? 'verified' : 'idle');
+  const [ninResult, setNinResult] = useState<NinData | null>(storedNinData);
 
   const isValid = nin.length === NIN_LENGTH;
   const isLoading = status === 'loading';

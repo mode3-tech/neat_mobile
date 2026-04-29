@@ -18,13 +18,18 @@ import { useAuthStore } from '@/stores/auth.store';
 const PRIMARY = '#472FF8';
 
 export default function EnableBiometricsScreen() {
-  const [enabled, setEnabled] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
   const store = useSignUpStore();
   const setTokens = useAuthStore((s) => s.setTokens);
   const setBiometricsEnabled = useAuthStore((s) => s.setBiometricsEnabled);
+
+  const [enabled, setEnabled] = useState(store.biometricsEnabled);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleToggle = (next: boolean) => {
+    setEnabled(next);
+    store.setBiometrics(next);
+  };
 
   const handleComplete = async () => {
     store.setBiometrics(enabled);
@@ -78,7 +83,7 @@ export default function EnableBiometricsScreen() {
         <Text style={styles.toggleLabel}>Enable</Text>
         <Switch
           value={enabled}
-          onValueChange={setEnabled}
+          onValueChange={handleToggle}
           trackColor={{ false: '#E5E7EB', true: PRIMARY }}
           thumbColor="#fff"
         />

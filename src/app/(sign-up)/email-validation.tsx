@@ -18,20 +18,38 @@ const PRIMARY = '#472FF8';
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function EmailValidationScreen() {
-  const [email, setEmail] = useState('');
+  const storedEmail = useSignUpStore((s) => s.email);
+  const storedEmailVerificationId = useSignUpStore((s) => s.emailVerificationId);
+  const storeEmail = useSignUpStore((s) => s.setEmail);
+  const storeEmailVerificationId = useSignUpStore((s) => s.setEmailVerificationId);
+
+  const isAlreadyVerified = !!storedEmail && !!storedEmailVerificationId;
+
+  const [editing, setEditing] = useState(!isAlreadyVerified);
+  const [email, setEmail] = useState(storedEmail);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const storeEmail = useSignUpStore((s) => s.setEmail);
 
   const isValid = EMAIL_REGEX.test(email);
 
+  const handleStartEditing = () => {
+    setEditing(true);
+    setEmail('');
+    setError('');
+  };
+
   const handleProceed = async () => {
+    if (!editing) {
+      router.push('/(sign-up)/create-password');
+      return;
+    }
     if (!isValid || loading) return;
-    storeEmail(email);
     setLoading(true);
     setError('');
     try {
       await authService.sendEmailOtp(email);
+      storeEmail(email);
+      storeEmailVerificationId('');
       router.push('/(sign-up)/email-otp');
     } catch (err: any) {
       setError(err.message);
@@ -59,45 +77,66 @@ export default function EmailValidationScreen() {
         <Text style={styles.title}>Email Validation</Text>
         <Text style={styles.subtitle}>Enter your email address</Text>
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Email Address</Text>
-          <View style={styles.inputWrap}>
-            <TextInput
-              style={styles.input}
-              value={email}
-              onChangeText={(val) => { setEmail(val); setError(''); }}
-              placeholder="example@gmail.com"
-              placeholderTextColor="#9CA3AF"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
+        {!editing && (
+          <View style={styles.setCard}>
+            <View style={styles.setHeader}>
+              <View style={styles.checkCircle}>
+                <Text style={styles.checkMark}>✓</Text>
+              </View>
+              <Text style={styles.setTitle}>Email verified</Text>
+            </View>
+            <Text style={styles.setBody}>{storedEmail}</Text>
+            <TouchableOpacity onPress={handleStartEditing} activeOpacity={0.7}>
+              <Text style={styles.changeLink}>Change email</Text>
+            </TouchableOpacity>
           </View>
-        </View>
+        )}
 
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        {editing && (
+          <>
+            <View style={styles.field}>
+              <Text style={styles.label}>Email Address</Text>
+              <View style={styles.inputWrap}>
+                <TextInput
+                  style={styles.input}
+                  value={email}
+                  onChangeText={(val) => { setEmail(val); setError(''); }}
+                  placeholder="example@gmail.com"
+                  placeholderTextColor="#9CA3AF"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
+            </View>
+
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          </>
+        )}
 
         <View style={styles.spacer} />
 
         <View style={styles.footer}>
           <TouchableOpacity
-            style={[styles.primaryBtn, !isValid && styles.disabledBtn]}
+            style={[styles.primaryBtn, editing && !isValid && styles.disabledBtn]}
             onPress={handleProceed}
-            disabled={!isValid || loading}
+            disabled={editing ? (!isValid || loading) : false}
             activeOpacity={0.85}
           >
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
+              <Text style={[styles.primaryBtnText, editing && !isValid && styles.disabledBtnText]}>
                 Proceed
               </Text>
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.skipBtn} onPress={handleSkip}>
-            <Text style={styles.skipText}>Skip Now</Text>
-          </TouchableOpacity>
+          {editing && (
+            <TouchableOpacity style={styles.skipBtn} onPress={handleSkip}>
+              <Text style={styles.skipText}>Skip Now</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
@@ -196,5 +235,46 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#374151',
     fontWeight: '500',
+  },
+  setCard: {
+    backgroundColor: '#EEF0FF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    gap: 8,
+  },
+  setHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  checkCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#16A34A',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkMark: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  setTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1A1A1A',
+  },
+  setBody: {
+    fontSize: 13,
+    color: '#374151',
+    lineHeight: 18,
+  },
+  changeLink: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: PRIMARY,
+    marginTop: 4,
   },
 });

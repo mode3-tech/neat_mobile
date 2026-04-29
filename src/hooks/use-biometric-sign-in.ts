@@ -5,6 +5,7 @@ import {
   type BiometryType,
   getBiometricType,
   isBiometricAvailable,
+  promptBiometricDetailed,
 } from '@/services/biometric.service';
 import { authService } from '@/services/auth.service';
 import { getOrCreateDeviceId, signChallenge } from '@/services/device.service';
@@ -40,7 +41,7 @@ interface UseBiometricSignInReturn {
   biometryType: BiometryType;
   /** Whether a biometric sign-in is currently in progress */
   authenticating: boolean;
-  /** Requests a challenge, signs it with the device key (triggers biometric prompt), then verifies. */
+  /** Prompts for biometric, then signs a server challenge with the device key and verifies it. */
   signInWithBiometric: () => Promise<SignInResult>;
 }
 
@@ -76,6 +77,21 @@ export function useBiometricSignIn(): UseBiometricSignInReturn {
   const signInWithBiometric = useCallback(async (): Promise<SignInResult> => {
     setAuthenticating(true);
     try {
+      const promptResult = await promptBiometricDetailed({
+        title: 'Sign in to NEAT',
+        subtitle: 'Verify your identity',
+        description: 'Authenticate to sign in with biometrics',
+      });
+      if (promptResult.status === 'cancelled') {
+        return { status: 'cancelled' };
+      }
+      if (promptResult.status === 'lockout') {
+        return { status: 'failed', error: 'Too many attempts. Please try again in a moment.' };
+      }
+      if (promptResult.status === 'failed') {
+        return { status: 'failed', error: 'Biometric authentication failed' };
+      }
+
       const { challenge } = await authService.requestChallenge();
       if (!challenge) {
         return { status: 'failed', error: 'Invalid challenge from server' };

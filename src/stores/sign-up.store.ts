@@ -35,7 +35,7 @@ const initialState = {
   email: '',
   password: '',
   transactionPin: '',
-  biometricsEnabled: false,
+  biometricsEnabled: true,
   phoneVerificationId: '',
   emailVerificationId: '',
 };

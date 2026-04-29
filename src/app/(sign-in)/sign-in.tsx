@@ -170,7 +170,7 @@ export default function SignInScreen() {
               activeOpacity={0.7}
             >
               <Text style={styles.signUpText}>
-                Don't have an account?{' '}
+                Don't have an accounters?{' '}
                 <Text style={styles.signUpLink}>Sign up</Text>
               </Text>
             </TouchableOpacity>
