@@ -10,11 +10,13 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { toast } from 'sonner-native';
 
 import { PIN_LENGTH } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
+import { getErrorMessage } from '@/utils/error';
 
 function formatCurrency(amount: number): string {
   return (
@@ -67,7 +69,6 @@ export default function TransferReviewScreen() {
   const [pin, setPin] = useState('');
   const [showPin, setShowPin] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
 
   // Guard: redirect back if store is empty (direct navigation)
   useEffect(() => {
@@ -82,7 +83,6 @@ export default function TransferReviewScreen() {
 
   const submitTransfer = async (transactionPin: string) => {
     setSubmitting(true);
-    setErrorMsg('');
     try {
       const response = await walletService.transfer({
         amount: parsedAmount,
@@ -97,12 +97,8 @@ export default function TransferReviewScreen() {
       await onManualPinSuccess(transactionPin);
       store.setTransferResult(response.transfer);
       router.push('/(transfer)/transfer-success');
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.error ||
-        err?.message ||
-        'Transfer failed. Please try again.';
-      setErrorMsg(message);
+    } catch (err: unknown) {
+      toast.error('Transfer failed', { description: getErrorMessage(err) });
     } finally {
       setSubmitting(false);
     }
@@ -115,10 +111,11 @@ export default function TransferReviewScreen() {
 
   const handleBiometric = async () => {
     if (authenticating || submitting) return;
-    setErrorMsg('');
     const storedPin = await authenticateWithBiometric();
     if (!storedPin) {
-      setErrorMsg('Biometric authentication failed. Please use your PIN.');
+      toast.error('Authentication failed', {
+        description: 'Biometric authentication failed. Please use your PIN.',
+      });
       return;
     }
     submitTransfer(storedPin);
@@ -181,10 +178,9 @@ export default function TransferReviewScreen() {
             <TextInput
               className="flex-1 text-[15px] text-[#1A1A1A] p-0 text-center tracking-[8px]"
               value={pin}
-              onChangeText={(t) => {
-                setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH));
-                setErrorMsg('');
-              }}
+              onChangeText={(t) =>
+                setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH))
+              }
               placeholder="••••"
               placeholderTextColor="#9CA3AF"
               secureTextEntry={!showPin}
@@ -199,9 +195,6 @@ export default function TransferReviewScreen() {
               />
             </TouchableOpacity>
           </View>
-          {errorMsg !== '' && (
-            <Text className="text-xs text-red-500 mt-1.5">{errorMsg}</Text>
-          )}
         </View>
 
         {/* Confirm + Fingerprint */}

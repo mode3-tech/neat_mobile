@@ -9,11 +9,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { toast } from 'sonner-native';
 
 import { PIN_LENGTH } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { loanService } from '@/services/loan.service';
 import { useLoanStore } from '@/stores/loan.store';
+import { getErrorMessage } from '@/utils/error';
 
 export default function LoanPinScreen() {
   const store = useLoanStore();
@@ -28,13 +30,11 @@ export default function LoanPinScreen() {
   const [pin, setPin] = useState('');
   const [showPin, setShowPin] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
 
   const canConfirm = pin.length === PIN_LENGTH;
 
   const submitApplication = async (transactionPin: string) => {
     setSubmitting(true);
-    setErrorMsg('');
     try {
       const response = await loanService.submitApplication({
         business_address: store.businessAddress,
@@ -49,12 +49,8 @@ export default function LoanPinScreen() {
       store.setSummary(response.summary);
       store.setApplicationRef(response.application_ref);
       router.push('/(loan)/loan-success');
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.error ||
-        err?.message ||
-        'Failed to submit application';
-      setErrorMsg(message);
+    } catch (err: unknown) {
+      toast.error('Application failed', { description: getErrorMessage(err) });
     } finally {
       setSubmitting(false);
     }
@@ -67,10 +63,11 @@ export default function LoanPinScreen() {
 
   const handleBiometric = async () => {
     if (authenticating || submitting) return;
-    setErrorMsg('');
     const storedPin = await authenticateWithBiometric();
     if (!storedPin) {
-      setErrorMsg('Biometric authentication failed. Please use your PIN.');
+      toast.error('Authentication failed', {
+        description: 'Biometric authentication failed. Please use your PIN.',
+      });
       return;
     }
     submitApplication(storedPin);
@@ -95,10 +92,9 @@ export default function LoanPinScreen() {
           <TextInput
             className="flex-1 text-[15px] text-[#1A1A1A] p-0"
             value={pin}
-            onChangeText={(t) => {
-              setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH));
-              setErrorMsg('');
-            }}
+            onChangeText={(t) =>
+              setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH))
+            }
             placeholder="••••"
             placeholderTextColor="#9CA3AF"
             secureTextEntry={!showPin}
@@ -113,9 +109,6 @@ export default function LoanPinScreen() {
             />
           </TouchableOpacity>
         </View>
-        {errorMsg !== '' && (
-          <Text className="text-xs text-red-500 mt-1.5">{errorMsg}</Text>
-        )}
       </View>
 
       <View className="flex-1" />

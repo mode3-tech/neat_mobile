@@ -181,8 +181,8 @@ export default function RepaymentScheduleScreen() {
         )}
       </ScrollView>
 
-      {/* Bottom Buttons */}
-      {!isLoading && repayment && (
+      {/* Bottom Buttons — temporarily disabled; repayment now lives on loan-home.tsx */}
+      {/* {!isLoading && repayment && (
         <View className="pb-4 gap-3">
           <TouchableOpacity
             className="bg-[#472FF8] rounded-full py-4 items-center"
@@ -199,7 +199,7 @@ export default function RepaymentScheduleScreen() {
             <Text className="text-[#472FF8] text-base font-semibold">Pay Off Early</Text>
           </TouchableOpacity>
         </View>
-      )}
+      )} */}
 
       {/* Payment Modal */}
       <Modal

@@ -9,9 +9,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
+import { toast } from 'sonner-native';
 
 import { authService } from '@/services/auth.service';
 import { useSecurityChangeStore } from '@/stores/security-change.store';
+import { getErrorMessage } from '@/utils/error';
 
 const REQUIREMENTS = [
   { label: 'An uppercase letter', test: (p: string) => /[A-Z]/.test(p) },
@@ -61,7 +63,6 @@ export default function ChangePasswordScreen() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [hasError, setHasError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [sessionExpired, setSessionExpired] = useState(false);
 
@@ -88,12 +89,12 @@ export default function ChangePasswordScreen() {
       return;
     }
     if (newPassword === currentPassword) {
-      setHasError(true);
-      setErrorMessage('New password must be different from current password.');
+      toast.error('Password change failed', {
+        description: 'New password must be different from current password.',
+      });
       return;
     }
     setLoading(true);
-    setErrorMessage('');
     try {
       await authService.changePassword({
         verification_id: passwordChange.verificationId,
@@ -109,8 +110,8 @@ export default function ChangePasswordScreen() {
           message: 'Your password has been updated. Use your new password the next time you sign in.',
         },
       });
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to change password.');
+    } catch (err: unknown) {
+      toast.error('Password change failed', { description: getErrorMessage(err) });
     } finally {
       setLoading(false);
     }
@@ -159,7 +160,6 @@ export default function ChangePasswordScreen() {
             onChangeText={(t) => {
               setCurrentPassword(t);
               setHasError(false);
-              setErrorMessage('');
             }}
             hasError={false}
             placeholder="Enter current password"
@@ -171,7 +171,6 @@ export default function ChangePasswordScreen() {
             onChangeText={(t) => {
               setNewPassword(t);
               setHasError(false);
-              setErrorMessage('');
             }}
             hasError={hasError && !isValidNew}
             placeholder="Enter new password"
@@ -199,7 +198,6 @@ export default function ChangePasswordScreen() {
             onChangeText={(t) => {
               setConfirmNewPassword(t);
               setHasError(false);
-              setErrorMessage('');
             }}
             hasError={hasError && !isMatch}
             placeholder="Re-enter new password"
@@ -207,12 +205,6 @@ export default function ChangePasswordScreen() {
           {hasError && !isMatch && confirmNewPassword.length > 0 && (
             <Text className="text-xs text-[#EF4444] -mt-3">Passwords do not match</Text>
           )}
-          {errorMessage ? (
-            <View className="bg-[#FEF2F2] rounded-xl px-4 py-3 mt-2">
-              <Text className="text-[13px] text-[#EF4444]">{errorMessage}</Text>
-            </View>
-          ) : null}
-
 
         <View className="flex-1" />
 

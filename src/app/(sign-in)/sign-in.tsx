@@ -11,12 +11,14 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { toast } from 'sonner-native';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useBiometricSignIn } from '@/hooks/use-biometric-sign-in';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
+import { getErrorMessage } from '@/utils/error';
 
 const PRIMARY = '#472FF8';
 
@@ -25,7 +27,6 @@ export default function SignInScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const {
     isBiometricSignInReady,
@@ -39,7 +40,6 @@ export default function SignInScreen() {
   const handleSignIn = async () => {
     if (!canSignIn || loading) return;
     setLoading(true);
-    setError('');
     try {
       const response = await authService.loginUser(phone.trim(), password);
 
@@ -59,7 +59,9 @@ export default function SignInScreen() {
 
       if (response.status === 'new_device_detected') {
         if (!response.session_token) {
-          setError('Server error: missing session token');
+          toast.error('Sign in failed', {
+            description: 'Server error: missing session token',
+          });
           return;
         }
         router.push({
@@ -69,9 +71,11 @@ export default function SignInScreen() {
         return;
       }
 
-      setError('Unexpected response from server');
-    } catch (err: any) {
-      setError(err.message);
+      toast.error('Sign in failed', {
+        description: 'Unexpected response from server',
+      });
+    } catch (err: unknown) {
+      toast.error('Sign in failed', { description: getErrorMessage(err) });
     } finally {
       setLoading(false);
     }
@@ -104,10 +108,7 @@ export default function SignInScreen() {
               <TextInput
                 style={styles.input}
                 value={phone}
-                onChangeText={(t) => {
-                  setPhone(t);
-                  setError('');
-                }}
+                onChangeText={setPhone}
                 placeholder="Enter your phone number"
                 placeholderTextColor="#9CA3AF"
                 keyboardType="phone-pad"
@@ -123,10 +124,7 @@ export default function SignInScreen() {
               <TextInput
                 style={styles.input}
                 value={password}
-                onChangeText={(t) => {
-                  setPassword(t);
-                  setError('');
-                }}
+                onChangeText={setPassword}
                 placeholder="Enter your password"
                 placeholderTextColor="#9CA3AF"
                 secureTextEntry={!showPassword}
@@ -146,8 +144,6 @@ export default function SignInScreen() {
           >
             <Text style={styles.forgotText}>Forgot Password</Text>
           </TouchableOpacity>
-
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
           <View style={styles.spacer} />
 
@@ -185,7 +181,6 @@ export default function SignInScreen() {
                 activeOpacity={0.7}
                 disabled={biometricLoading || loading}
                 onPress={async () => {
-                  setError('');
                   const result = await signInWithBiometric();
                   if (result.status === 'success') {
                     router.replace('/Dashboard' as any);
@@ -195,7 +190,9 @@ export default function SignInScreen() {
                       params: { session_token: result.sessionToken },
                     });
                   } else if (result.status === 'failed') {
-                    setError(result.error);
+                    toast.error('Sign in failed', {
+                      description: result.error || 'Please try again.',
+                    });
                   }
                 }}
               >
@@ -225,9 +222,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  flex: {
-    flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
@@ -298,11 +292,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: PRIMARY,
     fontWeight: '600',
-  },
-  errorText: {
-    fontSize: 12,
-    color: '#EF4444',
-    marginTop: 6,
   },
   footer: {
     gap: 16,

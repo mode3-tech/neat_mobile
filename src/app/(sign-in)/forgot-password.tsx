@@ -12,30 +12,30 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { toast } from 'sonner-native';
 
 import { authService } from '@/services/auth.service';
+import { getErrorMessage } from '@/utils/error';
 
 const PRIMARY = '#472FF8';
 
 export default function ForgotPasswordScreen() {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const canSubmit = phone.trim().length > 0;
 
   const handleSubmit = async () => {
     if (!canSubmit || loading) return;
     setLoading(true);
-    setError('');
     try {
       const { otp_id } = await authService.forgotPassword(phone.trim());
       router.push({
         pathname: '/(sign-in)/forgot-password-otp',
         params: { phone: phone.trim(), otp_id },
       });
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      toast.error('Request failed', { description: getErrorMessage(err) });
     } finally {
       setLoading(false);
     }
@@ -64,7 +64,7 @@ export default function ForgotPasswordScreen() {
               <TextInput
                 style={styles.input}
                 value={phone}
-                onChangeText={(val) => { setPhone(val); setError(''); }}
+                onChangeText={setPhone}
                 placeholder="Enter your phone number"
                 placeholderTextColor="#9CA3AF"
                 keyboardType="phone-pad"
@@ -73,8 +73,6 @@ export default function ForgotPasswordScreen() {
               />
             </View>
           </View>
-
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
         </ScrollView>
 
         <View style={styles.footer}>
@@ -156,11 +154,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#1A1A1A',
     padding: 0,
-  },
-  errorText: {
-    fontSize: 13,
-    color: '#EF4444',
-    marginTop: 8,
   },
   footer: {
     paddingHorizontal: 24,

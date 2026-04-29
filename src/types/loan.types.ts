@@ -71,6 +71,17 @@ export interface LoanRepaymentResponse {
   repayment: LoanRepayment;
 }
 
+export interface ManualRepaymentRequest {
+  loan_id: string;
+  amount: number;
+  transaction_pin: string;
+}
+
+export interface ManualRepaymentResponse {
+  status: string;
+  message: string;
+}
+
 export interface LoanStatusItem {
   loan_id: string;
   loan_amount: number;

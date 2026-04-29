@@ -10,11 +10,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
+import { toast } from 'sonner-native';
 
 import { PIN_LENGTH } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { savingsService } from '@/services/savings.service';
 import { useSavingsStore } from '@/stores/savings.store';
+import { getErrorMessage } from '@/utils/error';
 
 export default function SavingsPinScreen() {
   const store = useSavingsStore();
@@ -30,13 +32,11 @@ export default function SavingsPinScreen() {
   const [pin, setPin] = useState('');
   const [showPin, setShowPin] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
 
   const canConfirm = pin.length === PIN_LENGTH;
 
   const submitDeposit = async (transactionPin: string) => {
     setSubmitting(true);
-    setErrorMsg('');
     try {
       await savingsService.deposit({
         amount: parseFloat(store.amount),
@@ -47,12 +47,8 @@ export default function SavingsPinScreen() {
       queryClient.invalidateQueries({ queryKey: ['account-summary'] });
       store.reset();
       router.replace('/Dashboard');
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.error ||
-        err?.message ||
-        'Deposit failed';
-      setErrorMsg(message);
+    } catch (err: unknown) {
+      toast.error('Deposit failed', { description: getErrorMessage(err) });
     } finally {
       setSubmitting(false);
     }
@@ -65,10 +61,11 @@ export default function SavingsPinScreen() {
 
   const handleBiometric = async () => {
     if (authenticating || submitting) return;
-    setErrorMsg('');
     const storedPin = await authenticateWithBiometric();
     if (!storedPin) {
-      setErrorMsg('Biometric authentication failed. Please use your PIN.');
+      toast.error('Authentication failed', {
+        description: 'Biometric authentication failed. Please use your PIN.',
+      });
       return;
     }
     submitDeposit(storedPin);
@@ -93,10 +90,9 @@ export default function SavingsPinScreen() {
           <TextInput
             className="flex-1 text-[15px] text-[#1A1A1A] p-0"
             value={pin}
-            onChangeText={(t) => {
-              setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH));
-              setErrorMsg('');
-            }}
+            onChangeText={(t) =>
+              setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH))
+            }
             placeholder="••••"
             placeholderTextColor="#9CA3AF"
             secureTextEntry={!showPin}
@@ -111,9 +107,6 @@ export default function SavingsPinScreen() {
             />
           </TouchableOpacity>
         </View>
-        {errorMsg !== '' && (
-          <Text className="text-xs text-red-500 mt-1.5">{errorMsg}</Text>
-        )}
       </View>
 
       <View className="flex-1" />

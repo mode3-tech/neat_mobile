@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
+import { toast } from 'sonner-native';
 
 import { OtpInput } from '@/components/ui/otp-input';
 import { useSmsOtp } from '@/hooks/use-sms-otp';
@@ -22,7 +23,6 @@ const RESEND_SECONDS = 30;
 export default function PhoneOtpScreen() {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
   const phone = useSignUpStore((s) => s.phone);
   const setPhoneVerificationId = useSignUpStore((s) => s.setPhoneVerificationId);
@@ -49,13 +49,14 @@ export default function PhoneOtpScreen() {
   const handleVerify = async () => {
     if (!canVerify || loading) return;
     setLoading(true);
-    setError('');
     try {
       const result = await authService.verifyPhoneOtp(phone, otp);
       setPhoneVerificationId(result.verification_id);
       router.push('/(sign-up)/nin-verification');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'OTP verification failed');
+      toast.error('Verification failed', {
+        description: err instanceof Error ? err.message : 'Please try again.',
+      });
     } finally {
       setLoading(false);
     }
@@ -79,10 +80,8 @@ export default function PhoneOtpScreen() {
         <Text style={styles.subtitle}>Enter the 6-digit code sent to your phone</Text>
 
         <View style={styles.otpWrap}>
-          <OtpInput value={otp} onChange={(val) => { setOtp(val); setError(''); }} length={OTP_LENGTH} />
+          <OtpInput value={otp} onChange={setOtp} length={OTP_LENGTH} />
         </View>
-
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         <View style={styles.spacer} />
 
@@ -157,11 +156,6 @@ const styles = StyleSheet.create({
   },
   otpWrap: {
     marginBottom: 8,
-  },
-  errorText: {
-    fontSize: 13,
-    color: '#EF4444',
-    marginTop: 4,
   },
   spacer: {
     flex: 1,

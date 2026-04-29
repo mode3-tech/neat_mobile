@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Platform,
   Text,
   TextInput,
@@ -11,11 +10,15 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner-native';
+import { z } from 'zod';
 
 import { QUERY_KEYS } from '@/constants';
 import { accountService } from '@/services/account.service';
 import type { AccountSummary } from '@/types/account.types';
+
+const emailSchema = z.email();
 
 function formatDob(dob: string | undefined): string {
   if (!dob) return '';
@@ -28,20 +31,24 @@ interface FieldProps {
   label: string;
   value: string;
   onChangeText?: (t: string) => void;
+  onBlur?: () => void;
   placeholder?: string;
   editable?: boolean;
   keyboardType?: 'default' | 'email-address';
   autoCapitalize?: 'none' | 'words';
+  error?: string;
 }
 
 function Field({
   label,
   value,
   onChangeText,
+  onBlur,
   placeholder,
   editable = true,
   keyboardType = 'default',
   autoCapitalize = 'none',
+  error,
 }: FieldProps) {
   const inputRef = useRef<TextInput>(null);
   const mountStateRef = useRef({ value, editable });
@@ -55,14 +62,18 @@ function Field({
     }
   }, []);
 
+  const containerBg = !editable ? 'bg-[#ECECEC]' : 'bg-[#F5F5F5]';
+  const borderClass = error ? 'border border-[#EF4444]' : '';
+
   return (
     <View className="mb-4">
       <Text className="text-[13px] font-semibold text-gray-700 mb-2">{label}</Text>
-      <View className={`rounded-xl ${editable ? 'bg-[#F5F5F5]' : 'bg-[#ECECEC]'}`}>
+      <View className={`rounded-xl ${containerBg} ${borderClass}`}>
         <TextInput
           ref={inputRef}
           value={value}
           onChangeText={onChangeText}
+          onBlur={onBlur}
           placeholder={placeholder}
           placeholderTextColor="#9CA3AF"
           editable={editable}
@@ -72,6 +83,9 @@ function Field({
           className={`text-[15px] px-4 py-[14px] ${editable ? 'text-[#1A1A1A]' : 'text-gray-500'}`}
         />
       </View>
+      {error ? (
+        <Text className="text-[12px] text-[#EF4444] mt-1.5">{error}</Text>
+      ) : null}
     </View>
   );
 }
@@ -130,32 +144,51 @@ function PersonalDataForm({ summary }: { summary: AccountSummary }) {
   const queryClient = useQueryClient();
   const [email, setEmail] = useState(summary.email ?? '');
   const [address, setAddress] = useState(summary.address ?? '');
-  const [saving, setSaving] = useState(false);
-  const isMountedRef = useRef(true);
+  const [emailError, setEmailError] = useState<string | undefined>();
 
-  useEffect(() => {
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
-  const handleSave = async () => {
-    if (saving) return;
-    setSaving(true);
-    try {
-      await accountService.updateProfile({
-        email: email || undefined,
-        address: address || undefined,
-      });
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
-      router.back();
-    } catch (err) {
-      if (isMountedRef.current) {
-        Alert.alert('Update failed', err instanceof Error ? err.message : 'Please try again.');
-        setSaving(false);
-      }
-    }
+  const validateEmail = (val: string): string | undefined => {
+    if (!val) return undefined;
+    return emailSchema.safeParse(val).success ? undefined : 'Enter a valid email address.';
   };
+
+  const handleEmailChange = (val: string) => {
+    setEmail(val);
+    if (emailError) setEmailError(validateEmail(val));
+  };
+
+  const handleEmailBlur = () => {
+    setEmailError(validateEmail(email));
+  };
+
+  const updateMutation = useMutation({
+    mutationFn: (payload: { email?: string; address?: string }) =>
+      accountService.updateProfile(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
+      toast.success('Profile updated', { duration: 2500 });
+      router.back();
+    },
+    onError: (err) => {
+      toast.error('Update failed', {
+        description: err instanceof Error ? err.message : 'Please try again.',
+      });
+    },
+  });
+
+  const handleSave = () => {
+    if (updateMutation.isPending) return;
+    const err = validateEmail(email);
+    if (err) {
+      setEmailError(err);
+      return;
+    }
+    updateMutation.mutate({
+      email: email || undefined,
+      address: address || undefined,
+    });
+  };
+
+  const saving = updateMutation.isPending;
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -183,9 +216,11 @@ function PersonalDataForm({ summary }: { summary: AccountSummary }) {
         <Field
           label="Email address"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={handleEmailChange}
+          onBlur={handleEmailBlur}
           placeholder="Enter your email"
           keyboardType="email-address"
+          error={emailError}
         />
         <Field
           label="Phone Number"

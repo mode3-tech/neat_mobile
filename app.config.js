@@ -23,7 +23,8 @@ const baseConfig = {
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
   updates: {
-    url: 'https://u.expo.dev/a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
+    url: 'https://u.expo.dev/13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
+    // url: 'https://u.expo.dev/a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
   },
   runtimeVersion: {
     policy: 'appVersion',
@@ -67,6 +68,7 @@ const baseConfig = {
       },
     ],
     '@react-native-community/datetimepicker',
+    'expo-web-browser',
   ],
   experiments: {
     typedRoutes: true,
@@ -75,10 +77,11 @@ const baseConfig = {
   extra: {
     router: {},
     eas: {
-      projectId: 'a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
+      projectId: '13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
+      // projectId: 'a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
     },
   },
-  // owner: 'micropayafrica',
+  owner: 'micropayafrica',
 };
 
 module.exports = {

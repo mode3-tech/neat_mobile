@@ -9,6 +9,8 @@ import { Stack, useRouter } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 import { StatusBar } from 'expo-status-bar';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Toaster } from 'sonner-native';
 import 'react-native-reanimated';
 
 import { useSessionTimeout } from '@/hooks/use-session-timeout';
@@ -122,6 +124,7 @@ export default function RootLayout(): React.JSX.Element {
   }, []);
 
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <QueryClientProvider client={queryClient}>
       <KeyboardProvider>
         <ThemeProvider value={DefaultTheme}>
@@ -154,9 +157,11 @@ export default function RootLayout(): React.JSX.Element {
             />
           </Stack>
           </View>
+          <Toaster position="top-center" />
           <StatusBar style="auto" />
         </ThemeProvider>
       </KeyboardProvider>
     </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }

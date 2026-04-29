@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { toast } from 'sonner-native';
 
 import { PIN_LENGTH } from '@/constants';
 import { authService } from '@/services/auth.service';
 import { useSecurityChangeStore } from '@/stores/security-change.store';
+import { getErrorMessage } from '@/utils/error';
 
 interface PinFieldProps {
   label: string;
@@ -56,7 +58,6 @@ export default function ChangePinScreen() {
   const [confirmNewPin, setConfirmNewPin] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorField, setErrorField] = useState<'current' | 'new' | 'confirm' | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
   const [sessionExpired, setSessionExpired] = useState(false);
 
   const pinChange = useSecurityChangeStore((s) => s.pinChange);
@@ -82,11 +83,12 @@ export default function ChangePinScreen() {
     }
     if (newPin === currentPin) {
       setErrorField('new');
-      setErrorMessage('New PIN must be different from current PIN.');
+      toast.error('PIN change failed', {
+        description: 'New PIN must be different from current PIN.',
+      });
       return;
     }
     setLoading(true);
-    setErrorMessage('');
     try {
       await authService.changePin({
         verification_id: pinChange.verificationId,
@@ -102,8 +104,8 @@ export default function ChangePinScreen() {
           message: 'Your transaction PIN has been updated. Use your new PIN for future transactions.',
         },
       });
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to change PIN.');
+    } catch (err: unknown) {
+      toast.error('PIN change failed', { description: getErrorMessage(err) });
     } finally {
       setLoading(false);
     }
@@ -150,7 +152,6 @@ export default function ChangePinScreen() {
           onChangeText={(t) => {
             setCurrentPin(t);
             setErrorField(null);
-            setErrorMessage('');
           }}
           hasError={errorField === 'current'}
         />
@@ -160,7 +161,6 @@ export default function ChangePinScreen() {
           onChangeText={(t) => {
             setNewPin(t);
             setErrorField(null);
-            setErrorMessage('');
           }}
           hasError={errorField === 'new'}
         />
@@ -170,18 +170,12 @@ export default function ChangePinScreen() {
           onChangeText={(t) => {
             setConfirmNewPin(t);
             setErrorField(null);
-            setErrorMessage('');
           }}
           hasError={errorField === 'confirm'}
         />
         {errorField === 'confirm' && (
           <Text className="text-xs text-[#EF4444] -mt-3 mb-2">PINs do not match</Text>
         )}
-        {errorMessage ? (
-          <View className="bg-[#FEF2F2] rounded-xl px-4 py-3 mt-2">
-            <Text className="text-[13px] text-[#EF4444]">{errorMessage}</Text>
-          </View>
-        ) : null}
 
         <View className="flex-1" />
 

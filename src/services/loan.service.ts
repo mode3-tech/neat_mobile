@@ -12,10 +12,22 @@ import type {
   LoanRepaymentResponse,
   LoanStatusItem,
   LoanStatusResponse,
+  ManualRepaymentRequest,
+  ManualRepaymentResponse,
 } from '@/types/loan.types';
+import axios from 'axios';
 import { api } from './api';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function extractErrorMessage(error: unknown, fallback: string): never {
+  if (axios.isAxiosError(error)) {
+    const data = error.response?.data as { error?: string; message?: string } | undefined;
+    if (data?.error) throw new Error(data.error);
+    if (data?.message) throw new Error(data.message);
+  }
+  throw new Error(fallback);
+}
 
 export const loanService = {
   getEligibility: async (): Promise<LoanEligibility> => {
@@ -41,9 +53,9 @@ export const loanService = {
   },
 
   getRepaymentSchedule: async (loanId: string): Promise<LoanRepayment> => {
-    const { data } = await api.get<LoanRepaymentResponse>(
-      `/loan/repayment-schedule/${encodeURIComponent(loanId)}`,
-    );
+    const { data } = await api.get<LoanRepaymentResponse>('/loan/repayment-schedule', {
+      params: { loan_id: loanId },
+    });
     return data.repayment;
   },
 
@@ -69,5 +81,19 @@ export const loanService = {
       `/loan/history/${encodeURIComponent(loanId)}`,
     );
     return data.history;
+  },
+
+  submitRepayment: async (
+    payload: ManualRepaymentRequest,
+  ): Promise<ManualRepaymentResponse> => {
+    try {
+      const { data } = await api.post<ManualRepaymentResponse>(
+        '/loan/repayment/manual',
+        payload,
+      );
+      return data;
+    } catch (error) {
+      extractErrorMessage(error, 'Repayment failed. Please try again.');
+    }
   },
 };
