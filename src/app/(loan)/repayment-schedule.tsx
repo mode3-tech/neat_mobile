@@ -17,6 +17,8 @@ import { useQuery } from '@tanstack/react-query';
 import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { loanService } from '@/services/loan.service';
+import { formatDateLong } from '@/utils/format';
+import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
 
 function formatCurrency(amount: number): string {
   return '₦' + new Intl.NumberFormat('en-NG', {
@@ -34,6 +36,62 @@ function SummaryRow({ label, value, isLast }: { label: string; value: string; is
   );
 }
 
+function statusLabel(s: LoanHistoryStatus) {
+  return s === 'paid' ? 'Paid' : s === 'overdue' ? 'Overdue' : 'Pending';
+}
+
+function statusColorClass(s: LoanHistoryStatus) {
+  return s === 'paid'
+    ? 'text-[#16A34A]'
+    : s === 'overdue'
+    ? 'text-[#EF4444]'
+    : 'text-[#F59E0B]';
+}
+
+function ScheduleRow({
+  item,
+  index,
+  isNextUpcoming,
+}: {
+  item: LoanHistoryItem;
+  index: number;
+  isNextUpcoming: boolean;
+}) {
+  const highlight =
+    item.status === 'overdue'
+      ? 'bg-[#FEF2F2] border border-[#FECACA]'
+      : isNextUpcoming
+      ? 'bg-[#FFF7ED] border border-[#FED7AA]'
+      : 'bg-[#F9FAFB]';
+  const iconBg =
+    item.status === 'overdue'
+      ? 'bg-[#FEE2E2]'
+      : isNextUpcoming
+      ? 'bg-[#FFEDD5]'
+      : 'bg-[#EEF0FF]';
+  const iconColor =
+    item.status === 'overdue' ? '#EF4444' : isNextUpcoming ? '#F59E0B' : '#472FF8';
+  return (
+    <View className={`flex-row items-center justify-between rounded-2xl px-4 py-3 mb-3 ${highlight}`}>
+      <View className="flex-row items-center gap-3">
+        <View className={`w-9 h-9 rounded-lg items-center justify-center ${iconBg}`}>
+          <MaterialCommunityIcons name="cube-outline" size={18} color={iconColor} />
+        </View>
+        <View>
+          <Text className="text-[13px] font-semibold text-[#1A1A1A]">Week {index + 1}</Text>
+          <Text className="text-xs text-[#6B7280] mt-0.5">{formatDateLong(item.payment_date)}</Text>
+        </View>
+      </View>
+      <View className="items-end">
+        <Text className="text-sm font-bold text-[#1A1A1A]">
+          {formatCurrency(item.status === 'paid' ? item.amount_paid : item.loan_amount)}
+        </Text>
+        <Text className={`text-xs ${statusColorClass(item.status)}`}>{statusLabel(item.status)}</Text>
+      </View>
+    </View>
+  );
+}
+
 export default function RepaymentScheduleScreen() {
   const { loanId } = useLocalSearchParams<{ loanId: string }>();
 
@@ -44,6 +102,12 @@ export default function RepaymentScheduleScreen() {
   } = useQuery({
     queryKey: [QUERY_KEYS.REPAYMENT, loanId],
     queryFn: () => loanService.getRepaymentSchedule(loanId!),
+    enabled: !!loanId,
+  });
+
+  const { data: schedule, isLoading: scheduleLoading } = useQuery({
+    queryKey: [QUERY_KEYS.LOAN_HISTORY_BY_ID, loanId],
+    queryFn: () => loanService.getLoanHistoryById(loanId!),
     enabled: !!loanId,
   });
 
@@ -177,6 +241,32 @@ export default function RepaymentScheduleScreen() {
                 />
               ))}
             </View>
+
+            {/* Payment Schedule */}
+            <Text className="text-base font-bold text-[#1A1A1A] mb-3">Payment Schedule</Text>
+            {scheduleLoading ? (
+              <View className="py-6 items-center">
+                <ActivityIndicator size="small" color="#472FF8" />
+              </View>
+            ) : (schedule?.length ?? 0) === 0 ? (
+              <Text className="text-[13px] text-[#6B7280] mb-6">No scheduled payments yet.</Text>
+            ) : (
+              <View className="mb-6">
+                {(() => {
+                  const nextUpcomingIdx = schedule!.findIndex(
+                    (it) => it.status !== 'paid' && it.status !== 'overdue',
+                  );
+                  return schedule!.map((item, i) => (
+                    <ScheduleRow
+                      key={`${item.loan_id}-${item.payment_date}-${i}`}
+                      item={item}
+                      index={i}
+                      isNextUpcoming={i === nextUpcomingIdx}
+                    />
+                  ));
+                })()}
+              </View>
+            )}
           </>
         )}
       </ScrollView>

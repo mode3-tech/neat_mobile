@@ -10,10 +10,10 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { toast } from 'sonner-native';
 
 import { loanService } from '@/services/loan.service';
 import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
+import { getErrorMessage } from '@/utils/error';
 
 interface RepaymentBottomSheetProps {
   visible: boolean;
@@ -41,6 +41,7 @@ export default function RepaymentBottomSheet({
   const [pin, setPin] = useState('');
   const [showPin, setShowPin] = useState(false);
   const [successVisible, setSuccessVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Reset form whenever the sheet opens
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function RepaymentBottomSheet({
       setAmount('');
       setPin('');
       setShowPin(false);
+      setErrorMessage('');
     }
   }, [visible]);
 
@@ -59,17 +61,17 @@ export default function RepaymentBottomSheet({
       onClose();
       setSuccessVisible(true);
     },
-    onError: (err: Error) => {
-      toast.error('Repayment failed', {
-        description: err.message || 'Please try again.',
-      });
+    onError: (err: unknown) => {
+      setErrorMessage(getErrorMessage(err));
     },
   });
 
   const parsedAmount = parseFloat(amount.replace(/,/g, '')) || 0;
-  const exceedsBalance = parsedAmount > availableBalance;
+  // Temporarily disabled for testing the repayment endpoint
+  // const exceedsBalance = parsedAmount > availableBalance;
+  const exceedsBalance = false;
   const hasValidInput =
-    parsedAmount > 0 && !exceedsBalance && pin.length === PIN_LENGTH;
+    parsedAmount > 0 && /* !exceedsBalance && */ pin.length === PIN_LENGTH;
   const canConfirm = hasValidInput && !isPending;
 
   const onConfirm = () => {
@@ -112,7 +114,10 @@ export default function RepaymentBottomSheet({
                 <TextInput
                   className="text-[15px] text-[#1A1A1A] p-0"
                   value={amount}
-                  onChangeText={setAmount}
+                  onChangeText={(t) => {
+                    setAmount(t);
+                    setErrorMessage('');
+                  }}
                   keyboardType="decimal-pad"
                   placeholder="0.00"
                   placeholderTextColor="#9CA3AF"
@@ -137,7 +142,10 @@ export default function RepaymentBottomSheet({
                 <TextInput
                   className="flex-1 text-[15px] text-[#1A1A1A] p-0"
                   value={pin}
-                  onChangeText={(t) => setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH))}
+                  onChangeText={(t) => {
+                    setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH));
+                    setErrorMessage('');
+                  }}
                   placeholder="••••"
                   placeholderTextColor="#9CA3AF"
                   secureTextEntry={!showPin}
@@ -152,6 +160,12 @@ export default function RepaymentBottomSheet({
                   />
                 </TouchableOpacity>
               </View>
+
+              {errorMessage ? (
+                <View className="bg-[#FEF2F2] rounded-xl px-4 py-3 mb-4">
+                  <Text className="text-[13px] text-[#EF4444]">{errorMessage}</Text>
+                </View>
+              ) : null}
 
               {/* Confirm */}
               <TouchableOpacity
