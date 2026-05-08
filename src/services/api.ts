@@ -5,6 +5,34 @@ import axios, {
 } from 'axios';
 
 import { getOrCreateDeviceId } from './device.service';
+import { getIntegrityStatus } from './security.service';
+
+export class ApiError extends Error {
+  code: string;
+  status?: number;
+
+  constructor(message: string, code: string, status?: number) {
+    super(message);
+    this.name = 'ApiError';
+    this.code = code;
+    this.status = status;
+  }
+}
+
+export function throwApiError(error: unknown, fallback: string): never {
+  if (error instanceof ApiError) throw error;
+  if (axios.isAxiosError(error) && error.response?.data?.error) {
+    const serverError = error.response.data.error;
+    if (serverError && typeof serverError === 'object' && typeof serverError.message === 'string') {
+      throw new ApiError(
+        serverError.message,
+        typeof serverError.code === 'string' ? serverError.code : 'UNKNOWN',
+        error.response.status,
+      );
+    }
+  }
+  throw new ApiError(fallback, 'UNKNOWN');
+}
 
 let accessToken: string | null = null;
 let isRefreshing = false;
@@ -49,6 +77,7 @@ function createApiInstance(baseURL: string): AxiosInstance {
 
       const deviceId = await getOrCreateDeviceId();
       config.headers['X-Device-ID'] = deviceId;
+      config.headers['X-Device-Integrity'] = getIntegrityStatus();
 
       return config;
     },

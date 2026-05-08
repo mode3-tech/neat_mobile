@@ -14,6 +14,9 @@ interface SignUpState {
   biometricsEnabled: boolean;
   phoneVerificationId: string;
   emailVerificationId: string;
+  jobId: string;
+  claimToken: string;
+  claimExpiresAt: string;
 
   setBvnData: (bvn: string, data: BvnData) => void;
   setNinData: (nin: string, data: NinData) => void;
@@ -23,6 +26,11 @@ interface SignUpState {
   setBiometrics: (enabled: boolean) => void;
   setPhoneVerificationId: (id: string) => void;
   setEmailVerificationId: (id: string) => void;
+  setRegistrationJob: (
+    jobId: string,
+    claimToken: string,
+    claimExpiresAt: string,
+  ) => void;
   reset: () => void;
 }
 
@@ -38,6 +46,9 @@ const initialState = {
   biometricsEnabled: true,
   phoneVerificationId: '',
   emailVerificationId: '',
+  jobId: '',
+  claimToken: '',
+  claimExpiresAt: '',
 };
 
 export const useSignUpStore = create<SignUpState>((set) => ({
@@ -59,6 +70,9 @@ export const useSignUpStore = create<SignUpState>((set) => ({
   setPhoneVerificationId: (phoneVerificationId) => set({ phoneVerificationId }),
 
   setEmailVerificationId: (emailVerificationId) => set({ emailVerificationId }),
+
+  setRegistrationJob: (jobId, claimToken, claimExpiresAt) =>
+    set({ jobId, claimToken, claimExpiresAt }),
 
   reset: () => set(initialState),
 }));

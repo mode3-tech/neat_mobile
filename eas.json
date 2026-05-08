@@ -25,6 +25,8 @@
       "env": {
         "APP_VARIANT": "preview",
         "EXPO_PUBLIC_API_URL": "https://neat-mobile-backend-2wbh.onrender.com/api/v1"
+        // "EXPO_PUBLIC_ANDROID_CERT_SHA256": "",
+        // "EXPO_PUBLIC_IOS_TEAM_ID": ""
       }
     },
     "production": {
@@ -35,6 +37,8 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://neat-mobile-backend-2wbh.onrender.com/api/v1"
+        // "EXPO_PUBLIC_ANDROID_CERT_SHA256": "",
+        // "EXPO_PUBLIC_IOS_TEAM_ID": ""
       }
     }
   },

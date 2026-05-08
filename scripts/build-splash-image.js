@@ -1,3 +1,8 @@
+// DISABLED: splash-logo.png is now sourced from a Figma export, not generated.
+// Kept here for reference — if you ever need to regenerate programmatically,
+// uncomment the block below.
+
+/*
 const sharp = require('sharp');
 const path = require('path');
 
@@ -49,3 +54,4 @@ const GAP = 36;
 
   console.log('wrote', OUTPUT);
 })();
+*/

@@ -16,6 +16,7 @@ import 'react-native-reanimated';
 import { useSessionTimeout } from '@/hooks/use-session-timeout';
 import { useAuthStore } from '@/stores/auth.store';
 import { useProfileStore } from '@/stores/profile.store';
+import { DeviceIntegrityGate } from '@/components/security/device-integrity-gate';
 
 // Show notifications as alerts when app is in foreground
 Notifications.setNotificationHandler({
@@ -129,6 +130,7 @@ export default function RootLayout(): React.JSX.Element {
       <KeyboardProvider>
         <ThemeProvider value={DefaultTheme}>
           <View style={{ flex: 1 }} onStartShouldSetResponderCapture={onTouchActivity}>
+          <DeviceIntegrityGate>
           <Stack
             screenOptions={{
               headerShown: false,
@@ -148,14 +150,15 @@ export default function RootLayout(): React.JSX.Element {
             <Stack.Screen name="(loan)" />
             <Stack.Screen name="(transfer)" />
             <Stack.Screen name="(savings)" />
-            <Stack.Screen name="(account)" />
-            <Stack.Screen name="(profile)" />
+            {/* <Stack.Screen name="(account)" /> */}
+            {/* <Stack.Screen name="(profile)" /> */}
             <Stack.Screen name="notifications" />
             <Stack.Screen
               name="modal"
               options={{ presentation: 'modal' }}
             />
           </Stack>
+          </DeviceIntegrityGate>
           </View>
           <Toaster position="top-center" />
           <StatusBar style="auto" />

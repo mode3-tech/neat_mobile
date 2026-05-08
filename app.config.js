@@ -69,6 +69,7 @@ const baseConfig = {
     ],
     '@react-native-community/datetimepicker',
     'expo-web-browser',
+    ['freerasp-react-native', {}],
   ],
   experiments: {
     typedRoutes: true,

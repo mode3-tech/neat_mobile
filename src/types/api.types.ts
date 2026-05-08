@@ -1,7 +1,12 @@
-export interface ApiResponse<T> {
-  data: T;
+export interface ApiEnvelope<T = undefined> {
+  status: 'success';
   message: string;
-  success: boolean;
+  data: T;
+}
+
+export interface ApiErrorEnvelope {
+  status: 'error';
+  error: { code: string; message: string };
 }
 
 export interface PaginatedResponse<T> {
@@ -10,10 +15,4 @@ export interface PaginatedResponse<T> {
   page: number;
   limit: number;
   hasNextPage: boolean;
-}
-
-export interface ApiError {
-  message: string;
-  statusCode: number;
-  error?: string;
 }

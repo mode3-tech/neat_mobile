@@ -284,6 +284,9 @@ const styles = StyleSheet.create({
     color: ERROR_COLOR,
     marginTop: 6,
   },
+  spacer: {
+    flex: 1,
+  },
   footer: {
     paddingBottom: 16,
   },

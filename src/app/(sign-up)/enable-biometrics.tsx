@@ -11,16 +11,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
-import { storeTransactionPin } from '@/services/biometric.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
-import { useAuthStore } from '@/stores/auth.store';
 
 const PRIMARY = '#472FF8';
 
 export default function EnableBiometricsScreen() {
   const store = useSignUpStore();
-  const setTokens = useAuthStore((s) => s.setTokens);
-  const setBiometricsEnabled = useAuthStore((s) => s.setBiometricsEnabled);
 
   const [enabled, setEnabled] = useState(store.biometricsEnabled);
   const [loading, setLoading] = useState(false);
@@ -37,7 +33,6 @@ export default function EnableBiometricsScreen() {
     setError('');
     try {
       const result = await authService.registerUser({
-        phone_number: store.phone,
         email: store.email,
         password: store.password,
         confirm_password: store.password,
@@ -50,19 +45,13 @@ export default function EnableBiometricsScreen() {
         is_biometrics_enabled: enabled,
       });
 
-      setTokens(result.access_token, result.refresh_token);
-      setBiometricsEnabled(enabled);
+      store.setRegistrationJob(
+        result.job_id,
+        result.claim_token,
+        result.claim_expires_at,
+      );
 
-      if (enabled) {
-        try {
-          await storeTransactionPin(store.transactionPin);
-        } catch {
-          // Non-blocking — biometrics just won't be available until next manual login
-        }
-      }
-
-      store.reset();
-      router.replace('/(sign-up)/registration-success');
+      router.replace('/(sign-up)/registration-processing' as any);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {

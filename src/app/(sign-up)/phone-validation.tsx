@@ -12,12 +12,12 @@ import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
-import { maskPhone } from '@/utils/mask';
 
 const PRIMARY = '#472FF8';
 
 export default function PhoneValidationScreen() {
   const phone = useSignUpStore((s) => s.phone);
+  const bvnVerificationId = useSignUpStore((s) => s.bvnData?.verification_id ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -25,7 +25,7 @@ export default function PhoneValidationScreen() {
     setLoading(true);
     setError('');
     try {
-      await authService.sendPhoneOtp(phone);
+      await authService.sendPhoneOtp(bvnVerificationId);
       router.push('/(sign-up)/phone-otp');
     } catch (err: any) {
       setError(err.message);
@@ -43,7 +43,7 @@ export default function PhoneValidationScreen() {
       <Text style={styles.title}>Phone Validation</Text>
       <Text style={styles.subtitle}>
         We'll send an OTP to:{' '}
-        <Text style={styles.phoneHighlight}>{maskPhone(phone)}</Text>
+        <Text style={styles.phoneHighlight}>{phone}</Text>
       </Text>
 
       <View style={styles.body}>

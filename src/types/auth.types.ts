@@ -20,7 +20,6 @@ export interface AuthUser {
 }
 
 export interface RegisterPayload {
-  phone_number: string;
   email: string;
   password: string;
   confirm_password: string;
@@ -34,10 +33,31 @@ export interface RegisterPayload {
   device: DeviceInfo;
 }
 
-export interface RegisterResponse {
+export interface RegisterJobResponse {
+  job_id: string;
+  claim_token: string;
+  claim_expires_at: string;
+}
+
+export type RegistrationStatus =
+  | 'pending'
+  | 'processing'
+  | 'completed'
+  | 'failed';
+
+export interface RegistrationStatusResponse {
+  job_id: string;
+  registration_status: RegistrationStatus;
+  message: string;
+  can_login: boolean;
+  can_claim_session: boolean;
+  claim_expires_at: string;
+  error?: string;
+}
+
+export interface ClaimSessionResponse {
   access_token: string;
   refresh_token: string;
-  message: string;
 }
 
 export interface LoginResponse {
