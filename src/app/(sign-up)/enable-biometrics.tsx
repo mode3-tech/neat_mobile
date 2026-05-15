@@ -38,6 +38,7 @@ export default function EnableBiometricsScreen() {
         confirm_password: store.password,
         transaction_pin: store.transactionPin,
         confirm_transaction_pin: store.transactionPin,
+        mothers_maiden_name: store.mothersMaidenName,
         bvn_verification_id: store.bvnData?.verification_id ?? '',
         nin_verification_id: store.ninData?.verification_id ?? '',
         phone_verification_id: store.phoneVerificationId,

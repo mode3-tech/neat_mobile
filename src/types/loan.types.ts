@@ -43,7 +43,6 @@ export interface LoanApplySummary {
 export interface LoanApplyResponse {
   application_ref: string;
   loan_status: string;
-  message: string;
   summary: LoanApplySummary;
 }
 
@@ -66,8 +65,6 @@ export interface LoanRepayment {
 }
 
 export interface LoanRepaymentResponse {
-  status: string;
-  message: string;
   repayment: LoanRepayment;
 }
 
@@ -75,11 +72,6 @@ export interface ManualRepaymentRequest {
   loan_id: string;
   amount: number;
   transaction_pin: string;
-}
-
-export interface ManualRepaymentResponse {
-  status: string;
-  message: string;
 }
 
 export interface LoanStatusItem {
@@ -93,8 +85,6 @@ export interface LoanStatusItem {
 }
 
 export interface LoanStatusResponse {
-  status: string;
-  message: string;
   loans: LoanStatusItem[];
 }
 
@@ -109,8 +99,6 @@ export interface LoanHistoryItem {
 }
 
 export interface LoanHistoryResponse {
-  status: string;
-  message: string;
   history: LoanHistoryItem[];
 }
 
@@ -122,8 +110,6 @@ export interface LoanDetails {
 }
 
 export interface LoanDetailsResponse {
-  status: string;
-  message: string;
   details: LoanDetails & {
     repayment_history?: LoanHistoryItem[];
   };

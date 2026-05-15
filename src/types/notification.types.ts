@@ -34,11 +34,9 @@ export interface PaginatedNotificationsResponse {
 }
 
 export interface MarkReadResponse {
-  message: string;
   updated: boolean;
 }
 
 export interface MarkAllReadResponse {
-  message: string;
   updated: number;
 }

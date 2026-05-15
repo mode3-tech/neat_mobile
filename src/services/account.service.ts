@@ -1,18 +1,22 @@
 import type {
   AccountSummary,
-  AccountSummaryResponse,
   StatementJobStatusResponse,
   StatementRequestBody,
   StatementRequestResponse,
   UpdateProfileBody,
 } from '@/types/account.types';
-import { api, getAccessToken } from './api';
+import type { ApiEnvelope } from '@/types/api.types';
+import { ApiError, api, getAccessToken, throwApiError } from './api';
 import { getOrCreateDeviceId } from './device.service';
 
 export const accountService = {
   getSummary: async (): Promise<AccountSummary> => {
-    const { data } = await api.get<AccountSummaryResponse>('/account/summary');
-    return data.data;
+    try {
+      const response = await api.get<ApiEnvelope<AccountSummary>>('/account/summary');
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'Failed to load account summary');
+    }
   },
 
   updateProfile: async (body: UpdateProfileBody): Promise<void> => {
@@ -51,37 +55,51 @@ export const accountService = {
         body: form,
       });
     } catch {
-      throw new Error('Network error. Please check your connection.');
+      throw new ApiError('Network error. Please check your connection.', 'NETWORK_ERROR');
     }
 
     if (!response.ok) {
-      let serverMessage: string | undefined;
+      let serverError: { code?: string; message?: string } | undefined;
       try {
         const data = await response.json();
-        serverMessage = data?.error;
+        if (data?.error && typeof data.error === 'object') {
+          serverError = data.error;
+        }
       } catch {
         // response wasn't json — fall through to generic message
       }
-      throw new Error(serverMessage ?? 'Failed to update profile');
+      throw new ApiError(
+        serverError?.message ?? 'Failed to update profile',
+        serverError?.code ?? 'UNKNOWN',
+        response.status,
+      );
     }
   },
 
   requestStatement: async (
     body: StatementRequestBody,
   ): Promise<StatementRequestResponse> => {
-    const { data } = await api.post<StatementRequestResponse>(
-      '/account/statement',
-      body,
-    );
-    return data;
+    try {
+      const response = await api.post<ApiEnvelope<StatementRequestResponse>>(
+        '/account/statement',
+        body,
+      );
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'Failed to request statement');
+    }
   },
 
   getStatementJobStatus: async (
     jobId: string,
   ): Promise<StatementJobStatusResponse> => {
-    const { data } = await api.get<StatementJobStatusResponse>(
-      `/account/statement/${encodeURIComponent(jobId)}/status`,
-    );
-    return data;
+    try {
+      const response = await api.get<ApiEnvelope<StatementJobStatusResponse>>(
+        `/account/statement/${encodeURIComponent(jobId)}/status`,
+      );
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'Failed to fetch statement status');
+    }
   },
 };

@@ -9,6 +9,7 @@ interface SignUpState {
   ninData: NinData | null;
   phone: string;
   email: string;
+  mothersMaidenName: string;
   password: string;
   transactionPin: string;
   biometricsEnabled: boolean;
@@ -21,6 +22,7 @@ interface SignUpState {
   setBvnData: (bvn: string, data: BvnData) => void;
   setNinData: (nin: string, data: NinData) => void;
   setEmail: (email: string) => void;
+  setMothersMaidenName: (name: string) => void;
   setPassword: (password: string) => void;
   setTransactionPin: (pin: string) => void;
   setBiometrics: (enabled: boolean) => void;
@@ -41,6 +43,7 @@ const initialState = {
   ninData: null,
   phone: '',
   email: '',
+  mothersMaidenName: '',
   password: '',
   transactionPin: '',
   biometricsEnabled: true,
@@ -60,6 +63,8 @@ export const useSignUpStore = create<SignUpState>((set) => ({
   setNinData: (nin, data) => set({ nin, ninData: data }),
 
   setEmail: (email) => set({ email }),
+
+  setMothersMaidenName: (mothersMaidenName) => set({ mothersMaidenName }),
 
   setPassword: (password) => set({ password }),
 

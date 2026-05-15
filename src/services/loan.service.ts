@@ -13,21 +13,11 @@ import type {
   LoanStatusItem,
   LoanStatusResponse,
   ManualRepaymentRequest,
-  ManualRepaymentResponse,
 } from '@/types/loan.types';
-import axios from 'axios';
-import { api } from './api';
+import type { ApiEnvelope } from '@/types/api.types';
+import { api, throwApiError } from './api';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-function extractErrorMessage(error: unknown, fallback: string): never {
-  if (axios.isAxiosError(error)) {
-    const data = error.response?.data as { error?: string; message?: string } | undefined;
-    if (data?.error) throw new Error(data.error);
-    if (data?.message) throw new Error(data.message);
-  }
-  throw new Error(fallback);
-}
 
 export const loanService = {
   getEligibility: async (): Promise<LoanEligibility> => {
@@ -36,64 +26,94 @@ export const loanService = {
   },
 
   getLoanProducts: async (): Promise<LoanProduct[]> => {
-    const { data } = await api.get<{ message: string; products: LoanProduct[] }>('/loan');
-    return data.products;
+    try {
+      const response = await api.get<ApiEnvelope<{ products: LoanProduct[] }>>('/loan');
+      return response.data.data.products;
+    } catch (error) {
+      throwApiError(error, 'Failed to load loan products');
+    }
   },
 
   getActiveLoans: async (): Promise<ActiveLoan[]> => {
-    const { data } = await api.get<{ status: string; message: string; loans: ActiveLoan[] }>(
-      '/loan/loans/active',
-    );
-    return data.loans;
+    try {
+      const response = await api.get<ApiEnvelope<{ loans: ActiveLoan[] }>>(
+        '/loan/loans/active',
+      );
+      return response.data.data.loans;
+    } catch (error) {
+      throwApiError(error, 'Failed to load active loans');
+    }
   },
 
   getAllLoans: async (): Promise<LoanStatusItem[]> => {
-    const { data } = await api.get<LoanStatusResponse>('/loan/loans');
-    return data.loans;
+    try {
+      const response = await api.get<ApiEnvelope<LoanStatusResponse>>('/loan/loans');
+      return response.data.data.loans;
+    } catch (error) {
+      throwApiError(error, 'Failed to load loans');
+    }
   },
 
   getRepaymentSchedule: async (loanId: string): Promise<LoanRepayment> => {
-    const { data } = await api.get<LoanRepaymentResponse>('/loan/repayment-schedule', {
-      params: { loan_id: loanId },
-    });
-    return data.repayment;
+    try {
+      const response = await api.get<ApiEnvelope<LoanRepaymentResponse>>(
+        '/loan/repayment-schedule',
+        { params: { loan_id: loanId } },
+      );
+      return response.data.data.repayment;
+    } catch (error) {
+      throwApiError(error, 'Failed to load repayment schedule');
+    }
   },
 
   submitApplication: async (payload: LoanApplyPayload): Promise<LoanApplyResponse> => {
-    const { data } = await api.post<LoanApplyResponse>('/loan/apply', payload);
-    return data;
+    try {
+      const response = await api.post<ApiEnvelope<LoanApplyResponse>>(
+        '/loan/apply',
+        payload,
+      );
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'Loan application failed. Please try again.');
+    }
   },
 
   getLoanHistory: async (): Promise<LoanHistoryItem[]> => {
-    const { data } = await api.get<LoanHistoryResponse>('/loan/history');
-    return data.history;
+    try {
+      const response = await api.get<ApiEnvelope<LoanHistoryResponse>>('/loan/history');
+      return response.data.data.history;
+    } catch (error) {
+      throwApiError(error, 'Failed to load loan history');
+    }
   },
 
   getLoanDetails: async (loanId: string): Promise<LoanDetails> => {
-    const { data } = await api.get<LoanDetailsResponse>(
-      `/loan/loans/${encodeURIComponent(loanId)}`,
-    );
-    return data.details;
+    try {
+      const response = await api.get<ApiEnvelope<LoanDetailsResponse>>(
+        `/loan/loans/${encodeURIComponent(loanId)}`,
+      );
+      return response.data.data.details;
+    } catch (error) {
+      throwApiError(error, 'Failed to load loan details');
+    }
   },
 
   getLoanHistoryById: async (loanId: string): Promise<LoanHistoryItem[]> => {
-    const { data } = await api.get<LoanHistoryResponse>(
-      `/loan/history/${encodeURIComponent(loanId)}`,
-    );
-    return data.history;
+    try {
+      const response = await api.get<ApiEnvelope<LoanHistoryResponse>>(
+        `/loan/history/${encodeURIComponent(loanId)}`,
+      );
+      return response.data.data.history;
+    } catch (error) {
+      throwApiError(error, 'Failed to load loan history');
+    }
   },
 
-  submitRepayment: async (
-    payload: ManualRepaymentRequest,
-  ): Promise<ManualRepaymentResponse> => {
+  submitRepayment: async (payload: ManualRepaymentRequest): Promise<void> => {
     try {
-      const { data } = await api.post<ManualRepaymentResponse>(
-        '/loan/repayment/manual',
-        payload,
-      );
-      return data;
+      await api.post<ApiEnvelope>('/loan/repayment/manual', payload);
     } catch (error) {
-      extractErrorMessage(error, 'Repayment failed. Please try again.');
+      throwApiError(error, 'Repayment failed. Please try again.');
     }
   },
 };

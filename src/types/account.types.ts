@@ -30,11 +30,6 @@ export interface UpdateProfileBody {
   profile_picture_uri?: string;
 }
 
-export interface AccountSummaryResponse {
-  status: boolean;
-  data: AccountSummary;
-}
-
 export type StatementFormat = 'xlsx' | 'pdf';
 export type StatementJobStatus = 'pending' | 'processing' | 'ready' | 'failed';
 
@@ -45,13 +40,10 @@ export interface StatementRequestBody {
 }
 
 export interface StatementRequestResponse {
-  status: boolean;
-  message: string;
   job_id: string;
 }
 
 export interface StatementJobStatusResponse {
-  status: boolean;
   job_status: StatementJobStatus;
   download_url?: string;
 }
