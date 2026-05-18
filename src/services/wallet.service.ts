@@ -6,7 +6,6 @@ import type {
   BulkTransferResponse,
   TransferPayload,
   TransferResponse,
-  ValidateAccountResponse,
   ValidatedAccount,
 } from '@/types/transfer.types';
 import type { ApiEnvelope } from '@/types/api.types';
@@ -22,11 +21,11 @@ export const walletService = {
     accountNumber: string,
     bankCode: string,
   ): Promise<ValidatedAccount> => {
-    const { data } = await api.get<ValidateAccountResponse>(
+    const response = await api.get<ApiEnvelope<{ account: ValidatedAccount }>>(
       '/wallet/bank/details',
       { params: { account_number: accountNumber, bank_code: bankCode } },
     );
-    return data.account;
+    return response.data.data.account;
   },
 
   transfer: async (payload: TransferPayload): Promise<TransferResponse> => {
