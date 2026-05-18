@@ -1,9 +1,7 @@
 import type {
   AddBeneficiaryPayload,
-  BeneficiariesResponse,
   Beneficiary,
   Bank,
-  BanksResponse,
   BulkTransferPayload,
   BulkTransferResponse,
   TransferPayload,
@@ -11,12 +9,13 @@ import type {
   ValidateAccountResponse,
   ValidatedAccount,
 } from '@/types/transfer.types';
+import type { ApiEnvelope } from '@/types/api.types';
 import { api } from './api';
 
 export const walletService = {
   getBanks: async (): Promise<Bank[]> => {
-    const { data } = await api.get<BanksResponse>('/wallet/banks');
-    return data.banks;
+    const response = await api.get<ApiEnvelope<Bank[]>>('/wallet/banks');
+    return response.data.data;
   },
 
   validateAccount: async (
@@ -53,9 +52,9 @@ export const walletService = {
   },
 
   getBeneficiaries: async (): Promise<Beneficiary[]> => {
-    const { data } = await api.get<BeneficiariesResponse>(
+    const response = await api.get<ApiEnvelope<Beneficiary[]>>(
       '/wallet/beneficiaries',
     );
-    return data.beneficiaries;
+    return response.data.data;
   },
 };

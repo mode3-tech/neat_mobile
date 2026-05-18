@@ -7,6 +7,7 @@ import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack, useRouter } from 'expo-router';
 import * as Notifications from 'expo-notifications';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -17,6 +18,15 @@ import { useSessionTimeout } from '@/hooks/use-session-timeout';
 import { useAuthStore } from '@/stores/auth.store';
 import { useProfileStore } from '@/stores/profile.store';
 import { DeviceIntegrityGate } from '@/components/security/device-integrity-gate';
+
+// Keep the native (expo-splash-screen) splash visible until the first real
+// screen has painted. Called at module scope here — the earliest point that
+// runs on every cold start — so it always wins the race against the OS
+// auto-hiding the splash on first render. `fade` makes hideAsync() cross-fade
+// into the destination instead of a hard cut. hideAsync() itself is called
+// from index.tsx once the post-auth route is mounted.
+SplashScreen.preventAutoHideAsync();
+SplashScreen.setOptions({ fade: true, duration: 250 });
 
 // Show notifications as alerts when app is in foreground
 Notifications.setNotificationHandler({

@@ -27,8 +27,8 @@ export const loanService = {
 
   getLoanProducts: async (): Promise<LoanProduct[]> => {
     try {
-      const response = await api.get<ApiEnvelope<{ products: LoanProduct[] }>>('/loan');
-      return response.data.data.products;
+      const response = await api.get<ApiEnvelope<LoanProduct[]>>('/loan');
+      return response.data.data;
     } catch (error) {
       throwApiError(error, 'Failed to load loan products');
     }

@@ -5,7 +5,8 @@ import { View } from 'react-native';
 
 import { useAuthStore } from '@/stores/auth.store';
 
-SplashScreen.preventAutoHideAsync();
+// preventAutoHideAsync()/setOptions() now live in _layout.tsx so they run at
+// the earliest possible point and always win the auto-hide race.
 
 export default function Index(): React.JSX.Element {
   useEffect(() => {
@@ -27,7 +28,15 @@ export default function Index(): React.JSX.Element {
         } else {
           router.replace('/welcome');
         }
-        await SplashScreen.hideAsync();
+        // Wait two frames so the destination screen has mounted and laid
+        // out before we lift the native splash — otherwise it reveals this
+        // bare view (or a half-painted screen) for a beat. The `fade`
+        // configured in _layout.tsx cross-fades over any sub-frame gap.
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            void SplashScreen.hideAsync();
+          });
+        });
       }
     }
     prepare();
