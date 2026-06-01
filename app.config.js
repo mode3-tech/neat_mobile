@@ -50,6 +50,7 @@ const baseConfig = {
   },
   plugins: [
     'expo-router',
+    'expo-font',
     [
       'expo-splash-screen',
       {

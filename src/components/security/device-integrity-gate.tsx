@@ -1,5 +1,4 @@
 import { useEffect, useState, type PropsWithChildren } from 'react';
-import { View } from 'react-native';
 import { useFreeRasp } from 'freerasp-react-native';
 import * as Application from 'expo-application';
 
@@ -13,8 +12,6 @@ import {
 
 import { DeviceBlockedScreen } from './device-blocked-screen';
 
-const SPLASH_BG = '#472FF8';
-const FALLBACK_TIMEOUT_MS = 15_000;
 const WATCHER_EMAIL = 'security@neatpay.ng';
 
 const ANDROID_CERT_HASHES = (process.env.EXPO_PUBLIC_ANDROID_CERT_SHA256 ?? '')
@@ -92,25 +89,14 @@ function ProductionIntegrityGate({
 
   useEffect(() => {
     const unsubscribe = subscribeIntegrity(setStatus);
-    // Defensive fallback: if neither a blocking threat nor
-    // allChecksFinished fires (e.g., library failure), unblock the user
-    // after this timeout rather than stranding them on the splash. A
-    // late-arriving threat after this point can still upgrade the
-    // status to 'compromised' — see security.service.ts:update.
-    const timer = setTimeout(() => {
-      if (getIntegrityStatus() === 'unknown') {
-        reportChecksFinished();
-      }
-    }, FALLBACK_TIMEOUT_MS);
-    return () => {
-      unsubscribe();
-      clearTimeout(timer);
-    };
+    return unsubscribe;
   }, []);
 
-  if (status === 'unknown') {
-    return <View style={{ flex: 1, backgroundColor: SPLASH_BG }} />;
-  }
+  // Render the app immediately and let the integrity checks run in the
+  // background — we no longer hold the first paint hostage to them. A blocking
+  // threat (now while 'unknown', or later once checks settle to 'ok') flips the
+  // status to 'compromised' and swaps in the blocked screen — see
+  // security.service.ts:update, where 'compromised' overrides any prior state.
   if (status === 'compromised') {
     return <DeviceBlockedScreen />;
   }

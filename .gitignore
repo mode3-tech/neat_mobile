@@ -50,3 +50,7 @@ app-example
 # Claude
 .claude/
 .vscode/CLAUDE.md
+
+# internal pre-launch checklist
+THINGS-TO-DO-BEFORE-GOING-LIVE.md
+EAS-ACCOUNT-CHANGE-CHECKLIST.md
