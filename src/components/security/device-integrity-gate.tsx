@@ -25,6 +25,17 @@ if (!__DEV__ && ANDROID_CERT_HASHES.length === 0) {
   );
 }
 
+// A `preview` build is an internal-distribution APK sideloaded from outside the
+// Play/App Store, so freeRASP's `unofficialStore` check ALWAYS fires for it — even on a
+// perfectly clean device. That would block every QA install. Relax ONLY that one check,
+// and ONLY when the variant is exactly 'preview'. Anything else — production, or an
+// unset variant — stays strict, so production fails closed. Every other reaction
+// (root/jailbreak, hooks, debug, simulator, …) hard-blocks on every build, preview
+// included.
+const IS_PREVIEW_BUILD = process.env.EXPO_PUBLIC_APP_VARIANT === 'preview';
+
+const onUnofficialStore = IS_PREVIEW_BUILD ? () => {} : reportBlockingThreat;
+
 export function DeviceIntegrityGate({
   children,
 }: PropsWithChildren): React.JSX.Element {
@@ -63,7 +74,7 @@ function ProductionIntegrityGate({
       // appIntegrity: reportBlockingThreat,
       appIntegrity: () => {}, // TODO: re-enable once cert hash configured in eas.json
 
-      unofficialStore: reportBlockingThreat,
+      unofficialStore: onUnofficialStore,
       simulator: reportBlockingThreat,
       passcode: () => {},
       deviceBinding: () => {},
