@@ -11,8 +11,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { PIN_LENGTH } from '@/constants';
+import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { walletService } from '@/services/wallet.service';
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
@@ -20,6 +21,7 @@ import { getErrorMessage } from '@/utils/error';
 
 export default function BulkTransferPinScreen() {
   const { recipients, setResultMessage } = useBulkTransferStore();
+  const queryClient = useQueryClient();
   const {
     isBiometricReady,
     biometryType,
@@ -54,6 +56,10 @@ export default function BulkTransferPinScreen() {
       });
 
       await onManualPinSuccess(transactionPin);
+      // Outflow consumed — refresh balance and the activation-cap allowance
+      // so the next transfer screen pre-validates against fresh numbers.
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_LIMITS] });
       setResultMessage(
         response.message || 'Your bulk transfer has been processed successfully.',
       );

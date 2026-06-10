@@ -59,6 +59,44 @@ export const authService = {
     }
   },
 
+  verifyBvnWithFace: async (
+    verificationId: string,
+    bvn: string,
+    image: string,
+  ): Promise<{ bvn_w_face_verification_id: string }> => {
+    try {
+      const response = await api.post<
+        ApiEnvelope<{ bvn_w_face_verification_id: string }>
+      >('/auth/validate/bvn-with-face', {
+        verification_id: verificationId,
+        bvn,
+        image,
+      });
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'BVN face verification failed');
+    }
+  },
+
+  verifyNinWithFace: async (
+    verificationId: string,
+    nin: string,
+    image: string,
+  ): Promise<{ nin_w_face_verification_id: string }> => {
+    try {
+      const response = await api.post<
+        ApiEnvelope<{ nin_w_face_verification_id: string }>
+      >('/auth/validate/nin-with-face', {
+        verification_id: verificationId,
+        nin,
+        image,
+      });
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'NIN face verification failed');
+    }
+  },
+
   sendPhoneOtp: async (verificationId: string): Promise<void> => {
     try {
       await api.post<ApiEnvelope>(

@@ -10,14 +10,12 @@ interface ServiceItem {
 
 const SERVICES: ServiceItem[][] = [
   [
-    { icon: 'send', label: 'Send Bulk', route: '/(transfer)/bulk-transfer' },
     { icon: 'qrcode-scan', label: 'QR Code' },
     { icon: 'cash-multiple', label: 'Loans', route: '/(loan)/loan-home' },
-    { icon: 'piggy-bank', label: 'NeatSave' },
     { icon: 'file-document-outline', label: 'Statement', route: '/(account)/statement' },
+    { icon: 'wifi', label: 'Buy Data' },
   ],
   [
-    { icon: 'wifi', label: 'Buy Data' },
     { icon: 'television', label: 'Cable TV' },
     { icon: 'flash', label: 'Electricity' },
     { icon: 'trophy', label: 'Betting' },
@@ -34,7 +32,7 @@ export default function ServicesGrid() {
           {row.map((item) => (
             <TouchableOpacity
               key={item.label}
-              className="items-center w-[18%]"
+              className="items-center w-[22%]"
               activeOpacity={0.7}
               onPress={() => item.route && router.push(item.route as any)}
             >

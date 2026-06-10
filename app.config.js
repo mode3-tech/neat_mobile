@@ -31,6 +31,12 @@ const baseConfig = {
   },
   ios: {
     supportsTablet: true,
+    infoPlist: {
+      NSCameraUsageDescription:
+        'NeatPay needs your camera to verify your identity with a quick selfie.',
+      NSMicrophoneUsageDescription:
+        'NeatPay uses your microphone during identity verification.',
+    },
   },
   android: {
     googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? './google-services.json',
@@ -43,6 +49,7 @@ const baseConfig = {
     softwareKeyboardLayoutMode: 'resize',
     predictiveBackGestureEnabled: false,
     package: 'com.mode3.neatmobile',
+    permissions: ['android.permission.CAMERA', 'android.permission.RECORD_AUDIO'],
   },
   web: {
     output: 'static',

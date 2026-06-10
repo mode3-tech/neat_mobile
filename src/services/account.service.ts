@@ -1,4 +1,5 @@
 import type {
+  AccountLimits,
   AccountSummary,
   StatementJobStatusResponse,
   StatementRequestBody,
@@ -16,6 +17,15 @@ export const accountService = {
       return response.data.data;
     } catch (error) {
       throwApiError(error, 'Failed to load account summary');
+    }
+  },
+
+  getLimits: async (): Promise<AccountLimits> => {
+    try {
+      const response = await api.get<ApiEnvelope<AccountLimits>>('/account/limits');
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'Failed to load account limits');
     }
   },
 

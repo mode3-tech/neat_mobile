@@ -18,6 +18,8 @@ interface SignUpState {
   jobId: string;
   claimToken: string;
   claimExpiresAt: string;
+  bvnFaceVerificationId: string;
+  ninFaceVerificationId: string;
 
   setBvnData: (bvn: string, data: BvnData) => void;
   setNinData: (nin: string, data: NinData) => void;
@@ -33,6 +35,8 @@ interface SignUpState {
     claimToken: string,
     claimExpiresAt: string,
   ) => void;
+  setBvnFaceVerificationId: (id: string) => void;
+  setNinFaceVerificationId: (id: string) => void;
   reset: () => void;
 }
 
@@ -52,6 +56,8 @@ const initialState = {
   jobId: '',
   claimToken: '',
   claimExpiresAt: '',
+  bvnFaceVerificationId: '',
+  ninFaceVerificationId: '',
 };
 
 export const useSignUpStore = create<SignUpState>((set) => ({
@@ -78,6 +84,10 @@ export const useSignUpStore = create<SignUpState>((set) => ({
 
   setRegistrationJob: (jobId, claimToken, claimExpiresAt) =>
     set({ jobId, claimToken, claimExpiresAt }),
+
+  setBvnFaceVerificationId: (bvnFaceVerificationId) => set({ bvnFaceVerificationId }),
+
+  setNinFaceVerificationId: (ninFaceVerificationId) => set({ ninFaceVerificationId }),
 
   reset: () => set(initialState),
 }));

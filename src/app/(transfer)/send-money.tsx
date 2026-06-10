@@ -19,6 +19,9 @@ import { accountService } from '@/services/account.service';
 import { walletService } from '@/services/wallet.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { useTransferStore } from '@/stores/transfer.store';
+import { useAccountLimits } from '@/hooks/use-account-limits';
+import { ActivationCapBanner } from '@/components/ActivationCapBanner';
+import { formatNairaShort } from '@/utils/format';
 import type { Bank, Beneficiary, TransferType } from '@/types/transfer.types';
 
 const TABS: { key: TransferType; label: string }[] = [
@@ -33,6 +36,7 @@ export default function SendMoneyScreen() {
     queryKey: ['account-summary'],
     queryFn: accountService.getSummary,
   });
+  const { data: limits } = useAccountLimits();
 
   const [activeTab, setActiveTab] = useState<TransferType>('neatpay');
 
@@ -178,15 +182,25 @@ export default function SendMoneyScreen() {
 
   const parsedAmount = parseInt(amount, 10) || 0;
 
+  // CBN 24h activation cap: block outflow above what's left in the window.
+  // Amount input is whole naira; the limit is kobo, so compare in kobo.
+  // Fail-open — if the cap isn't active or limits didn't load, never block.
+  const outflowRemaining = limits?.out_flow?.remaining;
+  const exceedsCap =
+    limits?.activation_cap?.active === true &&
+    parsedAmount > 0 &&
+    parsedAmount * 100 > (outflowRemaining ?? Infinity);
+
   const canProceed =
-    activeTab === 'neatpay'
+    !exceedsCap &&
+    (activeTab === 'neatpay'
       ? accountNumber.length === ACCOUNT_NUMBER_LENGTH &&
         accountName !== '' &&
         parsedAmount > 0
       : accountNumber.length === ACCOUNT_NUMBER_LENGTH &&
         accountName !== '' &&
         selectedBank !== null &&
-        parsedAmount > 0;
+        parsedAmount > 0);
 
   const handleProceed = () => {
     if (!canProceed) return;
@@ -259,6 +273,9 @@ export default function SendMoneyScreen() {
         <Text className="text-[20px] font-medium text-[#1A1A1A] mb-8">
           Send Money
         </Text>
+
+        {/* CBN 24h activation cap disclosure (renders only when active) */}
+        <ActivationCapBanner limits={limits} />
 
         {/* Transfer Type label */}
         <Text className="text-sm font-semibold text-[#1A1A1A] mb-6">
@@ -393,6 +410,12 @@ export default function SendMoneyScreen() {
                 keyboardType="number-pad"
               />
             </View>
+            {exceedsCap && outflowRemaining != null && (
+              <Text className="text-xs text-red-500 mt-1.5">
+                Exceeds your remaining {formatNairaShort(outflowRemaining)}{' '}
+                24-hour limit.
+              </Text>
+            )}
           </View>
 
           {/* Narration */}

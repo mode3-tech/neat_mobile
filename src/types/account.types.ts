@@ -24,6 +24,17 @@ export interface AccountSummary {
   profile_picture?: string;
 }
 
+export interface AccountLimits {
+  activation_cap: {
+    active: boolean;
+    expires_at?: string; // ISO 8601, present when active
+    cap_amount?: number; // kobo
+    currency?: string;
+  };
+  out_flow?: { limit: number; spent: number; remaining: number }; // kobo
+  in_flow?: { capped: boolean; limit: number; remaining: number }; // kobo
+}
+
 export interface UpdateProfileBody {
   email?: string;
   address?: string;

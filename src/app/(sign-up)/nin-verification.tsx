@@ -56,7 +56,7 @@ export default function NinVerificationScreen() {
   const handleConfirm = () => {
     if (!ninResult) return;
     storeNinData(nin, ninResult);
-    router.push('/(sign-up)/mothers-maiden-name');
+    router.push('/(sign-up)/face-liveness');
   };
 
   return (

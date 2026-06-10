@@ -21,7 +21,7 @@ export default function NewDeviceDetectedScreen() {
 
   return ( 
     <View className="flex-1 bg-[#F5F5F5]">
-      {/* Top section - light bg with centered image */}
+     
       <View className="flex-[0.65] justify-end items-center">
         <Image
           source={require('../../../assets/images/device.png')}

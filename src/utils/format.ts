@@ -11,6 +11,22 @@ export const formatNaira = (kobo: number): string => {
 };
 
 /**
+ * Format kobo to Naira, dropping trailing ".00" for whole amounts
+ * (e.g. 2000000 → "₦20,000", 1500050 → "₦15,000.50"). For compact UI
+ * copy like banners where round figures read better without decimals.
+ */
+export const formatNairaShort = (kobo: number): string => {
+  const naira = kobo / 100;
+  const hasFraction = naira % 1 !== 0;
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: hasFraction ? 2 : 0,
+    maximumFractionDigits: 2,
+  }).format(naira);
+};
+
+/**
  * Format whole-naira amounts (not kobo) to display string.
  */
 export const formatNairaWhole = (amount: number): string => {
@@ -91,6 +107,38 @@ export const formatTransactionDateTime = (iso: string): string => {
   const h12 = hours % 12 || 12;
 
   return `${months[d.getMonth()]} ${ordinal(day)}, ${d.getFullYear()} | ${String(h12).padStart(2, '0')}:${mins} ${ampm}`;
+};
+
+/**
+ * Format an ISO timestamp as a friendly cap-expiry label.
+ * e.g. "2026-06-05T10:33:00Z" → "11:33 AM today" / "3:33 PM tomorrow".
+ * Falls back to a short date ("Jun 7") for dates further out.
+ */
+export const formatCapExpiry = (iso: string): string => {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+
+  const hours = d.getHours();
+  const mins = String(d.getMinutes()).padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const h12 = hours % 12 || 12;
+  const time = `${h12}:${mins} ${ampm}`;
+
+  // Compare calendar days (ignoring time) to label today/tomorrow.
+  const startOfDay = (x: Date) =>
+    new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const dayDiff = Math.round(
+    (startOfDay(d) - startOfDay(new Date())) / 86_400_000,
+  );
+
+  if (dayDiff === 0) return `${time} today`;
+  if (dayDiff === 1) return `${time} tomorrow`;
+
+  const months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+  return `${time} on ${months[d.getMonth()]} ${d.getDate()}`;
 };
 
 /**

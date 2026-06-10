@@ -11,8 +11,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { PIN_LENGTH } from '@/constants';
+import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
@@ -58,6 +59,7 @@ function SummaryRow({
 
 export default function TransferReviewScreen() {
   const store = useTransferStore();
+  const queryClient = useQueryClient();
   const {
     isBiometricReady,
     biometryType,
@@ -95,6 +97,10 @@ export default function TransferReviewScreen() {
       });
 
       await onManualPinSuccess(transactionPin);
+      // Outflow consumed — refresh balance and the activation-cap allowance
+      // so the next transfer screen pre-validates against fresh numbers.
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_LIMITS] });
       store.setTransferResult(response.transfer);
       router.push('/(transfer)/transfer-success');
     } catch (err: unknown) {
