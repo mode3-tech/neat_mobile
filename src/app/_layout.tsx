@@ -158,6 +158,7 @@ export default function RootLayout(): React.JSX.Element {
               options={{ animation: 'none' }}
             />
             <Stack.Screen name="(loan)" />
+            <Stack.Screen name="(vas)" />
             <Stack.Screen name="(transfer)" />
             <Stack.Screen name="(savings)" />
             {/* <Stack.Screen name="(account)" /> */}

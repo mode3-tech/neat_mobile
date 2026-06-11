@@ -28,6 +28,9 @@ export const QUERY_KEYS = {
   STATEMENT_JOB: 'statement-job',
   ACCOUNT_SUMMARY: 'account-summary',
   ACCOUNT_LIMITS: 'account-limits',
+  VAS_CATEGORIES: 'vas-categories',
+  VAS_BILLERS: 'vas-billers',
+  VAS_PRODUCTS: 'vas-products',
 } as const;
 
 export const SESSION_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
