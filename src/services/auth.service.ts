@@ -17,6 +17,8 @@ import type {
   ClaimSessionResponse,
   ForgotPasswordResponse,
   ForgotPasswordVerifyResponse,
+  ForgotPinResponse,
+  ForgotPinVerifyResponse,
   LoginResponse,
   OtpVerifyResponse,
   PasswordChangeRequestResponse,
@@ -465,6 +467,51 @@ export const authService = {
       await api.patch<ApiEnvelope>('/auth/pin/change', body);
     } catch (error) {
       throwApiError(error, 'Failed to change PIN');
+    }
+  },
+
+  forgotPin: async (): Promise<ForgotPinResponse> => {
+    try {
+      const response = await api.post<ApiEnvelope<ForgotPinResponse>>(
+        '/auth/pin/forgot',
+      );
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'Failed to send OTP');
+    }
+  },
+
+  verifyForgotPinOtp: async (
+    body: { otp_id: string; otp_code: string },
+  ): Promise<ForgotPinVerifyResponse> => {
+    try {
+      const response = await api.post<ApiEnvelope<ForgotPinVerifyResponse>>(
+        '/auth/pin/forgot/verify',
+        body,
+      );
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'OTP verification failed');
+    }
+  },
+
+  resendForgotPinOtp: async (): Promise<void> => {
+    try {
+      await api.post<ApiEnvelope>('/auth/pin/forgot/resend');
+    } catch (error) {
+      throwApiError(error, 'Failed to resend OTP');
+    }
+  },
+
+  resetPin: async (body: {
+    verification_id: string;
+    new_pin: string;
+    confirm_new_pin: string;
+  }): Promise<void> => {
+    try {
+      await api.patch<ApiEnvelope>('/auth/pin/reset', body);
+    } catch (error) {
+      throwApiError(error, 'Failed to reset PIN');
     }
   },
 

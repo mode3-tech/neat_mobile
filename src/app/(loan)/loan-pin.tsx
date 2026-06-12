@@ -11,6 +11,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
 
+import { ForgotPinLink } from '@/components/ui/forgot-pin-link';
 import { PIN_LENGTH } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { loanService } from '@/services/loan.service';
@@ -109,6 +110,7 @@ export default function LoanPinScreen() {
             />
           </TouchableOpacity>
         </View>
+        <ForgotPinLink />
       </View>
 
       <View className="flex-1" />

@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 
+import { ForgotPinLink } from '@/components/ui/forgot-pin-link';
 import { PIN_LENGTH } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { vasService } from '@/services/vas.service';
@@ -124,6 +125,7 @@ export default function VasPinScreen() {
             />
           </TouchableOpacity>
         </View>
+        <ForgotPinLink />
       </View>
 
       <View className="flex-1" />

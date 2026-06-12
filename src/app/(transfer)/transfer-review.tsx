@@ -13,6 +13,7 @@ import { router } from 'expo-router';
 import { toast } from 'sonner-native';
 import { useQueryClient } from '@tanstack/react-query';
 
+import { ForgotPinLink } from '@/components/ui/forgot-pin-link';
 import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { walletService } from '@/services/wallet.service';
@@ -201,6 +202,7 @@ export default function TransferReviewScreen() {
               />
             </TouchableOpacity>
           </View>
+          <ForgotPinLink />
         </View>
 
         {/* Confirm + Fingerprint */}

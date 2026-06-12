@@ -116,6 +116,14 @@ export interface PasswordChangeVerifyResponse {
   verification_id: string;
 }
 
+export interface ForgotPinResponse {
+  otp_id: string;
+}
+
+export interface ForgotPinVerifyResponse {
+  verification_id: string;
+}
+
 export interface ForgotPasswordResponse {
   message: string;
   otp_id: string;

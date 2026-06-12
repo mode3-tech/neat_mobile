@@ -11,6 +11,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
 
+import { SessionExpiredCard } from '@/components/ui/session-expired-card';
 import { authService } from '@/services/auth.service';
 import { useSecurityChangeStore } from '@/stores/security-change.store';
 import { getErrorMessage } from '@/utils/error';
@@ -118,23 +119,7 @@ export default function ChangePasswordScreen() {
   };
 
   if (sessionExpired) {
-    return (
-      <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
-        <View className="bg-[#FEF2F2] rounded-2xl px-6 py-8 items-center w-full">
-          <Text className="text-lg font-bold text-[#1A1A1A] mb-2">Session Expired</Text>
-          <Text className="text-[13px] text-gray-500 text-center leading-5 mb-6">
-            Please start the password change again.
-          </Text>
-          <TouchableOpacity
-            className="bg-[#472FF8] rounded-full py-3.5 px-10"
-            onPress={() => router.back()}
-            activeOpacity={0.85}
-          >
-            <Text className="text-white text-sm font-semibold">Go Back</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    );
+    return <SessionExpiredCard message="Please start the password change again." />;
   }
 
   return (

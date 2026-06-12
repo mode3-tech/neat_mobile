@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { toast } from 'sonner-native';
 
 import { PinField } from '@/components/ui/pin-field';
@@ -16,73 +16,48 @@ import { SessionExpiredCard } from '@/components/ui/session-expired-card';
 import { PIN_LENGTH } from '@/constants';
 import { authService } from '@/services/auth.service';
 import { clearStoredTransactionPin } from '@/services/biometric.service';
-import { useSecurityChangeStore } from '@/stores/security-change.store';
 import { getErrorMessage } from '@/utils/error';
 
-export default function ChangePinScreen() {
-  const [currentPin, setCurrentPin] = useState('');
+export default function ResetPinScreen() {
+  const { verificationId } = useLocalSearchParams<{ verificationId: string }>();
+
   const [newPin, setNewPin] = useState('');
   const [confirmNewPin, setConfirmNewPin] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errorField, setErrorField] = useState<'current' | 'new' | 'confirm' | null>(null);
-  const [sessionExpired, setSessionExpired] = useState(false);
+  const [errorField, setErrorField] = useState<'confirm' | null>(null);
 
-  const pinChange = useSecurityChangeStore((s) => s.pinChange);
-  const clearPinChange = useSecurityChangeStore((s) => s.clearPinChange);
-  const hadPinChange = useRef(!!pinChange);
+  const canProceed = newPin.length === PIN_LENGTH && confirmNewPin.length === PIN_LENGTH;
 
-  useEffect(() => {
-    if (!hadPinChange.current) {
-      setSessionExpired(true);
-    }
-  }, []);
-
-  const canProceed =
-    currentPin.length === PIN_LENGTH &&
-    newPin.length === PIN_LENGTH &&
-    confirmNewPin.length === PIN_LENGTH;
-
-  const handleChangePin = async () => {
-    if (!canProceed || loading || !pinChange) return;
+  const handleResetPin = async () => {
+    if (!canProceed || loading || !verificationId) return;
     if (newPin !== confirmNewPin) {
       setErrorField('confirm');
       return;
     }
-    if (newPin === currentPin) {
-      setErrorField('new');
-      toast.error('PIN change failed', {
-        description: 'New PIN must be different from current PIN.',
-      });
-      return;
-    }
     setLoading(true);
     try {
-      await authService.changePin({
-        verification_id: pinChange.verificationId,
-        current_pin: currentPin,
+      await authService.resetPin({
+        verification_id: verificationId,
         new_pin: newPin,
         confirm_new_pin: confirmNewPin,
       });
-      // The old PIN cached for biometric auth is now invalid; clearing is
-      // best-effort — the change already succeeded on the backend.
-      await clearStoredTransactionPin().catch(() => {});
-      clearPinChange();
-      router.replace({
-        pathname: '/(profile)/success' as any,
-        params: {
-          title: 'PIN Changed Successfully',
-          message: 'Your transaction PIN has been updated. Use your new PIN for future transactions.',
-        },
-      });
     } catch (err: unknown) {
-      toast.error('PIN change failed', { description: getErrorMessage(err) });
-    } finally {
+      toast.error('PIN reset failed', { description: getErrorMessage(err) });
       setLoading(false);
+      return;
     }
+    // The old PIN cached for biometric auth is now invalid; clearing is
+    // best-effort — the reset already succeeded on the backend.
+    await clearStoredTransactionPin().catch(() => {});
+    setLoading(false);
+    toast.success('PIN reset successfully', {
+      description: 'Use your new PIN for this transaction.',
+    });
+    router.back();
   };
 
-  if (sessionExpired) {
-    return <SessionExpiredCard message="Please start the PIN change again." />;
+  if (!verificationId) {
+    return <SessionExpiredCard message="Please start the PIN reset again." />;
   }
 
   return (
@@ -98,17 +73,8 @@ export default function ChangePinScreen() {
           <Text className="text-sm text-gray-700 font-medium">Back</Text>
         </TouchableOpacity>
 
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Change Transaction PIN</Text>
+        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Reset Transaction PIN</Text>
 
-        <PinField
-          label="Current PIN"
-          value={currentPin}
-          onChangeText={(t) => {
-            setCurrentPin(t);
-            setErrorField(null);
-          }}
-          hasError={errorField === 'current'}
-        />
         <PinField
           label="New PIN"
           value={newPin}
@@ -116,7 +82,6 @@ export default function ChangePinScreen() {
             setNewPin(t);
             setErrorField(null);
           }}
-          hasError={errorField === 'new'}
         />
         <PinField
           label="Confirm New PIN"
@@ -136,7 +101,7 @@ export default function ChangePinScreen() {
         <View className="pb-4">
           <TouchableOpacity
             className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
-            onPress={handleChangePin}
+            onPress={handleResetPin}
             disabled={!canProceed || loading}
             activeOpacity={0.85}
           >
@@ -144,7 +109,7 @@ export default function ChangePinScreen() {
               <ActivityIndicator color="#fff" />
             ) : (
               <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-gray-400'}`}>
-                Change PIN
+                Reset PIN
               </Text>
             )}
           </TouchableOpacity>
