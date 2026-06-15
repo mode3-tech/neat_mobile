@@ -13,7 +13,8 @@ import { useQuery } from '@tanstack/react-query';
 
 import { loanService } from '@/services/loan.service';
 import { QUERY_KEYS } from '@/constants';
-import { formatNairaWhole } from '@/utils/format';
+import { formatNairaWhole, titleCase } from '@/utils/format';
+import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import type { LoanStatusItem } from '@/types/loan.types';
 
 function StatTile({
@@ -59,21 +60,34 @@ function DetailRow({
   );
 }
 
+function getStatusDisplay(status: string): {
+  label: string;
+  bg: string;
+  text: string;
+} {
+  switch (status) {
+    case 'embryo':
+    case 'pending':
+      return { label: 'Pending', bg: '#FEF3C7', text: '#B45309' };
+    case 'active':
+    case 'approved':
+    case 'disbursed':
+      return { label: titleCase(status), bg: '#D1FAE5', text: '#16A34A' };
+    case 'overdue':
+    case 'defaulted':
+    case 'rejected':
+      return { label: titleCase(status), bg: '#FEE2E2', text: '#DC2626' };
+    case 'paid':
+    case 'completed':
+    case 'closed':
+      return { label: titleCase(status), bg: '#EEF0FF', text: '#472FF8' };
+    default:
+      return { label: titleCase(status), bg: '#F3F4F6', text: '#6B7280' };
+  }
+}
+
 function LoanStatusCard({ loan }: { loan: LoanStatusItem }) {
-  // const paidPct =
-  //   loan.loan_amount > 0
-  //     ? Math.max(
-  //         0,
-  //         Math.min(
-  //           100,
-  //           Math.round(
-  //             ((loan.loan_amount - loan.balance_remaining) / loan.loan_amount) *
-  //               100,
-  //           ),
-  //         ),
-  //       )
-  //     : 0;
-  // const remainingPct = 100 - paidPct;
+  const statusDisplay = getStatusDisplay(loan.status);
 
   return (
     <View className="border border-[#E5E7EB] rounded-2xl p-6 mb-4">
@@ -86,9 +100,15 @@ function LoanStatusCard({ loan }: { loan: LoanStatusItem }) {
             ID: {loan.loan_id}
           </Text>
         </View>
-        <View className="bg-[#D1FAE5] rounded-full px-3 py-1">
-          <Text className="text-[#16A34A] text-xs font-semibold">
-            {loan.status}
+        <View
+          className="rounded-full px-3 py-1"
+          style={{ backgroundColor: statusDisplay.bg }}
+        >
+          <Text
+            className="text-xs font-semibold"
+            style={{ color: statusDisplay.text }}
+          >
+            {statusDisplay.label}
           </Text>
         </View>
       </View>
@@ -98,19 +118,17 @@ function LoanStatusCard({ loan }: { loan: LoanStatusItem }) {
           icon="wallet-outline"
           label="Loan Amount"
           value={formatNairaWhole(loan.loan_amount)}
-          // footer={`${paidPct}% Paid`}
         />
         <StatTile
           icon="wallet-outline"
           label="Balance Remaining"
           value={formatNairaWhole(loan.balance_remaining)}
-          // footer={`${remainingPct}% remaining`}
         />
       </View>
 
       <View className="bg-[#EEF0FF] rounded-2xl px-5 py-2 mt-5">
         <DetailRow
-          label="Monthly Payment"
+          label="Periodic Payment"
           value={formatNairaWhole(loan.periodic_payment)}
         />
         <DetailRow label="Tenure" value={loan.tenure} />
@@ -125,7 +143,7 @@ function LoanStatusCard({ loan }: { loan: LoanStatusItem }) {
 }
 
 export default function LoanStatusScreen() {
-  const { data: loans, isLoading, isError } = useQuery({
+  const { data: loans, isLoading, isError, refetch, isRefetching } = useQuery({
     queryKey: [QUERY_KEYS.LOAN_STATUS],
     queryFn: loanService.getAllLoans,
   });
@@ -149,34 +167,39 @@ export default function LoanStatusScreen() {
         <View className="h-[180px] items-center justify-center">
           <ActivityIndicator size="small" color="#472FF8" />
         </View>
-      ) : isError ? (
-        <View className="flex-1 items-center justify-center py-16">
-          <MaterialCommunityIcons
-            name="alert-circle-outline"
-            size={48}
-            color="#EF4444"
-          />
-          <Text className="text-sm text-[#6B7280] mt-3 text-center">
-            Could not load loan status.{'\n'}Please try again.
-          </Text>
-        </View>
-      ) : isEmpty ? (
-        <View className="flex-1 items-center justify-center py-16">
-          <Image
-            source={require('../../../assets/images/loan-status.png')}
-            className="w-[280px] h-[280px]"
-            resizeMode="contain"
-          />
-        </View>
       ) : (
         <ScrollView
           className="flex-1"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 32 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
+          refreshControl={
+            <PrimaryRefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          }
         >
-          {(loans ?? []).map((loan) => (
-            <LoanStatusCard key={loan.loan_id} loan={loan} />
-          ))}
+          {isError ? (
+            <View className="flex-1 items-center justify-center py-16">
+              <MaterialCommunityIcons
+                name="alert-circle-outline"
+                size={48}
+                color="#EF4444"
+              />
+              <Text className="text-sm text-[#6B7280] mt-3 text-center">
+                Could not load loan status.{'\n'}Please try again.
+              </Text>
+            </View>
+          ) : isEmpty ? (
+            <View className="flex-1 items-center justify-center py-16">
+              <Image
+                source={require('../../../assets/images/loan-status.png')}
+                className="w-[280px] h-[280px]"
+                resizeMode="contain"
+              />
+            </View>
+          ) : (
+            (loans ?? []).map((loan) => (
+              <LoanStatusCard key={loan.loan_id} loan={loan} />
+            ))
+          )}
         </ScrollView>
       )}
     </SafeAreaView>

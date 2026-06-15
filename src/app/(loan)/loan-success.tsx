@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   ScrollView,
   Text,
@@ -10,6 +10,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { useLoanStore } from '@/stores/loan.store';
+import { titleCase } from '@/utils/format';
 
 function formatCurrency(amount: number): string {
   return '₦' + new Intl.NumberFormat('en-NG', {
@@ -30,15 +31,23 @@ function SummaryRow({ label, value, isLast }: { label: string; value: string; is
 export default function LoanSuccessScreen() {
   const summary = useLoanStore((s) => s.summary);
   const reset = useLoanStore((s) => s.reset);
+  const leavingRef = useRef(false);
 
-  const handleBack = () => {
+  const handleGoToStatus = () => {
+    leavingRef.current = true;
+    // Collapse the application stack back to its root (loan-home) and open
+    // loan-status on top, so Back goes loan-status → loan-home → Dashboard.
+    router.dismissAll();
+    router.push('/(loan)/loan-status');
     reset();
-    router.replace('/(loan)/loan-home');
   };
 
+  // Guard: if this screen is ever shown without summary data (e.g. stale
+  // navigation), bail back to loan-home — but not while the user is
+  // intentionally leaving (reset() clears summary as we navigate away).
   useEffect(() => {
-    if (!summary) {
-      handleBack();
+    if (!summary && !leavingRef.current) {
+      router.replace('/(loan)/loan-home');
     }
   }, [summary]);
 
@@ -46,9 +55,7 @@ export default function LoanSuccessScreen() {
     return null;
   }
 
-  const frequencyLabel =
-    summary.repayment_frequency.charAt(0).toUpperCase() +
-    summary.repayment_frequency.slice(1);
+  const frequencyLabel = titleCase(summary.repayment_frequency);
 
   const rows = [
     { label: 'Loan Amount', value: formatCurrency(summary.loan_amount) },
@@ -91,10 +98,10 @@ export default function LoanSuccessScreen() {
       <View className="pb-4">
         <TouchableOpacity
           className="bg-[#472FF8] rounded-full py-4 items-center"
-          onPress={handleBack}
+          onPress={handleGoToStatus}
           activeOpacity={0.85}
         >
-          <Text className="text-white text-base font-semibold">Back to Loans</Text>
+          <Text className="text-white text-base font-semibold">View Loan Status</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

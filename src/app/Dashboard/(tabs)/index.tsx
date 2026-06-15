@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -17,6 +17,7 @@ import PromoCard from '@/components/features/dashboard/PromoCard';
 import RecentTransactions from '@/components/features/dashboard/RecentTransactions';
 import ActiveLoanCard from '@/components/features/dashboard/ActiveLoanCard';
 import RepaymentBottomSheet from '@/components/features/loans/RepaymentBottomSheet';
+import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 
 export default function HomeScreen() {
   const user = useAuthStore((s) => s.user);
@@ -88,7 +89,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 10 }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <PrimaryRefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
         {/* Header */}

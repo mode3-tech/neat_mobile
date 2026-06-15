@@ -18,6 +18,7 @@ import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { loanService } from '@/services/loan.service';
 import { formatDateLong } from '@/utils/format';
+import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
 
 function formatCurrency(amount: number): string {
@@ -99,17 +100,29 @@ export default function RepaymentScheduleScreen() {
     data: repayment,
     isLoading,
     isError,
+    refetch: refetchRepayment,
+    isRefetching,
   } = useQuery({
     queryKey: [QUERY_KEYS.REPAYMENT, loanId],
     queryFn: () => loanService.getRepaymentSchedule(loanId!),
     enabled: !!loanId,
   });
 
-  const { data: schedule, isLoading: scheduleLoading } = useQuery({
+  const {
+    data: schedule,
+    isLoading: scheduleLoading,
+    refetch: refetchSchedule,
+  } = useQuery({
     queryKey: [QUERY_KEYS.LOAN_HISTORY_BY_ID, loanId],
     queryFn: () => loanService.getLoanHistoryById(loanId!),
     enabled: !!loanId,
   });
+
+  const onRefresh = () => {
+    if (!loanId) return;
+    refetchRepayment();
+    refetchSchedule();
+  };
 
   const {
     isBiometricReady,
@@ -170,7 +183,14 @@ export default function RepaymentScheduleScreen() {
         <Text className="text-sm font-medium text-[#374151]">Back</Text>
       </TouchableOpacity>
 
-      <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="flex-1"
+        contentContainerStyle={{ flexGrow: 1 }}
+        refreshControl={
+          <PrimaryRefreshControl refreshing={isRefetching} onRefresh={onRefresh} />
+        }
+      >
         <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">Repayment Schedule</Text>
 
         {isLoading && (

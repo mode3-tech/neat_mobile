@@ -37,6 +37,12 @@ export const formatNairaWhole = (amount: number): string => {
 };
 
 /**
+ * Capitalize the first character of a string (e.g. "active" → "Active").
+ */
+export const titleCase = (value: string): string =>
+  value.charAt(0).toUpperCase() + value.slice(1);
+
+/**
  * Format an ISO 8601 date string for transaction display.
  * e.g. "2026-04-02T14:17:23+01:00" → "Apr 2nd, 14:17:23"
  */

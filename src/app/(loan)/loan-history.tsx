@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { loanService } from '@/services/loan.service';
 import { QUERY_KEYS } from '@/constants';
+import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import { formatNairaWhole, formatDateLong } from '@/utils/format';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
 
@@ -89,6 +90,8 @@ export default function LoanHistoryScreen() {
     data: history,
     isLoading,
     isError,
+    refetch,
+    isRefetching,
   } = useQuery({
     queryKey: [QUERY_KEYS.LOAN_HISTORY],
     queryFn: loanService.getLoanHistory,
@@ -138,37 +141,42 @@ export default function LoanHistoryScreen() {
         <View className="h-[180px] items-center justify-center">
           <ActivityIndicator size="small" color="#472FF8" />
         </View>
-      ) : isError ? (
-        <View className="flex-1 items-center justify-center py-16">
-          <MaterialCommunityIcons
-            name="alert-circle-outline"
-            size={48}
-            color="#EF4444"
-          />
-          <Text className="text-sm text-[#6B7280] mt-3 text-center">
-            Could not load loan history.{'\n'}Please try again.
-          </Text>
-        </View>
-      ) : items.length === 0 ? (
-        <View className="flex-1 items-center justify-center py-16">
-          <MaterialCommunityIcons
-            name="file-document-outline"
-            size={48}
-            color="#E5E7EB"
-          />
-          <Text className="text-sm text-[#6B7280] mt-3 text-center">
-            No loans to show here yet.
-          </Text>
-        </View>
       ) : (
         <ScrollView
           className="flex-1"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 32 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
+          refreshControl={
+            <PrimaryRefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          }
         >
-          {items.map((item, idx) => (
-            <HistoryRow key={`${item.loan_id}-${item.payment_date}-${idx}`} item={item} />
-          ))}
+          {isError ? (
+            <View className="flex-1 items-center justify-center py-16">
+              <MaterialCommunityIcons
+                name="alert-circle-outline"
+                size={48}
+                color="#EF4444"
+              />
+              <Text className="text-sm text-[#6B7280] mt-3 text-center">
+                Could not load loan history.{'\n'}Please try again.
+              </Text>
+            </View>
+          ) : items.length === 0 ? (
+            <View className="flex-1 items-center justify-center py-16">
+              <MaterialCommunityIcons
+                name="file-document-outline"
+                size={48}
+                color="#E5E7EB"
+              />
+              <Text className="text-sm text-[#6B7280] mt-3 text-center">
+                No loans to show here yet.
+              </Text>
+            </View>
+          ) : (
+            items.map((item, idx) => (
+              <HistoryRow key={`${item.loan_id}-${item.payment_date}-${idx}`} item={item} />
+            ))
+          )}
         </ScrollView>
       )}
     </SafeAreaView>

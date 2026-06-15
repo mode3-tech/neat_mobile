@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { loanService } from '@/services/loan.service';
 import { QUERY_KEYS } from '@/constants';
+import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import { formatNairaWhole, formatDateLong } from '@/utils/format';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
 
@@ -83,6 +84,8 @@ export default function LoanDetailsScreen() {
     data: details,
     isLoading: loadingDetails,
     isError: detailsError,
+    refetch: refetchDetails,
+    isRefetching: isRefetchingDetails,
   } = useQuery({
     queryKey: [QUERY_KEYS.LOAN_DETAILS, loanId],
     queryFn: () => loanService.getLoanDetails(loanId!),
@@ -92,6 +95,8 @@ export default function LoanDetailsScreen() {
   const {
     data: schedule,
     isLoading: loadingSchedule,
+    refetch: refetchSchedule,
+    isRefetching: isRefetchingSchedule,
   } = useQuery({
     queryKey: [QUERY_KEYS.LOAN_HISTORY_BY_ID, loanId],
     queryFn: () => loanService.getLoanHistoryById(loanId!),
@@ -99,6 +104,14 @@ export default function LoanDetailsScreen() {
   });
 
   const isLoading = loadingDetails || loadingSchedule;
+
+  const onRefresh = () => {
+    if (!loanId) return;
+    refetchDetails();
+    refetchSchedule();
+  };
+
+  const isRefreshing = isRefetchingDetails || isRefetchingSchedule;
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
@@ -112,7 +125,10 @@ export default function LoanDetailsScreen() {
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 32 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
+        refreshControl={
+          <PrimaryRefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        }
       >
         <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">Loan Details</Text>
 

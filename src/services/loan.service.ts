@@ -11,7 +11,6 @@ import type {
   LoanRepayment,
   LoanRepaymentResponse,
   LoanStatusItem,
-  LoanStatusResponse,
   ManualRepaymentRequest,
 } from '@/types/loan.types';
 import type { ApiEnvelope } from '@/types/api.types';
@@ -28,7 +27,7 @@ export const loanService = {
   getLoanProducts: async (): Promise<LoanProduct[]> => {
     try {
       const response = await api.get<ApiEnvelope<LoanProduct[]>>('/loan');
-      return response.data.data;
+      return response.data.data ?? [];
     } catch (error) {
       throwApiError(error, 'Failed to load loan products');
     }
@@ -39,7 +38,7 @@ export const loanService = {
       const response = await api.get<ApiEnvelope<{ loans: ActiveLoan[] }>>(
         '/loan/loans/active',
       );
-      return response.data.data.loans;
+      return response.data.data?.loans ?? [];
     } catch (error) {
       throwApiError(error, 'Failed to load active loans');
     }
@@ -47,8 +46,8 @@ export const loanService = {
 
   getAllLoans: async (): Promise<LoanStatusItem[]> => {
     try {
-      const response = await api.get<ApiEnvelope<LoanStatusResponse>>('/loan/loans');
-      return response.data.data.loans;
+      const response = await api.get<ApiEnvelope<LoanStatusItem[]>>('/loan/loans');
+      return response.data.data ?? [];
     } catch (error) {
       throwApiError(error, 'Failed to load loans');
     }
@@ -81,7 +80,7 @@ export const loanService = {
   getLoanHistory: async (): Promise<LoanHistoryItem[]> => {
     try {
       const response = await api.get<ApiEnvelope<LoanHistoryResponse>>('/loan/history');
-      return response.data.data.history;
+      return response.data.data?.history ?? [];
     } catch (error) {
       throwApiError(error, 'Failed to load loan history');
     }
@@ -103,7 +102,7 @@ export const loanService = {
       const response = await api.get<ApiEnvelope<LoanHistoryResponse>>(
         `/loan/history/${encodeURIComponent(loanId)}`,
       );
-      return response.data.data.history;
+      return response.data.data?.history ?? [];
     } catch (error) {
       throwApiError(error, 'Failed to load loan history');
     }

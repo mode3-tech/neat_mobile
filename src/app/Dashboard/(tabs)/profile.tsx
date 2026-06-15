@@ -14,6 +14,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import { useProfileStore } from '@/stores/profile.store';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { PhotoPickerSheet } from '@/components/ui/PhotoPickerSheet';
+import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 
 interface RowProps {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
@@ -53,7 +54,12 @@ export default function ProfileScreen() {
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const queryClient = useQueryClient();
 
-  const { data: summary, dataUpdatedAt: summaryUpdatedAt } = useQuery({
+  const {
+    data: summary,
+    dataUpdatedAt: summaryUpdatedAt,
+    refetch,
+    isRefetching,
+  } = useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
     queryFn: accountService.getSummary,
   });
@@ -133,6 +139,9 @@ export default function ProfileScreen() {
       <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <PrimaryRefreshControl refreshing={isRefetching} onRefresh={refetch} />
+        }
       >
         {/* Header */}
         <View className="flex-row items-center px-6 pt-2 pb-4">

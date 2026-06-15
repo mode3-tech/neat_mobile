@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardProvider, KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -41,6 +42,7 @@ export default function BuyDataScreen() {
   const [phone, setPhone] = useState('');
   const [selectedPlan, setSelectedPlan] = useState<VasProduct | null>(null);
   const [planModalVisible, setPlanModalVisible] = useState(false);
+  const [planSearch, setPlanSearch] = useState('');
   const [summaryVisible, setSummaryVisible] = useState(false);
 
   const billersQuery = useQuery({
@@ -64,6 +66,16 @@ export default function BuyDataScreen() {
 
   const selectedBiller =
     billersQuery.data?.find((b) => b.id === selectedBillerId) ?? null;
+
+  const planQuery = planSearch.trim().toLowerCase();
+  const filteredPlans = (plansQuery.data ?? []).filter((p) =>
+    p.name.toLowerCase().includes(planQuery),
+  );
+
+  const closePlanModal = () => {
+    setPlanModalVisible(false);
+    setPlanSearch('');
+  };
 
   const canProceed =
     !!selectedBiller && phone.length === PHONE_LENGTH && !!selectedPlan;
@@ -124,7 +136,7 @@ export default function BuyDataScreen() {
               </Text>
             </View>
           ) : (
-            <View className="flex-row flex-wrap gap-3">
+            <View className="flex-row flex-wrap justify-between gap-y-3">
               {billersQuery.data?.map((biller) => {
                 const isSelected = biller.id === selectedBillerId;
                 return (
@@ -132,7 +144,7 @@ export default function BuyDataScreen() {
                     key={biller.id}
                     activeOpacity={0.8}
                     onPress={() => selectProvider(biller)}
-                    className={`w-[68px] h-[68px] rounded-2xl bg-white items-center justify-center border-2 ${
+                    className={`w-[23%] aspect-square rounded-2xl bg-white items-center justify-center border-2 ${
                       isSelected ? 'border-[#472FF8]' : 'border-transparent'
                     }`}
                   >
@@ -144,6 +156,13 @@ export default function BuyDataScreen() {
                   </TouchableOpacity>
                 );
               })}
+              {/* Invisible fillers keep a non-full last row left-aligned. Items
+                  are w-[23%], so exactly 4 fit per row regardless of screen width. */}
+              {Array.from({
+                length: (4 - ((billersQuery.data?.length ?? 0) % 4)) % 4,
+              }).map((_, i) => (
+                <View key={`filler-${i}`} className="w-[23%]" />
+              ))}
             </View>
           )}
         </View>
@@ -181,9 +200,7 @@ export default function BuyDataScreen() {
             }`}
             numberOfLines={1}
           >
-            {selectedPlan
-              ? `${selectedPlan.name}  ·  ${formatNairaWhole(selectedPlan.amount)}`
-              : 'Select Plan'}
+            {selectedPlan ? selectedPlan.name : 'Select Plan'}
           </Text>
           {plansQuery.isLoading && !!selectedBillerId ? (
             <ActivityIndicator size="small" color="#472FF8" />
@@ -217,13 +234,15 @@ export default function BuyDataScreen() {
         visible={planModalVisible}
         animationType="slide"
         transparent
-        onRequestClose={() => setPlanModalVisible(false)}
+        onRequestClose={closePlanModal}
       >
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className="bg-white rounded-t-3xl pt-4 pb-10 max-h-[70%]">
+        <KeyboardProvider>
+          <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+            <View className="flex-1 bg-black/50 justify-end">
+              <View className="bg-white rounded-t-3xl pt-4 pb-10 max-h-[70%]">
             <View className="flex-row items-center justify-between px-6 mb-4">
               <Text className="text-lg font-bold text-[#1A1A1A]">Select Plan</Text>
-              <TouchableOpacity onPress={() => setPlanModalVisible(false)}>
+              <TouchableOpacity onPress={closePlanModal}>
                 <MaterialCommunityIcons name="close" size={24} color="#374151" />
               </TouchableOpacity>
             </View>
@@ -251,44 +270,78 @@ export default function BuyDataScreen() {
                 </Text>
               </View>
             ) : (
-              <ScrollView showsVerticalScrollIndicator={false}>
-                {plansQuery.data.map((plan) => {
-                  const isSelected =
-                    selectedPlan?.unique_code === plan.unique_code;
-                  return (
-                    <TouchableOpacity
-                      key={plan.unique_code}
-                      className={`px-6 py-4 border-b border-[#F3F4F6] flex-row items-center ${
-                        isSelected ? 'bg-[#EEF0FF]' : ''
-                      }`}
-                      onPress={() => {
-                        setSelectedPlan(plan);
-                        setPlanModalVisible(false);
-                      }}
-                    >
-                      <Text
-                        className="text-[15px] text-[#1A1A1A] flex-1 mr-3"
-                        numberOfLines={1}
-                      >
-                        {plan.name}
-                      </Text>
-                      <Text className="text-sm font-semibold text-[#1A1A1A] mr-2">
-                        {formatNairaWhole(plan.amount)}
-                      </Text>
-                      {isSelected && (
+              <>
+                <View className="px-6 mb-3">
+                  <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
+                    <MaterialCommunityIcons name="magnify" size={20} color="#9CA3AF" />
+                    <TextInput
+                      className="flex-1 text-[15px] text-[#1A1A1A] p-0 ml-2"
+                      value={planSearch}
+                      onChangeText={setPlanSearch}
+                      placeholder="Search plans"
+                      placeholderTextColor="#9CA3AF"
+                    />
+                    {planSearch.length > 0 && (
+                      <TouchableOpacity onPress={() => setPlanSearch('')}>
                         <MaterialCommunityIcons
-                          name="check-circle"
-                          size={20}
-                          color="#472FF8"
+                          name="close-circle"
+                          size={18}
+                          color="#9CA3AF"
                         />
-                      )}
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+
+                {filteredPlans.length === 0 ? (
+                  <View className="h-24 items-center justify-center px-6">
+                    <Text className="text-[13px] text-[#6B7280] text-center">
+                      No plans match "{planSearch.trim()}".
+                    </Text>
+                  </View>
+                ) : (
+                  <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                  >
+                    {filteredPlans.map((plan) => {
+                      const isSelected =
+                        selectedPlan?.unique_code === plan.unique_code;
+                      return (
+                        <TouchableOpacity
+                          key={plan.unique_code}
+                          className={`px-6 py-4 border-b border-[#F3F4F6] flex-row items-center ${
+                            isSelected ? 'bg-[#EEF0FF]' : ''
+                          }`}
+                          onPress={() => {
+                            setSelectedPlan(plan);
+                            closePlanModal();
+                          }}
+                        >
+                          <Text
+                            className="text-[15px] text-[#1A1A1A] flex-1 mr-3"
+                            numberOfLines={1}
+                          >
+                            {plan.name}
+                          </Text>
+                          {isSelected && (
+                            <MaterialCommunityIcons
+                              name="check-circle"
+                              size={20}
+                              color="#472FF8"
+                            />
+                          )}
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </ScrollView>
+                )}
+              </>
             )}
-          </View>
-        </View>
+              </View>
+            </View>
+          </KeyboardAvoidingView>
+        </KeyboardProvider>
       </Modal>
 
       <TransactionSummaryModal

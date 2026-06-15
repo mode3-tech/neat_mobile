@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   ActivityIndicator,
   Image,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -15,6 +16,7 @@ import { loanService } from '@/services/loan.service';
 import { accountService } from '@/services/account.service';
 import { QUERY_KEYS } from '@/constants';
 import { formatNairaWhole } from '@/utils/format';
+import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import RepaymentBottomSheet from '@/components/features/loans/RepaymentBottomSheet';
 import type { ActiveLoan } from '@/types/loan.types';
 
@@ -114,15 +116,31 @@ function ActiveBalanceCard({ loan, onMakeRepayment }: { loan: ActiveLoan; onMake
 }
 
 export default function LoanHomeScreen() {
-  const { data, isLoading } = useQuery({
+  const {
+    data,
+    isLoading,
+    refetch: refetchLoans,
+    isRefetching: isRefetchingLoans,
+  } = useQuery({
     queryKey: [QUERY_KEYS.LOANS],
     queryFn: loanService.getActiveLoans,
   });
 
-  const { data: accountSummary, isLoading: isAccountLoading } = useQuery({
+  const {
+    data: accountSummary,
+    isLoading: isAccountLoading,
+    refetch: refetchSummary,
+    isRefetching: isRefetchingSummary,
+  } = useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
     queryFn: accountService.getSummary,
   });
+
+  const onRefresh = () => {
+    refetchLoans();
+    refetchSummary();
+  };
+  const isRefreshing = isRefetchingLoans || isRefetchingSummary;
 
   const loan = data?.[0];
   const hasLoan = !!loan;
@@ -149,45 +167,54 @@ export default function LoanHomeScreen() {
       <Text className="text-[22px] font-bold text-[#1A1A1A] mb-1">Loans</Text>
       <Text className="text-[13px] text-[#6B7280] mb-5">Manage your loans and applications</Text>
 
-      {isLoading ? (
-        <View className="h-[180px] items-center justify-center mb-7">
-          <ActivityIndicator size="small" color="#472FF8" />
-        </View>
-      ) : hasLoan ? (
-        <ActiveBalanceCard loan={loan} onMakeRepayment={openRepaymentSheet} />
-      ) : (
-        <EmptyBalanceCard />
-      )}
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
+        refreshControl={
+          <PrimaryRefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        }
+      >
+        {isLoading ? (
+          <View className="h-[180px] items-center justify-center mb-7">
+            <ActivityIndicator size="small" color="#472FF8" />
+          </View>
+        ) : hasLoan ? (
+          <ActiveBalanceCard loan={loan} onMakeRepayment={openRepaymentSheet} />
+        ) : (
+          <EmptyBalanceCard />
+        )}
 
-      <View className="gap-3">
-        <ActionItem
-          icon="📋"
-          label="Apply New Loan"
-          onPress={() => router.push('/(loan)/loan-eligibility')}
-        />
-        <ActionItem
-          icon="📅"
-          label="Repayment Schedule"
-          disabled={!activeLoanId}
-          onPress={() => {
-            if (!activeLoanId) return;
-            router.push({
-              pathname: '/(loan)/repayment-schedule',
-              params: { loanId: activeLoanId },
-            });
-          }}
-        />
-        <ActionItem
-          icon="📊"
-          label="Loan Status"
-          onPress={() => router.push('/(loan)/loan-status')}
-        />
-        <ActionItem
-          icon="💰"
-          label="Loan History"
-          onPress={() => router.push('/(loan)/loan-history')}
-        />
-      </View>
+        <View className="gap-3">
+          <ActionItem
+            icon="📋"
+            label="Apply New Loan"
+            onPress={() => router.push('/(loan)/loan-eligibility')}
+          />
+          <ActionItem
+            icon="📅"
+            label="Repayment Schedule"
+            disabled={!activeLoanId}
+            onPress={() => {
+              if (!activeLoanId) return;
+              router.push({
+                pathname: '/(loan)/repayment-schedule',
+                params: { loanId: activeLoanId },
+              });
+            }}
+          />
+          <ActionItem
+            icon="📊"
+            label="Loan Status"
+            onPress={() => router.push('/(loan)/loan-status')}
+          />
+          <ActionItem
+            icon="💰"
+            label="Loan History"
+            onPress={() => router.push('/(loan)/loan-history')}
+          />
+        </View>
+      </ScrollView>
 
       <RepaymentBottomSheet
         visible={sheetOpen}
