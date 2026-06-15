@@ -16,6 +16,7 @@ export default function TransactionSummaryModal({
   onSave,
   provider,
   phone,
+  plan,
   amount,
   date,
 }: TransactionSummaryModalProps) {
@@ -38,6 +39,7 @@ export default function TransactionSummaryModal({
             <TransactionSummaryCard
               provider={provider}
               phone={phone}
+              plan={plan}
               amount={amount}
               date={date}
             />

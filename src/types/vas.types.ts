@@ -32,6 +32,8 @@ export interface BuyAirtimePayload {
   amount: number;
 }
 
+export type BuyDataPayload = BuyAirtimePayload;
+
 /**
  * Route params consumed by the shared VAS result screen.
  * Everything arrives as a string (expo-router serialises params).
@@ -41,6 +43,8 @@ export interface VasResultParams {
   message: string;
   provider: string;
   phone: string;
+  /** Data plan name — only present for data purchases. */
+  plan?: string;
   amount: string;
   date: string;
 }

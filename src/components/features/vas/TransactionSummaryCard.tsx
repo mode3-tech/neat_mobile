@@ -3,6 +3,8 @@ import { Text, View } from 'react-native';
 export interface TransactionSummary {
   provider: string;
   phone: string;
+  /** Data plan name — only shown for data purchases. */
+  plan?: string;
   amount: string;
   date: string;
 }
@@ -31,12 +33,14 @@ function SummaryRow({
 export default function TransactionSummaryCard({
   provider,
   phone,
+  plan,
   amount,
   date,
 }: TransactionSummary) {
   const rows = [
     { label: 'Service Provider', value: provider },
     { label: 'Phone Number', value: phone },
+    ...(plan ? [{ label: 'Data plan', value: plan }] : []),
     { label: 'Amount', value: amount },
     { label: 'Transaction Date', value: date },
   ];

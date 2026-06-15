@@ -21,11 +21,11 @@ export const walletService = {
     accountNumber: string,
     bankCode: string,
   ): Promise<ValidatedAccount> => {
-    const response = await api.get<ApiEnvelope<{ account: ValidatedAccount }>>(
+    const response = await api.get<ApiEnvelope<ValidatedAccount>>(
       '/wallet/bank/details',
       { params: { account_number: accountNumber, bank_code: bankCode } },
     );
-    return response.data.data.account;
+    return response.data.data;
   },
 
   transfer: async (payload: TransferPayload): Promise<TransferResponse> => {

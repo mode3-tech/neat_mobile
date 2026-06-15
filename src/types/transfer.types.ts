@@ -13,11 +13,6 @@ export interface ValidatedAccount {
   accountNumber: string;
 }
 
-export interface ValidateAccountResponse {
-  status: boolean;
-  account: ValidatedAccount;
-}
-
 export type TransferType = 'neatpay' | 'other_bank';
 
 export interface TransferPayload {

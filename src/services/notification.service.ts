@@ -8,6 +8,7 @@ import { api, throwApiError } from './api';
 import { getOrCreateDeviceId } from './device.service';
 import type { ApiEnvelope } from '@/types/api.types';
 import type {
+  AppNotification,
   PushTokenPayload,
   PaginatedNotificationsResponse,
   MarkReadResponse,
@@ -112,15 +113,30 @@ export async function getStoredToken(): Promise<string | null> {
 
 // ── Notification History (in-app bell) ────────────────────────────────
 
+// The backend returns the notification array directly in `data` with
+// pagination fields at the top level: { data: [...], page, limit, total }
+interface NotificationsListResponse {
+  data: AppNotification[] | null;
+  page: number;
+  limit: number;
+  total: number;
+}
+
 export async function getNotifications(
   page: number = 1,
 ): Promise<PaginatedNotificationsResponse> {
   try {
-    const response = await api.get<ApiEnvelope<PaginatedNotificationsResponse>>(
-      '/notifications',
-      { params: { page } },
-    );
-    return response.data.data;
+    const response = await api.get<NotificationsListResponse>('/notifications', {
+      params: { page },
+    });
+    const { data: notifications, page: currentPage, limit, total } = response.data;
+    return {
+      notifications: notifications ?? [],
+      page: currentPage,
+      page_size: limit,
+      total,
+      has_next: currentPage * limit < total,
+    };
   } catch {
     return { notifications: [], page: 1, page_size: 20, total: 0, has_next: false };
   }

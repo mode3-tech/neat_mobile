@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
+import { toast } from 'sonner-native';
 
 import { ForgotPinLink } from '@/components/ui/forgot-pin-link';
 import { PIN_LENGTH } from '@/constants';
@@ -21,13 +22,17 @@ export default function VasPinScreen() {
   const params = useLocalSearchParams<{
     provider: string;
     phone: string;
+    plan?: string;
     amount: string;
     date: string;
   }>();
 
+  const categoryName = useVasStore((s) => s.categoryName);
   const product = useVasStore((s) => s.product);
   const phoneNumber = useVasStore((s) => s.phoneNumber);
   const amount = useVasStore((s) => s.amount);
+
+  const isData = categoryName === 'DATA';
 
   const {
     isBiometricReady,
@@ -51,26 +56,44 @@ export default function VasPinScreen() {
         message,
         provider: params.provider ?? '',
         phone: params.phone ?? '',
+        plan: params.plan ?? '',
         amount: params.amount ?? '',
         date: params.date ?? '',
       },
     });
   };
 
+  // Data purchases surface errors here so the user can retry their PIN;
+  // airtime keeps routing failures to the shared result screen.
+  const handleFailure = (message: string) => {
+    if (isData) {
+      toast.error('Data purchase failed', { description: message });
+      setPin('');
+      return;
+    }
+    goToResult('failed', message);
+  };
+
   const purchase = async (transactionPin: string) => {
     if (!product) return;
     setSubmitting(true);
     try {
-      const { message } = await vasService.buyAirtime({
+      const payload = {
         pin: transactionPin,
         unique_code: product.unique_code,
         phone_number: phoneNumber,
         amount: Number(amount),
-      });
+      };
+      const { message } = isData
+        ? await vasService.buyData(payload)
+        : await vasService.buyAirtime(payload);
       await onManualPinSuccess(transactionPin);
+      // Clear the PIN so backing out of the result screen can't re-confirm
+      // the purchase with a still-armed PIN.
+      setPin('');
       goToResult('success', message);
     } catch (err: unknown) {
-      goToResult('failed', getErrorMessage(err));
+      handleFailure(getErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
@@ -85,7 +108,11 @@ export default function VasPinScreen() {
     if (authenticating || submitting) return;
     const storedPin = await authenticateWithBiometric();
     if (!storedPin) {
-      goToResult('failed', 'Biometric authentication failed. Please use your PIN.');
+      // No purchase was attempted, so this is not a transaction failure —
+      // keep any typed PIN and let the user continue manually.
+      toast.error('Biometric authentication failed', {
+        description: 'Please use your PIN instead.',
+      });
       return;
     }
     purchase(storedPin);

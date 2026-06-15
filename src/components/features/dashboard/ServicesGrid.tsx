@@ -23,12 +23,17 @@ const CATEGORY_FALLBACK: Record<string, number> = {
   'CABLE TV': 5,
 };
 
+const CATEGORY_ROUTE: Record<string, string> = {
+  AIRTIME: '/(vas)/buy-airtime',
+  DATA: '/(vas)/buy-data',
+};
+
 const SERVICES: ServiceItem[][] = [
   [
     { icon: 'qrcode-scan', label: 'QR Code' },
     { icon: 'cash-multiple', label: 'Loans', route: '/(loan)/loan-home' },
     { icon: 'file-document-outline', label: 'Statement', route: '/(account)/statement' },
-    { icon: 'wifi', label: 'Buy Data' },
+    { icon: 'wifi', label: 'Buy Data', categoryName: 'DATA' },
   ],
   [
     { icon: 'television', label: 'Cable TV' },
@@ -50,9 +55,10 @@ export default function ServicesGrid() {
     const resolvedId =
       categories?.find((c) => c.name === categoryName)?.id ??
       CATEGORY_FALLBACK[categoryName];
-    if (!resolvedId) return;
+    const route = CATEGORY_ROUTE[categoryName];
+    if (!resolvedId || !route) return;
     setCategory(resolvedId, categoryName);
-    router.push('/(vas)/buy-airtime');
+    router.push(route as any);
   };
 
   const handlePress = (item: ServiceItem) => {
