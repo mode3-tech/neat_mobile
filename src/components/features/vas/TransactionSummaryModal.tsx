@@ -17,6 +17,9 @@ export default function TransactionSummaryModal({
   provider,
   phone,
   plan,
+  smartcard,
+  packageName,
+  months,
   amount,
   date,
 }: TransactionSummaryModalProps) {
@@ -40,6 +43,9 @@ export default function TransactionSummaryModal({
               provider={provider}
               phone={phone}
               plan={plan}
+              smartcard={smartcard}
+              packageName={packageName}
+              months={months}
               amount={amount}
               date={date}
             />

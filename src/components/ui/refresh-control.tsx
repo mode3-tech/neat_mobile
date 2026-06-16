@@ -1,24 +1,16 @@
-import { RefreshControl } from 'react-native';
-
-interface PrimaryRefreshControlProps {
-  refreshing: boolean;
-  onRefresh: () => void;
-}
+import { RefreshControl, type RefreshControlProps } from 'react-native';
 
 /**
  * Pull-to-refresh control tinted with the NEAT brand color (#472FF8).
- * Wraps RN's RefreshControl so the tint/colors stay consistent across screens.
+ *
+ * IMPORTANT: this must forward ALL props to the underlying RefreshControl.
+ * When a ScrollView renders a `refreshControl` on Android it calls
+ * `cloneElement(control, { style }, <scrollContent/>)` — i.e. it injects the
+ * scroll content as `children` and a layout `style`. If this wrapper only
+ * picked `refreshing`/`onRefresh` it would silently drop that content and the
+ * screen would render blank. So spread `props` through and only override the
+ * brand colors.
  */
-export function PrimaryRefreshControl({
-  refreshing,
-  onRefresh,
-}: PrimaryRefreshControlProps) {
-  return (
-    <RefreshControl
-      refreshing={refreshing}
-      onRefresh={onRefresh}
-      tintColor="#472FF8"
-      colors={['#472FF8']}
-    />
-  );
+export function PrimaryRefreshControl(props: RefreshControlProps) {
+  return <RefreshControl {...props} tintColor="#472FF8" colors={['#472FF8']} />;
 }

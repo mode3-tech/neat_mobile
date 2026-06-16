@@ -18,6 +18,9 @@ export default function AirtimeResultScreen() {
     provider: string;
     phone: string;
     plan?: string;
+    smartcard?: string;
+    packageName?: string;
+    months?: string;
     amount: string;
     date: string;
   }>();
@@ -60,8 +63,11 @@ export default function AirtimeResultScreen() {
 
         <TransactionSummaryCard
           provider={params.provider ?? ''}
-          phone={params.phone ?? ''}
+          phone={params.phone || undefined}
           plan={params.plan || undefined}
+          smartcard={params.smartcard || undefined}
+          packageName={params.packageName || undefined}
+          months={params.months || undefined}
           amount={params.amount ?? ''}
           date={params.date ?? ''}
         />

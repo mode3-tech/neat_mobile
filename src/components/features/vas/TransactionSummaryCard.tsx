@@ -2,9 +2,16 @@ import { Text, View } from 'react-native';
 
 export interface TransactionSummary {
   provider: string;
-  phone: string;
+  /** Recipient phone — shown for airtime/data purchases. */
+  phone?: string;
   /** Data plan name — only shown for data purchases. */
   plan?: string;
+  /** Smartcard number — only shown for cable purchases. */
+  smartcard?: string;
+  /** Cable package name — only shown for cable purchases. */
+  packageName?: string;
+  /** Number of months — only shown for cable purchases. */
+  months?: string;
   amount: string;
   date: string;
 }
@@ -34,13 +41,19 @@ export default function TransactionSummaryCard({
   provider,
   phone,
   plan,
+  smartcard,
+  packageName,
+  months,
   amount,
   date,
 }: TransactionSummary) {
   const rows = [
     { label: 'Service Provider', value: provider },
-    { label: 'Phone Number', value: phone },
+    ...(phone ? [{ label: 'Phone Number', value: phone }] : []),
+    ...(smartcard ? [{ label: 'Smartcard Number', value: smartcard }] : []),
     ...(plan ? [{ label: 'Data plan', value: plan }] : []),
+    ...(packageName ? [{ label: 'Package', value: packageName }] : []),
+    ...(months ? [{ label: 'Number of Months', value: months }] : []),
     { label: 'Amount', value: amount },
     { label: 'Transaction Date', value: date },
   ];

@@ -26,6 +26,7 @@ const CATEGORY_FALLBACK: Record<string, number> = {
 const CATEGORY_ROUTE: Record<string, string> = {
   AIRTIME: '/(vas)/buy-airtime',
   DATA: '/(vas)/buy-data',
+  'CABLE TV': '/(vas)/cable-tv',
 };
 
 const SERVICES: ServiceItem[][] = [
@@ -36,7 +37,7 @@ const SERVICES: ServiceItem[][] = [
     { icon: 'wifi', label: 'Buy Data', categoryName: 'DATA' },
   ],
   [
-    { icon: 'television', label: 'Cable TV' },
+    { icon: 'television', label: 'Cable TV', categoryName: 'CABLE TV' },
     { icon: 'flash', label: 'Electricity' },
     { icon: 'trophy', label: 'Buy Airtime', categoryName: 'AIRTIME' },
     { icon: 'dots-horizontal', label: 'More' },

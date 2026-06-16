@@ -1,5 +1,6 @@
 import type {
   BuyAirtimePayload,
+  BuyCablePayload,
   BuyDataPayload,
   VasBiller,
   VasCategory,
@@ -90,6 +91,15 @@ export const vasService = {
       return { message: response.data.message };
     } catch (error) {
       throwApiError(error, 'Data purchase failed. Please try again.');
+    }
+  },
+
+  buyCable: async (payload: BuyCablePayload): Promise<{ message: string }> => {
+    try {
+      const response = await api.post<ApiEnvelope<unknown>>('/vas/cable', payload);
+      return { message: response.data.message };
+    } catch (error) {
+      throwApiError(error, 'Cable subscription failed. Please try again.');
     }
   },
 };

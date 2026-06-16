@@ -34,6 +34,18 @@ export interface BuyAirtimePayload {
 
 export type BuyDataPayload = BuyAirtimePayload;
 
+export interface BuyCablePayload {
+  pin: string;
+  unique_code: string;
+  /** Smartcard / IUC number. */
+  account_number: string;
+  /** Provider code, e.g. "DSTV" / "GOTV" / "STARTIMES". */
+  account_type: string;
+  no_of_month: number;
+  /** Total charged = package amount × no_of_month. */
+  amount: number;
+}
+
 /**
  * Route params consumed by the shared VAS result screen.
  * Everything arrives as a string (expo-router serialises params).
@@ -45,6 +57,12 @@ export interface VasResultParams {
   phone: string;
   /** Data plan name — only present for data purchases. */
   plan?: string;
+  /** Smartcard number — only present for cable purchases. */
+  smartcard?: string;
+  /** Cable package name — only present for cable purchases. */
+  packageName?: string;
+  /** Number of months — only present for cable purchases. */
+  months?: string;
   amount: string;
   date: string;
 }

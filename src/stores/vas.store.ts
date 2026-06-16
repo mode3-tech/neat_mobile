@@ -8,12 +8,18 @@ interface VasState {
   product: VasProduct | null;
   phoneNumber: string;
   amount: string;
+  /** Smartcard / IUC number — cable only. */
+  smartcardNumber: string;
+  /** Number of months — cable only. */
+  noOfMonth: number;
 
   setCategory: (id: number, name: string) => void;
   setBiller: (biller: VasBiller) => void;
   setProduct: (product: VasProduct) => void;
   setPhoneNumber: (phoneNumber: string) => void;
   setAmount: (amount: string) => void;
+  setSmartcardNumber: (smartcardNumber: string) => void;
+  setNoOfMonth: (noOfMonth: number) => void;
   reset: () => void;
 }
 
@@ -24,6 +30,8 @@ const initialState = {
   product: null,
   phoneNumber: '',
   amount: '',
+  smartcardNumber: '',
+  noOfMonth: 1,
 };
 
 export const useVasStore = create<VasState>((set) => ({
@@ -38,6 +46,10 @@ export const useVasStore = create<VasState>((set) => ({
   setPhoneNumber: (phoneNumber) => set({ phoneNumber }),
 
   setAmount: (amount) => set({ amount }),
+
+  setSmartcardNumber: (smartcardNumber) => set({ smartcardNumber }),
+
+  setNoOfMonth: (noOfMonth) => set({ noOfMonth }),
 
   reset: () => set(initialState),
 }));

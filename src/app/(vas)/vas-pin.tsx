@@ -23,16 +23,23 @@ export default function VasPinScreen() {
     provider: string;
     phone: string;
     plan?: string;
+    smartcard?: string;
+    packageName?: string;
+    months?: string;
     amount: string;
     date: string;
   }>();
 
   const categoryName = useVasStore((s) => s.categoryName);
+  const biller = useVasStore((s) => s.biller);
   const product = useVasStore((s) => s.product);
   const phoneNumber = useVasStore((s) => s.phoneNumber);
   const amount = useVasStore((s) => s.amount);
+  const smartcardNumber = useVasStore((s) => s.smartcardNumber);
+  const noOfMonth = useVasStore((s) => s.noOfMonth);
 
   const isData = categoryName === 'DATA';
+  const isCable = categoryName === 'CABLE TV';
 
   const {
     isBiometricReady,
@@ -57,17 +64,22 @@ export default function VasPinScreen() {
         provider: params.provider ?? '',
         phone: params.phone ?? '',
         plan: params.plan ?? '',
+        smartcard: params.smartcard ?? '',
+        packageName: params.packageName ?? '',
+        months: params.months ?? '',
         amount: params.amount ?? '',
         date: params.date ?? '',
       },
     });
   };
 
-  // Data purchases surface errors here so the user can retry their PIN;
-  // airtime keeps routing failures to the shared result screen.
+  // Data and cable purchases surface errors here so the user can retry their
+  // PIN; airtime keeps routing failures to the shared result screen.
   const handleFailure = (message: string) => {
-    if (isData) {
-      toast.error('Data purchase failed', { description: message });
+    if (isData || isCable) {
+      toast.error(isCable ? 'Cable subscription failed' : 'Data purchase failed', {
+        description: message,
+      });
       setPin('');
       return;
     }
@@ -75,18 +87,30 @@ export default function VasPinScreen() {
   };
 
   const purchase = async (transactionPin: string) => {
-    if (!product) return;
+    if (!product || (isCable && !biller)) return;
     setSubmitting(true);
     try {
-      const payload = {
-        pin: transactionPin,
-        unique_code: product.unique_code,
-        phone_number: phoneNumber,
-        amount: Number(amount),
-      };
-      const { message } = isData
-        ? await vasService.buyData(payload)
-        : await vasService.buyAirtime(payload);
+      let message: string;
+      if (isCable) {
+        ({ message } = await vasService.buyCable({
+          pin: transactionPin,
+          unique_code: product.unique_code,
+          account_number: smartcardNumber,
+          account_type: biller!.biller_code,
+          no_of_month: noOfMonth,
+          amount: Number(amount),
+        }));
+      } else {
+        const payload = {
+          pin: transactionPin,
+          unique_code: product.unique_code,
+          phone_number: phoneNumber,
+          amount: Number(amount),
+        };
+        ({ message } = isData
+          ? await vasService.buyData(payload)
+          : await vasService.buyAirtime(payload));
+      }
       await onManualPinSuccess(transactionPin);
       // Clear the PIN so backing out of the result screen can't re-confirm
       // the purchase with a still-armed PIN.
