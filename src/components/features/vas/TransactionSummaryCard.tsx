@@ -12,6 +12,10 @@ export interface TransactionSummary {
   packageName?: string;
   /** Number of months — only shown for cable purchases. */
   months?: string;
+  /** Meter number — only shown for electricity purchases. */
+  meter?: string;
+  /** Meter type ("Prepaid"/"Postpaid") — only shown for electricity. */
+  meterType?: string;
   amount: string;
   date: string;
 }
@@ -44,11 +48,15 @@ export default function TransactionSummaryCard({
   smartcard,
   packageName,
   months,
+  meter,
+  meterType,
   amount,
   date,
 }: TransactionSummary) {
   const rows = [
     { label: 'Service Provider', value: provider },
+    ...(meter ? [{ label: 'Meter Number', value: meter }] : []),
+    ...(meterType ? [{ label: 'Type', value: meterType }] : []),
     ...(phone ? [{ label: 'Phone Number', value: phone }] : []),
     ...(smartcard ? [{ label: 'Smartcard Number', value: smartcard }] : []),
     ...(plan ? [{ label: 'Data plan', value: plan }] : []),

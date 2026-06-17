@@ -7,6 +7,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
+import * as Clipboard from 'expo-clipboard';
+import { toast } from 'sonner-native';
 
 import { useVasStore } from '@/stores/vas.store';
 import TransactionSummaryCard from '@/components/features/vas/TransactionSummaryCard';
@@ -21,12 +23,22 @@ export default function AirtimeResultScreen() {
     smartcard?: string;
     packageName?: string;
     months?: string;
+    meter?: string;
+    meterType?: string;
+    token?: string;
+    units?: string;
     amount: string;
     date: string;
   }>();
 
   const reset = useVasStore((s) => s.reset);
   const isSuccess = params.status === 'success';
+
+  const copyToken = async () => {
+    if (!params.token) return;
+    await Clipboard.setStringAsync(params.token);
+    toast.success('Token copied');
+  };
 
   const handleBackToDashboard = () => {
     reset();
@@ -61,6 +73,36 @@ export default function AirtimeResultScreen() {
           {params.message}
         </Text>
 
+        {/* Prepaid electricity recharge token — the customer needs this to load
+            their meter, so surface it prominently with a copy action. */}
+        {isSuccess && params.token ? (
+          <View className="bg-[#EEF0FF] rounded-[14px] p-4 mb-5">
+            <Text className="text-[13px] text-[#6B7280] mb-1.5">Recharge Token</Text>
+            <View className="flex-row items-center justify-between">
+              <Text className="text-lg font-bold text-[#1A1A1A] flex-1 mr-3">
+                {params.token}
+              </Text>
+              <TouchableOpacity
+                className="flex-row items-center gap-1"
+                activeOpacity={0.7}
+                onPress={copyToken}
+              >
+                <MaterialCommunityIcons
+                  name="content-copy"
+                  size={18}
+                  color="#472FF8"
+                />
+                <Text className="text-[13px] font-semibold text-[#472FF8]">Copy</Text>
+              </TouchableOpacity>
+            </View>
+            {params.units ? (
+              <Text className="text-[13px] text-[#374151] mt-2">
+                Units: <Text className="font-semibold">{params.units}</Text>
+              </Text>
+            ) : null}
+          </View>
+        ) : null}
+
         <TransactionSummaryCard
           provider={params.provider ?? ''}
           phone={params.phone || undefined}
@@ -68,6 +110,8 @@ export default function AirtimeResultScreen() {
           smartcard={params.smartcard || undefined}
           packageName={params.packageName || undefined}
           months={params.months || undefined}
+          meter={params.meter || undefined}
+          meterType={params.meterType || undefined}
           amount={params.amount ?? ''}
           date={params.date ?? ''}
         />

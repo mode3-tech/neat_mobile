@@ -26,6 +26,8 @@ export default function VasPinScreen() {
     smartcard?: string;
     packageName?: string;
     months?: string;
+    meter?: string;
+    meterType?: string;
     amount: string;
     date: string;
   }>();
@@ -37,9 +39,12 @@ export default function VasPinScreen() {
   const amount = useVasStore((s) => s.amount);
   const smartcardNumber = useVasStore((s) => s.smartcardNumber);
   const noOfMonth = useVasStore((s) => s.noOfMonth);
+  const meterNumber = useVasStore((s) => s.meterNumber);
+  const accountType = useVasStore((s) => s.accountType);
 
   const isData = categoryName === 'DATA';
   const isCable = categoryName === 'CABLE TV';
+  const isElectricity = categoryName === 'ELECTRICITY';
 
   const {
     isBiometricReady,
@@ -55,7 +60,11 @@ export default function VasPinScreen() {
 
   const canConfirm = pin.length === PIN_LENGTH;
 
-  const goToResult = (status: 'success' | 'failed', message: string) => {
+  const goToResult = (
+    status: 'success' | 'failed',
+    message: string,
+    extra?: { token?: string; units?: string },
+  ) => {
     router.push({
       pathname: '/(vas)/airtime-result',
       params: {
@@ -67,19 +76,26 @@ export default function VasPinScreen() {
         smartcard: params.smartcard ?? '',
         packageName: params.packageName ?? '',
         months: params.months ?? '',
+        meter: params.meter ?? '',
+        meterType: params.meterType ?? '',
+        token: extra?.token ?? '',
+        units: extra?.units ?? '',
         amount: params.amount ?? '',
         date: params.date ?? '',
       },
     });
   };
 
-  // Data and cable purchases surface errors here so the user can retry their
-  // PIN; airtime keeps routing failures to the shared result screen.
+  // Data, cable and electricity purchases surface errors here so the user can
+  // retry their PIN; airtime keeps routing failures to the shared result screen.
   const handleFailure = (message: string) => {
-    if (isData || isCable) {
-      toast.error(isCable ? 'Cable subscription failed' : 'Data purchase failed', {
-        description: message,
-      });
+    if (isData || isCable || isElectricity) {
+      const title = isCable
+        ? 'Cable subscription failed'
+        : isElectricity
+          ? 'Electricity payment failed'
+          : 'Data purchase failed';
+      toast.error(title, { description: message });
       setPin('');
       return;
     }
@@ -91,6 +107,8 @@ export default function VasPinScreen() {
     setSubmitting(true);
     try {
       let message: string;
+      let token: string | undefined;
+      let units: string | undefined;
       if (isCable) {
         ({ message } = await vasService.buyCable({
           pin: transactionPin,
@@ -100,6 +118,17 @@ export default function VasPinScreen() {
           no_of_month: noOfMonth,
           amount: Number(amount),
         }));
+      } else if (isElectricity) {
+        const res = await vasService.buyElectricity({
+          pin: transactionPin,
+          unique_code: product.unique_code,
+          account_number: meterNumber,
+          account_type: accountType,
+          amount: Number(amount),
+        });
+        message = res.message;
+        token = res.token;
+        units = res.unit;
       } else {
         const payload = {
           pin: transactionPin,
@@ -115,7 +144,7 @@ export default function VasPinScreen() {
       // Clear the PIN so backing out of the result screen can't re-confirm
       // the purchase with a still-armed PIN.
       setPin('');
-      goToResult('success', message);
+      goToResult('success', message, { token, units });
     } catch (err: unknown) {
       handleFailure(getErrorMessage(err));
     } finally {

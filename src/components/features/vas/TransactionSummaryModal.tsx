@@ -20,6 +20,8 @@ export default function TransactionSummaryModal({
   smartcard,
   packageName,
   months,
+  meter,
+  meterType,
   amount,
   date,
 }: TransactionSummaryModalProps) {
@@ -46,6 +48,8 @@ export default function TransactionSummaryModal({
               smartcard={smartcard}
               packageName={packageName}
               months={months}
+              meter={meter}
+              meterType={meterType}
               amount={amount}
               date={date}
             />

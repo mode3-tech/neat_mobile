@@ -27,6 +27,7 @@ const CATEGORY_ROUTE: Record<string, string> = {
   AIRTIME: '/(vas)/buy-airtime',
   DATA: '/(vas)/buy-data',
   'CABLE TV': '/(vas)/cable-tv',
+  ELECTRICITY: '/(vas)/buy-electricity',
 };
 
 const SERVICES: ServiceItem[][] = [
@@ -38,7 +39,7 @@ const SERVICES: ServiceItem[][] = [
   ],
   [
     { icon: 'television', label: 'Cable TV', categoryName: 'CABLE TV' },
-    { icon: 'flash', label: 'Electricity' },
+    { icon: 'flash', label: 'Electricity', categoryName: 'ELECTRICITY' },
     { icon: 'trophy', label: 'Buy Airtime', categoryName: 'AIRTIME' },
     { icon: 'dots-horizontal', label: 'More' },
   ],

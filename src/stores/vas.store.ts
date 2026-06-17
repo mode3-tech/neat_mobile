@@ -12,6 +12,10 @@ interface VasState {
   smartcardNumber: string;
   /** Number of months — cable only. */
   noOfMonth: number;
+  /** Meter number — electricity only. */
+  meterNumber: string;
+  /** Meter type ("prepaid"/"postpaid") — electricity only. */
+  accountType: string;
 
   setCategory: (id: number, name: string) => void;
   setBiller: (biller: VasBiller) => void;
@@ -20,6 +24,8 @@ interface VasState {
   setAmount: (amount: string) => void;
   setSmartcardNumber: (smartcardNumber: string) => void;
   setNoOfMonth: (noOfMonth: number) => void;
+  setMeterNumber: (meterNumber: string) => void;
+  setAccountType: (accountType: string) => void;
   reset: () => void;
 }
 
@@ -32,6 +38,8 @@ const initialState = {
   amount: '',
   smartcardNumber: '',
   noOfMonth: 1,
+  meterNumber: '',
+  accountType: '',
 };
 
 export const useVasStore = create<VasState>((set) => ({
@@ -50,6 +58,10 @@ export const useVasStore = create<VasState>((set) => ({
   setSmartcardNumber: (smartcardNumber) => set({ smartcardNumber }),
 
   setNoOfMonth: (noOfMonth) => set({ noOfMonth }),
+
+  setMeterNumber: (meterNumber) => set({ meterNumber }),
+
+  setAccountType: (accountType) => set({ accountType }),
 
   reset: () => set(initialState),
 }));

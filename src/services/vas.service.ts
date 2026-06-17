@@ -2,6 +2,8 @@ import type {
   BuyAirtimePayload,
   BuyCablePayload,
   BuyDataPayload,
+  BuyElectricityPayload,
+  ElectricityPurchaseData,
   VasBiller,
   VasCategory,
   VasProduct,
@@ -100,6 +102,26 @@ export const vasService = {
       return { message: response.data.message };
     } catch (error) {
       throwApiError(error, 'Cable subscription failed. Please try again.');
+    }
+  },
+
+  buyElectricity: async (
+    payload: BuyElectricityPayload,
+  ): Promise<{ message: string; token?: string; unit?: string }> => {
+    try {
+      // Success envelope nests the meter details one level deeper:
+      // { message, data: { ..., data: { token, unit, ... } } }.
+      const response = await api.post<
+        ApiEnvelope<{ data?: ElectricityPurchaseData }>
+      >('/vas/electricity', payload);
+      const inner = response.data.data?.data;
+      return {
+        message: response.data.message,
+        token: inner?.token,
+        unit: inner?.unit,
+      };
+    } catch (error) {
+      throwApiError(error, 'Electricity payment failed. Please try again.');
     }
   },
 };
