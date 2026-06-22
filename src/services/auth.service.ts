@@ -20,6 +20,7 @@ import type {
   ForgotPinResponse,
   ForgotPinVerifyResponse,
   LoginResponse,
+  OtpRequestResponse,
   OtpVerifyResponse,
   PasswordChangeRequestResponse,
   PasswordChangeVerifyResponse,
@@ -99,22 +100,23 @@ export const authService = {
     }
   },
 
-  sendPhoneOtp: async (verificationId: string): Promise<void> => {
+  sendPhoneOtp: async (verificationId: string): Promise<OtpRequestResponse> => {
     try {
-      await api.post<ApiEnvelope>(
+      const response = await api.post<ApiEnvelope<OtpRequestResponse>>(
         '/auth/otp/sms/request',
         { verification_id: verificationId },
       );
+      return response.data.data;
     } catch (error) {
       throwApiError(error, 'Failed to send OTP');
     }
   },
 
-  verifyPhoneOtp: async (verificationId: string, otp: string): Promise<OtpVerifyResponse> => {
+  verifyPhoneOtp: async (otpId: string, otp: string): Promise<OtpVerifyResponse> => {
     try {
       const response = await api.post<ApiEnvelope<OtpVerifyResponse>>(
         '/auth/otp/verify',
-        { purpose: 'signup', channel: 'sms', verification_id: verificationId, otp },
+        { otp_id: otpId, otp },
       );
       return response.data.data;
     } catch (error) {

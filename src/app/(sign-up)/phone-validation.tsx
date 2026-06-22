@@ -18,6 +18,7 @@ const PRIMARY = '#472FF8';
 export default function PhoneValidationScreen() {
   const phone = useSignUpStore((s) => s.phone);
   const bvnVerificationId = useSignUpStore((s) => s.bvnData?.verification_id ?? '');
+  const setPhoneOtpId = useSignUpStore((s) => s.setPhoneOtpId);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -25,7 +26,8 @@ export default function PhoneValidationScreen() {
     setLoading(true);
     setError('');
     try {
-      await authService.sendPhoneOtp(bvnVerificationId);
+      const { otp_id } = await authService.sendPhoneOtp(bvnVerificationId);
+      setPhoneOtpId(otp_id);
       router.push('/(sign-up)/phone-otp');
     } catch (err: any) {
       setError(err.message);

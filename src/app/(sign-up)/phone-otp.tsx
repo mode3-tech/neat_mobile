@@ -25,6 +25,8 @@ export default function PhoneOtpScreen() {
   const [loading, setLoading] = useState(false);
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
   const bvnVerificationId = useSignUpStore((s) => s.bvnData?.verification_id ?? '');
+  const phoneOtpId = useSignUpStore((s) => s.phoneOtpId);
+  const setPhoneOtpId = useSignUpStore((s) => s.setPhoneOtpId);
   const setPhoneVerificationId = useSignUpStore((s) => s.setPhoneVerificationId);
 
   const handleSmsOtp = useCallback((code: string) => setOtp(code), []);
@@ -43,14 +45,15 @@ export default function PhoneOtpScreen() {
     if (!canResend) return;
     setSeconds(RESEND_SECONDS);
     setOtp('');
-    await authService.sendPhoneOtp(bvnVerificationId).catch(() => null);
+    const res = await authService.sendPhoneOtp(bvnVerificationId).catch(() => null);
+    if (res) setPhoneOtpId(res.otp_id);
   };
 
   const handleVerify = async () => {
     if (!canVerify || loading) return;
     setLoading(true);
     try {
-      const result = await authService.verifyPhoneOtp(bvnVerificationId, otp);
+      const result = await authService.verifyPhoneOtp(phoneOtpId, otp);
       setPhoneVerificationId(result.verification_id);
       router.push('/(sign-up)/nin-verification');
     } catch (err: unknown) {

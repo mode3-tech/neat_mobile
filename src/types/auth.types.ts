@@ -84,6 +84,10 @@ export interface ChallengeRequestResponse {
   expires_at: string;
 }
 
+export interface OtpRequestResponse {
+  otp_id: string;
+}
+
 export interface OtpVerifyResponse {
   message: string;
   verification_id: string;
