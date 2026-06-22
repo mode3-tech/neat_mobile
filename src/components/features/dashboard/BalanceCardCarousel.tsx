@@ -36,7 +36,7 @@ interface CardData {
   title: string;
   amount: string;
   // buttons: { label: string; variant: 'dark' | 'light' }[];
-  buttons: { label: string; icon?: keyof typeof Feather.glyphMap }[];
+  buttons: { label: string; icon?: keyof typeof Feather.glyphMap; disabled?: boolean }[];
   image: ImageSourcePropType;
   imageSize?: { width: number; height: number };
 }
@@ -82,7 +82,7 @@ function buildCards(
       accountNumber,
       title: 'Loan Balance',
       amount: fmtBalance(loanBalance),
-      buttons: hasActiveLoan ? [{ label: 'Make Repayment' }] : [],
+      buttons: [{ label: 'Make Repayment', disabled: !hasActiveLoan }],
       image: require('../../../../assets/images/dashboard/barg.png'),
       imageSize: { width: 80, height: 70 },
     },
@@ -238,9 +238,9 @@ export default function BalanceCardCarousel({
         {card.buttons.map((btn) => (
           <TouchableOpacity
             key={btn.label}
-            className={`rounded-full py-4 flex-row justify-center items-center ${
-              card.buttons.length === 1 ? 'flex-1' : 'flex-1'
-            } bg-white`}
+            disabled={btn.disabled}
+            style={{ opacity: btn.disabled ? 0.5 : 1 }}
+            className="rounded-full py-4 flex-row justify-center items-center flex-1 bg-white"
             activeOpacity={0.85}
             onPress={() => {
               if (btn.label === 'Send Money') {

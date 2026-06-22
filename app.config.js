@@ -14,7 +14,7 @@ const variants = {
 const variant = variants[process.env.APP_VARIANT];
 
 const baseConfig = {
-  name: 'NeatPay',
+  name: 'NEATPay',
   slug: 'neat-mobile',
   version: '1.0.0',
   orientation: 'portrait',
@@ -23,8 +23,8 @@ const baseConfig = {
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
   updates: {
-    url: 'https://u.expo.dev/13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
-    // url: 'https://u.expo.dev/a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
+    // url: 'https://u.expo.dev/13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
+    url: 'https://u.expo.dev/a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
   },
   runtimeVersion: {
     policy: 'appVersion',
@@ -41,8 +41,8 @@ const baseConfig = {
   android: {
     googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? './google-services.json',
     adaptiveIcon: {
-      backgroundColor: '#FFFFFF',
-      foregroundImage: './assets/images/adap-ic-foreground.png',
+      backgroundColor: '#032252',
+      foregroundImage: './assets/images/test-logo.png',
       monochromeImage: './assets/images/android-icon-monochrome.png',
     },
     edgeToEdgeEnabled: true,
@@ -61,8 +61,8 @@ const baseConfig = {
     [
       'expo-splash-screen',
       {
-        image: './assets/images/splash-logo.png',
-        imageWidth: 340,
+        image: './assets/images/welcome/NeatLogo.png',
+        imageWidth: 200,
         resizeMode: 'contain',
         backgroundColor: '#472FF8',
       },
@@ -86,11 +86,11 @@ const baseConfig = {
   extra: {
     router: {},
     eas: {
-      projectId: '13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
-      // projectId: 'a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
+      // projectId: '13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
+      projectId: 'a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
     },
   },
-  owner: 'micropayafrica',
+  owner: 'morojuoluwa',
 };
 
 module.exports = {

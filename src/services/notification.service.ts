@@ -144,10 +144,11 @@ export async function getNotifications(
 
 export async function getUnreadCount(): Promise<number> {
   try {
-    const response = await api.get<ApiEnvelope<{ count: number }>>(
+    const response = await api.get<ApiEnvelope<number | { count: number }>>(
       '/notifications/unread-count',
     );
-    return response.data.data.count;
+    const data = response.data.data;
+    return (typeof data === 'number' ? data : data?.count) ?? 0;
   } catch {
     return 0;
   }

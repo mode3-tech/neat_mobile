@@ -102,8 +102,8 @@ export const authService = {
   sendPhoneOtp: async (verificationId: string): Promise<void> => {
     try {
       await api.post<ApiEnvelope>(
-        '/auth/otp/request',
-        { purpose: 'signup', channel: 'sms', verification_id: verificationId },
+        '/auth/otp/sms/request',
+        { verification_id: verificationId },
       );
     } catch (error) {
       throwApiError(error, 'Failed to send OTP');
@@ -122,22 +122,22 @@ export const authService = {
     }
   },
 
-  sendEmailOtp: async (email: string): Promise<void> => {
+  sendEmailOtp: async (verificationId: string, email: string): Promise<void> => {
     try {
       await api.post<ApiEnvelope>(
-        '/auth/otp/request',
-        { purpose: 'signup', channel: 'email', destination: email },
+        '/auth/otp/email/request',
+        { verification_id: verificationId, destination: email },
       );
     } catch (error) {
       throwApiError(error, 'Failed to send OTP');
     }
   },
 
-  verifyEmailOtp: async (email: string, otp: string): Promise<OtpVerifyResponse> => {
+  verifyEmailOtp: async (verificationId: string, otp: string): Promise<OtpVerifyResponse> => {
     try {
       const response = await api.post<ApiEnvelope<OtpVerifyResponse>>(
         '/auth/otp/verify',
-        { purpose: 'signup', channel: 'email', destination: email, otp },
+        { purpose: 'signup', channel: 'email', verification_id: verificationId, otp },
       );
       return response.data.data;
     } catch (error) {

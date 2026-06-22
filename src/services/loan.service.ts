@@ -3,13 +3,10 @@ import type {
   LoanApplyPayload,
   LoanApplyResponse,
   LoanDetails,
-  LoanDetailsResponse,
   LoanEligibility,
   LoanHistoryItem,
-  LoanHistoryResponse,
   LoanProduct,
   LoanRepayment,
-  LoanRepaymentResponse,
   LoanStatusItem,
   ManualRepaymentRequest,
 } from '@/types/loan.types';
@@ -35,10 +32,10 @@ export const loanService = {
 
   getActiveLoans: async (): Promise<ActiveLoan[]> => {
     try {
-      const response = await api.get<ApiEnvelope<{ loans: ActiveLoan[] }>>(
+      const response = await api.get<ApiEnvelope<ActiveLoan[]>>(
         '/loan/loans/active',
       );
-      return response.data.data?.loans ?? [];
+      return response.data.data ?? [];
     } catch (error) {
       throwApiError(error, 'Failed to load active loans');
     }
@@ -55,11 +52,11 @@ export const loanService = {
 
   getRepaymentSchedule: async (loanId: string): Promise<LoanRepayment> => {
     try {
-      const response = await api.get<ApiEnvelope<LoanRepaymentResponse>>(
+      const response = await api.get<ApiEnvelope<LoanRepayment>>(
         '/loan/repayment-schedule',
         { params: { loan_id: loanId } },
       );
-      return response.data.data.repayment;
+      return response.data.data;
     } catch (error) {
       throwApiError(error, 'Failed to load repayment schedule');
     }
@@ -79,8 +76,8 @@ export const loanService = {
 
   getLoanHistory: async (): Promise<LoanHistoryItem[]> => {
     try {
-      const response = await api.get<ApiEnvelope<LoanHistoryResponse>>('/loan/history');
-      return response.data.data?.history ?? [];
+      const response = await api.get<ApiEnvelope<LoanHistoryItem[]>>('/loan/history');
+      return response.data.data ?? [];
     } catch (error) {
       throwApiError(error, 'Failed to load loan history');
     }
@@ -88,10 +85,10 @@ export const loanService = {
 
   getLoanDetails: async (loanId: string): Promise<LoanDetails> => {
     try {
-      const response = await api.get<ApiEnvelope<LoanDetailsResponse>>(
+      const response = await api.get<ApiEnvelope<LoanDetails>>(
         `/loan/loans/${encodeURIComponent(loanId)}`,
       );
-      return response.data.data.details;
+      return response.data.data;
     } catch (error) {
       throwApiError(error, 'Failed to load loan details');
     }
@@ -99,10 +96,10 @@ export const loanService = {
 
   getLoanHistoryById: async (loanId: string): Promise<LoanHistoryItem[]> => {
     try {
-      const response = await api.get<ApiEnvelope<LoanHistoryResponse>>(
+      const response = await api.get<ApiEnvelope<LoanHistoryItem[]>>(
         `/loan/history/${encodeURIComponent(loanId)}`,
       );
-      return response.data.data?.history ?? [];
+      return response.data.data ?? [];
     } catch (error) {
       throwApiError(error, 'Failed to load loan history');
     }

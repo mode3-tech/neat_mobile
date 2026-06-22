@@ -91,14 +91,12 @@ export default function SignInScreen() {
         >
           <View style={styles.logoWrap}>
             <Image
-              source={require('../../../assets/images/sign.png')}
+              // source={require('../../../assets/images/sign.png')}
+              source={require('../../../assets/images/welcome/NeatLogo.png')}
               style={styles.logo}
               resizeMode="contain"
             />
-            {/* <Text style={styles.brandName}>
-              Neat<Text style={styles.brandAccent}>pays</Text>
-            </Text>
-            <Text style={styles.tagline}>Let's get you In</Text> */}
+            {/* <Text style={styles.tagline}>Let's get you in</Text> */}
           </View>
 
         

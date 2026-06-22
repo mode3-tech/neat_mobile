@@ -22,6 +22,7 @@ export default function EmailValidationScreen() {
   const storedEmailVerificationId = useSignUpStore((s) => s.emailVerificationId);
   const storeEmail = useSignUpStore((s) => s.setEmail);
   const storeEmailVerificationId = useSignUpStore((s) => s.setEmailVerificationId);
+  const bvnVerificationId = useSignUpStore((s) => s.bvnData?.verification_id ?? '');
 
   const isAlreadyVerified = !!storedEmail && !!storedEmailVerificationId;
 
@@ -47,7 +48,7 @@ export default function EmailValidationScreen() {
     setLoading(true);
     setError('');
     try {
-      await authService.sendEmailOtp(email);
+      await authService.sendEmailOtp(bvnVerificationId, email);
       storeEmail(email);
       storeEmailVerificationId('');
       router.push('/(sign-up)/email-otp');

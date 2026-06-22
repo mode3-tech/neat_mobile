@@ -26,6 +26,7 @@ export default function EmailOtpScreen() {
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
   const email = useSignUpStore((s) => s.email);
   const setEmailVerificationId = useSignUpStore((s) => s.setEmailVerificationId);
+  const bvnVerificationId = useSignUpStore((s) => s.bvnData?.verification_id ?? '');
 
   const canVerify = otp.length === OTP_LENGTH;
   const canResend = seconds === 0;
@@ -38,16 +39,28 @@ export default function EmailOtpScreen() {
 
   const handleResend = async () => {
     if (!canResend) return;
-    setSeconds(RESEND_SECONDS);
+    if (!bvnVerificationId) {
+      toast.error('Could not resend code', {
+        description: 'Your session expired. Please restart sign-up.',
+      });
+      return;
+    }
     setOtp('');
-    await authService.sendEmailOtp(email).catch(() => null);
+    try {
+      await authService.sendEmailOtp(bvnVerificationId, email);
+      setSeconds(RESEND_SECONDS);
+    } catch (err: unknown) {
+      toast.error('Could not resend code', {
+        description: err instanceof Error ? err.message : 'Please try again.',
+      });
+    }
   };
 
   const handleVerify = async () => {
     if (!canVerify || loading) return;
     setLoading(true);
     try {
-      const result = await authService.verifyEmailOtp(email, otp);
+      const result = await authService.verifyEmailOtp(bvnVerificationId, otp);
       setEmailVerificationId(result.verification_id);
       router.push('/(sign-up)/create-password');
     } catch (err: unknown) {

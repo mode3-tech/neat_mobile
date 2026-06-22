@@ -113,7 +113,7 @@ export default function HomeScreen() {
               </Text>
             </View>
           </View>
-          <View className="flex-row items-center gap-3">
+          <View className="flex-row items-center gap-2">
             <TouchableOpacity
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               onPress={() => router.push('/notifications')}
@@ -128,8 +128,8 @@ export default function HomeScreen() {
               )}
             </TouchableOpacity>
             <Image
-              source={require('../../../../assets/images/dashboard/logoe.png')}
-              className="w-7 h-7"
+              source={require('../../../../assets/images/welcome/NeatLogo.png')}
+              className="w-12 h-10"
               resizeMode="contain"
             />
           </View>

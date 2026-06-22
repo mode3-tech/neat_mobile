@@ -28,7 +28,7 @@ function RecentTransactionRow({ transaction }: { transaction: Transaction }) {
         <Text className="text-sm font-semibold text-gray-900" numberOfLines={1}>
           {transaction.description}
         </Text>
-        <Text className="text-xs text-gray-500 mt-0.5">
+        <Text className="text-xs text-gray-600 mt-0.5">
           {formatTransactionDate(transaction.date)}
         </Text>
       </View>

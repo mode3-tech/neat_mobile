@@ -27,8 +27,24 @@
         "APP_VARIANT": "preview",
         "EXPO_PUBLIC_APP_VARIANT": "preview",
         "EXPO_PUBLIC_API_URL": "https://neat-mobile-backend-nhsk.onrender.com/api/v1",
-        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "9siJv+kxI1/Sd5rlv8OBFEpKkIq1AHC9bPyqLgoDNWc="
+        // "EXPO_PUBLIC_ANDROID_CERT_SHA256": "9siJv+kxI1/Sd5rlv8OBFEpKkIq1AHC9bPyqLgoDNWc=" // @micropayafrica keystore — restore for go-live
+        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "BPnSD/56TppW01ddhy7XR2yptHVMqoVTVgu+MkEb784="
         // "EXPO_PUBLIC_IOS_TEAM_ID": ""
+      }
+    },
+    "apk": {
+      "distribution": "internal",
+      "channel": "preview",
+      "environment": "preview",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "APP_VARIANT": "preview",
+        "EXPO_PUBLIC_APP_VARIANT": "preview",
+        "EXPO_PUBLIC_API_URL": "https://neat-mobile-backend-nhsk.onrender.com/api/v1",
+        // "EXPO_PUBLIC_ANDROID_CERT_SHA256": "9siJv+kxI1/Sd5rlv8OBFEpKkIq1AHC9bPyqLgoDNWc=" // @micropayafrica keystore — restore for go-live
+        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "BPnSD/56TppW01ddhy7XR2yptHVMqoVTVgu+MkEb784="
       }
     },
     "production": {
