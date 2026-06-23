@@ -10,7 +10,7 @@ export function SplashScreenComponent(): React.JSX.Element {
         source={require('../../../assets/images/welcome/NeatLogo.png')}
         className="w-[200px] h-[200px]"
         resizeMode="contain"
-      />
+      /> 
     </View>
   );
 }

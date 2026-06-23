@@ -9,51 +9,75 @@ import type {
   ValidatedAccount,
 } from '@/types/transfer.types';
 import type { ApiEnvelope } from '@/types/api.types';
-import { api } from './api';
+import { api, throwApiError } from './api';
 
 export const walletService = {
   getBanks: async (): Promise<Bank[]> => {
-    const response = await api.get<ApiEnvelope<Bank[]>>('/wallet/banks');
-    return response.data.data;
+    try {
+      const response = await api.get<ApiEnvelope<Bank[]>>('/wallet/banks');
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'Failed to load banks');
+    }
   },
 
   validateAccount: async (
     accountNumber: string,
     bankCode: string,
   ): Promise<ValidatedAccount> => {
-    const response = await api.get<ApiEnvelope<ValidatedAccount>>(
-      '/wallet/bank/details',
-      { params: { account_number: accountNumber, bank_code: bankCode } },
-    );
-    return response.data.data;
+    try {
+      const response = await api.get<ApiEnvelope<ValidatedAccount>>(
+        '/wallet/bank/details',
+        { params: { account_number: accountNumber, bank_code: bankCode } },
+      );
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'Failed to fetch bank details');
+    }
   },
 
   transfer: async (payload: TransferPayload): Promise<TransferResponse> => {
-    const { data } = await api.post<TransferResponse>(
-      '/wallet/transfer',
-      payload,
-    );
-    return data;
+    try {
+      const { data } = await api.post<TransferResponse>(
+        '/wallet/transfer',
+        payload,
+      );
+      return data;
+    } catch (error) {
+      throwApiError(error, 'Transfer failed');
+    }
   },
 
   transferBulk: async (
     payload: BulkTransferPayload,
   ): Promise<BulkTransferResponse> => {
-    const { data } = await api.post<BulkTransferResponse>(
-      '/wallet/transfer/bulk',
-      payload,
-    );
-    return data;
+    try {
+      const { data } = await api.post<BulkTransferResponse>(
+        '/wallet/transfer/bulk',
+        payload,
+      );
+      return data;
+    } catch (error) {
+      throwApiError(error, 'Bulk transfer failed');
+    }
   },
 
   addBeneficiary: async (payload: AddBeneficiaryPayload): Promise<void> => {
-    await api.post('/wallet/beneficiary', payload);
+    try {
+      await api.post('/wallet/beneficiary', payload);
+    } catch (error) {
+      throwApiError(error, 'Failed to add beneficiary');
+    }
   },
 
   getBeneficiaries: async (): Promise<Beneficiary[]> => {
-    const response = await api.get<ApiEnvelope<Beneficiary[]>>(
-      '/wallet/beneficiaries',
-    );
-    return response.data.data;
+    try {
+      const response = await api.get<ApiEnvelope<Beneficiary[]>>(
+        '/wallet/beneficiaries',
+      );
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'Failed to load beneficiaries');
+    }
   },
 };

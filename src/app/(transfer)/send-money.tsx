@@ -21,6 +21,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import { useTransferStore } from '@/stores/transfer.store';
 import { useAccountLimits } from '@/hooks/use-account-limits';
 import { ActivationCapBanner } from '@/components/ActivationCapBanner';
+import { getErrorMessage } from '@/utils/error';
 import { formatNairaShort } from '@/utils/format';
 import type { Bank, Beneficiary, TransferType } from '@/types/transfer.types';
 
@@ -148,11 +149,9 @@ export default function SendMoneyScreen() {
         );
         if (myRequestId !== validationRequestId.current) return;
         setAccountName(result.accountName);
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (myRequestId !== validationRequestId.current) return;
-        setValidationError(
-          err?.response?.data?.error || 'Could not validate account',
-        );
+        setValidationError(getErrorMessage(err, 'Could not validate account'));
       } finally {
         if (myRequestId === validationRequestId.current) setValidating(false);
       }
