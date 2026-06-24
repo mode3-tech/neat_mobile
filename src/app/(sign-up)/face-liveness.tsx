@@ -124,7 +124,7 @@ export default function FaceLivenessScreen() {
   };
 
   const handleContinue = () => {
-    router.push('/(sign-up)/mothers-maiden-name');
+    router.push('/(sign-up)/email-validation');
   };
 
   return (

@@ -25,7 +25,6 @@ export interface RegisterPayload {
   confirm_password: string;
   transaction_pin: string;
   confirm_transaction_pin: string;
-  mothers_maiden_name: string;
   bvn_verification_id: string;
   bvn_w_face_verification_id: string;
   nin_verification_id: string;

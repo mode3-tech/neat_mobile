@@ -57,7 +57,7 @@ export default function BankTransferScreen() {
 
         <Text className="text-[13px] text-[#6B7280] mb-1">Account Name</Text>
         <Text className="text-[17px] font-bold text-[#1A1A1A]">
-          Neatpay Savings
+          {accountSummary?.full_name ?? '---'}
         </Text>
       </View>
 

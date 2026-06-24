@@ -171,7 +171,6 @@ export default function RegistrationProcessingScreen() {
         confirm_password: store.password,
         transaction_pin: store.transactionPin,
         confirm_transaction_pin: store.transactionPin,
-        mothers_maiden_name: store.mothersMaidenName,
         bvn_verification_id: store.bvnData?.verification_id ?? '',
         bvn_w_face_verification_id: store.bvnFaceVerificationId,
         nin_verification_id: store.ninData?.verification_id ?? '',

@@ -158,7 +158,7 @@ export default function SignInScreen() {
                 <ActivityIndicator color="#fff" />
               ) : (
                 <Text style={[styles.primaryBtnText, !canSignIn && styles.disabledBtnText]}>
-                  ~Sign In
+                  Sign In
                 </Text>
                 
               )}

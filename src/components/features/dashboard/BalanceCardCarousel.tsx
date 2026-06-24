@@ -60,7 +60,7 @@ function buildCards(
       accountNumber,
       title: 'Available Balance',
       amount: fmtBalance(availableBalance),
-      buttons: [{ label: 'Send Money', icon: 'send' }],
+      buttons: [{ label: 'Send Money', icon: 'send' }, { label: 'Deposit', icon: 'plus' }],
       image: require('../../../../assets/images/dashboard/ball.png'),
       imageSize: { width: 70, height: 70 },
     },
