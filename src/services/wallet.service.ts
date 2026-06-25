@@ -72,10 +72,13 @@ export const walletService = {
 
   getBeneficiaries: async (): Promise<Beneficiary[]> => {
     try {
-      const response = await api.get<ApiEnvelope<Beneficiary[]>>(
+      // This endpoint does NOT use the standard ApiEnvelope ({ data }).
+      // It returns { status, message, beneficiaries }, so unwrap that key
+      // and fall back to [] so callers never receive undefined.
+      const response = await api.get<{ beneficiaries: Beneficiary[] }>(
         '/wallet/beneficiaries',
       );
-      return response.data.data;
+      return response.data.beneficiaries ?? [];
     } catch (error) {
       throwApiError(error, 'Failed to load beneficiaries');
     }
