@@ -195,6 +195,10 @@ export default function SignInScreen() {
                   }
                 }}
               >
+
+                {/* {
+                  biometricLoading?
+                } */}
                 {biometricLoading ? (
                   <ActivityIndicator size="small" color={PRIMARY} />
                 ) : (

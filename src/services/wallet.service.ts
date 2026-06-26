@@ -5,7 +5,7 @@ import type {
   BulkTransferPayload,
   BulkTransferResponse,
   TransferPayload,
-  TransferResponse,
+  TransferResult,
   ValidatedAccount,
 } from '@/types/transfer.types';
 import type { ApiEnvelope } from '@/types/api.types';
@@ -36,13 +36,13 @@ export const walletService = {
     }
   },
 
-  transfer: async (payload: TransferPayload): Promise<TransferResponse> => {
+  transfer: async (payload: TransferPayload): Promise<TransferResult> => {
     try {
-      const { data } = await api.post<TransferResponse>(
+      const response = await api.post<ApiEnvelope<TransferResult>>(
         '/wallet/transfer',
         payload,
       );
-      return data;
+      return response.data.data;
     } catch (error) {
       throwApiError(error, 'Transfer failed');
     }

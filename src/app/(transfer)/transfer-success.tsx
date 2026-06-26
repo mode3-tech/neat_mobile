@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Image,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -9,16 +10,17 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import ViewShot from 'react-native-view-shot';
+import ViewShot, { captureRef } from 'react-native-view-shot';
 import * as Print from 'expo-print';
 
 import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
 import { buildReceiptHtml, shareFile } from '@/utils/receipt';
+import { formatTransactionDateTime } from '@/utils/format';
 
-function formatCurrency(amount: number): string {
+function formatAmount(amount: number): string {
   return (
-    '₦' +
+    'NGN ' +
     new Intl.NumberFormat('en-NG', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -26,23 +28,30 @@ function formatCurrency(amount: number): string {
   );
 }
 
-function SummaryRow({
+function ReceiptRow({
   label,
   value,
+  valueColor,
   isLast,
 }: {
   label: string;
   value: string;
+  valueColor?: string;
   isLast?: boolean;
 }) {
   return (
     <View
-      className={`flex-row justify-between items-center py-[14px] ${
+      className={`flex-row justify-between items-start gap-4 py-[14px] ${
         !isLast ? 'border-b border-[#F3F4F6]' : ''
       }`}
     >
-      <Text className="text-[13px] text-[#6B7280]">{label}</Text>
-      <Text className="text-sm font-semibold text-[#1A1A1A]">{value}</Text>
+      <Text className="text-[13px] text-[#6B7280] shrink-0">{label}</Text>
+      <Text
+        className="text-sm font-semibold flex-1 text-right"
+        style={{ color: valueColor ?? '#1A1A1A' }}
+      >
+        {value}
+      </Text>
     </View>
   );
 }
@@ -55,6 +64,8 @@ export default function TransferSuccessScreen() {
   const viewShotRef = useRef<ViewShot>(null);
   const [beneficiaryAdded, setBeneficiaryAdded] = useState(false);
   const [addingBeneficiary, setAddingBeneficiary] = useState(false);
+  // Capture the receipt time once so it doesn't drift across re-renders.
+  const [receiptDate] = useState(() => new Date());
 
   const handleBack = () => {
     if (hasNavigatedAway.current) return;
@@ -72,11 +83,16 @@ export default function TransferSuccessScreen() {
 
   if (!result) return null;
 
-  const rows = [
-    { label: 'Sender', value: store.senderPhone },
-    { label: 'Amount', value: formatCurrency(result.amount) },
-    { label: 'Recipient Account', value: store.accountNumber },
-    { label: 'Recipient Name', value: store.accountName },
+  const detailRows: { label: string; value: string; valueColor?: string }[] = [
+    { label: 'Name', value: store.accountName },
+    { label: 'Account No.', value: store.accountNumber },
+    { label: 'Bank Name', value: store.bankName },
+    { label: 'Session ID', value: result.sessionId },
+    { label: 'Transaction ID', value: result.transactionReference },
+    { label: 'Transaction Status', value: 'Successful', valueColor: '#16A34A' },
+    ...(store.narration
+      ? [{ label: 'Remark', value: store.narration }]
+      : []),
   ];
 
   const handleShareAsImage = async () => {
@@ -90,21 +106,16 @@ export default function TransferSuccessScreen() {
 
   const handleShareAsPdf = async () => {
     try {
-      const html = buildReceiptHtml({
-        sender: store.senderPhone,
-        amount: formatCurrency(result.amount),
-        recipientAccount: store.accountNumber,
-        recipientName: store.accountName,
-        bankName: store.bankName,
-        reference: result.reference,
-        date: new Date().toLocaleDateString('en-NG', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        }),
-        description: result.description,
+      // Capture the on-screen receipt as a data-URI and wrap it in a PDF —
+      // keeps the PDF pixel-identical to the screen (logo included).
+      const dataUri = await captureRef(viewShotRef, {
+        format: 'png',
+        quality: 1,
+        result: 'data-uri',
       });
-      const { uri } = await Print.printToFileAsync({ html });
+      const { uri } = await Print.printToFileAsync({
+        html: buildReceiptHtml(dataUri),
+      });
       await shareFile(uri);
     } catch {
       // user cancelled or error
@@ -119,7 +130,7 @@ export default function TransferSuccessScreen() {
         bank_code: store.bankCode,
         account_number: store.accountNumber,
         account_name: store.accountName,
-        // wallet_id: 'WLT-001', 
+        // wallet_id: 'WLT-001',
       });
       setBeneficiaryAdded(true);
     } catch {
@@ -133,36 +144,55 @@ export default function TransferSuccessScreen() {
     <SafeAreaView className="flex-1 bg-white px-6">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="flex-1 pt-10"
+        className="flex-1 pt-8"
         contentContainerStyle={{ flexGrow: 1 }}
       >
+        {/* Receipt card (captured for Share Image / Download PDF) */}
         <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 1 }}>
-          <View className="bg-white px-6 pt-4 pb-6">
-            {/* Success icon */}
-            <View className="items-center mb-5">
-              <View className="w-16 h-16 rounded-full bg-[#16A34A] items-center justify-center">
-                <MaterialCommunityIcons name="check" size={32} color="#fff" />
-              </View>
-            </View>
+          <View className="bg-white px-5 py-6 border border-[#E5E7EB] rounded-[16px]">
+            {/* Brand logo */}
+            <Image
+              source={require('../../../assets/images/welcome/NeatLogo.png')}
+              className="w-16 h-12 self-center"
+              resizeMode="contain"
+            />
 
-            <Text className="text-[22px] font-bold text-[#1A1A1A] text-center mb-2">
-              Successful!
+            <View className="border-b border-[#E5E7EB] my-4" />
+
+            {/* Amount + status + timestamp */}
+            <Text className="text-base font-bold text-[#1A1A1A] text-center">
+              Transaction Receipt
             </Text>
-            <Text className="text-[13px] text-[#6B7280] text-center leading-5 mb-7">
-              {result.description}
+            <Text className="text-[26px] font-bold text-[#472FF8] text-center mt-2">
+              {formatAmount(result.amount)}
+            </Text>
+            <Text className="text-[13px] text-[#6B7280] text-center mt-1">
+              Successful
+            </Text>
+            <Text className="text-[12px] text-[#9CA3AF] text-center mt-1">
+              {formatTransactionDateTime(receiptDate.toISOString())}
             </Text>
 
-            {/* Summary */}
-            <View className="border border-[#E5E7EB] rounded-[14px] px-4">
-              {rows.map((row, i) => (
-                <SummaryRow
-                  key={row.label}
-                  label={row.label}
-                  value={row.value}
-                  isLast={i === rows.length - 1}
-                />
-              ))}
-            </View>
+            <View className="border-b border-[#E5E7EB] my-4" />
+
+            {/* Sender */}
+            {store.senderName ? (
+              <ReceiptRow label="Sender" value={store.senderName} isLast />
+            ) : null}
+
+            {/* Beneficiary details */}
+            <Text className="text-sm font-semibold text-[#472FF8] mt-4 mb-1">
+              Beneficiary details
+            </Text>
+            {detailRows.map((row, i) => (
+              <ReceiptRow
+                key={row.label}
+                label={row.label}
+                value={row.value}
+                valueColor={row.valueColor}
+                isLast={i === detailRows.length - 1}
+              />
+            ))}
           </View>
         </ViewShot>
 
@@ -224,20 +254,6 @@ export default function TransferSuccessScreen() {
             </View>
             <Text className="text-xs text-[#374151] text-center">
               {beneficiaryAdded ? 'Added' : `Add to${'\n'}Beneficiary`}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Add 1-tap payment */}
-          <TouchableOpacity className="items-center w-20">
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
-              <MaterialCommunityIcons
-                name="lightning-bolt-outline"
-                size={22}
-                color="#472FF8"
-              />
-            </View>
-            <Text className="text-xs text-[#374151] text-center">
-              Add 1-tap{'\n'}payment
             </Text>
           </TouchableOpacity>
         </View>

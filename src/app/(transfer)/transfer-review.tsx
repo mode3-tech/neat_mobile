@@ -43,13 +43,13 @@ function SummaryRow({
 }) {
   return (
     <View
-      className={`flex-row justify-between items-center py-[14px] ${
+      className={`flex-row justify-between items-start py-[14px] gap-4 ${
         !isLast ? 'border-b border-[#E5E7EB]' : ''
       }`}
     >
-      <Text className="text-[13px] text-[#6B7280]">{label}</Text>
+      <Text className="text-[13px] text-[#6B7280] shrink-0">{label}</Text>
       <Text
-        className="text-sm font-semibold"
+        className="text-sm font-semibold flex-1 text-right"
         style={{ color: valueColor ?? '#1A1A1A' }}
       >
         {value}
@@ -87,7 +87,7 @@ export default function TransferReviewScreen() {
   const submitTransfer = async (transactionPin: string) => {
     setSubmitting(true);
     try {
-      const response = await walletService.transfer({
+      const transfer = await walletService.transfer({
         amount: parsedAmount,
         sort_code: store.bankCode,
         account_number: store.accountNumber,
@@ -102,7 +102,7 @@ export default function TransferReviewScreen() {
       // so the next transfer screen pre-validates against fresh numbers.
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_LIMITS] });
-      store.setTransferResult(response.transfer);
+      store.setTransferResult(transfer);
       router.push('/(transfer)/transfer-success');
     } catch (err: unknown) {
       toast.error('Transfer failed', { description: getErrorMessage(err) });

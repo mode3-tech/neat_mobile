@@ -37,12 +37,6 @@ export interface TransferResult {
   description: string;
 }
 
-export interface TransferResponse {
-  status: boolean;
-  message: string;
-  transfer: TransferResult;
-}
-
 export interface AddBeneficiaryPayload {
   bank_code: string;
   account_number: string;
