@@ -209,7 +209,7 @@ export default function TransferReviewScreen() {
         <View className="flex-row items-center gap-3 mb-8">
           <TouchableOpacity
             className={`flex-1 rounded-full py-4 items-center ${
-              canConfirm ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+              canConfirm || submitting ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
             }`}
             onPress={handleConfirm}
             disabled={!canConfirm || submitting}

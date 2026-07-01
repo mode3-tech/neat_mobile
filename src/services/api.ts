@@ -1,6 +1,7 @@
 import axios, {
   type AxiosError,
   type AxiosInstance,
+  type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from 'axios';
 
@@ -10,13 +11,26 @@ import { getIntegrityStatus } from './security.service';
 export class ApiError extends Error {
   code: string;
   status?: number;
+  /** Seconds to wait before retrying, from a 429's `Retry-After` header or body. */
+  retryAfter?: number;
 
-  constructor(message: string, code: string, status?: number) {
+  constructor(message: string, code: string, status?: number, retryAfter?: number) {
     super(message);
     this.name = 'ApiError';
     this.code = code;
     this.status = status;
+    this.retryAfter = retryAfter;
   }
+}
+
+// Pull a retry delay (in seconds) from the `Retry-After` header or an
+// `error.retry_after` body field. Returns undefined if neither is a valid > 0.
+function parseRetryAfter(response: AxiosResponse): number | undefined {
+  const body = (response.data?.error as { retry_after?: unknown })?.retry_after;
+  const header = response.headers?.['retry-after'];
+  const raw = body ?? header;
+  const seconds = typeof raw === 'string' ? parseInt(raw, 10) : typeof raw === 'number' ? raw : NaN;
+  return Number.isFinite(seconds) && seconds > 0 ? seconds : undefined;
 }
 
 export function throwApiError(error: unknown, fallback: string): never {
@@ -28,6 +42,7 @@ export function throwApiError(error: unknown, fallback: string): never {
         serverError.message,
         typeof serverError.code === 'string' ? serverError.code : 'UNKNOWN',
         error.response.status,
+        parseRetryAfter(error.response),
       );
     }
   }

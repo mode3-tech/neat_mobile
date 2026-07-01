@@ -85,6 +85,8 @@ export interface ChallengeRequestResponse {
 
 export interface OtpRequestResponse {
   otp_id: string;
+  /** Optional server-provided cooldown (seconds) before another code can be sent. */
+  retry_after?: number;
 }
 
 export interface OtpVerifyResponse {

@@ -65,7 +65,7 @@ export default function PhoneValidationScreen() {
 
       <View style={styles.footer}>
         <TouchableOpacity
-          style={[styles.primaryBtn, loading && styles.disabledBtn]}
+          style={styles.primaryBtn}
           onPress={handleSendOtp}
           disabled={loading}
           activeOpacity={0.85}
@@ -149,9 +149,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
-  },
-  disabledBtn: {
-    backgroundColor: '#E5E7EB',
   },
   errorText: {
     fontSize: 13,

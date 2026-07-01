@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -13,11 +13,13 @@ import { router } from 'expo-router';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import * as Print from 'expo-print';
 
+import { SuccessCelebration } from '@/components/ui/success-celebration';
 import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
 import { buildReceiptHtml, shareFile } from '@/utils/receipt';
-import { formatTransactionDateTime } from '@/utils/format';
+import { formatNairaWhole, formatTransactionDateTime } from '@/utils/format';
 
+/** Receipt amount style: "NGN 60.00". */
 function formatAmount(amount: number): string {
   return (
     'NGN ' +
@@ -60,6 +62,7 @@ export default function TransferSuccessScreen() {
   const store = useTransferStore();
   const result = store.transferResult;
   const hasNavigatedAway = useRef(false);
+  const { width: screenWidth } = useWindowDimensions();
 
   const viewShotRef = useRef<ViewShot>(null);
   const [beneficiaryAdded, setBeneficiaryAdded] = useState(false);
@@ -106,8 +109,8 @@ export default function TransferSuccessScreen() {
 
   const handleShareAsPdf = async () => {
     try {
-      // Capture the on-screen receipt as a data-URI and wrap it in a PDF —
-      // keeps the PDF pixel-identical to the screen (logo included).
+      // Capture the off-screen receipt as a data-URI and wrap it in a PDF —
+      // keeps the PDF pixel-identical to the receipt design (logo included).
       const dataUri = await captureRef(viewShotRef, {
         format: 'png',
         quality: 1,
@@ -141,16 +144,20 @@ export default function TransferSuccessScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        className="flex-1 pt-8"
-        contentContainerStyle={{ flexGrow: 1 }}
+    <SafeAreaView className="flex-1 bg-white">
+      {/*
+        Off-screen receipt — kept mounted purely as the capture source for
+        Share Image / Download PDF. Rendered far off-screen with a fixed width
+        and collapsable={false} so react-native-view-shot can snapshot it
+        reliably on both iOS and Android.
+      */}
+      <View
+        style={{ position: 'absolute', left: -9999, top: 0, width: screenWidth - 48 }}
+        collapsable={false}
+        pointerEvents="none"
       >
-        {/* Receipt card (captured for Share Image / Download PDF) */}
         <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 1 }}>
           <View className="bg-white px-5 py-6 border border-[#E5E7EB] rounded-[16px]">
-            {/* Brand logo */}
             <Image
               source={require('../../../assets/images/welcome/NeatLogo.png')}
               className="w-16 h-12 self-center"
@@ -159,7 +166,6 @@ export default function TransferSuccessScreen() {
 
             <View className="border-b border-[#E5E7EB] my-4" />
 
-            {/* Amount + status + timestamp */}
             <Text className="text-base font-bold text-[#1A1A1A] text-center">
               Transaction Receipt
             </Text>
@@ -175,15 +181,9 @@ export default function TransferSuccessScreen() {
 
             <View className="border-b border-[#E5E7EB] my-4" />
 
-            {/* Sender */}
             {store.senderName ? (
-              <ReceiptRow label="Sender" value={store.senderName} isLast />
+              <ReceiptRow label="Sender" value={store.senderName} />
             ) : null}
-
-            {/* Beneficiary details */}
-            <Text className="text-sm font-semibold text-[#472FF8] mt-4 mb-1">
-              Beneficiary details
-            </Text>
             {detailRows.map((row, i) => (
               <ReceiptRow
                 key={row.label}
@@ -195,12 +195,57 @@ export default function TransferSuccessScreen() {
             ))}
           </View>
         </ViewShot>
+      </View>
 
-        {/* More menu */}
-        <Text className="text-base font-semibold text-[#1A1A1A] mb-4 mt-8">
-          More menu
+      {/* Done */}
+      <View className="px-6 pt-2 flex-row justify-end">
+        <TouchableOpacity onPress={handleBack} hitSlop={8} activeOpacity={0.7}>
+          <Text className="text-base font-semibold text-[#472FF8]">Done</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Celebration */}
+      <View className="flex-1 px-6 items-center pt-4">
+        <SuccessCelebration />
+
+        <Text className="text-[15px] text-[#6B7280] text-center mt-4">
+          Transfer successful
         </Text>
-        <View className="flex-row justify-around mb-8">
+        <Text className="text-[28px] font-bold text-[#1A1A1A] text-center mt-1">
+          {formatNairaWhole(result.amount)}
+        </Text>
+
+        <View className="bg-[#EEF0FF] border border-[#472FF8]/30 rounded-[14px] px-4 py-4 mt-6 w-full">
+          <Text className="text-[13px] text-[#472FF8] text-center leading-5">
+            The recipient account is expected to be credited within 5 minutes,
+            subject to notification by the bank.
+          </Text>
+        </View>
+
+        {/* Actions */}
+        <View className="flex-row justify-around mt-10 w-full">
+          {/* Add to Beneficiary */}
+          <TouchableOpacity
+            className="items-center w-20"
+            onPress={handleAddBeneficiary}
+            disabled={beneficiaryAdded}
+          >
+            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+              {addingBeneficiary ? (
+                <ActivityIndicator size="small" color="#472FF8" />
+              ) : (
+                <MaterialCommunityIcons
+                  name={beneficiaryAdded ? 'check-circle' : 'account-plus-outline'}
+                  size={22}
+                  color="#472FF8"
+                />
+              )}
+            </View>
+            <Text className="text-xs text-[#374151] text-center">
+              {beneficiaryAdded ? 'Added' : `Add to${'\n'}Beneficiary`}
+            </Text>
+          </TouchableOpacity>
+
           {/* Share as Image */}
           <TouchableOpacity
             className="items-center w-20"
@@ -234,44 +279,7 @@ export default function TransferSuccessScreen() {
               Download{'\n'}PDF
             </Text>
           </TouchableOpacity>
-
-          {/* Add to Beneficiary */}
-          <TouchableOpacity
-            className="items-center w-20"
-            onPress={handleAddBeneficiary}
-            disabled={beneficiaryAdded}
-          >
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
-              {addingBeneficiary ? (
-                <ActivityIndicator size="small" color="#472FF8" />
-              ) : (
-                <MaterialCommunityIcons
-                  name={beneficiaryAdded ? 'check-circle' : 'account-plus-outline'}
-                  size={22}
-                  color="#472FF8"
-                />
-              )}
-            </View>
-            <Text className="text-xs text-[#374151] text-center">
-              {beneficiaryAdded ? 'Added' : `Add to${'\n'}Beneficiary`}
-            </Text>
-          </TouchableOpacity>
         </View>
-
-        <View className="flex-1" />
-      </ScrollView>
-
-      {/* Back to Dashboard */}
-      <View className="pb-4">
-        <TouchableOpacity
-          className="bg-[#472FF8] rounded-full py-4 items-center"
-          onPress={handleBack}
-          activeOpacity={0.85}
-        >
-          <Text className="text-white text-base font-semibold">
-            Back to Dashboard
-          </Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

@@ -13,6 +13,7 @@ interface SignUpState {
   transactionPin: string;
   biometricsEnabled: boolean;
   phoneOtpId: string;
+  emailOtpId: string;
   phoneVerificationId: string;
   emailVerificationId: string;
   jobId: string;
@@ -28,6 +29,7 @@ interface SignUpState {
   setTransactionPin: (pin: string) => void;
   setBiometrics: (enabled: boolean) => void;
   setPhoneOtpId: (id: string) => void;
+  setEmailOtpId: (id: string) => void;
   setPhoneVerificationId: (id: string) => void;
   setEmailVerificationId: (id: string) => void;
   setRegistrationJob: (
@@ -51,6 +53,7 @@ const initialState = {
   transactionPin: '',
   biometricsEnabled: true,
   phoneOtpId: '',
+  emailOtpId: '',
   phoneVerificationId: '',
   emailVerificationId: '',
   jobId: '',
@@ -77,6 +80,8 @@ export const useSignUpStore = create<SignUpState>((set) => ({
   setBiometrics: (biometricsEnabled) => set({ biometricsEnabled }),
 
   setPhoneOtpId: (phoneOtpId) => set({ phoneOtpId }),
+
+  setEmailOtpId: (emailOtpId) => set({ emailOtpId }),
 
   setPhoneVerificationId: (phoneVerificationId) => set({ phoneVerificationId }),
 

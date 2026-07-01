@@ -25,6 +25,8 @@ export default function EmailOtpScreen() {
   const [loading, setLoading] = useState(false);
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
   const email = useSignUpStore((s) => s.email);
+  const emailOtpId = useSignUpStore((s) => s.emailOtpId);
+  const setEmailOtpId = useSignUpStore((s) => s.setEmailOtpId);
   const setEmailVerificationId = useSignUpStore((s) => s.setEmailVerificationId);
   const bvnVerificationId = useSignUpStore((s) => s.bvnData?.verification_id ?? '');
 
@@ -47,7 +49,8 @@ export default function EmailOtpScreen() {
     }
     setOtp('');
     try {
-      await authService.sendEmailOtp(bvnVerificationId, email);
+      const { otp_id } = await authService.sendEmailOtp(bvnVerificationId, email);
+      setEmailOtpId(otp_id);
       setSeconds(RESEND_SECONDS);
     } catch (err: unknown) {
       toast.error('Could not resend code', {
@@ -60,7 +63,7 @@ export default function EmailOtpScreen() {
     if (!canVerify || loading) return;
     setLoading(true);
     try {
-      const result = await authService.verifyEmailOtp(bvnVerificationId, otp);
+      const result = await authService.verifyOtp(emailOtpId, otp);
       setEmailVerificationId(result.verification_id);
       router.push('/(sign-up)/create-password');
     } catch (err: unknown) {
@@ -182,6 +185,7 @@ const styles = StyleSheet.create({
   },
   changeEmailBtn: {
     alignSelf: 'flex-end',
+    marginBottom: 24,
   },
   changeEmailText: {
     fontSize: 13,
