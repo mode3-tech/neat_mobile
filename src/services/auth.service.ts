@@ -20,6 +20,7 @@ import type {
   ForgotPinResponse,
   ForgotPinVerifyResponse,
   LoginResponse,
+  OtpPurpose,
   OtpRequestResponse,
   OtpVerifyResponse,
   PasswordChangeRequestResponse,
@@ -100,11 +101,20 @@ export const authService = {
     }
   },
 
-  sendPhoneOtp: async (verificationId: string): Promise<OtpRequestResponse> => {
+  // verificationId is null for submitted_contact requests — the backend
+  // identifies those by purpose + destination alone.
+  sendPhoneOtp: async (
+    verificationId: string | null,
+    opts?: { purpose?: OtpPurpose; destination?: string },
+  ): Promise<OtpRequestResponse> => {
     try {
       const response = await api.post<ApiEnvelope<OtpRequestResponse>>(
         '/auth/otp/sms/request',
-        { verification_id: verificationId },
+        {
+          ...(verificationId ? { verification_id: verificationId } : {}),
+          ...(opts?.purpose ? { purpose: opts.purpose } : {}),
+          ...(opts?.destination ? { destination: opts.destination } : {}),
+        },
       );
       return response.data.data;
     } catch (error) {
@@ -113,12 +123,17 @@ export const authService = {
   },
 
   // Channel-agnostic: both SMS and email OTPs verify the same way, keyed by the
-  // otp_id returned from their respective request calls.
-  verifyOtp: async (otpId: string, otp: string): Promise<OtpVerifyResponse> => {
+  // otp_id returned from their respective request calls. When a purpose was sent
+  // on the request, the same purpose must be sent here or verification fails.
+  verifyOtp: async (
+    otpId: string,
+    otp: string,
+    purpose?: OtpPurpose,
+  ): Promise<OtpVerifyResponse> => {
     try {
       const response = await api.post<ApiEnvelope<OtpVerifyResponse>>(
         '/auth/otp/verify',
-        { otp_id: otpId, otp },
+        { otp_id: otpId, otp, ...(purpose ? { purpose } : {}) },
       );
       return response.data.data;
     } catch (error) {
@@ -128,14 +143,16 @@ export const authService = {
 
   sendEmailOtp: async (
     verificationId: string,
-    email?: string,
+    opts?: { purpose?: OtpPurpose; destination?: string },
   ): Promise<OtpRequestResponse> => {
     try {
       const response = await api.post<ApiEnvelope<OtpRequestResponse>>(
         '/auth/otp/email/request',
-        email
-          ? { verification_id: verificationId, destination: email }
-          : { verification_id: verificationId },
+        {
+          verification_id: verificationId,
+          ...(opts?.purpose ? { purpose: opts.purpose } : {}),
+          ...(opts?.destination ? { destination: opts.destination } : {}),
+        },
       );
       return response.data.data;
     } catch (error) {

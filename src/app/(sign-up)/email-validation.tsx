@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
@@ -24,6 +24,7 @@ export default function EmailValidationScreen() {
   const storeEmailOtpId = useSignUpStore((s) => s.setEmailOtpId);
   const storeEmailVerificationId = useSignUpStore((s) => s.setEmailVerificationId);
   const bvnVerificationId = useSignUpStore((s) => s.bvnData?.verification_id ?? '');
+  const primaryOtpChannel = useSignUpStore((s) => s.primaryOtpChannel);
 
   const isAlreadyVerified = !!storedEmail && !!storedEmailVerificationId;
 
@@ -32,12 +33,21 @@ export default function EmailValidationScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Email-first users already verified their account email as the primary
+  // signup OTP — this optional step doesn't apply to them.
+  if (primaryOtpChannel === 'email') {
+    return <Redirect href="/(sign-up)/create-password" />;
+  }
+
   const isValid = EMAIL_REGEX.test(email);
 
   const handleStartEditing = () => {
     setEditing(true);
     setEmail('');
     setError('');
+    // Detach the old email's verification too — otherwise "Change email"
+    // followed by "Skip Now" would still register the old email.
+    storeEmailVerificationId('');
   };
 
   const handleProceed = async () => {
@@ -49,7 +59,9 @@ export default function EmailValidationScreen() {
     setLoading(true);
     setError('');
     try {
-      const { otp_id } = await authService.sendEmailOtp(bvnVerificationId, email);
+      const { otp_id } = await authService.sendEmailOtp(bvnVerificationId, {
+        destination: email,
+      });
       storeEmailOtpId(otp_id);
       storeEmail(email);
       storeEmailVerificationId('');

@@ -19,8 +19,9 @@ export interface AuthUser {
   isVerified: boolean;
 }
 
+export type OtpPurpose = 'signup' | 'submitted_contact';
+
 export interface RegisterPayload {
-  email: string;
   password: string;
   confirm_password: string;
   transaction_pin: string;
@@ -29,8 +30,12 @@ export interface RegisterPayload {
   bvn_w_face_verification_id: string;
   nin_verification_id: string;
   nin_w_face_verification_id: string;
-  phone_verification_id: string;
-  email_verification_id: string;
+  /** verification_id from the primary signup OTP, whichever channel delivered it. */
+  otp_verification_id: string;
+  /** Required when the primary OTP was email (lost-BVN-phone flow); omit for phone-first. */
+  submitted_phone_verification_id?: string;
+  /** Omit entirely when the optional email step was skipped — '' is rejected. */
+  email_verification_id?: string;
   is_biometrics_enabled: boolean;
   device: DeviceInfo;
 }

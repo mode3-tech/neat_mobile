@@ -19,6 +19,7 @@
     "preview": {
       "distribution": "store",
       "channel": "preview",
+      "autoIncrement": true,
       "environment": "preview",
       "android": {
         "buildType": "app-bundle"

@@ -15,6 +15,8 @@ import { storeTransactionPin } from '@/services/biometric.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { useSignUpStore } from '@/stores/sign-up.store';
 import { getErrorMessage } from '@/utils/error';
+import { getRegisterErrorAction, type RegisterErrorAction } from '@/utils/register-errors';
+import { buildRegisterPayload } from '@/utils/register-payload';
 
 const PRIMARY = '#472FF8';
 const POLL_INTERVAL_MS = 3000;
@@ -32,6 +34,7 @@ export default function RegistrationProcessingScreen() {
     'Setting up your account…',
   );
   const [errorMessage, setErrorMessage] = useState('');
+  const [errorAction, setErrorAction] = useState<RegisterErrorAction | null>(null);
   const [retrying, setRetrying] = useState(false);
   const [showSlowMessage, setShowSlowMessage] = useState(false);
 
@@ -163,22 +166,10 @@ export default function RegistrationProcessingScreen() {
     if (retrying) return;
     setRetrying(true);
     setErrorMessage('');
+    setErrorAction(null);
     claimingRef.current = false;
     try {
-      const result = await authService.registerUser({
-        email: store.email,
-        password: store.password,
-        confirm_password: store.password,
-        transaction_pin: store.transactionPin,
-        confirm_transaction_pin: store.transactionPin,
-        bvn_verification_id: store.bvnData?.verification_id ?? '',
-        bvn_w_face_verification_id: store.bvnFaceVerificationId,
-        nin_verification_id: store.ninData?.verification_id ?? '',
-        nin_w_face_verification_id: store.ninFaceVerificationId,
-        phone_verification_id: store.phoneVerificationId,
-        email_verification_id: store.emailVerificationId,
-        is_biometrics_enabled: store.biometricsEnabled,
-      });
+      const result = await authService.registerUser(buildRegisterPayload());
       if (cancelledRef.current) return;
 
       store.setRegistrationJob(
@@ -192,7 +183,16 @@ export default function RegistrationProcessingScreen() {
       startPolling();
     } catch (err: unknown) {
       if (cancelledRef.current) return;
-      setErrorMessage(getErrorMessage(err, 'Something went wrong'));
+      const action = getRegisterErrorAction(err);
+      if (action) {
+        // Retrying with the same dead verification ids would loop — surface
+        // the recovery CTA instead of the Retry button.
+        setErrorMessage(action.message);
+        setErrorAction(action);
+        setPhase('failed');
+      } else {
+        setErrorMessage(getErrorMessage(err, 'Something went wrong'));
+      }
     } finally {
       if (!cancelledRef.current) setRetrying(false);
     }
@@ -235,14 +235,16 @@ export default function RegistrationProcessingScreen() {
         <View style={styles.footer}>
           <TouchableOpacity
             style={styles.primaryBtn}
-            onPress={handleRetry}
+            onPress={errorAction ? errorAction.recover : handleRetry}
             disabled={retrying}
             activeOpacity={0.85}
           >
             {retrying ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.primaryBtnText}>Retry</Text>
+              <Text style={styles.primaryBtnText}>
+                {errorAction ? errorAction.ctaLabel : 'Retry'}
+              </Text>
             )}
           </TouchableOpacity>
           <TouchableOpacity

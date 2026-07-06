@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { toast } from 'sonner-native';
 
 import { OtpInput } from '@/components/ui/otp-input';
@@ -22,18 +22,25 @@ const PRIMARY = '#472FF8';
 const RESEND_SECONDS = 30;
 
 export default function PhoneOtpScreen() {
+  // Register-error recovery routes email-first users straight back here on
+  // the email channel so they never touch the SMS path they can't use.
+  const params = useLocalSearchParams<{ channel?: string }>();
+  const startOnEmail = params.channel === 'email';
+
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
-  const [channel, setChannel] = useState<'sms' | 'email'>('sms');
+  const [channel, setChannel] = useState<'sms' | 'email'>(startOnEmail ? 'email' : 'sms');
   const [switchingChannel, setSwitchingChannel] = useState(false);
-  const [hasUsedEmailFallback, setHasUsedEmailFallback] = useState(false);
+  const [hasUsedEmailFallback, setHasUsedEmailFallback] = useState(startOnEmail);
   const bvnVerificationId = useSignUpStore((s) => s.bvnData?.verification_id ?? '');
   const phoneOtpId = useSignUpStore((s) => s.phoneOtpId);
   const emailOtpId = useSignUpStore((s) => s.emailOtpId);
   const setPhoneOtpId = useSignUpStore((s) => s.setPhoneOtpId);
   const setEmailOtpId = useSignUpStore((s) => s.setEmailOtpId);
-  const setPhoneVerificationId = useSignUpStore((s) => s.setPhoneVerificationId);
+  const setOtpVerificationId = useSignUpStore((s) => s.setOtpVerificationId);
+  const setPrimaryOtpChannel = useSignUpStore((s) => s.setPrimaryOtpChannel);
+  const clearSubmittedPhone = useSignUpStore((s) => s.clearSubmittedPhone);
 
   const handleSmsOtp = useCallback((code: string) => setOtp(code), []);
   useSmsOtp({ onOtpReceived: handleSmsOtp, otpLength: OTP_LENGTH });
@@ -70,17 +77,41 @@ export default function PhoneOtpScreen() {
     });
   };
 
+  // Arriving via recovery: the stale OTP state was cleared before navigating,
+  // so request a fresh email code once on mount. On failure, zero the cooldown
+  // so the user can immediately retry via the resend link.
+  useEffect(() => {
+    if (!startOnEmail || emailOtpId) return;
+    (async () => {
+      try {
+        const { otp_id, retry_after } = await authService.sendEmailOtp(bvnVerificationId, {
+          purpose: 'signup',
+        });
+        setEmailOtpId(otp_id);
+        startCooldown(retry_after);
+      } catch (err: unknown) {
+        handleOtpError(err, 'Could not send email code');
+        setSeconds(0);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleResend = async () => {
     if (!canResend) return;
     setOtp('');
     startCooldown(); // optimistic — blocks a double-tap while the request is in flight
     try {
       if (channel === 'email') {
-        const { otp_id, retry_after } = await authService.sendEmailOtp(bvnVerificationId);
+        const { otp_id, retry_after } = await authService.sendEmailOtp(bvnVerificationId, {
+          purpose: 'signup',
+        });
         setEmailOtpId(otp_id);
         startCooldown(retry_after);
       } else {
-        const { otp_id, retry_after } = await authService.sendPhoneOtp(bvnVerificationId);
+        const { otp_id, retry_after } = await authService.sendPhoneOtp(bvnVerificationId, {
+          purpose: 'signup',
+        });
         setPhoneOtpId(otp_id);
         startCooldown(retry_after);
       }
@@ -99,7 +130,9 @@ export default function PhoneOtpScreen() {
     }
     setSwitchingChannel(true);
     try {
-      const { otp_id, retry_after } = await authService.sendEmailOtp(bvnVerificationId);
+      const { otp_id, retry_after } = await authService.sendEmailOtp(bvnVerificationId, {
+        purpose: 'signup',
+      });
       setEmailOtpId(otp_id);
       setHasUsedEmailFallback(true);
       setChannel('email');
@@ -125,7 +158,9 @@ export default function PhoneOtpScreen() {
     }
     setSwitchingChannel(true);
     try {
-      const { otp_id, retry_after } = await authService.sendPhoneOtp(bvnVerificationId);
+      const { otp_id, retry_after } = await authService.sendPhoneOtp(bvnVerificationId, {
+        purpose: 'signup',
+      });
       setPhoneOtpId(otp_id);
       setChannel('sms');
       setOtp('');
@@ -145,9 +180,19 @@ export default function PhoneOtpScreen() {
     setLoading(true);
     try {
       const otpId = channel === 'email' ? emailOtpId : phoneOtpId;
-      const result = await authService.verifyOtp(otpId, otp);
-      setPhoneVerificationId(result.verification_id);
-      router.push('/(sign-up)/nin-verification');
+      const result = await authService.verifyOtp(otpId, otp, 'signup');
+      setOtpVerificationId(result.verification_id);
+      setPrimaryOtpChannel(channel);
+      if (channel === 'email') {
+        // Email-first path: the user must now verify an alternate phone they
+        // can access — it becomes their login number.
+        router.push('/(sign-up)/alternate-phone');
+      } else {
+        // Wipe any half-completed email-first attempt so a stale submitted
+        // phone id can't ride along on a phone-first registration.
+        clearSubmittedPhone();
+        router.push('/(sign-up)/nin-verification');
+      }
     } catch (err: unknown) {
       toast.error('Verification failed', {
         description: err instanceof Error ? err.message : 'Please try again.',
@@ -174,7 +219,7 @@ export default function PhoneOtpScreen() {
         <Text style={styles.title}>Enter OTP Code</Text>
         <Text style={styles.subtitle}>
           {channel === 'email'
-            ? 'Enter the 6-digit code sent to the email on your BVN'
+            ? "Enter the 6-digit code sent to the email on your BVN. Next, you'll add a phone number you can access — it will be your sign-in number."
             : 'Enter the 6-digit code sent to your phone'}
         </Text>
 
@@ -283,6 +328,7 @@ const styles = StyleSheet.create({
     color: '#1A1A1A',
     lineHeight: 20,
     marginTop: 4,
+    marginBottom:10
   },
   fallbackLink: {
     color: PRIMARY,

@@ -26,7 +26,9 @@ export default function PhoneValidationScreen() {
     setLoading(true);
     setError('');
     try {
-      const { otp_id } = await authService.sendPhoneOtp(bvnVerificationId);
+      const { otp_id } = await authService.sendPhoneOtp(bvnVerificationId, {
+        purpose: 'signup',
+      });
       setPhoneOtpId(otp_id);
       router.push('/(sign-up)/phone-otp');
     } catch (err: any) {
@@ -45,7 +47,7 @@ export default function PhoneValidationScreen() {
       <Text style={styles.title}>Phone Validation</Text>
       <Text style={styles.subtitle}>
         We'll send an OTP to:{' '}
-        <Text style={styles.phoneHighlight}>{phone}</Text>
+        <Text style={styles.phoneHighlight}>{phone} </Text>or the mail attached to your BVN
       </Text>
 
       <View style={styles.body}>

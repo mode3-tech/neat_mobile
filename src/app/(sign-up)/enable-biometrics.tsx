@@ -12,6 +12,8 @@ import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
+import { getRegisterErrorAction, type RegisterErrorAction } from '@/utils/register-errors';
+import { buildRegisterPayload } from '@/utils/register-payload';
 
 const PRIMARY = '#472FF8';
 
@@ -21,6 +23,7 @@ export default function EnableBiometricsScreen() {
   const [enabled, setEnabled] = useState(store.biometricsEnabled);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [errorAction, setErrorAction] = useState<RegisterErrorAction | null>(null);
 
   const handleToggle = (next: boolean) => {
     setEnabled(next);
@@ -31,22 +34,9 @@ export default function EnableBiometricsScreen() {
     store.setBiometrics(enabled);
     setLoading(true);
     setError('');
-    console.log('face IDs at register:', store.bvnFaceVerificationId, store.ninFaceVerificationId);
+    setErrorAction(null);
     try {
-      const result = await authService.registerUser({
-        email: store.email,
-        password: store.password,
-        confirm_password: store.password,
-        transaction_pin: store.transactionPin,
-        confirm_transaction_pin: store.transactionPin,
-        bvn_verification_id: store.bvnData?.verification_id ?? '',
-        bvn_w_face_verification_id: store.bvnFaceVerificationId,
-        nin_verification_id: store.ninData?.verification_id ?? '',
-        nin_w_face_verification_id: store.ninFaceVerificationId,
-        phone_verification_id: store.phoneVerificationId,
-        email_verification_id: store.emailVerificationId,
-        is_biometrics_enabled: enabled,
-      });
+      const result = await authService.registerUser(buildRegisterPayload());
 
       store.setRegistrationJob(
         result.job_id,
@@ -56,7 +46,13 @@ export default function EnableBiometricsScreen() {
 
       router.replace('/(sign-up)/registration-processing' as any);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      const action = getRegisterErrorAction(err);
+      if (action) {
+        setError(action.message);
+        setErrorAction(action);
+      } else {
+        setError(err instanceof Error ? err.message : 'Something went wrong');
+      }
     } finally {
       setLoading(false);
     }
@@ -100,6 +96,16 @@ export default function EnableBiometricsScreen() {
             )}
           </TouchableOpacity>
         </View>
+
+        {errorAction && !loading ? (
+          <TouchableOpacity
+            style={styles.recoveryBtn}
+            onPress={errorAction.recover}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.recoveryBtnText}>{errorAction.ctaLabel}</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
     </SafeAreaView>
   );
@@ -163,6 +169,19 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingBottom: 16,
+    gap: 12,
+  },
+  recoveryBtn: {
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 50,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  recoveryBtnText: {
+    fontSize: 15,
+    color: '#374151',
+    fontWeight: '600',
   },
   btnOuter: {
     borderWidth: 2,

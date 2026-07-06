@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -12,23 +12,29 @@ import { router } from 'expo-router';
 import { toast } from 'sonner-native';
 
 import { OtpInput } from '@/components/ui/otp-input';
+import { useSmsOtp } from '@/hooks/use-sms-otp';
+import { ApiError } from '@/services/api';
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
 import { OTP_LENGTH } from '@/constants';
-import { maskEmail } from '@/utils/mask';
+import { maskPhone } from '@/utils/mask';
 
 const PRIMARY = '#472FF8';
 const RESEND_SECONDS = 30;
 
-export default function EmailOtpScreen() {
+export default function AlternatePhoneOtpScreen() {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
-  const email = useSignUpStore((s) => s.email);
-  const emailOtpId = useSignUpStore((s) => s.emailOtpId);
-  const setEmailOtpId = useSignUpStore((s) => s.setEmailOtpId);
-  const setEmailVerificationId = useSignUpStore((s) => s.setEmailVerificationId);
-  const bvnVerificationId = useSignUpStore((s) => s.bvnData?.verification_id ?? '');
+  const submittedPhone = useSignUpStore((s) => s.submittedPhone);
+  const submittedPhoneOtpId = useSignUpStore((s) => s.submittedPhoneOtpId);
+  const setSubmittedPhoneOtpId = useSignUpStore((s) => s.setSubmittedPhoneOtpId);
+  const setSubmittedPhoneVerificationId = useSignUpStore(
+    (s) => s.setSubmittedPhoneVerificationId,
+  );
+
+  const handleSmsOtp = useCallback((code: string) => setOtp(code), []);
+  useSmsOtp({ onOtpReceived: handleSmsOtp, otpLength: OTP_LENGTH });
 
   const canVerify = otp.length === OTP_LENGTH;
   const canResend = seconds === 0;
@@ -39,25 +45,44 @@ export default function EmailOtpScreen() {
     return () => clearInterval(t);
   }, [seconds]);
 
+  const startCooldown = (retryAfter?: number) =>
+    setSeconds(retryAfter && retryAfter > 0 ? retryAfter : RESEND_SECONDS);
+
+  // The backend is the real rate limiter (429 + Retry-After); this just mirrors
+  // it. On 429 we seed the local countdown from the server's wait time so the
+  // resend link stays disabled for exactly as long as the server says.
+  const handleOtpError = (err: unknown, fallbackTitle: string) => {
+    if (err instanceof ApiError && err.status === 429) {
+      startCooldown(err.retryAfter);
+      toast.error('Too many attempts', {
+        description: err.message || 'Please wait before requesting another code.',
+      });
+      return;
+    }
+    toast.error(fallbackTitle, {
+      description: err instanceof Error ? err.message : 'Please try again.',
+    });
+  };
+
   const handleResend = async () => {
     if (!canResend) return;
-    if (!bvnVerificationId) {
+    if (!submittedPhone) {
       toast.error('Could not resend code', {
         description: 'Your session expired. Please restart sign-up.',
       });
       return;
     }
     setOtp('');
+    startCooldown(); // optimistic — blocks a double-tap while the request is in flight
     try {
-      const { otp_id } = await authService.sendEmailOtp(bvnVerificationId, {
-        destination: email,
+      const { otp_id, retry_after } = await authService.sendPhoneOtp(null, {
+        purpose: 'submitted_contact',
+        destination: submittedPhone,
       });
-      setEmailOtpId(otp_id);
-      setSeconds(RESEND_SECONDS);
+      setSubmittedPhoneOtpId(otp_id);
+      startCooldown(retry_after);
     } catch (err: unknown) {
-      toast.error('Could not resend code', {
-        description: err instanceof Error ? err.message : 'Please try again.',
-      });
+      handleOtpError(err, 'Could not resend code');
     }
   };
 
@@ -65,9 +90,13 @@ export default function EmailOtpScreen() {
     if (!canVerify || loading) return;
     setLoading(true);
     try {
-      const result = await authService.verifyOtp(emailOtpId, otp);
-      setEmailVerificationId(result.verification_id);
-      router.push('/(sign-up)/create-password');
+      const result = await authService.verifyOtp(
+        submittedPhoneOtpId,
+        otp,
+        'submitted_contact',
+      );
+      setSubmittedPhoneVerificationId(result.verification_id);
+      router.push('/(sign-up)/nin-verification');
     } catch (err: unknown) {
       toast.error('Verification failed', {
         description: err instanceof Error ? err.message : 'Please try again.',
@@ -94,18 +123,16 @@ export default function EmailOtpScreen() {
         <Text style={styles.title}>Enter OTP Code</Text>
         <Text style={styles.subtitle}>
           Enter the 6-digit code sent to{' '}
-          <Text style={styles.emailHighlight}>{maskEmail(email)}</Text>
+          <Text style={styles.phoneHighlight}>{maskPhone(submittedPhone)}</Text>
         </Text>
 
         <View style={styles.otpWrap}>
           <OtpInput value={otp} onChange={setOtp} length={OTP_LENGTH} />
         </View>
 
-        {canVerify && (
-          <TouchableOpacity style={styles.changeEmailBtn} onPress={() => router.back()}>
-            <Text style={styles.changeEmailText}>Change email</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity style={styles.changeNumberBtn} onPress={() => router.back()}>
+          <Text style={styles.changeNumberText}>Change number</Text>
+        </TouchableOpacity>
 
         <View style={styles.spacer} />
 
@@ -178,18 +205,18 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 32,
   },
-  emailHighlight: {
+  phoneHighlight: {
     color: '#1A1A1A',
     fontWeight: '500',
   },
   otpWrap: {
     marginBottom: 12,
   },
-  changeEmailBtn: {
+  changeNumberBtn: {
     alignSelf: 'flex-end',
     marginBottom: 24,
   },
-  changeEmailText: {
+  changeNumberText: {
     fontSize: 13,
     color: PRIMARY,
     fontWeight: '600',
