@@ -12,14 +12,18 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
 
-import { ACCOUNT_NUMBER_LENGTH, NEAT_BANK_CODE } from '@/constants';
-import { accountService } from '@/services/account.service';
+import {
+  ACCOUNT_NUMBER_LENGTH,
+  INSUFFICIENT_FUNDS_MESSAGE,
+  NEAT_BANK_CODE,
+  TRANSFER_FEE,
+} from '@/constants';
 import { walletService } from '@/services/wallet.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { useTransferStore } from '@/stores/transfer.store';
 import { useAccountLimits } from '@/hooks/use-account-limits';
+import { useAccountSummary } from '@/hooks/use-account-summary';
 import { ActivationCapBanner } from '@/components/ActivationCapBanner';
 import { getErrorMessage } from '@/utils/error';
 import { formatNairaShort } from '@/utils/format';
@@ -33,10 +37,7 @@ const TABS: { key: TransferType; label: string }[] = [
 export default function SendMoneyScreen() {
   const store = useTransferStore();
   const user = useAuthStore((s) => s.user);
-  const { data: accountSummary } = useQuery({
-    queryKey: ['account-summary'],
-    queryFn: accountService.getSummary,
-  });
+  const { data: accountSummary } = useAccountSummary();
   const { data: limits } = useAccountLimits();
 
   const [activeTab, setActiveTab] = useState<TransferType>('neatpay');
@@ -190,8 +191,17 @@ export default function SendMoneyScreen() {
     parsedAmount > 0 &&
     parsedAmount * 100 > (outflowRemaining ?? Infinity);
 
+  // Block outflow above the available balance (amount + flat transfer fee).
+  // Balance is naira (not kobo), so compare directly. Fail-open if the summary
+  // hasn't loaded yet.
+  const exceedsBalance =
+    accountSummary?.available_balance != null &&
+    parsedAmount > 0 &&
+    parsedAmount + TRANSFER_FEE > accountSummary.available_balance;
+
   const canProceed =
     !exceedsCap &&
+    !exceedsBalance &&
     (activeTab === 'neatpay'
       ? accountNumber.length === ACCOUNT_NUMBER_LENGTH &&
         accountName !== '' &&
@@ -413,6 +423,11 @@ export default function SendMoneyScreen() {
               <Text className="text-xs text-red-500 mt-1.5">
                 Exceeds your remaining {formatNairaShort(outflowRemaining)}{' '}
                 24-hour limit.
+              </Text>
+            )}
+            {exceedsBalance && (
+              <Text className="text-xs text-red-500 mt-1.5">
+                {INSUFFICIENT_FUNDS_MESSAGE}
               </Text>
             )}
           </View>

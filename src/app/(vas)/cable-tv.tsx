@@ -18,9 +18,11 @@ import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
+import { useAccountSummary } from '@/hooks/use-account-summary';
 import type { VasBiller, VasProduct } from '@/types/vas.types';
 import { formatNairaWhole } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
+import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
 
 // Smartcard / IUC numbers vary by provider (DSTV 10–11, GOTV 10, StarTimes 11),
 // so gate on a minimum length rather than a fixed one.
@@ -84,12 +86,19 @@ export default function CableTvScreen() {
     setPackageSearch('');
   };
 
+  const { data: accountSummary } = useAccountSummary();
+
   const totalAmount = selectedPackage ? selectedPackage.amount * months : 0;
+  const exceedsBalance =
+    accountSummary?.available_balance != null &&
+    totalAmount > 0 &&
+    totalAmount > accountSummary.available_balance;
 
   const canProceed =
     !!selectedBiller &&
     smartcard.length >= MIN_SMARTCARD_LENGTH &&
-    !!selectedPackage;
+    !!selectedPackage &&
+    !exceedsBalance;
 
   const handleProceed = () => {
     if (!canProceed) return;
@@ -263,7 +272,7 @@ export default function CableTvScreen() {
 
         {/* Amount (read-only, derived from package × months) */}
         <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Amount</Text>
-        <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-6">
+        <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-1.5">
           <Text
             className={`text-[15px] ${
               selectedPackage ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'
@@ -272,6 +281,7 @@ export default function CableTvScreen() {
             {selectedPackage ? formatNairaWhole(totalAmount) : 'Amount'}
           </Text>
         </View>
+        <InsufficientFundsHint show={exceedsBalance} spacing="mb-5" />
       </ScrollView>
 
       <View className="px-6 pb-4">

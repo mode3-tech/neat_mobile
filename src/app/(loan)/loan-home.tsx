@@ -199,7 +199,7 @@ export default function LoanHomeScreen() {
   const loan = data?.[0];
   const hasLoan = !!loan;
   const activeLoanId = accountSummary?.active_loans?.[0]?.loan_id;
-  const availableBalance = accountSummary?.available_balance ?? 0;
+  const availableBalance = accountSummary?.available_balance;
   const canOpenRepayment = !!loan && !isAccountLoading;
 
   const [sheetOpen, setSheetOpen] = useState(false);

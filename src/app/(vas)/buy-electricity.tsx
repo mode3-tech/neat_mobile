@@ -18,9 +18,11 @@ import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
+import { useAccountSummary } from '@/hooks/use-account-summary';
 import type { VasBiller } from '@/types/vas.types';
 import { formatNairaWhole } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
+import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
 
 const QUICK_AMOUNTS = [500, 1000, 2000, 5000, 10000, 20000];
 
@@ -93,6 +95,8 @@ export default function BuyElectricityScreen() {
     closeProviderModal();
   };
 
+  const { data: accountSummary } = useAccountSummary();
+
   const amountNum = Number(amount) || 0;
   const withinRange =
     !!selectedProduct &&
@@ -100,11 +104,15 @@ export default function BuyElectricityScreen() {
     amountNum <= selectedProduct.max_amount;
   const amountOutOfRange =
     !!selectedProduct && amount.length > 0 && !withinRange;
+  const exceedsBalance =
+    accountSummary?.available_balance != null &&
+    amountNum > 0 &&
+    amountNum > accountSummary.available_balance;
 
   // Meter-number length varies by disco (dynamic), so just require a non-empty
   // meter and let the backend validate it.
   const canProceed =
-    !!selectedProduct && meter.length > 0 && withinRange;
+    !!selectedProduct && meter.length > 0 && withinRange && !exceedsBalance;
 
   const meterTypeLabel = meterType === 'prepaid' ? 'Prepaid' : 'Postpaid';
 
@@ -238,7 +246,7 @@ export default function BuyElectricityScreen() {
             {formatNairaWhole(selectedProduct.max_amount)}
           </Text>
         ) : (
-          <View className="mb-3" />
+          <InsufficientFundsHint show={exceedsBalance} />
         )}
 
         {/* Quick amounts */}

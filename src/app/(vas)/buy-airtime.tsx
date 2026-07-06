@@ -16,8 +16,10 @@ import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
+import { useAccountSummary } from '@/hooks/use-account-summary';
 import type { VasBiller } from '@/types/vas.types';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
+import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
 
 const PHONE_LENGTH = 11;
 const QUICK_AMOUNTS = [100, 200, 500, 1000, 2000, 5000];
@@ -82,15 +84,24 @@ export default function BuyAirtimeScreen() {
   const selectedBiller =
     billersQuery.data?.find((b) => b.id === selectedBillerId) ?? null;
 
+  const { data: accountSummary } = useAccountSummary();
+
   const amountNum = Number(amount) || 0;
   const withinRange =
     !!product &&
     amountNum >= product.min_amount &&
     amountNum <= product.max_amount;
   const amountOutOfRange = !!product && amount.length > 0 && !withinRange;
+  const exceedsBalance =
+    accountSummary?.available_balance != null &&
+    amountNum > 0 &&
+    amountNum > accountSummary.available_balance;
 
   const canProceed =
-    !!product && phone.length === PHONE_LENGTH && withinRange;
+    !!product &&
+    phone.length === PHONE_LENGTH &&
+    withinRange &&
+    !exceedsBalance;
 
   const handleProceed = () => {
     if (!canProceed) return;
@@ -207,7 +218,7 @@ export default function BuyAirtimeScreen() {
             {formatNaira(product.max_amount)}
           </Text>
         ) : (
-          <View className="mb-3" />
+          <InsufficientFundsHint show={exceedsBalance} />
         )}
 
         {/* Quick amounts */}

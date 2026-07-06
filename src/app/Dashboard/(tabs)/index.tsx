@@ -171,7 +171,7 @@ export default function HomeScreen() {
         visible={repaymentOpen}
         onClose={() => setRepaymentOpen(false)}
         loan={accountSummary?.active_loans?.[0]}
-        availableBalance={accountSummary?.available_balance ?? 0}
+        availableBalance={accountSummary?.available_balance}
       />
     </SafeAreaView>
   );

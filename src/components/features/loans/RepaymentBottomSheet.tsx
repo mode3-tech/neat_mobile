@@ -19,7 +19,7 @@ interface RepaymentBottomSheetProps {
   visible: boolean;
   onClose: () => void;
   loan: { loan_id: string } | undefined;
-  availableBalance: number;
+  availableBalance: number | undefined;
 }
 
 function formatCurrency(amount: number): string {
@@ -67,11 +67,12 @@ export default function RepaymentBottomSheet({
   });
 
   const parsedAmount = parseFloat(amount.replace(/,/g, '')) || 0;
-  // Temporarily disabled for testing the repayment endpoint
-  // const exceedsBalance = parsedAmount > availableBalance;
-  const exceedsBalance = false;
+  // Fail open while the balance is still unknown (summary loading/errored);
+  // the backend rejects a genuine over-balance repayment anyway.
+  const exceedsBalance =
+    availableBalance != null && parsedAmount > availableBalance;
   const hasValidInput =
-    parsedAmount > 0 && /* !exceedsBalance && */ pin.length === PIN_LENGTH;
+    parsedAmount > 0 && !exceedsBalance && pin.length === PIN_LENGTH;
   const canConfirm = hasValidInput && !isPending;
 
   const onConfirm = () => {
@@ -131,7 +132,9 @@ export default function RepaymentBottomSheet({
                 <Text className="text-xs mb-5">
                   <Text className="text-[#6B7280]">Balance: </Text>
                   <Text className="text-[#472FF8] font-medium">
-                    {formatCurrency(availableBalance)}
+                    {availableBalance != null
+                      ? formatCurrency(availableBalance)
+                      : '—'}
                   </Text>
                 </Text>
               )}

@@ -8,6 +8,14 @@ export const PIN_LENGTH = 4;
 export const ACCOUNT_NUMBER_LENGTH = 10;
 export const NEAT_BANK_CODE = '100040';
 
+// Flat transfer fees in naira. Placeholder values mirrored from the review
+// screens — replace with a backend-provided fee if the API starts returning one.
+export const TRANSFER_FEE = 10.75;
+export const BULK_FEE_PER_RECIPIENT = 10;
+
+export const INSUFFICIENT_FUNDS_MESSAGE =
+  'Insufficient funds for this transaction';
+
 export const TOKEN_KEYS = {
   ACCESS: 'neat_access_token',
   REFRESH: 'neat_refresh_token',

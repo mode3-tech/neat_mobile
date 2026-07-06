@@ -18,9 +18,11 @@ import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
+import { useAccountSummary } from '@/hooks/use-account-summary';
 import type { VasBiller, VasProduct } from '@/types/vas.types';
 import { formatNairaWhole } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
+import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
 
 const PHONE_LENGTH = 11;
 
@@ -77,8 +79,18 @@ export default function BuyDataScreen() {
     setPlanSearch('');
   };
 
+  const { data: accountSummary } = useAccountSummary();
+
+  const exceedsBalance =
+    !!selectedPlan &&
+    accountSummary?.available_balance != null &&
+    selectedPlan.amount > accountSummary.available_balance;
+
   const canProceed =
-    !!selectedBiller && phone.length === PHONE_LENGTH && !!selectedPlan;
+    !!selectedBiller &&
+    phone.length === PHONE_LENGTH &&
+    !!selectedPlan &&
+    !exceedsBalance;
 
   const handleProceed = () => {
     if (!canProceed) return;
@@ -189,7 +201,7 @@ export default function BuyDataScreen() {
         {/* Data plan selector */}
         <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Data Plan</Text>
         <TouchableOpacity
-          className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-6 flex-row items-center"
+          className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-1.5 flex-row items-center"
           activeOpacity={0.8}
           disabled={!selectedBillerId}
           onPress={() => setPlanModalVisible(true)}
@@ -208,6 +220,7 @@ export default function BuyDataScreen() {
             <MaterialCommunityIcons name="chevron-down" size={22} color="#6B7280" />
           )}
         </TouchableOpacity>
+        <InsufficientFundsHint show={exceedsBalance} spacing="mb-5" />
       </ScrollView>
 
       <View className="px-6 pb-4">

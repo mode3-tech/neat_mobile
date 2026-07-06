@@ -14,7 +14,7 @@ import { toast } from 'sonner-native';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { ForgotPinLink } from '@/components/ui/forgot-pin-link';
-import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
+import { PIN_LENGTH, QUERY_KEYS, TRANSFER_FEE } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
@@ -141,7 +141,7 @@ export default function TransferReviewScreen() {
     ...(store.transferType === 'other_bank'
       ? [{ label: 'Bank Name', value: store.bankName, valueColor: '#472FF8' }]
       : []),
-    { label: 'Commission', value: formatCurrency(10.75) },
+    { label: 'Commission', value: formatCurrency(TRANSFER_FEE) },
     // { label: 'Total Debit', value: formatCurrency(parsedAmount), valueColor: '#472FF8' },
   ];
 

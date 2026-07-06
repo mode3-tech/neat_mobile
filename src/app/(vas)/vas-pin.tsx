@@ -9,10 +9,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner-native';
 
 import { ForgotPinLink } from '@/components/ui/forgot-pin-link';
-import { PIN_LENGTH } from '@/constants';
+import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
@@ -31,6 +32,8 @@ export default function VasPinScreen() {
     amount: string;
     date: string;
   }>();
+
+  const queryClient = useQueryClient();
 
   const categoryName = useVasStore((s) => s.categoryName);
   const biller = useVasStore((s) => s.biller);
@@ -141,6 +144,9 @@ export default function VasPinScreen() {
           : await vasService.buyAirtime(payload));
       }
       await onManualPinSuccess(transactionPin);
+      // Refresh the cached balance so the next VAS/transfer screen gates on the
+      // post-debit balance instead of a stale one.
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
       // Clear the PIN so backing out of the result screen can't re-confirm
       // the purchase with a still-armed PIN.
       setPin('');

@@ -12,11 +12,14 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
 
-import { ACCOUNT_NUMBER_LENGTH, NEAT_BANK_CODE } from '@/constants';
-import { accountService } from '@/services/account.service';
+import {
+  ACCOUNT_NUMBER_LENGTH,
+  BULK_FEE_PER_RECIPIENT,
+  NEAT_BANK_CODE,
+} from '@/constants';
 import { walletService } from '@/services/wallet.service';
+import { useAccountSummary } from '@/hooks/use-account-summary';
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
 import type { Bank, BulkRecipient, TransferType } from '@/types/transfer.types';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
@@ -39,10 +42,7 @@ function formatNaira(amount: number): string {
 export default function BulkAddRecipientScreen() {
   const { recipients, addRecipient, removeRecipient } = useBulkTransferStore();
 
-  const { data: accountSummary } = useQuery({
-    queryKey: ['account-summary'],
-    queryFn: accountService.getSummary,
-  });
+  const { data: accountSummary } = useAccountSummary();
 
   const [activeTab, setActiveTab] = useState<TransferType>('neatpay');
 
@@ -158,8 +158,12 @@ export default function BulkAddRecipientScreen() {
   );
 
   const availableBalance = accountSummary?.available_balance ?? 0;
+  // Debit = recipient amounts + the flat per-recipient fee. Fail-open only
+  // while the summary is still loading (null); a real 0 balance blocks.
+  const totalDebit = totalPayment + recipients.length * BULK_FEE_PER_RECIPIENT;
   const exceedsBalance =
-    availableBalance > 0 && totalPayment > availableBalance;
+    accountSummary?.available_balance != null &&
+    totalDebit > accountSummary.available_balance;
 
   const canAdd =
     parsedAmount > 0 &&

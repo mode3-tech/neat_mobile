@@ -3,9 +3,8 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
+import { BULK_FEE_PER_RECIPIENT } from '@/constants';
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
-
-const FEE_PER_RECIPIENT = 10;
 
 function formatNaira(amount: number): string {
   return (
@@ -50,7 +49,7 @@ export default function BulkTransferReviewScreen() {
     [recipients],
   );
 
-  const totalFees = recipients.length * FEE_PER_RECIPIENT;
+  const totalFees = recipients.length * BULK_FEE_PER_RECIPIENT;
   const grandTotal = totalAmount + totalFees;
 
   const handleCancel = () => {
