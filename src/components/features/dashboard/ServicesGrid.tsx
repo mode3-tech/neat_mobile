@@ -35,15 +35,17 @@ const CATEGORY_ROUTE: Record<string, string> = {
 
 const SERVICES: ServiceItem[][] = [
   [
-    { icon: 'qrcode-scan', label: 'QR Code', comingSoon: true },
+
     { icon: 'cash-multiple', label: 'Loans', route: '/(loan)/loan-home' },
     { icon: 'file-document-outline', label: 'Statement', route: '/(account)/statement' },
+     { icon: 'television', label: 'Cable TV', categoryName: 'CABLE TV' },
     { icon: 'wifi', label: 'Buy Data', categoryName: 'DATA' },
   ],
   [
-    { icon: 'television', label: 'Cable TV', categoryName: 'CABLE TV' },
+    // { icon: 'television', label: 'Cable TV', categoryName: 'CABLE TV' },
     { icon: 'flash', label: 'Electricity', categoryName: 'ELECTRICITY' },
     { icon: 'trophy', label: 'Buy Airtime', categoryName: 'AIRTIME' },
+     { icon: 'qrcode-scan', label: 'QR Code', comingSoon: true },
     { icon: 'dots-horizontal', label: 'More', comingSoon: true },
   ],
 ];
