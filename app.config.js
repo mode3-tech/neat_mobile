@@ -20,7 +20,7 @@ const baseConfig = {
   orientation: 'portrait',
   icon: './assets/images/adap-ic.png',
   scheme: 'neatmobile',
-  userInterfaceStyle: 'automatic',
+  userInterfaceStyle: 'light',
   newArchEnabled: true,
   updates: {
     // url: 'https://u.expo.dev/13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
@@ -78,6 +78,15 @@ const baseConfig = {
     '@react-native-community/datetimepicker',
     'expo-web-browser',
     ['freerasp-react-native', {}],
+    [
+      'expo-build-properties',
+      {
+        // Security review (CyberPlural): raise Android floor from API 24 (Android 7.0,
+        // unpatched) to API 29 (Android 10) so the app only runs on devices still getting
+        // OS security updates. Drops Android 7–9 support.
+        android: { minSdkVersion: 29 },
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,
