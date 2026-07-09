@@ -16,47 +16,13 @@ import * as Print from 'expo-print';
 import { SuccessCelebration } from '@/components/ui/success-celebration';
 import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
+import { DetailRow } from '@/components/features/transaction/DetailRow';
 import { buildReceiptHtml, shareFile } from '@/utils/receipt';
-import { formatNairaWhole, formatTransactionDateTime } from '@/utils/format';
-
-/** Receipt amount style: "NGN 60.00". */
-function formatAmount(amount: number): string {
-  return (
-    'NGN ' +
-    new Intl.NumberFormat('en-NG', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount)
-  );
-}
-
-function ReceiptRow({
-  label,
-  value,
-  valueColor,
-  isLast,
-}: {
-  label: string;
-  value: string;
-  valueColor?: string;
-  isLast?: boolean;
-}) {
-  return (
-    <View
-      className={`flex-row justify-between items-start gap-4 py-[14px] ${
-        !isLast ? 'border-b border-[#F3F4F6]' : ''
-      }`}
-    >
-      <Text className="text-[13px] text-[#6B7280] shrink-0">{label}</Text>
-      <Text
-        className="text-sm font-semibold flex-1 text-right"
-        style={{ color: valueColor ?? '#1A1A1A' }}
-      >
-        {value}
-      </Text>
-    </View>
-  );
-}
+import {
+  formatNairaDecimal,
+  formatNairaWhole,
+  formatTransactionDateTime,
+} from '@/utils/format';
 
 export default function TransferSuccessScreen() {
   const store = useTransferStore();
@@ -158,19 +124,21 @@ export default function TransferSuccessScreen() {
       >
         <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 1 }}>
           <View className="bg-white px-5 py-6 border border-[#E5E7EB] rounded-[16px]">
-            <Image
-              source={require('../../../assets/images/welcome/NeatLogo.png')}
-              className="w-16 h-12 self-center"
-              resizeMode="contain"
-            />
+            <View className="flex-row items-center justify-between">
+              <Image
+                source={require('../../../assets/images/welcome/NeatLogo.png')}
+                className="w-16 h-12"
+                resizeMode="contain"
+              />
+              <Text className="text-[15px] font-medium text-[#1A1A1A]">
+                Transaction Receipt
+              </Text>
+            </View>
 
             <View className="border-b border-[#E5E7EB] my-4" />
 
-            <Text className="text-base font-bold text-[#1A1A1A] text-center">
-              Transaction Receipt
-            </Text>
             <Text className="text-[26px] font-bold text-[#472FF8] text-center mt-2">
-              {formatAmount(result.amount)}
+              {formatNairaDecimal(result.amount)}
             </Text>
             <Text className="text-[13px] text-[#6B7280] text-center mt-1">
               Successful
@@ -182,10 +150,10 @@ export default function TransferSuccessScreen() {
             <View className="border-b border-[#E5E7EB] my-4" />
 
             {store.senderName ? (
-              <ReceiptRow label="Sender" value={store.senderName} />
+              <DetailRow label="Sender" value={store.senderName} />
             ) : null}
             {detailRows.map((row, i) => (
-              <ReceiptRow
+              <DetailRow
                 key={row.label}
                 label={row.label}
                 value={row.value}

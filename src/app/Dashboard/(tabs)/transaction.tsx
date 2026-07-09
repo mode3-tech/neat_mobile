@@ -12,6 +12,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
 import { useTransactions } from '@/hooks/use-transactions';
+import { openTransactionDetails } from '@/utils/transaction-nav';
 import { TransactionRow } from '@/components/features/transaction/TransactionRow';
 import type { TransactionFilter, Transaction } from '@/types/transaction.types';
 
@@ -182,7 +183,10 @@ export default function TransactionScreen() {
             </Text>
           )}
           renderItem={({ item }: { item: Transaction }) => (
-            <TransactionRow transaction={item} />
+            <TransactionRow
+              transaction={item}
+              onPress={() => openTransactionDetails(item)}
+            />
           )}
           ListEmptyComponent={<EmptyState isFiltered={isFiltered} />}
           contentContainerStyle={

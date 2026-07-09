@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 
 import { transactionService } from '@/services/transaction.service';
 import { formatNairaWhole, formatTransactionDate } from '@/utils/format';
+import { openTransactionDetails } from '@/utils/transaction-nav';
 import { getTransactionIcon, STATUS_COLORS } from '@/components/features/transaction/TransactionRow';
 import { QUERY_KEYS } from '@/constants';
 import type { Transaction } from '@/types/transaction.types';
@@ -17,7 +18,11 @@ function RecentTransactionRow({ transaction }: { transaction: Transaction }) {
   const statusColor = STATUS_COLORS[transaction.status] ?? '#6B7280';
 
   return (
-    <View className="flex-row items-center py-3">
+    <TouchableOpacity
+      className="flex-row items-center py-3"
+      activeOpacity={0.7}
+      onPress={() => openTransactionDetails(transaction)}
+    >
       <View
         className="w-10 h-10 rounded-xl items-center justify-center"
         style={{ backgroundColor: bgColor }}
@@ -42,7 +47,7 @@ function RecentTransactionRow({ transaction }: { transaction: Transaction }) {
           {transaction.status}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

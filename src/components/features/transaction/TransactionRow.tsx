@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { formatNairaWhole, formatTransactionDateTime } from '@/utils/format';
@@ -43,15 +43,28 @@ export function getTransactionIcon(description: string) {
   return match ?? DEFAULT_ICON;
 }
 
-export function TransactionRow({ transaction }: { transaction: Transaction }) {
+export function TransactionRow({
+  transaction,
+  onPress,
+}: {
+  transaction: Transaction;
+  onPress?: () => void;
+}) {
   const { icon, bgColor, iconColor } = getTransactionIcon(transaction.description);
   const isCredit = transaction.type === 'credit';
   const prefix = isCredit ? '+' : '-';
   const formattedAmount = formatNairaWhole(transaction.amount);
   const statusColor = STATUS_COLORS[transaction.status] ?? '#6B7280';
 
+  // Always a TouchableOpacity; `disabled` when there's no handler makes it inert
+  // (no press feedback, no action) — equivalent to a static row, without `any`.
   return (
-    <View className="flex-row items-center py-3 px-6">
+    <TouchableOpacity
+      className="flex-row items-center py-3 px-6"
+      onPress={onPress}
+      disabled={!onPress}
+      activeOpacity={0.7}
+    >
       {/* Icon */}
       <View
         className="w-10 h-10 rounded-xl items-center justify-center"
@@ -81,6 +94,6 @@ export function TransactionRow({ transaction }: { transaction: Transaction }) {
           {transaction.status}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }

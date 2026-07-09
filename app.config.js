@@ -18,13 +18,13 @@ const baseConfig = {
   slug: 'neat-mobile',
   version: '1.0.0',
   orientation: 'portrait',
-  icon: './assets/images/adap-ic.png',
+  icon: './assets/images/test-logo.png',
   scheme: 'neatmobile',
   userInterfaceStyle: 'light',
   newArchEnabled: true,
   updates: {
-    // url: 'https://u.expo.dev/13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
-    url: 'https://u.expo.dev/a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
+    url: 'https://u.expo.dev/13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
+    // url: 'https://u.expo.dev/a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
   },
   runtimeVersion: {
     policy: 'appVersion',
@@ -70,7 +70,10 @@ const baseConfig = {
     [
       'expo-notifications',
       {
-        icon: './assets/images/home-logo.png',
+        // Monochrome white-on-transparent "N" — Android renders the small icon
+        // from the alpha channel only, tinting it with `color` in the shade and
+        // forcing white in the status bar. A full-colour wordmark would smudge.
+        icon: './assets/images/notification-icon.png',
         color: '#472FF8',
         defaultChannel: 'transactions',
       },
@@ -95,11 +98,12 @@ const baseConfig = {
   extra: {
     router: {},
     eas: {
-      // projectId: '13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
-      projectId: 'a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
+      projectId: '13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
+      // projectId: 'a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
     },
   },
-  owner: 'morojuoluwa',
+  owner: 'micropayafrica',
+  // owner: 'morojuoluwa',
 };
 
 module.exports = {

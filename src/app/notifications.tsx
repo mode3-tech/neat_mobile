@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   FlatList,
   SectionList,
@@ -68,7 +68,7 @@ function groupByDate(
   };
 
   for (const item of items) {
-    const t = new Date(item.CreatedAt).getTime();
+    const t = new Date(item.created_at).getTime();
     if (t >= todayMs) buckets.Today.push(item);
     else if (t >= yesterdayMs) buckets.Yesterday.push(item);
     else if (t >= weekAgoMs) buckets['This week'].push(item);
@@ -81,7 +81,7 @@ function groupByDate(
 }
 
 function NotificationItem({ item }: { item: AppNotification }) {
-  const icon = TYPE_ICONS[item.Type] ?? TYPE_ICONS.promo;
+  const icon = TYPE_ICONS[item.type] ?? TYPE_ICONS.promo;
 
   return (
     <View
@@ -104,19 +104,19 @@ function NotificationItem({ item }: { item: AppNotification }) {
       <View className="flex-1">
         <View className="flex-row items-center justify-between mb-1">
           <Text className="text-[11px] text-[#29292a]">
-            {formatRelativeTime(item.CreatedAt)}
+            {formatRelativeTime(item.created_at)}
           </Text>
-          {!item.IsRead && (
+          {!item.is_read && (
             <View className="w-2 h-2 rounded-full bg-[#472FF8]" />
           )}
         </View>
         <Text
-          className={`text-[14px] ${!item.IsRead ? 'font-bold' : 'font-semibold'} text-[#272626] mb-1`}
+          className={`text-[14px] ${!item.is_read ? 'font-bold' : 'font-semibold'} text-[#272626] mb-1`}
         >
-          {item.Title}
+          {item.title}
         </Text>
         <Text className="text-[13px] text-[#161617] leading-[18px]">
-          {item.Body}
+          {item.body}
         </Text>
       </View>
     </View>
@@ -174,10 +174,17 @@ export default function NotificationsScreen() {
       lastPage.has_next ? lastPage.page + 1 : undefined,
   });
 
-  const allNotifications = data?.pages.flatMap((p) => p.notifications) ?? [];
-  const notifications = allNotifications.filter(
-    (n, i, arr) => arr.findIndex((x) => x.ID === n.ID) === i,
-  );
+  // Flatten pages and de-dupe by id in a single O(n) pass, recomputed only when
+  // the query data changes (not on every render / scroll / mark-read tick).
+  const notifications = useMemo(() => {
+    const all = data?.pages.flatMap((p) => p.notifications) ?? [];
+    const seen = new Set<string>();
+    return all.filter((n) => {
+      if (seen.has(n.id)) return false;
+      seen.add(n.id);
+      return true;
+    });
+  }, [data]);
 
   useEffect(() => {
     if (!data?.pages.length) return;
@@ -203,7 +210,7 @@ export default function NotificationsScreen() {
           pages: old.pages.map((page: any) => ({
             ...page,
             notifications: page.notifications.map((n: AppNotification) =>
-              n.ID === notificationId ? { ...n, IsRead: true } : n,
+              n.id === notificationId ? { ...n, is_read: true } : n,
             ),
           })),
         };
@@ -232,10 +239,10 @@ export default function NotificationsScreen() {
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
       for (const entry of viewableItems) {
         const n = entry.item as AppNotification | null;
-        if (!entry.isViewable || !n?.ID || n.IsRead) continue;
-        if (viewedIdsRef.current.has(n.ID)) continue;
-        viewedIdsRef.current.add(n.ID);
-        markReadMutation.mutate(n.ID);
+        if (!entry.isViewable || !n?.id || n.is_read) continue;
+        if (viewedIdsRef.current.has(n.id)) continue;
+        viewedIdsRef.current.add(n.id);
+        markReadMutation.mutate(n.id);
       }
     },
   );
@@ -251,8 +258,11 @@ export default function NotificationsScreen() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const sections = groupByDate(notifications);
-  const hasUnread = notifications.some((n) => !n.IsRead);
+  const sections = useMemo(() => groupByDate(notifications), [notifications]);
+  const hasUnread = useMemo(
+    () => notifications.some((n) => !n.is_read),
+    [notifications],
+  );
 
   const errorMessage = isError
     ? (error as any)?.response?.data?.error ||
@@ -305,7 +315,7 @@ export default function NotificationsScreen() {
       ) : (
         <SectionList
           sections={sections}
-          keyExtractor={(item, index) => item.ID ?? `notif-${index}`}
+          keyExtractor={(item, index) => item.id ?? `notif-${index}`}
           renderItem={({ item }) => <NotificationItem item={item} />}
           renderSectionHeader={({ section: { title } }) => (
             <View className="bg-white px-6 pt-5 pb-3">

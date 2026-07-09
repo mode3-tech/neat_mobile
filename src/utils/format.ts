@@ -37,6 +37,18 @@ export const formatNairaWhole = (amount: number): string => {
 };
 
 /**
+ * Format a whole-naira amount as "NGN 60.00" for receipts — always 2 decimals
+ * and a plain "NGN " prefix (not the ₦ glyph, which some captured-image/PDF
+ * renderers drop).
+ */
+export const formatNairaDecimal = (amount: number): string =>
+  'NGN ' +
+  new Intl.NumberFormat('en-NG', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+
+/**
  * Capitalize the first character of a string (e.g. "active" → "Active").
  */
 export const titleCase = (value: string): string =>

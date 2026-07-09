@@ -1,10 +1,19 @@
+export interface TransactionCounterparty {
+  name: string;
+  account_number: string;
+  bank: string; // bank code (e.g. "090267")
+}
+
 export interface Transaction {
   id: string;
   type: 'credit' | 'debit';
   description: string;
+  reference?: string;
   date: string;
   status: string;
   amount: number;
+  narration?: string;
+  counterparty?: TransactionCounterparty;
 }
 
 export interface TransactionSection {

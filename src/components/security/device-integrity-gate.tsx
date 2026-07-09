@@ -71,8 +71,8 @@ function ProductionIntegrityGate({
       privilegedAccess: reportBlockingThreat,
       hooks: reportBlockingThreat,
       debug: reportBlockingThreat,
-      // appIntegrity: reportBlockingThreat,
-      appIntegrity: () => {}, // TODO: re-enable once cert hash configured in eas.json
+      appIntegrity: reportBlockingThreat,
+      // appIntegrity: () => {}, // stub — re-enabled once cert hash configured in eas.json (go-live)
 
       unofficialStore: onUnofficialStore,
       simulator: reportBlockingThreat,

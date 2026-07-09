@@ -28,8 +28,8 @@
         "APP_VARIANT": "preview",
         "EXPO_PUBLIC_APP_VARIANT": "preview",
         "EXPO_PUBLIC_API_URL": "https://neat-mobile-backend-nhsk.onrender.com/api/v1",
-        // "EXPO_PUBLIC_ANDROID_CERT_SHA256": "9siJv+kxI1/Sd5rlv8OBFEpKkIq1AHC9bPyqLgoDNWc=" // @micropayafrica keystore — restore for go-live
-        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "BPnSD/56TppW01ddhy7XR2yptHVMqoVTVgu+MkEb784="
+        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "9siJv+kxI1/Sd5rlv8OBFEpKkIq1AHC9bPyqLgoDNWc=" // @micropayafrica keystore — active for go-live
+        // "EXPO_PUBLIC_ANDROID_CERT_SHA256": "BPnSD/56TppW01ddhy7XR2yptHVMqoVTVgu+MkEb784=" // @morojuoluwa (dev) keystore
         // "EXPO_PUBLIC_IOS_TEAM_ID": ""
       }
     },
@@ -44,8 +44,8 @@
         "APP_VARIANT": "preview",
         "EXPO_PUBLIC_APP_VARIANT": "preview",
         "EXPO_PUBLIC_API_URL": "https://neat-mobile-backend-nhsk.onrender.com/api/v1",
-        // "EXPO_PUBLIC_ANDROID_CERT_SHA256": "9siJv+kxI1/Sd5rlv8OBFEpKkIq1AHC9bPyqLgoDNWc=" // @micropayafrica keystore — restore for go-live
-        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "BPnSD/56TppW01ddhy7XR2yptHVMqoVTVgu+MkEb784="
+        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "9siJv+kxI1/Sd5rlv8OBFEpKkIq1AHC9bPyqLgoDNWc=" // @micropayafrica keystore — active for go-live
+        // "EXPO_PUBLIC_ANDROID_CERT_SHA256": "BPnSD/56TppW01ddhy7XR2yptHVMqoVTVgu+MkEb784=" // @morojuoluwa (dev) keystore
       }
     },
     "production": {
@@ -56,8 +56,8 @@
       },
       "env": {
         "EXPO_PUBLIC_APP_VARIANT": "production",
-        "EXPO_PUBLIC_API_URL": "https://neat-mobile-backend-nhsk.onrender.com/api/v1"
-        // "EXPO_PUBLIC_ANDROID_CERT_SHA256": "",
+        "EXPO_PUBLIC_API_URL": "https://neat-mobile-backend-nhsk.onrender.com/api/v1",
+        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "XN/W36qSIDyB0jTdERO2PMv5Npa4xZyLFnjf/S/sYsk=" // @micropayafrica Play app-signing key
         // "EXPO_PUBLIC_IOS_TEAM_ID": ""
       }
     }

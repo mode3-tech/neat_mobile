@@ -161,6 +161,7 @@ export default function RootLayout(): React.JSX.Element {
             <Stack.Screen name="(vas)" />
             <Stack.Screen name="(transfer)" />
             <Stack.Screen name="(savings)" />
+            <Stack.Screen name="(transaction)" />
             {/* <Stack.Screen name="(account)" /> */}
             {/* <Stack.Screen name="(profile)" /> */}
             <Stack.Screen name="notifications" />

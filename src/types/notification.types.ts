@@ -9,20 +9,23 @@ export interface NotificationData {
   core_loan_id?: string;
   event?: string;
   loan_status?: string;
+  amount?: number;
+  reference?: string;
+  type?: string;
 }
 
 export type NotificationType = 'loan' | 'transaction' | 'security' | 'promo';
 
 export interface AppNotification {
-  ID: string;
-  UserID: string;
-  Title: string;
-  Body: string;
-  Type: NotificationType;
-  Data?: NotificationData;
-  IsRead: boolean;
-  CreatedAt: string;
-  ReadAt: string | null;
+  id: string;
+  user_id: string;
+  title: string;
+  body: string;
+  type: NotificationType;
+  data?: NotificationData;
+  is_read: boolean;
+  created_at: string;
+  read_at: string | null;
 }
 
 export interface PaginatedNotificationsResponse {

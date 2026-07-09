@@ -41,9 +41,9 @@ export const useNotificationStore = create<NotificationState>((set) => ({
 
   appendNotifications: (response) =>
     set((state) => {
-      const existingIds = new Set(state.notifications.map((n) => n.ID));
+      const existingIds = new Set(state.notifications.map((n) => n.id));
       const newItems = response.notifications.filter(
-        (n) => !existingIds.has(n.ID),
+        (n) => !existingIds.has(n.id),
       );
       return {
         notifications: [...state.notifications, ...newItems],
@@ -56,12 +56,12 @@ export const useNotificationStore = create<NotificationState>((set) => ({
 
   markRead: (notificationId) =>
     set((state) => {
-      const target = state.notifications.find((n) => n.ID === notificationId);
-      const wasUnread = target && !target.IsRead;
+      const target = state.notifications.find((n) => n.id === notificationId);
+      const wasUnread = target && !target.is_read;
       return {
         notifications: state.notifications.map((n) =>
-          n.ID === notificationId
-            ? { ...n, IsRead: true, ReadAt: new Date().toISOString() }
+          n.id === notificationId
+            ? { ...n, is_read: true, read_at: new Date().toISOString() }
             : n,
         ),
         unreadCount: wasUnread ? Math.max(0, state.unreadCount - 1) : state.unreadCount,
@@ -72,8 +72,8 @@ export const useNotificationStore = create<NotificationState>((set) => ({
     set((state) => ({
       notifications: state.notifications.map((n) => ({
         ...n,
-        IsRead: true,
-        ReadAt: n.ReadAt ?? new Date().toISOString(),
+        is_read: true,
+        read_at: n.read_at ?? new Date().toISOString(),
       })),
       unreadCount: 0,
     })),
