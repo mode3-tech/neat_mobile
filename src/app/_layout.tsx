@@ -172,7 +172,7 @@ export default function RootLayout(): React.JSX.Element {
           </Stack>
           </DeviceIntegrityGate>
           </View>
-          <Toaster position="top-center" />
+          <Toaster position="top-center" richColors />
           <StatusBar style="dark" />
         </ThemeProvider>
       </KeyboardProvider>
