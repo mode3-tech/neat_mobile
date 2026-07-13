@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { toast } from 'sonner-native';
+import { useMutation } from '@tanstack/react-query';
+
+import { accountService } from '@/services/account.service';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { getCloseBlockerMessage } from '@/utils/close-account';
 
 const MAX_REASON_CHARS = 300;
 
@@ -20,14 +24,51 @@ type ReasonValue = (typeof REASONS)[number]['value'];
 export default function CloseAccountReasonScreen() {
   const [selected, setSelected] = useState<ReasonValue | null>(null);
   const [otherText, setOtherText] = useState('');
+  const [confirmVisible, setConfirmVisible] = useState(false);
 
   const canSubmit =
     selected !== null && (selected !== 'other' || otherText.trim().length > 0);
 
+  const closeMutation = useMutation({
+    mutationFn: (reasonNote: string) => accountService.closeAccount(reasonNote),
+    onSuccess: (res) => {
+      setConfirmVisible(false);
+      if (res.status === 'blocked' || res.blocker_code) {
+        router.push({
+          pathname: '/(close-account)/result',
+          params: {
+            variant: 'blocked',
+            message: getCloseBlockerMessage(res.blocker_code, res.blocker_details),
+          },
+        });
+        return;
+      }
+      router.replace('/(close-account)/success');
+    },
+    onError: (err) => {
+      setConfirmVisible(false);
+      router.push({
+        pathname: '/(close-account)/result',
+        params: {
+          variant: 'error',
+          message: err instanceof Error ? err.message : 'Please try again.',
+        },
+      });
+    },
+  });
+
   const handleSubmit = () => {
-    if (!canSubmit) return;
-    // TODO: wire when close-account endpoint is ready.
-    toast.info('Account closure requests are coming soon.');
+    if (!canSubmit || closeMutation.isPending) return;
+    setConfirmVisible(true);
+  };
+
+  const handleConfirm = () => {
+    if (closeMutation.isPending) return;
+    const reasonNote =
+      selected === 'other'
+        ? otherText.trim()
+        : REASONS.find((r) => r.value === selected)?.label ?? '';
+    closeMutation.mutate(reasonNote);
   };
 
   return (
@@ -103,18 +144,33 @@ export default function CloseAccountReasonScreen() {
             canSubmit ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
           }`}
           onPress={handleSubmit}
-          disabled={!canSubmit}
+          disabled={!canSubmit || closeMutation.isPending}
           activeOpacity={0.85}
         >
-          <Text
-            className={`text-base font-semibold ${
-              canSubmit ? 'text-white' : 'text-gray-400'
-            }`}
-          >
-            Submit
-          </Text>
+          {closeMutation.isPending ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text
+              className={`text-base font-semibold ${
+                canSubmit ? 'text-white' : 'text-gray-400'
+              }`}
+            >
+              Submit
+            </Text>
+          )}
         </TouchableOpacity>
       </KeyboardAwareScrollView>
+
+      <ConfirmModal
+        visible={confirmVisible}
+        title="Close account permanently? This action can't be undone."
+        confirmLabel="Yes, close it"
+        cancelLabel="Cancel"
+        confirmStyle="danger"
+        loading={closeMutation.isPending}
+        onConfirm={handleConfirm}
+        onCancel={() => setConfirmVisible(false)}
+      />
     </SafeAreaView>
   );
 }

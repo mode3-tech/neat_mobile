@@ -13,9 +13,14 @@ interface AuthState {
   biometricsHydrated: boolean;
   tokensHydrated: boolean;
   hasStoredTokens: boolean;
+  // One-shot: when true, the next isAuthenticated true→false transition does NOT
+  // redirect to sign-in (the screen that cleared auth handles navigation itself,
+  // e.g. account-closure routes to /welcome). Consumed (reset) by the subscriber.
+  skipLogoutRedirect: boolean;
   setTokens: (accessToken: string, refreshToken: string) => void;
   setUser: (user: AuthUser) => void;
   setBiometricsEnabled: (enabled: boolean) => void;
+  setSkipLogoutRedirect: (skip: boolean) => void;
   hydrateTokens: () => Promise<void>;
   hydrateBiometrics: () => Promise<void>;
   clearAuth: () => void;
@@ -30,6 +35,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   biometricsHydrated: false,
   tokensHydrated: false,
   hasStoredTokens: false,
+  skipLogoutRedirect: false,
 
   setTokens: (access, refresh) => {
     setAccessToken(access);
@@ -37,6 +43,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   setUser: (user) => set({ user }),
+
+  setSkipLogoutRedirect: (skip) => set({ skipLogoutRedirect: skip }),
 
   setBiometricsEnabled: (enabled) => {
     SecureStore.setItemAsync('biometrics_enabled', JSON.stringify(enabled)).catch(() => {});

@@ -91,6 +91,12 @@ export default function RootLayout(): React.JSX.Element {
         if (token) await sendTokenToBackend(token);
       }
       if (!state.isAuthenticated && prevState.isAuthenticated) {
+        // A screen may opt out of the sign-in redirect to handle navigation
+        // itself (e.g. account closure routes to /welcome). Consume the flag.
+        if (state.skipLogoutRedirect) {
+          useAuthStore.setState({ skipLogoutRedirect: false });
+          return;
+        }
         router.replace('/(sign-in)/sign-in' as any);
       }
     });

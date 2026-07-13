@@ -1,6 +1,7 @@
 import type {
   AccountLimits,
   AccountSummary,
+  CloseAccountResponse,
   StatementJobStatusResponse,
   StatementRequestBody,
   StatementRequestResponse,
@@ -110,6 +111,18 @@ export const accountService = {
       return response.data.data;
     } catch (error) {
       throwApiError(error, 'Failed to fetch statement status');
+    }
+  },
+
+  closeAccount: async (reasonNote: string): Promise<CloseAccountResponse> => {
+    try {
+      const response = await api.post<ApiEnvelope<CloseAccountResponse>>(
+        '/account/close',
+        { reason_note: reasonNote },
+      );
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'Failed to close account');
     }
   },
 };

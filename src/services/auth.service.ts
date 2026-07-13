@@ -593,6 +593,22 @@ export const authService = {
     }
   },
 
+  // Wipe the stored tokens locally without calling the backend. Used after an
+  // account is closed — its sessions are already revoked server-side, and
+  // deleting the SecureStore tokens (which clearAuth intentionally keeps) means
+  // the app opens on /welcome rather than the sign-in page next launch.
+  clearLocalSession: async (): Promise<void> => {
+    try {
+      await Promise.all([
+        SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY),
+        SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY),
+      ]);
+    } catch {
+      // best-effort — nothing to recover if SecureStore deletion fails
+    }
+    setAccessToken(null);
+  },
+
   updateBiometricsPreference: async (enabled: boolean): Promise<void> => {
     try {
       await api.patch<ApiEnvelope>('/auth/biometrics/toggle', { is_enabled: enabled });

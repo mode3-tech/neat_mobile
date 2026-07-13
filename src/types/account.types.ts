@@ -58,3 +58,25 @@ export interface StatementJobStatusResponse {
   job_status: StatementJobStatus;
   download_url?: string;
 }
+
+export type CloseAccountStatus =
+  | 'closed'
+  | 'blocked'
+  | 'pending'
+  | 'rejected'
+  | 'cancelled';
+
+export interface CloseAccountBlockerDetails {
+  available_balance?: number;
+  currency?: string;
+}
+
+export interface CloseAccountResponse {
+  id: string;
+  closure_reference: string;
+  status: CloseAccountStatus;
+  reason_note?: string;
+  blocker_code?: string | null;
+  blocker_details?: CloseAccountBlockerDetails | null;
+  requested_at?: string;
+}
