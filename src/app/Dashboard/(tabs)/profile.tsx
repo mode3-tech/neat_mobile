@@ -228,6 +228,11 @@ export default function ProfileScreen() {
             label="Biometrics Settings"
             onPress={() => router.push('/(profile)/biometrics' as any)}
           />
+          <SettingsRow
+            icon="power"
+            label="Close Account"
+            onPress={() => router.push('/(close-account)/intro' as any)}
+          />
         </View>
 
         {/* Logout */}

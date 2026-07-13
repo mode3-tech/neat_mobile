@@ -34,8 +34,10 @@ const baseConfig = {
     infoPlist: {
       NSCameraUsageDescription:
         'NeatPay needs your camera to verify your identity with a quick selfie.',
-      NSMicrophoneUsageDescription:
-        'NeatPay uses your microphone during identity verification.',
+      // Liveness is selfie-only for now — no audio captured. Re-enable when
+      // active/video liveness ships (keeps Data Safety form clean).
+      // NSMicrophoneUsageDescription:
+      //   'NeatPay uses your microphone during identity verification.',
     },
   },
   android: {
@@ -49,7 +51,9 @@ const baseConfig = {
     softwareKeyboardLayoutMode: 'resize',
     predictiveBackGestureEnabled: false,
     package: 'com.mode3.neatmobile',
-    permissions: ['android.permission.CAMERA', 'android.permission.RECORD_AUDIO'],
+    // RECORD_AUDIO removed for now — liveness is selfie-only (no audio capture).
+    // Re-add 'android.permission.RECORD_AUDIO' when active/video liveness ships.
+    permissions: ['android.permission.CAMERA'],
   },
   web: {
     output: 'static',
