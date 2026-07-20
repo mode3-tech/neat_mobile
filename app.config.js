@@ -74,10 +74,12 @@ const baseConfig = {
     [
       'expo-notifications',
       {
-        // Monochrome white-on-transparent "N" — Android renders the small icon
-        // from the alpha channel only, tinting it with `color` in the shade and
-        // forcing white in the status bar. A full-colour wordmark would smudge.
-        icon: './assets/images/notification-icon.png',
+        // Square (192x192) canvas with the wordmark centred and transparent
+        // padding — the small-icon slot is square, so a 3:1 banner gets
+        // centre-cropped to "EAT". Generated from welcome/NeatPayLogo.png.
+        icon: './assets/images/notification-icon-color.png',
+        // icon: './assets/images/welcome/NeatPayLogo.png', // wide — crops to "EAT"
+        // icon: './assets/images/notification-icon.png',   // monochrome "N"
         color: '#472FF8',
         defaultChannel: 'transactions',
       },

@@ -33,6 +33,7 @@ export const QUERY_KEYS = {
   BANKS: 'banks',
   TRANSACTIONS: 'transactions',
   RECENT_TRANSACTIONS: 'recent-transactions',
+  TRANSACTION_DETAILS: 'transaction-details',
   STATEMENT_JOB: 'statement-job',
   ACCOUNT_SUMMARY: 'account-summary',
   ACCOUNT_LIMITS: 'account-limits',

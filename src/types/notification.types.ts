@@ -14,6 +14,34 @@ export interface NotificationData {
   type?: string;
 }
 
+/**
+ * Data bag carried by a push notification. Distinct from `NotificationData`
+ * above, which types the in-app notification list from the backend — these are
+ * the fields the push itself carries, and the two have drifted apart before.
+ */
+export interface StatementReadyPushData {
+  event: 'statement-ready';
+  job_id: string;
+  format?: 'pdf' | 'xlsx';
+}
+
+export interface CreditAlertPushData {
+  event?: string;
+  transaction_id: string;
+  amount?: number;
+  reference?: string;
+}
+
+export interface GenericPushData {
+  event?: string;
+  [key: string]: unknown;
+}
+
+export type PushNotificationData =
+  | StatementReadyPushData
+  | CreditAlertPushData
+  | GenericPushData;
+
 export type NotificationType = 'loan' | 'transaction' | 'security' | 'promo';
 
 export interface AppNotification {

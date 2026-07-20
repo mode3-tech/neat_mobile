@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
+  ActivityIndicator,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -7,6 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useQuery } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 
 import {
@@ -19,27 +21,96 @@ import {
   formatTransactionDateTime,
   titleCase,
 } from '@/utils/format';
+import { useAccountSummary } from '@/hooks/use-account-summary';
+import { useAuthStore } from '@/stores/auth.store';
+import { transactionService } from '@/services/transaction.service';
+import { QUERY_KEYS } from '@/constants';
 import type { Transaction } from '@/types/transaction.types';
 
 export default function TransactionDetailsScreen() {
-  const { tx } = useLocalSearchParams<{ tx: string }>();
+  // Two ways in. List taps pass `tx` — the row already holds every field, so
+  // there is nothing to fetch. Notification deep links only carry an id, so
+  // that path fetches. `tx` wins when both are somehow present.
+  const { tx, id } = useLocalSearchParams<{ tx?: string; id?: string }>();
+  const { data: summary } = useAccountSummary();
+  const user = useAuthStore((s) => s.user);
 
-  let transaction: Transaction | null = null;
-  try {
-    transaction = tx ? (JSON.parse(tx) as Transaction) : null;
-  } catch {
-    transaction = null;
-  }
+  const parsedTx = useMemo<Transaction | null>(() => {
+    try {
+      return tx ? (JSON.parse(tx) as Transaction) : null;
+    } catch {
+      return null;
+    }
+  }, [tx]);
 
-  // Guard: bail out if the screen was reached without a valid transaction.
+  const {
+    data: fetched,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: [QUERY_KEYS.TRANSACTION_DETAILS, id],
+    queryFn: () => transactionService.getById(id!),
+    enabled: !!id && !parsedTx,
+  });
+
+  const transaction = parsedTx ?? fetched ?? null;
+  const hasInput = !!parsedTx || !!id;
+
+  // Guard: bail out only if the screen was reached with neither a serialized
+  // transaction nor an id — NOT on `!transaction`, which is briefly true while
+  // the id fetch is in flight and would bounce the user off their own deep link.
   // The navigation runs in an effect — calling router.back() during render is a
   // side-effect that warns and can strand the user on a blank screen.
   useEffect(() => {
-    if (!transaction) router.back();
-  }, [transaction]);
+    if (!hasInput) router.back();
+  }, [hasInput]);
 
-  if (!transaction) {
+  const header = (
+    <View className="px-6">
+      <TouchableOpacity
+        className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-6"
+        onPress={() => router.back()}
+      >
+        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+      </TouchableOpacity>
+      <Text className="text-[20px] font-medium text-[#1A1A1A]">
+        Transaction Details
+      </Text>
+    </View>
+  );
+
+  if (!hasInput) {
     return null;
+  }
+
+  // Only the id path can be transaction-less here: `tx` parses synchronously, so
+  // the list path always falls through to the render below. Anything that isn't
+  // an in-flight fetch — a real error, or a 200 carrying no transaction — is a
+  // failure the user can retry out of, never a spinner with no escape.
+  if (!transaction) {
+    return (
+      <SafeAreaView className="flex-1 bg-white">
+        {header}
+        {isLoading ? (
+          <View className="flex-1 items-center justify-center">
+            <ActivityIndicator size="small" color="#472FF8" />
+          </View>
+        ) : (
+          <View className="flex-1 items-center justify-center px-6">
+            <Text className="text-[15px] text-[#6B7280] text-center">
+              We couldn&apos;t load this transaction.
+            </Text>
+            <TouchableOpacity
+              className="mt-4 bg-[#472FF8] rounded-[50px] px-6 py-3"
+              onPress={() => refetch()}
+              activeOpacity={0.85}
+            >
+              <Text className="text-white text-sm font-semibold">Try again</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </SafeAreaView>
+    );
   }
 
   const { icon, bgColor, iconColor } = getTransactionIcon(
@@ -50,16 +121,38 @@ export default function TransactionDetailsScreen() {
   const statusColor = STATUS_COLORS[transaction.status] ?? '#6B7280';
   const statusLabel = titleCase(transaction.status);
 
-  const detailRows: { label: string; value: string; valueColor?: string }[] = [
-    ...(transaction.counterparty
-      ? [
-          {
-            label: 'Recipient Details',
-            value: `${transaction.counterparty.name}\n${transaction.counterparty.account_number}`,
-          },
-        ]
-      : []),
-    { label: 'Transaction No.', value: transaction.reference ?? transaction.id },
+  // For a credit the logged-in user is the recipient; the counterparty is the
+  // sender. For a debit the counterparty is the recipient (unchanged).
+  const userName =
+    summary?.full_name ?? [user?.firstName, user?.lastName].filter(Boolean).join(' ');
+  const cp = transaction.counterparty;
+  const txNo = transaction.reference ?? transaction.id;
+
+  const recipientRow = isCredit
+    ? { label: 'Recipient Details', value: userName }
+    : cp
+      ? {
+          label: 'Recipient Details',
+          value: `${cp.name}\n${cp.account_number}`,
+        }
+      : null;
+  const senderRow =
+    isCredit && cp
+      ? {
+          label: 'Sender Details',
+          value: `${cp.name}\n${cp.account_number}\n${cp.bank}`,
+        }
+      : null;
+
+  const detailRows: {
+    label: string;
+    value: string;
+    valueColor?: string;
+    copyValue?: string;
+  }[] = [
+    ...(recipientRow ? [recipientRow] : []),
+    ...(senderRow ? [senderRow] : []),
+    { label: 'Transaction No.', value: txNo, copyValue: txNo },
     { label: 'Transaction Type', value: titleCase(transaction.type) },
     {
       label: 'Transaction Date',
@@ -74,24 +167,13 @@ export default function TransactionDetailsScreen() {
   const handleShareReceipt = () => {
     router.push({
       pathname: '/(transaction)/transaction-receipt',
-      params: { tx },
+      params: { tx: JSON.stringify(transaction) },
     });
   };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* Header */}
-      <View className="px-6">
-        <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-6"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
-        </TouchableOpacity>
-        <Text className="text-[20px] font-medium text-[#1A1A1A]">
-          Transaction Details
-        </Text>
-      </View>
+      {header}
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -135,6 +217,7 @@ export default function TransactionDetailsScreen() {
               label={row.label}
               value={row.value}
               valueColor={row.valueColor}
+              copyValue={row.copyValue}
               isLast={i === detailRows.length - 1}
             />
           ))}

@@ -93,9 +93,12 @@ export async function sendTokenToBackend(token: string): Promise<void> {
     };
 
     await api.post<ApiEnvelope>('/notifications/token', payload);
-  } catch {
-    // Backend endpoint may not be available yet — token is stored locally
-    // and will be sent on next app foreground once the endpoint is ready
+  } catch (error) {
+    // Non-fatal: the token is stored locally and re-sent on the next app
+    // foreground, so a failure here must not interrupt the auth flow. Logged
+    // rather than swallowed — a silent failure here means the backend never
+    // learns the token and no push ever arrives.
+    console.warn('Failed to register push token with backend:', error);
   }
 }
 

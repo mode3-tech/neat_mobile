@@ -17,6 +17,17 @@ export const transactionService = {
     }
   },
 
+  getById: async (transactionId: string): Promise<Transaction> => {
+    try {
+      const response = await api.get<ApiEnvelope<Transaction>>(
+        `/transaction/${encodeURIComponent(transactionId)}`,
+      );
+      return response.data.data;
+    } catch (error) {
+      throwApiError(error, 'Failed to load transaction');
+    }
+  },
+
   getAll: async (params: {
     limit: number;
     cursor?: string;

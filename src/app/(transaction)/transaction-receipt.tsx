@@ -14,11 +14,15 @@ import {
   formatTransactionDateTime,
   titleCase,
 } from '@/utils/format';
+import { useAccountSummary } from '@/hooks/use-account-summary';
+import { useAuthStore } from '@/stores/auth.store';
 import type { Transaction } from '@/types/transaction.types';
 
 export default function TransactionReceiptScreen() {
   const { tx } = useLocalSearchParams<{ tx: string }>();
   const viewShotRef = useRef<ViewShot>(null);
+  const { data: summary } = useAccountSummary();
+  const user = useAuthStore((s) => s.user);
 
   let transaction: Transaction | null = null;
   try {
@@ -40,15 +44,32 @@ export default function TransactionReceiptScreen() {
 
   const statusLabel = titleCase(transaction.status);
 
+  // For a credit the logged-in user is the recipient; the counterparty is the
+  // sender. For a debit the counterparty is the recipient (unchanged).
+  const isCredit = transaction.type === 'credit';
+  const userName =
+    summary?.full_name ?? [user?.firstName, user?.lastName].filter(Boolean).join(' ');
+  const cp = transaction.counterparty;
+
+  const recipientRow = isCredit
+    ? { label: 'Recipient Details', value: userName }
+    : cp
+      ? {
+          label: 'Recipient Details',
+          value: `${cp.name}\n${cp.account_number}`,
+        }
+      : null;
+  const senderRow =
+    isCredit && cp
+      ? {
+          label: 'Sender Details',
+          value: `${cp.name}\n${cp.account_number}\n${cp.bank}`,
+        }
+      : null;
+
   const receiptRows: { label: string; value: string; valueColor?: string }[] = [
-    ...(transaction.counterparty
-      ? [
-          {
-            label: 'Recipient Details',
-            value: `${transaction.counterparty.name}\n${transaction.counterparty.account_number}`,
-          },
-        ]
-      : []),
+    ...(recipientRow ? [recipientRow] : []),
+    ...(senderRow ? [senderRow] : []),
     { label: 'Transaction No.', value: transaction.reference ?? transaction.id },
     { label: 'Transaction Type', value: titleCase(transaction.type) },
     {
