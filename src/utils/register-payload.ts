@@ -29,6 +29,7 @@ export function buildRegisterPayload(): Omit<RegisterPayload, 'device'> {
     ...(s.emailVerificationId
       ? { email_verification_id: s.emailVerificationId }
       : {}),
+    ...(s.redeemCode.trim() ? { referral_code: s.redeemCode.trim() } : {}),
     is_biometrics_enabled: s.biometricsEnabled,
   };
 }

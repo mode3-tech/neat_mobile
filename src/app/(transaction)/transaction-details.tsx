@@ -24,7 +24,7 @@ import {
 import { useAccountSummary } from '@/hooks/use-account-summary';
 import { useAuthStore } from '@/stores/auth.store';
 import { transactionService } from '@/services/transaction.service';
-import { QUERY_KEYS } from '@/constants';
+import { ACCOUNT_NUMBER_LENGTH, QUERY_KEYS } from '@/constants';
 import type { Transaction } from '@/types/transaction.types';
 
 export default function TransactionDetailsScreen() {
@@ -171,6 +171,40 @@ export default function TransactionDetailsScreen() {
     });
   };
 
+  // Repeat this transfer with the counterparty prefilled. On a debit that's the
+  // recipient ("Transfer Again"); on a credit it's the sender, so the same
+  // prefill means paying them back ("Transfer Back").
+  //
+  // Successful only: on a pending debit the original may still land, so
+  // offering a repeat invites a double-send; on a pending credit it would send
+  // back money that hasn't arrived.
+  //
+  // A blank bank code is a hard exclusion, not something to default. Send Money
+  // treats an empty code as NEAT for beneficiaries — mirroring that here would
+  // validate an external account number against NEAT and could resolve a
+  // completely different person's account.
+  const canTransfer =
+    transaction.status === 'successful' &&
+    !!cp &&
+    cp.account_number?.length === ACCOUNT_NUMBER_LENGTH &&
+    cp.bank !== '' &&
+    cp.name !== '';
+
+  const handleTransferAgain = () => {
+    if (!cp) return;
+    router.push({
+      pathname: '/(transfer)/send-money',
+      params: {
+        prefillAccountNumber: cp.account_number,
+        prefillBankCode: cp.bank,
+        prefillAccountName: cp.name,
+        // Whole naira; the sign is presentational and rendered separately.
+        prefillAmount: String(Math.trunc(Math.abs(transaction.amount))),
+        prefillNarration: transaction.narration ?? '',
+      },
+    });
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       {header}
@@ -226,16 +260,46 @@ export default function TransactionDetailsScreen() {
 
       {/* More Actions */}
       <View className="px-6 pt-4 pb-6 border-t border-[#F3F4F6]">
-        <TouchableOpacity
-          className="bg-[#472FF8] rounded-[50px] py-4 items-center flex-row justify-center"
-          onPress={handleShareReceipt}
-          activeOpacity={0.85}
-        >
-          <MaterialCommunityIcons name="share-variant" size={18} color="white" />
-          <Text className="text-white text-base font-semibold ml-2">
-            Share Receipt
-          </Text>
-        </TouchableOpacity>
+        <Text className="text-base font-semibold text-[#1A1A1A] mb-4">
+          More Actions
+        </Text>
+        <View className="flex-row">
+          {canTransfer && (
+            <TouchableOpacity
+              className="items-center w-20 mr-4"
+              onPress={handleTransferAgain}
+              activeOpacity={0.85}
+            >
+              <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+                <MaterialCommunityIcons
+                  name={isCredit ? 'arrow-u-left-top' : 'repeat'}
+                  size={22}
+                  color="#472FF8"
+                />
+              </View>
+              <Text className="text-xs text-[#374151] text-center">
+                {isCredit ? `Transfer${'\n'}Back` : `Transfer${'\n'}Again`}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          <TouchableOpacity
+            className="items-center w-20"
+            onPress={handleShareReceipt}
+            activeOpacity={0.85}
+          >
+            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+              <MaterialCommunityIcons
+                name="share-variant"
+                size={22}
+                color="#472FF8"
+              />
+            </View>
+            <Text className="text-xs text-[#374151] text-center">
+              Share{'\n'}Receipt
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );

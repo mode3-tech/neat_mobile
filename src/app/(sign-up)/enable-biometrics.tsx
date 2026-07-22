@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Switch,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -21,6 +22,7 @@ export default function EnableBiometricsScreen() {
   const store = useSignUpStore();
 
   const [enabled, setEnabled] = useState(store.biometricsEnabled);
+  const [redeemCode, setRedeemCode] = useState(store.redeemCode);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [errorAction, setErrorAction] = useState<RegisterErrorAction | null>(null);
@@ -32,6 +34,7 @@ export default function EnableBiometricsScreen() {
 
   const handleComplete = async () => {
     store.setBiometrics(enabled);
+    store.setRedeemCode(redeemCode.trim());
     setLoading(true);
     setError('');
     setErrorAction(null);
@@ -74,6 +77,21 @@ export default function EnableBiometricsScreen() {
           onValueChange={handleToggle}
           trackColor={{ false: '#E5E7EB', true: PRIMARY }}
           thumbColor="#fff"
+        />
+      </View>
+
+      <View style={styles.redeemBlock}>
+        <Text style={styles.redeemLabel}>Redeem code (optional)</Text>
+        <TextInput
+          style={styles.redeemInput}
+          value={redeemCode}
+          onChangeText={setRedeemCode}
+          placeholder="Enter referral or promo code"
+          placeholderTextColor="#9CA3AF"
+          autoCapitalize="characters"
+          autoCorrect={false}
+          returnKeyType="done"
+          editable={!loading}
         />
       </View>
 
@@ -157,6 +175,23 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#1A1A1A',
     fontWeight: '500',
+  },
+  redeemBlock: {
+    marginTop: 20,
+  },
+  redeemLabel: {
+    fontSize: 13,
+    color: '#6B7280',
+    fontWeight: '500',
+    marginBottom: 8,
+  },
+  redeemInput: {
+    backgroundColor: '#F5F5F5',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 15,
+    color: '#1A1A1A',
   },
   spacer: {
     flex: 1,

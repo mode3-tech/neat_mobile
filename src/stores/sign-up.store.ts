@@ -12,6 +12,8 @@ interface SignUpState {
   password: string;
   transactionPin: string;
   biometricsEnabled: boolean;
+  /** Optional referral/redeem code — collected at signup, tracked by the backend. */
+  redeemCode: string;
   phoneOtpId: string;
   emailOtpId: string;
   /** Channel that delivered the primary signup OTP. Email means the lost-BVN-phone flow. */
@@ -35,6 +37,7 @@ interface SignUpState {
   setPassword: (password: string) => void;
   setTransactionPin: (pin: string) => void;
   setBiometrics: (enabled: boolean) => void;
+  setRedeemCode: (code: string) => void;
   setPhoneOtpId: (id: string) => void;
   setEmailOtpId: (id: string) => void;
   setPrimaryOtpChannel: (channel: 'sms' | 'email') => void;
@@ -64,6 +67,7 @@ const initialState = {
   password: '',
   transactionPin: '',
   biometricsEnabled: true,
+  redeemCode: '',
   phoneOtpId: '',
   emailOtpId: '',
   primaryOtpChannel: 'sms' as const,
@@ -94,6 +98,8 @@ export const useSignUpStore = create<SignUpState>((set) => ({
   setTransactionPin: (transactionPin) => set({ transactionPin }),
 
   setBiometrics: (biometricsEnabled) => set({ biometricsEnabled }),
+
+  setRedeemCode: (redeemCode) => set({ redeemCode }),
 
   setPhoneOtpId: (phoneOtpId) => set({ phoneOtpId }),
 

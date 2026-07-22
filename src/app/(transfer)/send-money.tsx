@@ -11,7 +11,7 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 
 import {
   ACCOUNT_NUMBER_LENGTH,
@@ -34,13 +34,41 @@ const TABS: { key: TransferType; label: string }[] = [
   { key: 'other_bank', label: 'Other Banks Transfers' },
 ];
 
+// Single source of truth for code -> Bank. Falls back to showing the raw code as
+// the name so a failed/incomplete banks fetch degrades the *label* only — the
+// code itself stays correct, which is all account validation needs.
+const resolveBank = (bankCode: string, list: Bank[]): Bank =>
+  list.find((b) => b.code === bankCode) ?? { code: bankCode, name: bankCode };
+
 export default function SendMoneyScreen() {
   const store = useTransferStore();
   const user = useAuthStore((s) => s.user);
   const { data: accountSummary } = useAccountSummary();
   const { data: limits } = useAccountLimits();
 
-  const [activeTab, setActiveTab] = useState<TransferType>('neatpay');
+  // "Transfer again" entry point. Passed as params rather than hydrated into the
+  // transfer store on purpose: params die with this navigation entry, so a plain
+  // push from the dashboard can never inherit a stale locked recipient.
+  const {
+    prefillAccountNumber = '',
+    prefillBankCode = '',
+    prefillAccountName = '',
+    prefillAmount = '',
+    prefillNarration = '',
+  } = useLocalSearchParams<{
+    prefillAccountNumber?: string;
+    prefillBankCode?: string;
+    prefillAccountName?: string;
+    prefillAmount?: string;
+    prefillNarration?: string;
+  }>();
+
+  const isPrefill = prefillAccountNumber !== '' && prefillBankCode !== '';
+
+  const [lockedRecipient, setLockedRecipient] = useState(isPrefill);
+  const [activeTab, setActiveTab] = useState<TransferType>(
+    isPrefill && prefillBankCode !== NEAT_BANK_CODE ? 'other_bank' : 'neatpay',
+  );
 
   // Bank selection
   const [banks, setBanks] = useState<Bank[]>([]);
@@ -50,7 +78,7 @@ export default function SendMoneyScreen() {
   const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
 
   // Account
-  const [accountNumber, setAccountNumber] = useState('');
+  const [accountNumber, setAccountNumber] = useState(prefillAccountNumber);
   const [accountName, setAccountName] = useState('');
   const [validating, setValidating] = useState(false);
   const [validationError, setValidationError] = useState('');
@@ -63,8 +91,13 @@ export default function SendMoneyScreen() {
   const prefilled = useRef(false);
 
   // Amount & narration
-  const [amount, setAmount] = useState('');
-  const [narration, setNarration] = useState('');
+  // Whitelist digits rather than stripping them — stripping would turn a stray
+  // "5000.50" into "500050" and silently inflate the amount 100x. Anything that
+  // isn't already whole-naira digits falls back to blank.
+  const [amount, setAmount] = useState(
+    /^\d+$/.test(prefillAmount) ? prefillAmount : '',
+  );
+  const [narration, setNarration] = useState(prefillNarration);
 
   const validationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Monotonic id incremented on every validation attempt. Stale responses that
@@ -72,19 +105,23 @@ export default function SendMoneyScreen() {
   // pin the wrong account name to the current input.
   const validationRequestId = useRef(0);
 
-  // Fetch banks on first switch to Other Banks tab
-  const fetchBanks = useCallback(async () => {
-    if (banks.length > 0) return;
+  // Fetch banks on first switch to Other Banks tab.
+  // Returns the list so callers that need to resolve a code immediately don't
+  // have to wait for the `banks` state to land in a later render.
+  const fetchBanks = useCallback(async (): Promise<Bank[]> => {
+    if (banks.length > 0) return banks;
     setBanksLoading(true);
     try {
       const result = await walletService.getBanks();
       setBanks(result);
+      return result;
     } catch {
       // silent — user can retry by reopening modal
+      return [];
     } finally {
       setBanksLoading(false);
     }
-  }, [banks.length]);
+  }, [banks]);
 
   // Fetch beneficiaries
   const fetchBeneficiaries = useCallback(async () => {
@@ -100,8 +137,17 @@ export default function SendMoneyScreen() {
     }
   }, [beneficiaries.length]);
 
-  // Reset account fields when tab changes
+  // Reset account fields when tab changes.
+  // Skips its own mount run so prefilled state survives. Safe for every other
+  // entry path: on mount this only ever assigned the values the fields already
+  // hold, so not running it is a no-op rather than a behaviour change.
+  const skipTabReset = useRef(true);
+
   useEffect(() => {
+    if (skipTabReset.current) {
+      skipTabReset.current = false;
+      return;
+    }
     setAccountNumber('');
     setAccountName('');
     setValidationError('');
@@ -110,7 +156,28 @@ export default function SendMoneyScreen() {
     setNarration('');
   }, [activeTab]);
 
-  // Validate account number for Other Banks
+  // Resolve the prefilled bank code to a Bank, once, on mount.
+  // `selectedBank` is deliberately left null until this lands rather than being
+  // seeded with a {code, name: code} placeholder: the validation effect below
+  // keys on selectedBank by *identity*, so swapping a placeholder for the real
+  // Bank would fire it a second time and wipe the confirmed account name.
+  useEffect(() => {
+    if (!isPrefill || prefillBankCode === NEAT_BANK_CODE) return;
+    let cancelled = false;
+    fetchBanks().then((list) => {
+      if (!cancelled) setSelectedBank(resolveBank(prefillBankCode, list));
+    });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Validate account number for Other Banks.
+  // NOTE: `selectedBank` (the object) is the dep, not `selectedBank?.code`.
+  // Narrowing it to the code looks like a cleanup but breaks re-selecting the
+  // same bank: handleSelectBank clears accountName itself, and with a .code dep
+  // no effect run would follow to refill it, leaving Proceed dead.
   useEffect(() => {
     // Bump the id at the top of every run — even when we early-return — so any
     // in-flight request from a previous run (different tab, fewer digits, prior
@@ -177,10 +244,16 @@ export default function SendMoneyScreen() {
     );
   });
 
-  const getBankName = (bankCode: string) =>
-    banks.find((b) => b.code === bankCode)?.name ?? bankCode;
+  const getBankName = (bankCode: string) => resolveBank(bankCode, banks).name;
 
   const parsedAmount = parseInt(amount, 10) || 0;
+
+  // The validation effect clears `accountName` on its first run, so the name
+  // carried over from the transaction can't live in that state. Derive it for
+  // display instead: grey = last known, unconfirmed; green = confirmed just now.
+  // `canProceed` still keys off `accountName` alone, so a grey name can't be
+  // transferred to.
+  const displayName = accountName || (lockedRecipient ? prefillAccountName : '');
 
   // CBN 24h activation cap: block outflow above what's left in the window.
   // Amount input is whole naira; the limit is kobo, so compare in kobo.
@@ -235,24 +308,26 @@ export default function SendMoneyScreen() {
     setBeneficiarySearch('');
 
     if (activeTab === 'other_bank') {
-      // Ensure banks are loaded so we can find the matching bank
-      let bankList = banks;
-      if (bankList.length === 0) {
-        try {
-          const result = await walletService.getBanks();
-          setBanks(result);
-          bankList = result;
-        } catch {
-          // fallback — set bank code directly
-        }
-      }
-      const matchedBank = bankList.find(
-        (b) => b.code === beneficiary.bank_code,
-      );
-      setSelectedBank(
-        matchedBank ?? { code: beneficiary.bank_code, name: beneficiary.bank_code },
-      );
+      // Ternary, not an unconditional `await fetchBanks()`. When banks are
+      // already cached this must not yield: staying synchronous keeps all the
+      // setters in one batch, so the validation effect runs once and consumes
+      // `prefilled` — which is what preserves "trust the saved name". Awaiting
+      // here would split the batch and re-validate every beneficiary pick.
+      const bankList = banks.length > 0 ? banks : await fetchBanks();
+      setSelectedBank(resolveBank(beneficiary.bank_code, bankList));
     }
+  };
+
+  // Escape hatch for a prefilled recipient that fails validation. Locked fields
+  // would otherwise be a dead end. This lifts the *lock* rather than making the
+  // prefilled fields editable, so a prefilled recipient is still never edited —
+  // the screen just reverts to a blank Send Money.
+  const handleClearPrefill = () => {
+    setLockedRecipient(false);
+    setAccountNumber('');
+    setAccountName('');
+    setValidationError('');
+    setSelectedBank(null);
   };
 
   const handleSelectBank = (bank: Bank) => {
@@ -292,8 +367,13 @@ export default function SendMoneyScreen() {
         </Text>
 
         {/* Tab pills */}
+        {/* When locked, render only the active pill. Switching tabs would fire
+            the reset effect and wipe the prefill, and a disabled-but-visible
+            second pill is a dead affordance — a lone pill reads as a label. */}
         <View className="flex-row bg-[#F3F3F4] rounded-full py-3 px-3 mb-6">
-          {TABS.map((tab) => (
+          {TABS.filter(
+            (tab) => !lockedRecipient || tab.key === activeTab,
+          ).map((tab) => (
             <TouchableOpacity
               key={tab.key}
               className={`flex-1 py-3 rounded-full items-center ${
@@ -303,6 +383,7 @@ export default function SendMoneyScreen() {
                 setActiveTab(tab.key);
                 if (tab.key === 'other_bank') fetchBanks();
               }}
+              disabled={lockedRecipient}
               activeOpacity={0.85}
             >
               <Text
@@ -332,19 +413,27 @@ export default function SendMoneyScreen() {
                   fetchBanks();
                   setBankModalVisible(true);
                 }}
+                disabled={lockedRecipient}
+                activeOpacity={lockedRecipient ? 1 : 0.2}
               >
                 <Text
                   className={`text-[15px] ${
                     selectedBank ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'
                   }`}
                 >
-                  {selectedBank?.name ?? 'Select a bank'}
+                  {selectedBank?.name ??
+                    (lockedRecipient ? '' : 'Select a bank')}
                 </Text>
-                <MaterialCommunityIcons
-                  name="chevron-down"
-                  size={20}
-                  color="#9CA3AF"
-                />
+                {/* Chevron promises a picker; a lock explains its absence. */}
+                {lockedRecipient && !selectedBank && banksLoading ? (
+                  <ActivityIndicator size="small" color="#472FF8" />
+                ) : (
+                  <MaterialCommunityIcons
+                    name={lockedRecipient ? 'lock-outline' : 'chevron-down'}
+                    size={lockedRecipient ? 18 : 20}
+                    color="#9CA3AF"
+                  />
+                )}
               </TouchableOpacity>
             </View>
           )}
@@ -359,28 +448,50 @@ export default function SendMoneyScreen() {
                 validationError ? 'border-[#EF4444] bg-white' : 'border-transparent'
               } flex-row items-center`}
             >
+              {/* Keep the text colour explicit: on Android an editable={false}
+                  input renders dimmed, which would read as broken rather than
+                  intentionally locked. The lock icon carries that meaning. */}
               <TextInput
                 className="flex-1 text-[15px] text-[#1A1A1A] p-0"
                 value={accountNumber}
                 onChangeText={(t) =>
                   setAccountNumber(t.replace(/\D/g, '').slice(0, ACCOUNT_NUMBER_LENGTH))
                 }
+                editable={!lockedRecipient}
                 placeholder="Enter account number"
                 placeholderTextColor="#9CA3AF"
                 keyboardType="number-pad"
                 maxLength={ACCOUNT_NUMBER_LENGTH}
               />
               {validating && <ActivityIndicator size="small" color="#472FF8" />}
+              {lockedRecipient && !validating && (
+                <MaterialCommunityIcons
+                  name="lock-outline"
+                  size={16}
+                  color="#9CA3AF"
+                />
+              )}
             </View>
-            {accountName !== '' && (
-              <Text className="text-[13px] text-[#16A34A] mt-1.5 font-medium">
-                {accountName}
+            {displayName !== '' && (
+              <Text
+                className={`text-[13px] mt-1.5 font-medium ${
+                  accountName !== '' ? 'text-[#16A34A]' : 'text-[#6B7280]'
+                }`}
+              >
+                {displayName}
               </Text>
             )}
             {validationError !== '' && (
               <Text className="text-xs text-red-500 mt-1.5">
                 {validationError}
               </Text>
+            )}
+            {lockedRecipient && validationError !== '' && (
+              <TouchableOpacity className="mt-2" onPress={handleClearPrefill}>
+                <Text className="text-[13px] font-medium text-[#472FF8]">
+                  Send to a different account
+                </Text>
+              </TouchableOpacity>
             )}
             {accountNumber === '' && (
               <TouchableOpacity

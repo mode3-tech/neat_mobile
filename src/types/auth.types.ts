@@ -37,6 +37,8 @@ export interface RegisterPayload {
   /** Omit entirely when the optional email step was skipped — '' is rejected. */
   email_verification_id?: string;
   is_biometrics_enabled: boolean;
+  /** Optional referral code — omitted entirely when the user leaves it blank. */
+  referral_code?: string;
   device: DeviceInfo;
 }
 
