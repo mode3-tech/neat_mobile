@@ -18,6 +18,7 @@ import { useSessionTimeout } from '@/hooks/use-session-timeout';
 import { useAuthStore } from '@/stores/auth.store';
 import { useProfileStore } from '@/stores/profile.store';
 import { DeviceIntegrityGate } from '@/components/security/device-integrity-gate';
+import { OfflineBanner } from '@/components/OfflineBanner';
 import { resolveNotificationRoute } from '@/utils/notification-route';
 import {
   markNotificationHandled,
@@ -230,6 +231,7 @@ export default function RootLayout(): React.JSX.Element {
           </Stack>
           </DeviceIntegrityGate>
           </View>
+          <OfflineBanner />
           <Toaster position="top-center" richColors />
           <StatusBar style="dark" />
         </ThemeProvider>

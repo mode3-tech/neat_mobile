@@ -13,6 +13,7 @@ import { toast } from 'sonner-native';
 
 import { OtpInput } from '@/components/ui/otp-input';
 import { useSmsOtp } from '@/hooks/use-sms-otp';
+import { useNetworkStatus } from '@/hooks/use-network-status';
 import { ApiError } from '@/services/api';
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
@@ -36,7 +37,8 @@ export default function AlternatePhoneOtpScreen() {
   const handleSmsOtp = useCallback((code: string) => setOtp(code), []);
   useSmsOtp({ onOtpReceived: handleSmsOtp, otpLength: OTP_LENGTH });
 
-  const canVerify = otp.length === OTP_LENGTH;
+  const { isOffline } = useNetworkStatus();
+  const canVerify = otp.length === OTP_LENGTH && !isOffline;
   const canResend = seconds === 0;
 
   useEffect(() => {

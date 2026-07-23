@@ -14,6 +14,7 @@ import { toast } from 'sonner-native';
 import { OtpInput } from '@/components/ui/otp-input';
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
+import { useNetworkStatus } from '@/hooks/use-network-status';
 import { OTP_LENGTH } from '@/constants';
 import { maskEmail } from '@/utils/mask';
 
@@ -30,7 +31,8 @@ export default function EmailOtpScreen() {
   const setEmailVerificationId = useSignUpStore((s) => s.setEmailVerificationId);
   const bvnVerificationId = useSignUpStore((s) => s.bvnData?.verification_id ?? '');
 
-  const canVerify = otp.length === OTP_LENGTH;
+  const { isOffline } = useNetworkStatus();
+  const canVerify = otp.length === OTP_LENGTH && !isOffline;
   const canResend = seconds === 0;
 
   useEffect(() => {

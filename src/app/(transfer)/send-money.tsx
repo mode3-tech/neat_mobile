@@ -24,6 +24,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import { useTransferStore } from '@/stores/transfer.store';
 import { useAccountLimits } from '@/hooks/use-account-limits';
 import { useAccountSummary } from '@/hooks/use-account-summary';
+import { useNetworkStatus } from '@/hooks/use-network-status';
 import { ActivationCapBanner } from '@/components/ActivationCapBanner';
 import { getErrorMessage } from '@/utils/error';
 import { formatNairaShort } from '@/utils/format';
@@ -45,6 +46,7 @@ export default function SendMoneyScreen() {
   const user = useAuthStore((s) => s.user);
   const { data: accountSummary } = useAccountSummary();
   const { data: limits } = useAccountLimits();
+  const { isOffline } = useNetworkStatus();
 
   // "Transfer again" entry point. Passed as params rather than hydrated into the
   // transfer store on purpose: params die with this navigation entry, so a plain
@@ -273,6 +275,7 @@ export default function SendMoneyScreen() {
     parsedAmount + TRANSFER_FEE > accountSummary.available_balance;
 
   const canProceed =
+    !isOffline &&
     !exceedsCap &&
     !exceedsBalance &&
     (activeTab === 'neatpay'

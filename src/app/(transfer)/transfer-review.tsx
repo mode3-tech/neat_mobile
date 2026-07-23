@@ -16,6 +16,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ForgotPinLink } from '@/components/ui/forgot-pin-link';
 import { PIN_LENGTH, QUERY_KEYS, TRANSFER_FEE } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
+import { useNetworkStatus } from '@/hooks/use-network-status';
 import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
 import { getErrorMessage } from '@/utils/error';
@@ -82,7 +83,8 @@ export default function TransferReviewScreen() {
 
   const parsedAmount = parseInt(store.amount, 10) || 0;
 
-  const canConfirm = pin.length === PIN_LENGTH;
+  const { isOffline } = useNetworkStatus();
+  const canConfirm = pin.length === PIN_LENGTH && !isOffline;
 
   const submitTransfer = async (transactionPin: string) => {
     setSubmitting(true);
