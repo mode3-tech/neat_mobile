@@ -53,7 +53,9 @@ app-example
 
 # internal pre-launch checklist
 THINGS-TO-DO-BEFORE-GOING-LIVE.md
+THINGS-TO-DO-BEFORE-APP-STORE.md
 EAS-ACCOUNT-CHANGE-CHECKLIST.md
+RELEASE-PLAYBOOK.md
 
 # internal per-feature notes / docs
 feature-docs/

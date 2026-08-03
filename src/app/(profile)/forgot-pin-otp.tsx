@@ -11,7 +11,7 @@ import { authService } from '@/services/auth.service';
 import { accountService } from '@/services/account.service';
 import { maskPhone } from '@/utils/mask';
 
-const RESEND_SECONDS = 30;
+const RESEND_SECONDS = 90;
 
 export default function ForgotPinOtpScreen() {
   const [otp, setOtp] = useState('');

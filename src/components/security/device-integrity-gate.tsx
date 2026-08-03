@@ -75,7 +75,10 @@ function ProductionIntegrityGate({
       // appIntegrity: () => {}, // stub — re-enabled once cert hash configured in eas.json (go-live)
 
       unofficialStore: onUnofficialStore,
-      simulator: reportBlockingThreat,
+      // Google reviews apps (and runs the Pre-Launch Report) on emulators, so
+      // hard-blocking `simulator` fails Play review. Report-only — root/hook/debug
+      // detection below still hard-blocks real tampered devices.
+      simulator: () => {},
       passcode: () => {},
       deviceBinding: () => {},
       deviceID: () => {},

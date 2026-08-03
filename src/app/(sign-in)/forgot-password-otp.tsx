@@ -14,7 +14,7 @@ import { authService } from '@/services/auth.service';
 import { OTP_LENGTH } from '@/constants';
 
 const PRIMARY = '#472FF8';
-const RESEND_SECONDS = 30;
+const RESEND_SECONDS = 90;
 
 export default function ForgotPasswordOtpScreen() {
   const params = useLocalSearchParams<{ phone: string; otp_id: string }>();

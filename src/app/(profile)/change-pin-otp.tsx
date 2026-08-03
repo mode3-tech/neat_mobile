@@ -12,7 +12,7 @@ import { accountService } from '@/services/account.service';
 import { useSecurityChangeStore } from '@/stores/security-change.store';
 import { maskPhone } from '@/utils/mask';
 
-const RESEND_SECONDS = 30;
+const RESEND_SECONDS = 90;
 
 export default function ChangePinOtpScreen() {
   const [otp, setOtp] = useState('');

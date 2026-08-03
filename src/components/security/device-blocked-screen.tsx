@@ -44,9 +44,9 @@ export function DeviceBlockedScreen(): React.JSX.Element {
             marginBottom: 24,
           }}
         >
-          For your protection, NeatPay cannot run on devices that have been
-          rooted, jailbroken, or modified. This is a banking-grade requirement
-          to keep your funds safe.
+          For your protection, NeatPay can't run on devices that have been
+          rooted, jailbroken, or modified. This helps keep your account and
+          funds safe.
         </Text>
 
         <Text

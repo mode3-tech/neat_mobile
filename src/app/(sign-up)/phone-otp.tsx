@@ -20,7 +20,7 @@ import { useSignUpStore } from '@/stores/sign-up.store';
 import { OTP_LENGTH } from '@/constants';
 
 const PRIMARY = '#472FF8';
-const RESEND_SECONDS = 30;
+const RESEND_SECONDS = 90;
 
 export default function PhoneOtpScreen() {
   // Register-error recovery routes email-first users straight back here on

@@ -21,7 +21,7 @@ import { OTP_LENGTH } from '@/constants';
 import { maskPhone } from '@/utils/mask';
 
 const PRIMARY = '#472FF8';
-const RESEND_SECONDS = 30;
+const RESEND_SECONDS = 90;
 
 export default function AlternatePhoneOtpScreen() {
   const [otp, setOtp] = useState('');

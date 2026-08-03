@@ -19,7 +19,7 @@ import { OTP_LENGTH } from '@/constants';
 import { maskEmail } from '@/utils/mask';
 
 const PRIMARY = '#472FF8';
-const RESEND_SECONDS = 30;
+const RESEND_SECONDS = 90;
 
 export default function EmailOtpScreen() {
   const [otp, setOtp] = useState('');
