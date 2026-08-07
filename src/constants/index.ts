@@ -22,6 +22,7 @@ export const TOKEN_KEYS = {
 } as const;
 
 export const QUERY_KEYS = {
+  APP_VERSION: 'app-version',
   USER: 'user',
   LOAN: 'loan',
   LOANS: 'loans',

@@ -11,10 +11,7 @@ import { SplashScreenComponent } from '@/components/ui/splash-screen';
 export default function Index(): React.JSX.Element {
   useEffect(() => {
     async function prepare(): Promise<void> {
-      // Lift the native splash right away to reveal our JS splash (same logo on
-      // #472FF8, so the hand-off is seamless). The JS splash then covers the
-      // hydration work below and we route the moment it's done — no artificial
-      // delay on the hot startup path.
+
       void SplashScreen.hideAsync();
 
       const store = useAuthStore.getState();

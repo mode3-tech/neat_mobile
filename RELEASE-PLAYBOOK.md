@@ -12,8 +12,8 @@ After a production build is live on Play, pick one:
 | | When | Action | User sees |
 |---|---|---|---|
 | **Silent** | Routine native change. No urgency. **This is the default.** | Nothing — don't touch the backend | Nothing. Play auto-updates them over a day or two |
-| **Nudge** | You're announcing the feature, or draining the old population ahead of a force you know is coming | Set `android.latest_build` to the new versionCode | Dismissible "Update available" — **Update** / **Later** |
-| **Force** | Old build is unsafe, broken, or incompatible | Set `android.min_build` to the new versionCode | Full-screen block — **Update** only |
+| **Nudge** | You're announcing the feature, or draining the old population ahead of a force you know is coming | Set `android.latest_build` to the new versionCode | Dismissible "Update available" sheet — **Update Now** / **Later** |
+| **Force** | Old build is unsafe, broken, or incompatible | Set `android.min_build` to the new versionCode | Non-dismissible "Update required" sheet over the app — **Update Now** only |
 
 ### Force is for these, and not much else
 
@@ -46,7 +46,8 @@ is the hard gate, which is the escalation you built this to avoid.
    > "Build 12 is live. Set `android.latest_build` to 12 **and** `android.min_build` to 12."
 6. If it's a notable release, trigger the broadcast push
 7. Verify on a real device before walking away from a force — a wrong `min_build` locks
-   out everyone below it
+   out everyone below it. It must be a **production** build: the gate is off on preview and
+   internal APKs (see below), so a force can't be confirmed on one.
 
 ---
 
@@ -68,6 +69,12 @@ alternative is worse.
 **The gate only governs builds that contain it.** Shipped in build 8, so it can never
 prompt anyone on 7 or below — those users move only via Play auto-update. Every force you
 issue reaches build 8+ and nobody else.
+
+**Production builds only.** The gate runs when `EXPO_PUBLIC_APP_VARIANT` is `production` —
+so never in development, and never on preview or internal APKs. Testers are rebuilt onto a
+fresh APK for every change, and blocking one would push them to Play and overwrite their
+test build with production. Consequence: a tester reporting "I never see the update prompt"
+is correct behaviour, not a bug, and a force can only be verified on a production build.
 
 **It fails open by design.** If `GET /app/version` errors or times out, the app opens
 normally with no gate. So a backend outage doesn't lock users out — it silently switches

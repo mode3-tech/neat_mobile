@@ -18,7 +18,9 @@ import { useSessionTimeout } from '@/hooks/use-session-timeout';
 import { useAuthStore } from '@/stores/auth.store';
 import { useProfileStore } from '@/stores/profile.store';
 import { DeviceIntegrityGate } from '@/components/security/device-integrity-gate';
+import { AppVersionGate } from '@/components/updates/app-version-gate';
 import { OfflineBanner } from '@/components/OfflineBanner';
+import { QUERY_KEYS } from '@/constants';
 import { resolveNotificationRoute } from '@/utils/notification-route';
 import {
   markNotificationHandled,
@@ -59,7 +61,7 @@ const queryClient = new QueryClient({
 export default function RootLayout(): React.JSX.Element {
   const router = useRouter();
   const { onTouchActivity } = useSessionTimeout(router);
-  const appState = useRef(AppState.currentState);
+  const hasBackgrounded = useRef(AppState.currentState === 'background');
 
   useEffect(() => {
     useProfileStore.getState().hydratePhotoUri();
@@ -161,19 +163,34 @@ export default function RootLayout(): React.JSX.Element {
     const subscription = AppState.addEventListener(
       'change',
       async (nextState) => {
-        if (
-          appState.current.match(/background/) &&
-          nextState === 'active'
-        ) {
-          const isAuthenticated =
-            useAuthStore.getState().isAuthenticated;
-          if (!isAuthenticated) return;
-          const { registerForPushNotifications, sendTokenToBackend } =
-            await import('@/services/notification.service');
-          const token = await registerForPushNotifications();
-          if (token) await sendTokenToBackend(token);
+        if (nextState === 'background') {
+          hasBackgrounded.current = true;
+          return;
         }
-        appState.current = nextState;
+
+        // Latch on 'background' rather than comparing against the previous
+        // state: iOS resumes background → inactive → active, so by the time
+        // 'active' arrives the previous state is 'inactive' and a
+        // previous-state check never fires. Only 'background' flips the latch,
+        // so a transient 'inactive' (control centre, an incoming call banner)
+        // with no real backgrounding is correctly ignored.
+        if (nextState !== 'active' || !hasBackgrounded.current) return;
+        hasBackgrounded.current = false;
+
+        // Re-check the app version gate on every resume. Must stay above the
+        // auth check below — the gate deliberately runs for signed-out users
+        // too. Invalidation overrides the query's staleTime, which is why
+        // that staleTime can be generous.
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.APP_VERSION],
+        });
+
+        const isAuthenticated = useAuthStore.getState().isAuthenticated;
+        if (!isAuthenticated) return;
+        const { registerForPushNotifications, sendTokenToBackend } =
+          await import('@/services/notification.service');
+        const token = await registerForPushNotifications();
+        if (token) await sendTokenToBackend(token);
       },
     );
     return () => subscription.remove();
@@ -200,6 +217,7 @@ export default function RootLayout(): React.JSX.Element {
         <ThemeProvider value={DefaultTheme}>
           <View style={{ flex: 1 }} onStartShouldSetResponderCapture={onTouchActivity}>
           <DeviceIntegrityGate>
+          <AppVersionGate>
           <Stack
             screenOptions={{
               headerShown: false,
@@ -229,6 +247,7 @@ export default function RootLayout(): React.JSX.Element {
               options={{ presentation: 'modal' }}
             />
           </Stack>
+          </AppVersionGate>
           </DeviceIntegrityGate>
           </View>
           <OfflineBanner />
