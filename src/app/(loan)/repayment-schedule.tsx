@@ -236,8 +236,8 @@ export default function RepaymentScheduleScreen() {
               </View>
 
               {/* Yet to Pay Card */}
-              <View className="flex-1 rounded-2xl p-4 bg-[#F3E8FF]">
-                <View className="w-9 h-9 rounded-xl bg-[#E9D5FF] items-center justify-center mb-3">
+              <View className="flex-1 rounded-2xl p-4 bg-accent-loan">
+                <View className="w-9 h-9 rounded-xl bg-accent-loan-strong items-center justify-center mb-3">
                   <MaterialCommunityIcons name="cash-clock" size={20} color="#7C3AED" />
                 </View>
                 <Text className="text-xs text-ink-soft mb-1">Yet to Pay</Text>

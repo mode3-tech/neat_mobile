@@ -81,6 +81,7 @@ export declare const colors: {
   warningBorderStrong: ColorToken;
 
   overlay: ColorToken;
+  accentMint: ColorToken;
 
   legacy: Record<
     | 'text1'

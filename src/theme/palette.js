@@ -176,6 +176,8 @@ const colors = {
   // --- misc --------------------------------------------------------------
   /** Modal/sheet scrim. Always used with an opacity. */
   overlay: raw.gray[1000],
+  /** Active-loan card CTA. The one place the app uses a mint accent. */
+  accentMint: raw.teal[600],
 
   /**
    * See `raw.drift`. These exist purely to keep extraction visually identical.
@@ -286,6 +288,22 @@ const tailwindColors = {
     'border-strong': colors.warningBorderStrong,
   },
   overlay: colors.overlay,
+  'accent-mint': colors.accentMint,
+
+  // Decorative category accents — see `accents`. Exposed here so className
+  // sites can use them (bg-accent-loan) instead of falling back to a raw hex.
+  accent: {
+    airtime: accents.airtime.surface,
+    transfer: accents.transfer.surface,
+    data: accents.data.surface,
+    electricity: accents.electricity.surface,
+    cable: accents.cable.surface,
+    betting: accents.betting.surface,
+    reward: accents.reward.surface,
+    loan: accents.loan.surface,
+    'loan-strong': accents.loanAlt.surface,
+    fallback: accents.fallback.surface,
+  },
 
   // Drift tokens — see `colors.legacy`. Remove once Stage 2 consolidates them.
   legacy: {

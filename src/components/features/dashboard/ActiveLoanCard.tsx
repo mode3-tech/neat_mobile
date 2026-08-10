@@ -41,7 +41,7 @@ export default function ActiveLoanCard({ loans }: ActiveLoanCardProps) {
 
         {/* View Settlement button */}
         <TouchableOpacity
-          className="bg-[#00BFA6] rounded-full py-3 px-6 self-start mt-5"
+          className="bg-accent-mint rounded-full py-3 px-6 self-start mt-5"
           activeOpacity={0.85}
         >
           <Text className="text-white text-sm font-semibold">View Settlement</Text>
