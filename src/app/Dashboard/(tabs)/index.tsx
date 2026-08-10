@@ -18,6 +18,7 @@ import RecentTransactions from '@/components/features/dashboard/RecentTransactio
 import ActiveLoanCard from '@/components/features/dashboard/ActiveLoanCard';
 import RepaymentBottomSheet from '@/components/features/loans/RepaymentBottomSheet';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
+import { colors } from '@/theme/palette';
 
 export default function HomeScreen() {
   const user = useAuthStore((s) => s.user);
@@ -111,7 +112,7 @@ export default function HomeScreen() {
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             onPress={() => router.push('/notifications')}
           >
-            <Ionicons name="notifications-outline" size={24} color="#1A1A1A" />
+            <Ionicons name="notifications-outline" size={24} color={colors.ink} />
             {unreadCount > 0 && (
               <View className="absolute -top-1 -right-1 bg-danger rounded-full min-w-[16px] h-4 items-center justify-center px-1">
                 <Text className="text-white text-[10px] font-bold">
@@ -150,7 +151,7 @@ export default function HomeScreen() {
 
         {/* 1-Tap Payments Banner */}
         {/* <View className="flex-row items-center gap-2 bg-amber-50 rounded-xl p-3.5 mx-6 mt-2">
-          <MaterialCommunityIcons name="information" size={20} color="#F59E0B" />
+          <MaterialCommunityIcons name="information" size={20} color={colors.warning} />
           <Text className="flex-1 text-[13px] text-gray-700">
             You don't have any 1-tap payments set up yet.
           </Text>

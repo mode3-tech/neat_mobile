@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { colors } from '@/theme/palette';
+
 interface OtpInputProps {
   value: string;
   onChange: (value: string) => void;
@@ -61,23 +63,23 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 10,
     borderWidth: 1.5,
-    borderColor: '#E5E7EB',
-    backgroundColor: '#F9FAFB',
+    borderColor: colors.line,
+    backgroundColor: colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
   activeBox: {
-    borderColor: '#472FF8',
-    backgroundColor: '#fff',
+    borderColor: colors.primary,
+    backgroundColor: colors.surface,
   },
   filledBox: {
-    borderColor: '#472FF8',
-    backgroundColor: '#fff',
+    borderColor: colors.primary,
+    backgroundColor: colors.surface,
   },
   digit: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#1A1A1A',
+    color: colors.ink,
   },
   hiddenInput: {
     ...StyleSheet.absoluteFillObject,

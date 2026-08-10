@@ -23,6 +23,7 @@ import { useAccountSummary } from '@/hooks/use-account-summary';
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
 import type { Bank, BulkRecipient, TransferType } from '@/types/transfer.types';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { colors } from '@/theme/palette';
 
 const TABS: { key: TransferType; label: string }[] = [
   { key: 'neatpay', label: 'NEAT Microcredit' },
@@ -338,7 +339,7 @@ export default function BulkAddRecipientScreen() {
                 <MaterialCommunityIcons
                   name="chevron-down"
                   size={20}
-                  color="#9CA3AF"
+                  color={colors.inkMuted}
                 />
               </TouchableOpacity>
             </View>
@@ -363,11 +364,11 @@ export default function BulkAddRecipientScreen() {
                   )
                 }
                 placeholder="Enter account number"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.inkMuted}
                 keyboardType="number-pad"
                 maxLength={ACCOUNT_NUMBER_LENGTH}
               />
-              {validating && <ActivityIndicator size="small" color="#472FF8" />}
+              {validating && <ActivityIndicator size="small" color={colors.primary} />}
             </View>
             {accountName !== '' && (
               <Text className="text-[13px] text-success mt-1.5 font-medium">
@@ -393,7 +394,7 @@ export default function BulkAddRecipientScreen() {
                 value={amount}
                 onChangeText={formatAmount}
                 placeholder="0"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.inkMuted}
                 keyboardType="number-pad"
               />
             </View>
@@ -410,7 +411,7 @@ export default function BulkAddRecipientScreen() {
                 value={narration}
                 onChangeText={setNarration}
                 placeholder="Enter narration"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.inkMuted}
               />
             </View>
           </View>
@@ -427,7 +428,7 @@ export default function BulkAddRecipientScreen() {
             <MaterialCommunityIcons
               name="plus"
               size={18}
-              color={canAdd ? '#472FF8' : '#9CA3AF'}
+              color={canAdd ? colors.primary : colors.inkMuted}
             />
             <Text
               className={`text-base font-semibold ml-1 ${
@@ -486,7 +487,7 @@ export default function BulkAddRecipientScreen() {
                         <MaterialCommunityIcons
                           name="trash-can-outline"
                           size={18}
-                          color="#EF4444"
+                          color={colors.danger}
                         />
                       </TouchableOpacity>
                     </View>
@@ -531,7 +532,7 @@ export default function BulkAddRecipientScreen() {
                 <MaterialCommunityIcons
                   name="close"
                   size={24}
-                  color="#374151"
+                  color={colors.inkBody}
                 />
               </TouchableOpacity>
             </View>
@@ -541,14 +542,14 @@ export default function BulkAddRecipientScreen() {
                 <MaterialCommunityIcons
                   name="magnify"
                   size={20}
-                  color="#9CA3AF"
+                  color={colors.inkMuted}
                 />
                 <TextInput
                   className="flex-1 text-[15px] text-ink ml-2 p-0"
                   value={bankSearch}
                   onChangeText={setBankSearch}
                   placeholder="Search bank"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.inkMuted}
                   autoFocus
                 />
               </View>
@@ -557,7 +558,7 @@ export default function BulkAddRecipientScreen() {
             {banksLoading ? (
               <ActivityIndicator
                 size="large"
-                color="#472FF8"
+                color={colors.primary}
                 className="mt-8"
               />
             ) : (

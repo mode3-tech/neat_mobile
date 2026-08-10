@@ -18,6 +18,7 @@ import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
 import { DetailRow } from '@/components/features/transaction/DetailRow';
 import { buildReceiptHtml, shareFile } from '@/utils/receipt';
+import { colors } from '@/theme/palette';
 import {
   formatNairaDecimal,
   formatNairaWhole,
@@ -58,7 +59,7 @@ export default function TransferSuccessScreen() {
     { label: 'Bank Name', value: store.bankName },
     { label: 'Session ID', value: result.sessionId },
     { label: 'Transaction ID', value: result.transactionReference },
-    { label: 'Transaction Status', value: 'Successful', valueColor: '#16A34A' },
+    { label: 'Transaction Status', value: 'Successful', valueColor: colors.success },
     ...(store.narration
       ? [{ label: 'Remark', value: store.narration }]
       : []),
@@ -200,12 +201,12 @@ export default function TransferSuccessScreen() {
           >
             <View className="w-14 h-14 rounded-2xl bg-primary-surface items-center justify-center mb-2">
               {addingBeneficiary ? (
-                <ActivityIndicator size="small" color="#472FF8" />
+                <ActivityIndicator size="small" color={colors.primary} />
               ) : (
                 <MaterialCommunityIcons
                   name={beneficiaryAdded ? 'check-circle' : 'account-plus-outline'}
                   size={22}
-                  color="#472FF8"
+                  color={colors.primary}
                 />
               )}
             </View>
@@ -223,7 +224,7 @@ export default function TransferSuccessScreen() {
               <MaterialCommunityIcons
                 name="image-outline"
                 size={22}
-                color="#472FF8"
+                color={colors.primary}
               />
             </View>
             <Text className="text-xs text-ink-body text-center">
@@ -240,7 +241,7 @@ export default function TransferSuccessScreen() {
               <MaterialCommunityIcons
                 name="file-pdf-box"
                 size={22}
-                color="#472FF8"
+                color={colors.primary}
               />
             </View>
             <Text className="text-xs text-ink-body text-center">

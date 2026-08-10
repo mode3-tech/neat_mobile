@@ -3,6 +3,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
+import { colors } from '@/theme/palette';
+
 function Bullet({ text }: { text: string }) {
   return (
     <View className="flex-row mb-4">
@@ -21,7 +23,7 @@ export default function CloseAccountIntroScreen() {
           className="border border-gray-200 rounded-full w-10 h-10 items-center justify-center"
           onPress={() => router.back()}
         >
-          <MaterialCommunityIcons name="chevron-left" size={24} color="#374151" />
+          <MaterialCommunityIcons name="chevron-left" size={24} color={colors.inkBody} />
         </TouchableOpacity>
         <Text className="flex-1 text-center text-lg font-bold text-ink mr-10">
           Close Account
@@ -35,7 +37,7 @@ export default function CloseAccountIntroScreen() {
         {/* Warning badge */}
         <View className="items-center mt-6 mb-6">
           <View className="w-16 h-16 rounded-full bg-danger items-center justify-center">
-            <MaterialCommunityIcons name="exclamation-thick" size={34} color="#fff" />
+            <MaterialCommunityIcons name="exclamation-thick" size={34} color={colors.inkInverse} />
           </View>
         </View>
 

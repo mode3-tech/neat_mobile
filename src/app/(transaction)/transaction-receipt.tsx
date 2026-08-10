@@ -17,6 +17,7 @@ import {
 import { useAccountSummary } from '@/hooks/use-account-summary';
 import { useAuthStore } from '@/stores/auth.store';
 import type { Transaction } from '@/types/transaction.types';
+import { colors } from '@/theme/palette';
 
 export default function TransactionReceiptScreen() {
   const { tx } = useLocalSearchParams<{ tx: string }>();
@@ -82,7 +83,7 @@ export default function TransactionReceiptScreen() {
     {
       label: 'Transaction Status',
       value: statusLabel,
-      valueColor: STATUS_COLORS[transaction.status] ?? '#6B7280',
+      valueColor: STATUS_COLORS[transaction.status] ?? colors.inkSoft,
     },
   ];
 
@@ -122,7 +123,7 @@ export default function TransactionReceiptScreen() {
           hitSlop={8}
           className="mr-3"
         >
-          <MaterialCommunityIcons name="chevron-left" size={26} color="#1A1A1A" />
+          <MaterialCommunityIcons name="chevron-left" size={26} color={colors.ink} />
         </TouchableOpacity>
         <Text className="text-lg font-semibold text-ink">
           Share Receipt
@@ -182,7 +183,7 @@ export default function TransactionReceiptScreen() {
           onPress={handleShareAsImage}
           activeOpacity={0.7}
         >
-          <MaterialCommunityIcons name="image-outline" size={20} color="#472FF8" />
+          <MaterialCommunityIcons name="image-outline" size={20} color={colors.primary} />
           <Text className="text-[15px] font-semibold text-primary ml-2">
             Share as image
           </Text>
@@ -195,7 +196,7 @@ export default function TransactionReceiptScreen() {
           onPress={handleShareAsPdf}
           activeOpacity={0.7}
         >
-          <MaterialCommunityIcons name="file-pdf-box" size={20} color="#472FF8" />
+          <MaterialCommunityIcons name="file-pdf-box" size={20} color={colors.primary} />
           <Text className="text-[15px] font-semibold text-primary ml-2">
             Share as PDF
           </Text>

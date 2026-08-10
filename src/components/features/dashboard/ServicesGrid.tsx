@@ -7,6 +7,7 @@ import { toast } from 'sonner-native';
 import { QUERY_KEYS } from '@/constants';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
+import { colors } from '@/theme/palette';
 
 interface ServiceItem {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
@@ -97,7 +98,7 @@ export default function ServicesGrid() {
               onPress={() => handlePress(item)}
             >
               <View className="w-12 h-12 rounded-full bg-primary items-center justify-center">
-                <MaterialCommunityIcons name={item.icon} size={22} color="#FFFFFF" />
+                <MaterialCommunityIcons name={item.icon} size={22} color={colors.inkInverse} />
               </View>
               <Text className="text-[10px] text-gray-700 text-center mt-1.5" numberOfLines={1}>
                 {item.label}

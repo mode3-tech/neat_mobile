@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
+import { colors } from '@/theme/palette';
 
 interface ChoiceCardProps {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
@@ -21,13 +22,13 @@ function ChoiceCard({ icon, title, subtitle, onPress }: ChoiceCardProps) {
       onPress={onPress}
     >
       <View className="w-10 h-10 rounded-xl bg-primary items-center justify-center mr-3">
-        <MaterialCommunityIcons name={icon} size={20} color="#FFFFFF" />
+        <MaterialCommunityIcons name={icon} size={20} color={colors.inkInverse} />
       </View>
       <View className="flex-1">
         <Text className="text-[15px] font-semibold text-ink">{title}</Text>
         <Text className="text-[12px] text-ink-soft mt-0.5">{subtitle}</Text>
       </View>
-      <MaterialCommunityIcons name="chevron-right" size={22} color="#9CA3AF" />
+      <MaterialCommunityIcons name="chevron-right" size={22} color={colors.inkMuted} />
     </TouchableOpacity>
   );
 }

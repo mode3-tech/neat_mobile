@@ -26,6 +26,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import { transactionService } from '@/services/transaction.service';
 import { ACCOUNT_NUMBER_LENGTH, QUERY_KEYS } from '@/constants';
 import type { Transaction } from '@/types/transaction.types';
+import { colors } from '@/theme/palette';
 
 export default function TransactionDetailsScreen() {
   // Two ways in. List taps pass `tx` — the row already holds every field, so
@@ -93,7 +94,7 @@ export default function TransactionDetailsScreen() {
         {header}
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="small" color="#472FF8" />
+            <ActivityIndicator size="small" color={colors.primary} />
           </View>
         ) : (
           <View className="flex-1 items-center justify-center px-6">
@@ -118,7 +119,7 @@ export default function TransactionDetailsScreen() {
   );
   const isCredit = transaction.type === 'credit';
   const prefix = isCredit ? '+' : '-';
-  const statusColor = STATUS_COLORS[transaction.status] ?? '#6B7280';
+  const statusColor = STATUS_COLORS[transaction.status] ?? colors.inkSoft;
   const statusLabel = titleCase(transaction.status);
 
   // For a credit the logged-in user is the recipient; the counterparty is the
@@ -274,7 +275,7 @@ export default function TransactionDetailsScreen() {
                 <MaterialCommunityIcons
                   name={isCredit ? 'arrow-u-left-top' : 'repeat'}
                   size={22}
-                  color="#472FF8"
+                  color={colors.primary}
                 />
               </View>
               <Text className="text-xs text-ink-body text-center">
@@ -292,7 +293,7 @@ export default function TransactionDetailsScreen() {
               <MaterialCommunityIcons
                 name="share-variant"
                 size={22}
-                color="#472FF8"
+                color={colors.primary}
               />
             </View>
             <Text className="text-xs text-ink-body text-center">

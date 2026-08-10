@@ -15,10 +15,11 @@ import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
 import { NIN_LENGTH } from '@/constants';
 import type { NinData } from '@/types/sign-up.types';
+import { colors } from '@/theme/palette';
 
-const PRIMARY = '#472FF8';
-const ERROR_COLOR = '#EF4444';
-const SUCCESS_COLOR = '#16A34A';
+const PRIMARY = colors.primary;
+const ERROR_COLOR = colors.danger;
+const SUCCESS_COLOR = colors.success;
 
 type Status = 'idle' | 'loading' | 'error' | 'verified';
 
@@ -87,7 +88,7 @@ export default function NinVerificationScreen() {
                 if (isError) setStatus('idle');
               }}
               placeholder="Enter 11-digit NIN"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.inkMuted}
               keyboardType="number-pad"
               maxLength={NIN_LENGTH}
               editable={!isVerified}
@@ -146,7 +147,7 @@ export default function NinVerificationScreen() {
               activeOpacity={0.85}
             >
               {isLoading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={colors.inkInverse} />
               ) : (
                 <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
                   Verify NIN
@@ -172,7 +173,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
   },
   scrollContent: {
     flexGrow: 1,
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
   backBtn: {
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.line,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -191,18 +192,18 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.inkBody,
     fontWeight: '500',
   },
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.inkSoft,
     lineHeight: 20,
     marginBottom: 28,
   },
@@ -212,11 +213,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#374151',
+    color: colors.inkBody,
     marginBottom: 8,
   },
   inputWrap: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.surfaceInput,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 15,
@@ -224,12 +225,12 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   inputWrapError: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     borderColor: ERROR_COLOR,
   },
   input: {
     fontSize: 15,
-    color: '#1A1A1A',
+    color: colors.ink,
     padding: 0,
   },
   errorText: {
@@ -239,11 +240,11 @@ const styles = StyleSheet.create({
   },
   helperText: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.inkSoft,
     marginTop: 6,
   },
   infoBox: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: colors.primarySurface,
     borderRadius: 12,
     padding: 16,
     gap: 8,
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
   infoBoxTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     marginBottom: 4,
   },
   bulletRow: {
@@ -260,17 +261,17 @@ const styles = StyleSheet.create({
   },
   bullet: {
     fontSize: 13,
-    color: '#374151',
+    color: colors.inkBody,
     lineHeight: 20,
   },
   bulletText: {
     fontSize: 13,
-    color: '#374151',
+    color: colors.inkBody,
     lineHeight: 20,
     flex: 1,
   },
   successCard: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: colors.primarySurface,
     borderRadius: 12,
     padding: 16,
     gap: 8,
@@ -290,7 +291,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   checkMark: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 12,
     fontWeight: '700',
   },
@@ -305,12 +306,12 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.inkSoft,
     width: 52,
   },
   infoValue: {
     fontSize: 13,
-    color: '#1A1A1A',
+    color: colors.ink,
     fontWeight: '500',
     flex: 1,
   },
@@ -327,14 +328,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   disabledBtn: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.surfaceDisabled,
   },
   disabledBtnText: {
-    color: '#9CA3AF',
+    color: colors.inkMuted,
   },
 });

@@ -2,8 +2,10 @@ import { Tabs, router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const PRIMARY = '#472FF8';
-const INACTIVE = '#9CA3AF';
+import { colors } from '@/theme/palette';
+
+const PRIMARY = colors.primary;
+const INACTIVE = colors.inkMuted;
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
@@ -12,13 +14,13 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        sceneStyle: { backgroundColor: '#fff' },
+        sceneStyle: { backgroundColor: colors.surface },
         tabBarActiveTintColor: PRIMARY,
         tabBarInactiveTintColor: INACTIVE,
         tabBarStyle: {
-          backgroundColor: '#fff',
+          backgroundColor: colors.surface,
           borderTopWidth: 1,
-          borderTopColor: '#F3F4F6',
+          borderTopColor: colors.lineSubtle,
           height: 65 + insets.bottom,
           paddingBottom: 8 + insets.bottom,
           paddingTop: 8,

@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { QUERY_KEYS } from '@/constants';
 import { accountService } from '@/services/account.service';
 import type { AccountSummary } from '@/types/account.types';
+import { colors } from '@/theme/palette';
 
 const emailSchema = z.email();
 
@@ -75,7 +76,7 @@ function Field({
           onChangeText={onChangeText}
           onBlur={onBlur}
           placeholder={placeholder}
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.inkMuted}
           editable={editable}
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
@@ -123,14 +124,14 @@ export default function PersonalDataScreen() {
                 activeOpacity={0.85}
               >
                 {isFetching ? (
-                  <ActivityIndicator color="#fff" />
+                  <ActivityIndicator color={colors.inkInverse} />
                 ) : (
                   <Text className="text-white text-base font-semibold">Retry</Text>
                 )}
               </TouchableOpacity>
             </>
           ) : (
-            <ActivityIndicator color="#472FF8" />
+            <ActivityIndicator color={colors.primary} />
           )}
         </View>
       </SafeAreaView>
@@ -254,7 +255,7 @@ function PersonalDataForm({ summary }: { summary: AccountSummary }) {
           activeOpacity={0.85}
         >
           {saving ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={colors.inkInverse} />
           ) : (
             <Text className="text-white text-base font-semibold">Save Changes</Text>
           )}

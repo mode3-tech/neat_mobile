@@ -16,6 +16,7 @@ import { QUERY_KEYS } from '@/constants';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import { formatNairaWhole, formatDateLong } from '@/utils/format';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
+import { colors } from '@/theme/palette';
 
 type TabKey = 'all' | 'upcoming' | 'paid' | 'overdue';
 
@@ -76,7 +77,7 @@ function HistoryRow({ item }: { item: LoanHistoryItem }) {
           </Text>
         </View>
         <View className="w-7 h-7 rounded-md bg-primary-surface items-center justify-center">
-          <MaterialCommunityIcons name="chevron-right" size={18} color="#472FF8" />
+          <MaterialCommunityIcons name="chevron-right" size={18} color={colors.primary} />
         </View>
       </View>
     </TouchableOpacity>
@@ -139,7 +140,7 @@ export default function LoanHistoryScreen() {
 
       {isLoading ? (
         <View className="h-[180px] items-center justify-center">
-          <ActivityIndicator size="small" color="#472FF8" />
+          <ActivityIndicator size="small" color={colors.primary} />
         </View>
       ) : (
         <ScrollView
@@ -155,7 +156,7 @@ export default function LoanHistoryScreen() {
               <MaterialCommunityIcons
                 name="alert-circle-outline"
                 size={48}
-                color="#EF4444"
+                color={colors.danger}
               />
               <Text className="text-sm text-ink-soft mt-3 text-center">
                 Could not load loan history.{'\n'}Please try again.
@@ -166,7 +167,7 @@ export default function LoanHistoryScreen() {
               <MaterialCommunityIcons
                 name="file-document-outline"
                 size={48}
-                color="#E5E7EB"
+                color={colors.line}
               />
               <Text className="text-sm text-ink-soft mt-3 text-center">
                 No loans to show here yet.

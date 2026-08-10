@@ -14,6 +14,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { loanService } from '@/services/loan.service';
 import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
 import { getErrorMessage } from '@/utils/error';
+import { colors } from '@/theme/palette';
 
 interface RepaymentBottomSheetProps {
   visible: boolean;
@@ -121,7 +122,7 @@ export default function RepaymentBottomSheet({
                   }}
                   keyboardType="decimal-pad"
                   placeholder="0.00"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.inkMuted}
                 />
               </View>
               {exceedsBalance ? (
@@ -150,7 +151,7 @@ export default function RepaymentBottomSheet({
                     setErrorMessage('');
                   }}
                   placeholder="••••"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.inkMuted}
                   secureTextEntry={!showPin}
                   keyboardType="number-pad"
                   maxLength={PIN_LENGTH}
@@ -159,7 +160,7 @@ export default function RepaymentBottomSheet({
                   <MaterialCommunityIcons
                     name={showPin ? 'eye-off-outline' : 'eye-outline'}
                     size={20}
-                    color="#9CA3AF"
+                    color={colors.inkMuted}
                   />
                 </TouchableOpacity>
               </View>
@@ -180,7 +181,7 @@ export default function RepaymentBottomSheet({
                 activeOpacity={0.85}
               >
                 {isPending ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color={colors.inkInverse} />
                 ) : (
                   <Text
                     className={`text-base font-semibold ${
@@ -220,7 +221,7 @@ export default function RepaymentBottomSheet({
             <MaterialCommunityIcons
               name="check-decagram"
               size={72}
-              color="#16A34A"
+              color={colors.success}
             />
 
             <Text className="text-xl font-bold text-ink mt-4 mb-8">

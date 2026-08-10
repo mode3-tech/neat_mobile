@@ -15,6 +15,8 @@ import { Ionicons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import { router } from 'expo-router';
 
+import { colors } from '@/theme/palette';
+
 const CARD_MARGIN = 24;
 const AUTO_ROTATE_INTERVAL = 4000;
 
@@ -55,7 +57,7 @@ function buildCards(
   return [
     {
       id: 'available',
-      bgColor: '#472FF8',
+      bgColor: colors.primary,
       label: 'Neatpay Account',
       accountNumber,
       title: 'Available Balance',
@@ -66,7 +68,7 @@ function buildCards(
     },
     // {
     //   id: 'savings',
-    //   bgColor: '#472FF8',
+    //   bgColor: colors.primary,
     //   label: 'Neatpay Account',
     //   accountNumber,
     //   title: 'Total Savings',
@@ -77,7 +79,7 @@ function buildCards(
     // },
     {
       id: 'loan',
-      bgColor: '#472FF8',
+      bgColor: colors.primary,
       label: 'Neatpay Account',
       accountNumber,
       title: 'Loan Balance',
@@ -255,7 +257,7 @@ export default function BalanceCardCarousel({
             }}
           >
             {btn.icon && (
-              <Feather name={btn.icon} size={16} color="#472FF8" style={{ marginRight: 8 }} />
+              <Feather name={btn.icon} size={16} color={colors.primary} style={{ marginRight: 8 }} />
             )}
             <Text className="text-sm font-semibold text-primary">
               {btn.label}

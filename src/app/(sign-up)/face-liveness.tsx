@@ -12,10 +12,11 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
+import { colors } from '@/theme/palette';
 
-const PRIMARY = '#472FF8';
-const ERROR_COLOR = '#EF4444';
-const SUCCESS_COLOR = '#16A34A';
+const PRIMARY = colors.primary;
+const ERROR_COLOR = colors.danger;
+const SUCCESS_COLOR = colors.success;
 
 type Status = 'idle' | 'capturing' | 'verifying' | 'verified' | 'error';
 
@@ -189,7 +190,7 @@ export default function FaceLivenessScreen() {
             >
               {isLoading ? (
                 <View style={styles.loadingRow}>
-                  <ActivityIndicator color="#fff" />
+                  <ActivityIndicator color={colors.inkInverse} />
                   <Text style={styles.loadingText}>
                     {isCapturing ? 'Opening camera...' : 'Verifying...'}
                   </Text>
@@ -210,7 +211,7 @@ export default function FaceLivenessScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
   },
   content: {
     flex: 1,
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
   backBtn: {
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.line,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -229,23 +230,23 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.inkBody,
     fontWeight: '500',
   },
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.inkSoft,
     lineHeight: 20,
     marginBottom: 28,
   },
   infoBox: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: colors.primarySurface,
     borderRadius: 12,
     padding: 16,
     gap: 8,
@@ -253,7 +254,7 @@ const styles = StyleSheet.create({
   infoBoxTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     marginBottom: 4,
   },
   bulletRow: {
@@ -262,12 +263,12 @@ const styles = StyleSheet.create({
   },
   bullet: {
     fontSize: 13,
-    color: '#374151',
+    color: colors.inkBody,
     lineHeight: 20,
   },
   bulletText: {
     fontSize: 13,
-    color: '#374151',
+    color: colors.inkBody,
     lineHeight: 20,
     flex: 1,
   },
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   successCard: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: colors.primarySurface,
     borderRadius: 12,
     padding: 16,
     gap: 8,
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   checkMark: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 12,
     fontWeight: '700',
   },
@@ -308,7 +309,7 @@ const styles = StyleSheet.create({
   },
   successBody: {
     fontSize: 13,
-    color: '#374151',
+    color: colors.inkBody,
     lineHeight: 20,
   },
   spacer: {
@@ -324,7 +325,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -334,7 +335,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   loadingText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 14,
     fontWeight: '500',
   },

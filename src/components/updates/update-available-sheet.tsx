@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import { openStoreListing } from '@/utils/store-link';
+import { colors } from '@/theme/palette';
 
 type Props = {
   /** Optional `store_url` from GET /app/version. */
@@ -51,16 +52,16 @@ export function UpdateAvailableSheet({
           style={{
             width: 64,
             height: 64,
-            backgroundColor: '#EEF0FF',
+            backgroundColor: colors.primarySurface,
             marginBottom: 16,
           }}
         >
-          <Ionicons name="arrow-up-circle-outline" size={32} color="#472FF8" />
+          <Ionicons name="arrow-up-circle-outline" size={32} color={colors.primary} />
         </View>
 
         <Text
           className="font-bold"
-          style={{ fontSize: 20, color: '#472FF8', marginBottom: 8 }}
+          style={{ fontSize: 20, color: colors.primary, marginBottom: 8 }}
         >
           Update available
         </Text>
@@ -68,7 +69,7 @@ export function UpdateAvailableSheet({
         <Text
           style={{
             fontSize: 15,
-            color: '#000000',
+            color: colors.overlay,
             opacity: 0.75,
             lineHeight: 22,
             marginBottom: 24,
@@ -85,7 +86,7 @@ export function UpdateAvailableSheet({
           }}
           className="items-center rounded-full bg-primary py-4 active:opacity-70"
         >
-          <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '600' }}>
+          <Text style={{ color: colors.inkInverse, fontSize: 15, fontWeight: '600' }}>
             Update Now
           </Text>
         </Pressable>
@@ -97,7 +98,7 @@ export function UpdateAvailableSheet({
         >
           <Text
             style={{
-              color: '#000000',
+              color: colors.overlay,
               opacity: 0.6,
               fontSize: 15,
               fontWeight: '600',

@@ -9,6 +9,7 @@ import { useMutation } from '@tanstack/react-query';
 import { accountService } from '@/services/account.service';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { getCloseBlockerMessage } from '@/utils/close-account';
+import { colors } from '@/theme/palette';
 
 const MAX_REASON_CHARS = 300;
 
@@ -79,7 +80,7 @@ export default function CloseAccountReasonScreen() {
           className="border border-gray-200 rounded-full w-10 h-10 items-center justify-center"
           onPress={() => router.back()}
         >
-          <MaterialCommunityIcons name="chevron-left" size={24} color="#374151" />
+          <MaterialCommunityIcons name="chevron-left" size={24} color={colors.inkBody} />
         </TouchableOpacity>
         <Text className="flex-1 text-center text-lg font-bold text-ink mr-10">
           Close Account
@@ -109,7 +110,7 @@ export default function CloseAccountReasonScreen() {
                 <MaterialCommunityIcons
                   name={isSelected ? 'radiobox-marked' : 'radiobox-blank'}
                   size={22}
-                  color={isSelected ? '#472FF8' : '#9CA3AF'}
+                  color={isSelected ? colors.primary : colors.inkMuted}
                 />
               </TouchableOpacity>
 
@@ -125,7 +126,7 @@ export default function CloseAccountReasonScreen() {
                     value={otherText}
                     onChangeText={setOtherText}
                     placeholder="Tell us more…"
-                    placeholderTextColor="#9CA3AF"
+                    placeholderTextColor={colors.inkMuted}
                     multiline
                     maxLength={MAX_REASON_CHARS}
                     textAlignVertical="top"
@@ -148,7 +149,7 @@ export default function CloseAccountReasonScreen() {
           activeOpacity={0.85}
         >
           {closeMutation.isPending ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={colors.inkInverse} />
           ) : (
             <Text
               className={`text-base font-semibold ${

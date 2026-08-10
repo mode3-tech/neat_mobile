@@ -3,6 +3,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { formatNairaWhole, formatTransactionDateTime } from '@/utils/format';
 import type { Transaction } from '@/types/transaction.types';
+import { accents, colors } from '@/theme/palette';
 
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
@@ -14,25 +15,25 @@ interface TransactionIconConfig {
 }
 
 const ICON_MAP: TransactionIconConfig[] = [
-  { keywords: ['airtime'], icon: 'phone', bgColor: '#F3F0FF', iconColor: '#472FF8' },
-  { keywords: ['transfer', 'send'], icon: 'bank-transfer', bgColor: '#EBF5FF', iconColor: '#3B82F6' },
-  { keywords: ['data'], icon: 'wifi', bgColor: '#ECFDF5', iconColor: '#10B981' },
-  { keywords: ['electricity'], icon: 'flash', bgColor: '#FFF7ED', iconColor: '#F59E0B' },
-  { keywords: ['cable', 'tv'], icon: 'television', bgColor: '#FFF1F2', iconColor: '#F97316' },
-  { keywords: ['betting'], icon: 'trophy', bgColor: '#FEF2F2', iconColor: '#EF4444' },
-  { keywords: ['bonus', 'cashback', 'reward'], icon: 'gift', bgColor: '#FDF2F8', iconColor: '#EC4899' },
+  { keywords: ['airtime'], icon: 'phone', bgColor: accents.airtime.surface, iconColor: accents.airtime.icon },
+  { keywords: ['transfer', 'send'], icon: 'bank-transfer', bgColor: accents.transfer.surface, iconColor: accents.transfer.icon },
+  { keywords: ['data'], icon: 'wifi', bgColor: accents.data.surface, iconColor: accents.data.icon },
+  { keywords: ['electricity'], icon: 'flash', bgColor: accents.electricity.surface, iconColor: accents.electricity.icon },
+  { keywords: ['cable', 'tv'], icon: 'television', bgColor: accents.cable.surface, iconColor: accents.cable.icon },
+  { keywords: ['betting'], icon: 'trophy', bgColor: accents.betting.surface, iconColor: accents.betting.icon },
+  { keywords: ['bonus', 'cashback', 'reward'], icon: 'gift', bgColor: accents.reward.surface, iconColor: accents.reward.icon },
 ];
 
 const DEFAULT_ICON: Omit<TransactionIconConfig, 'keywords'> = {
   icon: 'swap-horizontal',
-  bgColor: '#F3F4F6',
-  iconColor: '#6B7280',
+  bgColor: accents.fallback.surface,
+  iconColor: accents.fallback.icon,
 };
 
 export const STATUS_COLORS: Record<string, string> = {
-  successful: '#16A34A',
-  pending: '#F59E0B',
-  failed: '#EF4444',
+  successful: colors.success,
+  pending: colors.warning,
+  failed: colors.danger,
 };
 
 export function getTransactionIcon(description: string) {
@@ -54,7 +55,7 @@ export function TransactionRow({
   const isCredit = transaction.type === 'credit';
   const prefix = isCredit ? '+' : '-';
   const formattedAmount = formatNairaWhole(transaction.amount);
-  const statusColor = STATUS_COLORS[transaction.status] ?? '#6B7280';
+  const statusColor = STATUS_COLORS[transaction.status] ?? colors.inkSoft;
 
   // Always a TouchableOpacity; `disabled` when there's no handler makes it inert
   // (no press feedback, no action) — equivalent to a static row, without `any`.

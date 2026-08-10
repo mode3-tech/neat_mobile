@@ -3,6 +3,8 @@ import { Image, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 
+import { colors } from '@/theme/palette';
+
 export default function NewDeviceDetectedScreen() {
   const params = useLocalSearchParams<{ session_token: string }>();
   const sessionToken = Array.isArray(params.session_token)
@@ -33,7 +35,7 @@ export default function NewDeviceDetectedScreen() {
       {/* Bottom card */}
       <View className="flex-[0.45] rounded-t-3xl overflow-hidden">
         <LinearGradient
-          colors={['#2A1B6A', '#0D0B2E']}
+          colors={[colors.primaryDark, colors.primaryDeep]}
           style={{ flex: 1 }}
           className="px-8 pt-20 items-center"
         >

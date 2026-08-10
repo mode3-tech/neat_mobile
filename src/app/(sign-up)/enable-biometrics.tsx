@@ -15,8 +15,9 @@ import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
 import { getRegisterErrorAction, type RegisterErrorAction } from '@/utils/register-errors';
 import { buildRegisterPayload } from '@/utils/register-payload';
+import { colors } from '@/theme/palette';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = colors.primary;
 
 export default function EnableBiometricsScreen() {
   const store = useSignUpStore();
@@ -75,8 +76,8 @@ export default function EnableBiometricsScreen() {
         <Switch
           value={enabled}
           onValueChange={handleToggle}
-          trackColor={{ false: '#E5E7EB', true: PRIMARY }}
-          thumbColor="#fff"
+          trackColor={{ false: colors.surfaceDisabled, true: PRIMARY }}
+          thumbColor={colors.surface}
         />
       </View>
 
@@ -87,7 +88,7 @@ export default function EnableBiometricsScreen() {
           value={redeemCode}
           onChangeText={setRedeemCode}
           placeholder="Enter referral or promo code"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.inkMuted}
           autoCapitalize="characters"
           autoCorrect={false}
           returnKeyType="done"
@@ -108,7 +109,7 @@ export default function EnableBiometricsScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.inkInverse} />
             ) : (
               <Text style={styles.primaryBtnText}>Complete Setup</Text>
             )}
@@ -132,13 +133,13 @@ export default function EnableBiometricsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     paddingHorizontal: 24,
   },
   backBtn: {
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.line,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -147,18 +148,18 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.inkBody,
     fontWeight: '500',
   },
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.inkSoft,
     lineHeight: 20,
     marginBottom: 28,
   },
@@ -166,14 +167,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
   toggleLabel: {
     fontSize: 15,
-    color: '#1A1A1A',
+    color: colors.ink,
     fontWeight: '500',
   },
   redeemBlock: {
@@ -181,24 +182,24 @@ const styles = StyleSheet.create({
   },
   redeemLabel: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.inkSoft,
     fontWeight: '500',
     marginBottom: 8,
   },
   redeemInput: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.surfaceInput,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 15,
-    color: '#1A1A1A',
+    color: colors.ink,
   },
   spacer: {
     flex: 1,
   },
   errorText: {
     fontSize: 13,
-    color: '#EF4444',
+    color: colors.danger,
     textAlign: 'center',
     marginBottom: 12,
   },
@@ -208,14 +209,14 @@ const styles = StyleSheet.create({
   },
   recoveryBtn: {
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.line,
     borderRadius: 50,
     paddingVertical: 14,
     alignItems: 'center',
   },
   recoveryBtnText: {
     fontSize: 15,
-    color: '#374151',
+    color: colors.inkBody,
     fontWeight: '600',
   },
   btnOuter: {
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },

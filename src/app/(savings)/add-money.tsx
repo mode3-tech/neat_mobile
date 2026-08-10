@@ -10,6 +10,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
+import { colors } from '@/theme/palette';
+
 interface FundingOption {
   image: ImageSourcePropType;
   label: string;
@@ -82,7 +84,7 @@ export default function AddMoneyScreen() {
             <MaterialCommunityIcons
               name="chevron-right"
               size={22}
-              color="#9CA3AF"
+              color={colors.inkMuted}
             />
           </TouchableOpacity>
         ))}

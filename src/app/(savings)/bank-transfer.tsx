@@ -6,6 +6,7 @@ import * as Clipboard from 'expo-clipboard';
 import { router } from 'expo-router';
 
 import { accountService } from '@/services/account.service';
+import { colors } from '@/theme/palette';
 
 export default function BankTransferScreen() {
   const { data: accountSummary } = useQuery({
@@ -50,7 +51,7 @@ export default function BankTransferScreen() {
             <MaterialCommunityIcons
               name="content-copy"
               size={18}
-              color="#9CA3AF"
+              color={colors.inkMuted}
             />
           </TouchableOpacity>
         </View>

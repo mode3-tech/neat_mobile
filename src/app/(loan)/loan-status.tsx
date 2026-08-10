@@ -16,6 +16,7 @@ import { QUERY_KEYS } from '@/constants';
 import { formatNairaWhole, titleCase } from '@/utils/format';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import type { LoanStatusItem } from '@/types/loan.types';
+import { colors } from '@/theme/palette';
 
 function StatTile({
   icon,
@@ -30,7 +31,7 @@ function StatTile({
   return (
     <View className="flex-1 bg-primary rounded-2xl p-5">
       <View className="w-10 h-10 rounded-full bg-white/20 items-center justify-center mb-6">
-        <MaterialCommunityIcons name={icon} size={20} color="#FFFFFF" />
+        <MaterialCommunityIcons name={icon} size={20} color={colors.inkInverse} />
       </View>
       <Text className="text-xs text-white/80 mb-1.5">{label}</Text>
       <Text className="text-[17px] font-bold text-white">{value}</Text>
@@ -68,21 +69,21 @@ function getStatusDisplay(status: string): {
   switch (status) {
     case 'embryo':
     case 'pending':
-      return { label: 'Pending', bg: '#FEF3C7', text: '#B45309' };
+      return { label: 'Pending', bg: colors.warningSurfaceStrong, text: colors.warningStrong };
     case 'active':
     case 'approved':
     case 'disbursed':
-      return { label: titleCase(status), bg: '#D1FAE5', text: '#16A34A' };
+      return { label: titleCase(status), bg: colors.successSurfaceStrong, text: colors.success };
     case 'overdue':
     case 'defaulted':
     case 'rejected':
-      return { label: titleCase(status), bg: '#FEE2E2', text: '#DC2626' };
+      return { label: titleCase(status), bg: colors.dangerSurfaceStrong, text: colors.dangerStrong };
     case 'paid':
     case 'completed':
     case 'closed':
-      return { label: titleCase(status), bg: '#EEF0FF', text: '#472FF8' };
+      return { label: titleCase(status), bg: colors.primarySurface, text: colors.primary };
     default:
-      return { label: titleCase(status), bg: '#F3F4F6', text: '#6B7280' };
+      return { label: titleCase(status), bg: colors.surfaceSubtle, text: colors.inkSoft };
   }
 }
 
@@ -165,7 +166,7 @@ export default function LoanStatusScreen() {
 
       {isLoading ? (
         <View className="h-[180px] items-center justify-center">
-          <ActivityIndicator size="small" color="#472FF8" />
+          <ActivityIndicator size="small" color={colors.primary} />
         </View>
       ) : (
         <ScrollView
@@ -181,7 +182,7 @@ export default function LoanStatusScreen() {
               <MaterialCommunityIcons
                 name="alert-circle-outline"
                 size={48}
-                color="#EF4444"
+                color={colors.danger}
               />
               <Text className="text-sm text-ink-soft mt-3 text-center">
                 Could not load loan status.{'\n'}Please try again.

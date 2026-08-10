@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
+import { colors } from '@/theme/palette';
 
 export default function BulkTransferSuccessScreen() {
   const reset = useBulkTransferStore((s) => s.reset);
@@ -43,7 +44,7 @@ export default function BulkTransferSuccessScreen() {
 
         <View className="flex-1 items-center justify-center">
           <View className="w-16 h-16 rounded-full bg-success items-center justify-center mb-5">
-            <MaterialCommunityIcons name="check" size={32} color="#fff" />
+            <MaterialCommunityIcons name="check" size={32} color={colors.inkInverse} />
           </View>
           <Text className="text-[22px] font-bold text-primary text-center mb-2">
             Successful!

@@ -3,6 +3,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
+import { colors } from '@/theme/palette';
+
 const SUPPORT_EMAIL = 'support@neatpay.ng';
 
 export function DeviceBlockedScreen(): React.JSX.Element {
@@ -20,16 +22,16 @@ export function DeviceBlockedScreen(): React.JSX.Element {
           style={{
             width: 96,
             height: 96,
-            backgroundColor: '#EEF0FF',
+            backgroundColor: colors.primarySurface,
             marginBottom: 24,
           }}
         >
-          <Ionicons name="shield-outline" size={48} color="#472FF8" />
+          <Ionicons name="shield-outline" size={48} color={colors.primary} />
         </View>
 
         <Text
           className="text-center font-bold"
-          style={{ fontSize: 22, color: '#472FF8', marginBottom: 12 }}
+          style={{ fontSize: 22, color: colors.primary, marginBottom: 12 }}
         >
           Device Not Secure
         </Text>
@@ -38,7 +40,7 @@ export function DeviceBlockedScreen(): React.JSX.Element {
           className="text-center"
           style={{
             fontSize: 15,
-            color: '#000000',
+            color: colors.overlay,
             opacity: 0.75,
             lineHeight: 22,
             marginBottom: 24,
@@ -53,7 +55,7 @@ export function DeviceBlockedScreen(): React.JSX.Element {
           className="text-center"
           style={{
             fontSize: 13,
-            color: '#000000',
+            color: colors.overlay,
             opacity: 0.5,
             lineHeight: 20,
             marginBottom: 40,
@@ -71,14 +73,14 @@ export function DeviceBlockedScreen(): React.JSX.Element {
           }}
           style={({ pressed }) => ({
             borderWidth: 1,
-            borderColor: '#472FF8',
+            borderColor: colors.primary,
             borderRadius: 50,
             paddingHorizontal: 32,
             paddingVertical: 14,
             opacity: pressed ? 0.7 : 1,
           })}
         >
-          <Text style={{ color: '#472FF8', fontSize: 15, fontWeight: '600' }}>
+          <Text style={{ color: colors.primary, fontSize: 15, fontWeight: '600' }}>
             Contact Support
           </Text>
         </Pressable>

@@ -12,8 +12,9 @@ import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
+import { colors } from '@/theme/palette';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = colors.primary;
 
 export default function PhoneValidationScreen() {
   const phone = useSignUpStore((s) => s.phone);
@@ -73,7 +74,7 @@ export default function PhoneValidationScreen() {
           activeOpacity={0.85}
         >
           {loading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={colors.inkInverse} />
           ) : (
             <Text style={styles.primaryBtnText}>Send OTP</Text>
           )}
@@ -86,13 +87,13 @@ export default function PhoneValidationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     paddingHorizontal: 24,
   },
   backBtn: {
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.line,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -101,22 +102,22 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.inkBody,
     fontWeight: '500',
   },
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.inkSoft,
     lineHeight: 20,
   },
   phoneHighlight: {
-    color: '#1A1A1A',
+    color: colors.ink,
     fontWeight: '600',
   },
   body: {
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
   },
   hint: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.inkBody,
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -148,13 +149,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   errorText: {
     fontSize: 13,
-    color: '#EF4444',
+    color: colors.danger,
     textAlign: 'center',
     marginTop: 8,
   },

@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 
+import { colors } from '@/theme/palette';
+
 export default function SuccessScreen() {
   const { title, message } = useLocalSearchParams<{ title?: string; message?: string }>();
   const scale = useRef(new Animated.Value(0)).current;
@@ -33,7 +35,7 @@ export default function SuccessScreen() {
           className="w-28 h-28 rounded-full bg-success-surface items-center justify-center mb-8"
         >
           <View className="w-20 h-20 rounded-full bg-success items-center justify-center">
-            <Ionicons name="checkmark" size={44} color="#fff" />
+            <Ionicons name="checkmark" size={44} color={colors.inkInverse} />
           </View>
         </Animated.View>
 

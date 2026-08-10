@@ -13,8 +13,9 @@ import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
+import { colors } from '@/theme/palette';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = colors.primary;
 const PHONE_REGEX = /^\+?\d{10,14}$/;
 
 export default function AlternatePhoneScreen() {
@@ -83,7 +84,7 @@ export default function AlternatePhoneScreen() {
                 setError('');
               }}
               placeholder="08012345678"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.inkMuted}
               keyboardType="phone-pad"
               autoCorrect={false}
             />
@@ -110,7 +111,7 @@ export default function AlternatePhoneScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.inkInverse} />
             ) : (
               <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
                 Send Code
@@ -126,7 +127,7 @@ export default function AlternatePhoneScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
   },
   scrollContent: {
     flexGrow: 1,
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
   backBtn: {
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.line,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -145,18 +146,18 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.inkBody,
     fontWeight: '500',
   },
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.inkSoft,
     lineHeight: 20,
     marginBottom: 28,
   },
@@ -164,27 +165,27 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#374151',
+    color: colors.inkBody,
     marginBottom: 8,
   },
   inputWrap: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.surfaceInput,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 15,
   },
   input: {
     fontSize: 15,
-    color: '#1A1A1A',
+    color: colors.ink,
     padding: 0,
   },
   errorText: {
     fontSize: 13,
-    color: '#EF4444',
+    color: colors.danger,
     marginTop: 8,
   },
   infoCard: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: colors.primarySurface,
     borderRadius: 12,
     padding: 16,
     marginTop: 20,
@@ -194,11 +195,11 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
   },
   infoBody: {
     fontSize: 13,
-    color: '#374151',
+    color: colors.inkBody,
     lineHeight: 20,
   },
   spacer: {
@@ -214,14 +215,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   disabledBtn: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.surfaceDisabled,
   },
   disabledBtnText: {
-    color: '#9CA3AF',
+    color: colors.inkMuted,
   },
 });

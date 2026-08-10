@@ -18,6 +18,7 @@ import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { savingsService } from '@/services/savings.service';
 import { useSavingsStore } from '@/stores/savings.store';
 import { getErrorMessage } from '@/utils/error';
+import { colors } from '@/theme/palette';
 
 export default function SavingsPinScreen() {
   const store = useSavingsStore();
@@ -95,7 +96,7 @@ export default function SavingsPinScreen() {
               setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH))
             }
             placeholder="••••"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.inkMuted}
             secureTextEntry={!showPin}
             keyboardType="number-pad"
             maxLength={PIN_LENGTH}
@@ -104,7 +105,7 @@ export default function SavingsPinScreen() {
             <MaterialCommunityIcons
               name={showPin ? 'eye-off-outline' : 'eye-outline'}
               size={20}
-              color="#9CA3AF"
+              color={colors.inkMuted}
             />
           </TouchableOpacity>
         </View>
@@ -121,7 +122,7 @@ export default function SavingsPinScreen() {
           activeOpacity={0.85}
         >
           {submitting ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={colors.inkInverse} />
           ) : (
             <Text className={`text-base font-semibold ${canConfirm ? 'text-white' : 'text-ink-muted'}`}>
               Confirm
@@ -139,7 +140,7 @@ export default function SavingsPinScreen() {
             <MaterialCommunityIcons
               name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
               size={28}
-              color="#472FF8"
+              color={colors.primary}
             />
           </TouchableOpacity>
         )}

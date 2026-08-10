@@ -19,8 +19,9 @@ import { useBiometricSignIn } from '@/hooks/use-biometric-sign-in';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { getErrorMessage } from '@/utils/error';
+import { colors } from '@/theme/palette';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = colors.primary;
 
 export default function SignInScreen() {
   const [phone, setPhone] = useState('');
@@ -108,7 +109,7 @@ export default function SignInScreen() {
                 value={phone}
                 onChangeText={setPhone}
                 placeholder="Enter your phone number"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.inkMuted}
                 keyboardType="phone-pad"
                 autoCorrect={false}
               />
@@ -124,7 +125,7 @@ export default function SignInScreen() {
                 value={password}
                 onChangeText={setPassword}
                 placeholder="Enter your password"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.inkMuted}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -155,7 +156,7 @@ export default function SignInScreen() {
 
             >
               {loading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={colors.inkInverse} />
               ) : (
                 <Text style={[styles.primaryBtnText, !canSignIn && styles.disabledBtnText]}>
                   Sign In
@@ -224,7 +225,7 @@ export default function SignInScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
   },
   scrollContent: {
     flexGrow: 1,
@@ -244,7 +245,7 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     marginBottom: 4,
   },
   brandAccent: {
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
   },
   tagline: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.inkSoft,
   },
   field: {
     marginBottom: 20,
@@ -260,11 +261,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#374151',
+    color: colors.inkBody,
     marginBottom: 8,
   },
   inputWrap: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.surfaceInput,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 15,
@@ -276,12 +277,12 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
-    color: '#1A1A1A',
+    color: colors.ink,
     padding: 0,
   },
   eyeIcon: {
     fontSize: 16,
-    color: '#9CA3AF',
+    color: colors.inkMuted,
   },
   spacer: {
     flex: 1,
@@ -306,15 +307,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   disabledBtn: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.surfaceDisabled,
   },
   disabledBtnText: {
-    color: '#9CA3AF',
+    color: colors.inkMuted,
   },
   biometricBtn: {
     flexDirection: 'row',
@@ -322,18 +323,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     borderWidth: 1.5,
-    borderColor: '#E5E7EB',
+    borderColor: colors.line,
     borderRadius: 50,
     paddingVertical: 14,
   },
   biometricText: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.inkBody,
     fontWeight: '500',
   },
   signUpText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.inkSoft,
     textAlign: 'center' as const,
   },
   signUpLink: {

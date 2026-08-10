@@ -23,6 +23,7 @@ import type { VasBiller, VasProduct } from '@/types/vas.types';
 import { formatNairaWhole } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
+import { colors } from '@/theme/palette';
 
 const PHONE_LENGTH = 11;
 
@@ -139,7 +140,7 @@ export default function BuyDataScreen() {
 
           {billersQuery.isLoading ? (
             <View className="h-[68px] items-center justify-center">
-              <ActivityIndicator color="#472FF8" />
+              <ActivityIndicator color={colors.primary} />
             </View>
           ) : billersQuery.isError ? (
             <View className="h-[68px] items-center justify-center">
@@ -187,14 +188,14 @@ export default function BuyDataScreen() {
             value={phone}
             onChangeText={(t) => setPhone(t.replace(/\D/g, '').slice(0, PHONE_LENGTH))}
             placeholder="Phone Number"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.inkMuted}
             keyboardType="phone-pad"
             maxLength={PHONE_LENGTH}
           />
           <MaterialCommunityIcons
             name="account-circle-outline"
             size={22}
-            color="#6B7280"
+            color={colors.inkSoft}
           />
         </View>
 
@@ -215,9 +216,9 @@ export default function BuyDataScreen() {
             {selectedPlan ? selectedPlan.name : 'Select Plan'}
           </Text>
           {plansQuery.isLoading && !!selectedBillerId ? (
-            <ActivityIndicator size="small" color="#472FF8" />
+            <ActivityIndicator size="small" color={colors.primary} />
           ) : (
-            <MaterialCommunityIcons name="chevron-down" size={22} color="#6B7280" />
+            <MaterialCommunityIcons name="chevron-down" size={22} color={colors.inkSoft} />
           )}
         </TouchableOpacity>
         <InsufficientFundsHint show={exceedsBalance} spacing="mb-5" />
@@ -256,13 +257,13 @@ export default function BuyDataScreen() {
             <View className="flex-row items-center justify-between px-6 mb-4">
               <Text className="text-lg font-bold text-ink">Select Plan</Text>
               <TouchableOpacity onPress={closePlanModal}>
-                <MaterialCommunityIcons name="close" size={24} color="#374151" />
+                <MaterialCommunityIcons name="close" size={24} color={colors.inkBody} />
               </TouchableOpacity>
             </View>
 
             {plansQuery.isLoading ? (
               <View className="h-24 items-center justify-center">
-                <ActivityIndicator color="#472FF8" />
+                <ActivityIndicator color={colors.primary} />
               </View>
             ) : plansQuery.isError ? (
               <View className="h-24 items-center justify-center px-6">
@@ -286,20 +287,20 @@ export default function BuyDataScreen() {
               <>
                 <View className="px-6 mb-3">
                   <View className="bg-surface-input rounded-xl px-4 py-3 flex-row items-center">
-                    <MaterialCommunityIcons name="magnify" size={20} color="#9CA3AF" />
+                    <MaterialCommunityIcons name="magnify" size={20} color={colors.inkMuted} />
                     <TextInput
                       className="flex-1 text-[15px] text-ink p-0 ml-2"
                       value={planSearch}
                       onChangeText={setPlanSearch}
                       placeholder="Search plans"
-                      placeholderTextColor="#9CA3AF"
+                      placeholderTextColor={colors.inkMuted}
                     />
                     {planSearch.length > 0 && (
                       <TouchableOpacity onPress={() => setPlanSearch('')}>
                         <MaterialCommunityIcons
                           name="close-circle"
                           size={18}
-                          color="#9CA3AF"
+                          color={colors.inkMuted}
                         />
                       </TouchableOpacity>
                     )}
@@ -341,7 +342,7 @@ export default function BuyDataScreen() {
                             <MaterialCommunityIcons
                               name="check-circle"
                               size={20}
-                              color="#472FF8"
+                              color={colors.primary}
                             />
                           )}
                         </TouchableOpacity>

@@ -8,6 +8,7 @@ import { QUERY_KEYS } from '@/constants';
 import { accountService } from '@/services/account.service';
 import { toggleNotifications } from '@/services/notification.service';
 import type { AccountSummary } from '@/types/account.types';
+import { colors } from '@/theme/palette';
 
 export default function NotificationsScreen() {
   const queryClient = useQueryClient();
@@ -78,9 +79,9 @@ export default function NotificationsScreen() {
           value={displayEnabled}
           onValueChange={handleToggle}
           disabled={switchDisabled}
-          trackColor={{ false: '#E5E7EB', true: '#472FF8' }}
-          thumbColor="#fff"
-          ios_backgroundColor="#E5E7EB"
+          trackColor={{ false: colors.surfaceDisabled, true: colors.primary }}
+          thumbColor={colors.surface}
+          ios_backgroundColor={colors.surfaceDisabled}
         />
       </View>
 

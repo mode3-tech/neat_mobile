@@ -4,6 +4,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { File, Paths } from 'expo-file-system';
 
+import { colors } from '@/theme/palette';
+
 interface PhotoPickerSheetProps {
   visible: boolean;
   currentPhotoUri: string | null;
@@ -94,7 +96,7 @@ export function PhotoPickerSheet({
               {currentPhotoUri ? (
                 <Image source={{ uri: currentPhotoUri }} className="w-full h-full" />
               ) : (
-                <MaterialCommunityIcons name="camera" size={36} color="#9CA3AF" />
+                <MaterialCommunityIcons name="camera" size={36} color={colors.inkMuted} />
               )}
             </View>
           </View>

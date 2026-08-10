@@ -7,6 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
+import { colors } from '@/theme/palette';
 
 export default function CloseAccountSuccessScreen() {
   const queryClient = useQueryClient();
@@ -57,7 +58,7 @@ export default function CloseAccountSuccessScreen() {
           className="w-28 h-28 rounded-full bg-success-surface items-center justify-center mb-8"
         >
           <View className="w-20 h-20 rounded-full bg-success items-center justify-center">
-            <Ionicons name="checkmark" size={44} color="#fff" />
+            <Ionicons name="checkmark" size={44} color={colors.inkInverse} />
           </View>
         </Animated.View>
 

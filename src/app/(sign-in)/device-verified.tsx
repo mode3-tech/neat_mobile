@@ -4,7 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-const PRIMARY = '#472FF8';
+import { colors } from '@/theme/palette';
+
+const PRIMARY = colors.primary;
 
 export default function DeviceVerifiedScreen() {
   useEffect(() => {
@@ -18,7 +20,7 @@ export default function DeviceVerifiedScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <View style={styles.iconWrap}>
-          <Ionicons name="checkmark-circle" size={100} color="#22C55E" />
+          <Ionicons name="checkmark-circle" size={100} color={colors.successBright} />
         </View>
 
         <Text style={styles.title}>Device Verified{'\n'}Successfully</Text>
@@ -43,7 +45,7 @@ export default function DeviceVerifiedScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     paddingHorizontal: 24,
   },
   content: {
@@ -57,13 +59,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#1A1A1A',
+    color: colors.ink,
     textAlign: 'center',
     marginBottom: 12,
   },
   subtitle: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.inkSoft,
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -78,7 +80,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },

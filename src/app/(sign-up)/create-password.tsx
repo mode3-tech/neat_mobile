@@ -11,9 +11,10 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 
 import { useSignUpStore } from '@/stores/sign-up.store';
+import { colors } from '@/theme/palette';
 
-const PRIMARY = '#472FF8';
-const ERROR_COLOR = '#EF4444';
+const PRIMARY = colors.primary;
+const ERROR_COLOR = colors.danger;
 
 const REQUIREMENTS = [
   { label: 'An uppercase letter', test: (p: string) => /[A-Z]/.test(p) },
@@ -106,7 +107,7 @@ export default function CreatePasswordScreen() {
                   setHasError(false);
                 }}
                 placeholder="Enter password"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.inkMuted}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -146,7 +147,7 @@ export default function CreatePasswordScreen() {
                   setHasError(false);
                 }}
                 placeholder="Please enter password again"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.inkMuted}
                 secureTextEntry={!showConfirm}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -185,7 +186,7 @@ export default function CreatePasswordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
   },
   scrollContent: {
     flexGrow: 1,
@@ -195,7 +196,7 @@ const styles = StyleSheet.create({
   backBtn: {
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.line,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -204,18 +205,18 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.inkBody,
     fontWeight: '500',
   },
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.inkSoft,
     lineHeight: 20,
     marginBottom: 28,
   },
@@ -225,11 +226,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#374151',
+    color: colors.inkBody,
     marginBottom: 8,
   },
   inputWrap: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.surfaceInput,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 15,
@@ -239,18 +240,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inputWrapError: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     borderColor: ERROR_COLOR,
   },
   input: {
     flex: 1,
     fontSize: 15,
-    color: '#1A1A1A',
+    color: colors.ink,
     padding: 0,
   },
   eyeIcon: {
     fontSize: 16,
-    color: '#9CA3AF',
+    color: colors.inkMuted,
   },
   requirements: {
     marginTop: 10,
@@ -258,7 +259,7 @@ const styles = StyleSheet.create({
   },
   reqIntro: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.inkSoft,
     lineHeight: 18,
     marginBottom: 4,
   },
@@ -271,12 +272,12 @@ const styles = StyleSheet.create({
   },
   bullet: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.inkSoft,
     lineHeight: 18,
   },
   bulletText: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.inkSoft,
     lineHeight: 18,
   },
   errorText: {
@@ -297,18 +298,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   disabledBtn: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.surfaceDisabled,
   },
   disabledBtnText: {
-    color: '#9CA3AF',
+    color: colors.inkMuted,
   },
   setCard: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: colors.primarySurface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
@@ -323,23 +324,23 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: '#16A34A',
+    backgroundColor: colors.success,
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkMark: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 12,
     fontWeight: '700',
   },
   setTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1A1A1A',
+    color: colors.ink,
   },
   setBody: {
     fontSize: 13,
-    color: '#374151',
+    color: colors.inkBody,
     lineHeight: 18,
   },
   changeLink: {

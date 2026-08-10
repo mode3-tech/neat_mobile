@@ -15,6 +15,7 @@ import { useProfileStore } from '@/stores/profile.store';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { PhotoPickerSheet } from '@/components/ui/PhotoPickerSheet';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
+import { colors } from '@/theme/palette';
 
 interface RowProps {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
@@ -32,12 +33,12 @@ function SettingsRow({ icon, label, onPress, disabled }: RowProps) {
       activeOpacity={0.7}
     >
       <View className="w-9 h-9 rounded-full bg-primary-surface items-center justify-center mr-3">
-        <MaterialCommunityIcons name={icon} size={18} color="#472FF8" />
+        <MaterialCommunityIcons name={icon} size={18} color={colors.primary} />
       </View>
       <Text className={`flex-1 text-[15px] ${disabled ? 'text-gray-400' : 'text-ink'}`}>
         {label}
       </Text>
-      <MaterialCommunityIcons name="chevron-right" size={22} color="#9CA3AF" />
+      <MaterialCommunityIcons name="chevron-right" size={22} color={colors.inkMuted} />
     </TouchableOpacity>
   );
 }
@@ -171,7 +172,7 @@ export default function ProfileScreen() {
               )}
               {uploadPhotoMutation.isPending && (
                 <View className="absolute inset-0 bg-black/40 items-center justify-center">
-                  <ActivityIndicator color="#fff" />
+                  <ActivityIndicator color={colors.inkInverse} />
                 </View>
               )}
             </View>
@@ -181,7 +182,7 @@ export default function ProfileScreen() {
               activeOpacity={0.85}
               disabled={uploadPhotoMutation.isPending}
             >
-              <MaterialCommunityIcons name="camera" size={16} color="#fff" />
+              <MaterialCommunityIcons name="camera" size={16} color={colors.inkInverse} />
             </TouchableOpacity>
           </View>
           <Text className="mt-3 text-base font-semibold text-ink">
@@ -242,7 +243,7 @@ export default function ProfileScreen() {
             onPress={() => setLogoutVisible(true)}
             activeOpacity={0.85}
           >
-            <MaterialCommunityIcons name="logout" size={18} color="#EF4444" />
+            <MaterialCommunityIcons name="logout" size={18} color={colors.danger} />
             <Text className="text-danger text-base font-semibold ml-2">Log Out</Text>
           </TouchableOpacity>
         </View>

@@ -3,6 +3,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
+import { colors } from '@/theme/palette';
+
 function SectionTitle({ children }: { children: string }) {
   return (
     <Text className="text-[16px] font-bold text-ink mt-6 mb-2">{children}</Text>
@@ -42,7 +44,7 @@ export default function CloseAccountNoticeScreen() {
           className="border border-gray-200 rounded-full w-10 h-10 items-center justify-center"
           onPress={() => router.back()}
         >
-          <MaterialCommunityIcons name="chevron-left" size={24} color="#374151" />
+          <MaterialCommunityIcons name="chevron-left" size={24} color={colors.inkBody} />
         </TouchableOpacity>
         <Text className="flex-1 text-center text-lg font-bold text-ink mr-10">
           Account Cancellation Notice

@@ -12,6 +12,7 @@ import { toast } from 'sonner-native';
 
 import { useVasStore } from '@/stores/vas.store';
 import TransactionSummaryCard from '@/components/features/vas/TransactionSummaryCard';
+import { colors } from '@/theme/palette';
 
 export default function AirtimeResultScreen() {
   const params = useLocalSearchParams<{
@@ -53,11 +54,11 @@ export default function AirtimeResultScreen() {
             <MaterialCommunityIcons
               name="check-decagram"
               size={72}
-              color="#16A34A"
+              color={colors.success}
             />
           ) : (
             <View className="w-[72px] h-[72px] rounded-2xl bg-danger items-center justify-center">
-              <MaterialCommunityIcons name="close" size={40} color="#fff" />
+              <MaterialCommunityIcons name="close" size={40} color={colors.inkInverse} />
             </View>
           )}
         </View>
@@ -90,7 +91,7 @@ export default function AirtimeResultScreen() {
                 <MaterialCommunityIcons
                   name="content-copy"
                   size={18}
-                  color="#472FF8"
+                  color={colors.primary}
                 />
                 <Text className="text-[13px] font-semibold text-primary">Copy</Text>
               </TouchableOpacity>
@@ -134,7 +135,7 @@ export default function AirtimeResultScreen() {
             onPress={() => router.back()}
             activeOpacity={0.85}
           >
-            <MaterialCommunityIcons name="refresh" size={18} color="#fff" />
+            <MaterialCommunityIcons name="refresh" size={18} color={colors.inkInverse} />
             <Text className="text-white text-base font-semibold">Retry</Text>
           </TouchableOpacity>
         )}

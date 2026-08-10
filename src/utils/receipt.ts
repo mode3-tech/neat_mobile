@@ -1,5 +1,7 @@
 import * as Sharing from 'expo-sharing';
 
+import { colors } from '@/theme/palette';
+
 /**
  * Wrap a captured receipt image (a PNG data-URI from react-native-view-shot)
  * in minimal HTML so expo-print can render it to a PDF that is pixel-identical
@@ -15,7 +17,7 @@ export function buildReceiptHtml(imageDataUri: string): string {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #fff; padding: 24px; }
+    body { background: ${colors.surface}; padding: 24px; }
     img { display: block; width: 100%; max-width: 480px; margin: 0 auto; }
   </style>
 </head>

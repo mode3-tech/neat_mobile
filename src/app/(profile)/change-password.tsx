@@ -15,6 +15,7 @@ import { SessionExpiredCard } from '@/components/ui/session-expired-card';
 import { authService } from '@/services/auth.service';
 import { useSecurityChangeStore } from '@/stores/security-change.store';
 import { getErrorMessage } from '@/utils/error';
+import { colors } from '@/theme/palette';
 
 const REQUIREMENTS = [
   { label: 'An uppercase letter', test: (p: string) => /[A-Z]/.test(p) },
@@ -46,7 +47,7 @@ function PwField({ label, value, onChangeText, hasError, placeholder }: PwFieldP
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.inkMuted}
           secureTextEntry={!show}
           autoCapitalize="none"
           autoCorrect={false}
@@ -201,7 +202,7 @@ export default function ChangePasswordScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.inkInverse} />
             ) : (
               <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-gray-400'}`}>
                 Change Password

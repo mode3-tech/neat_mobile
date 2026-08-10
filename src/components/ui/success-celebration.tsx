@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import { Animated, Easing, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
+import { colors, confetti } from '@/theme/palette';
+
 /**
  * OPay-style success celebration: a green check that springs in while a burst
  * of confetti fans out and fades. Built on the core React Native `Animated`
@@ -9,14 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
  * dependency and no Reanimated worklet/babel setup required.
  */
 
-const CONFETTI_COLORS = [
-  '#472FF8',
-  '#16A34A',
-  '#F59E0B',
-  '#EF4444',
-  '#06B6D4',
-  '#EC4899',
-];
+const CONFETTI_COLORS = confetti;
 const PIECE_COUNT = 18;
 
 interface Piece {
@@ -105,7 +100,7 @@ export function SuccessCelebration() {
           width: 112,
           height: 112,
           borderRadius: 56,
-          backgroundColor: '#ECFDF5',
+          backgroundColor: colors.successSurface,
           alignItems: 'center',
           justifyContent: 'center',
           transform: [{ scale }],
@@ -116,12 +111,12 @@ export function SuccessCelebration() {
             width: 80,
             height: 80,
             borderRadius: 40,
-            backgroundColor: '#16A34A',
+            backgroundColor: colors.success,
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <Ionicons name="checkmark" size={44} color="#fff" />
+          <Ionicons name="checkmark" size={44} color={colors.inkInverse} />
         </View>
       </Animated.View>
     </View>

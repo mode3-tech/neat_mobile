@@ -29,6 +29,7 @@ import { ActivationCapBanner } from '@/components/ActivationCapBanner';
 import { getErrorMessage } from '@/utils/error';
 import { formatNairaShort } from '@/utils/format';
 import type { Bank, Beneficiary, TransferType } from '@/types/transfer.types';
+import { colors } from '@/theme/palette';
 
 const TABS: { key: TransferType; label: string }[] = [
   { key: 'neatpay', label: 'NEAT Microcredit' },
@@ -429,12 +430,12 @@ export default function SendMoneyScreen() {
                 </Text>
                 {/* Chevron promises a picker; a lock explains its absence. */}
                 {lockedRecipient && !selectedBank && banksLoading ? (
-                  <ActivityIndicator size="small" color="#472FF8" />
+                  <ActivityIndicator size="small" color={colors.primary} />
                 ) : (
                   <MaterialCommunityIcons
                     name={lockedRecipient ? 'lock-outline' : 'chevron-down'}
                     size={lockedRecipient ? 18 : 20}
-                    color="#9CA3AF"
+                    color={colors.inkMuted}
                   />
                 )}
               </TouchableOpacity>
@@ -462,16 +463,16 @@ export default function SendMoneyScreen() {
                 }
                 editable={!lockedRecipient}
                 placeholder="Enter account number"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.inkMuted}
                 keyboardType="number-pad"
                 maxLength={ACCOUNT_NUMBER_LENGTH}
               />
-              {validating && <ActivityIndicator size="small" color="#472FF8" />}
+              {validating && <ActivityIndicator size="small" color={colors.primary} />}
               {lockedRecipient && !validating && (
                 <MaterialCommunityIcons
                   name="lock-outline"
                   size={16}
-                  color="#9CA3AF"
+                  color={colors.inkMuted}
                 />
               )}
             </View>
@@ -508,7 +509,7 @@ export default function SendMoneyScreen() {
                 <MaterialCommunityIcons
                   name="account-circle-outline"
                   size={20}
-                  color="#472FF8"
+                  color={colors.primary}
                 />
                 <Text className="text-[13px] font-medium text-primary ml-1.5">
                   Select from Beneficiary
@@ -529,7 +530,7 @@ export default function SendMoneyScreen() {
                 value={amount}
                 onChangeText={formatAmount}
                 placeholder="0"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.inkMuted}
                 keyboardType="number-pad"
               />
             </View>
@@ -557,7 +558,7 @@ export default function SendMoneyScreen() {
                 value={narration}
                 onChangeText={setNarration}
                 placeholder="Enter narration"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.inkMuted}
               />
             </View>
           </View>
@@ -596,7 +597,7 @@ export default function SendMoneyScreen() {
                 <MaterialCommunityIcons
                   name="close"
                   size={24}
-                  color="#374151"
+                  color={colors.inkBody}
                 />
               </TouchableOpacity>
             </View>
@@ -607,14 +608,14 @@ export default function SendMoneyScreen() {
                 <MaterialCommunityIcons
                   name="magnify"
                   size={20}
-                  color="#9CA3AF"
+                  color={colors.inkMuted}
                 />
                 <TextInput
                   className="flex-1 text-[15px] text-ink ml-2 p-0"
                   value={bankSearch}
                   onChangeText={setBankSearch}
                   placeholder="Search bank"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.inkMuted}
                   autoFocus
                 />
               </View>
@@ -623,7 +624,7 @@ export default function SendMoneyScreen() {
             {banksLoading ? (
               <ActivityIndicator
                 size="large"
-                color="#472FF8"
+                color={colors.primary}
                 className="mt-8"
               />
             ) : (
@@ -671,7 +672,7 @@ export default function SendMoneyScreen() {
                 <MaterialCommunityIcons
                   name="close"
                   size={24}
-                  color="#374151"
+                  color={colors.inkBody}
                 />
               </TouchableOpacity>
             </View>
@@ -682,14 +683,14 @@ export default function SendMoneyScreen() {
                 <MaterialCommunityIcons
                   name="magnify"
                   size={20}
-                  color="#9CA3AF"
+                  color={colors.inkMuted}
                 />
                 <TextInput
                   className="flex-1 text-[15px] text-ink ml-2 p-0"
                   value={beneficiarySearch}
                   onChangeText={setBeneficiarySearch}
                   placeholder="Search beneficiary"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.inkMuted}
                   autoFocus
                 />
               </View>
@@ -698,7 +699,7 @@ export default function SendMoneyScreen() {
             {beneficiariesLoading ? (
               <ActivityIndicator
                 size="large"
-                color="#472FF8"
+                color={colors.primary}
                 className="mt-8"
               />
             ) : (

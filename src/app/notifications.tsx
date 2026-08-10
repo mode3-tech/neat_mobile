@@ -20,12 +20,13 @@ import {
 } from '@/services/notification.service';
 import { useNotificationStore } from '@/stores/notification.store';
 import type { AppNotification, NotificationType } from '@/types/notification.types';
+import { colors } from '@/theme/palette';
 
 const TYPE_ICONS: Record<NotificationType, { name: string; color: string; bg: string }> = {
-  loan: { name: 'wallet-outline', color: '#472FF8', bg: '#EEF0FF' },
-  transaction: { name: 'swap-horizontal', color: '#16A34A', bg: '#F0FDF4' },
-  security: { name: 'shield-lock-outline', color: '#EF4444', bg: '#FEF2F2' },
-  promo: { name: 'bullhorn-outline', color: '#F59E0B', bg: '#FFFBEB' },
+  loan: { name: 'wallet-outline', color: colors.primary, bg: colors.primarySurface },
+  transaction: { name: 'swap-horizontal', color: colors.success, bg: colors.successSurfaceAlt },
+  security: { name: 'shield-lock-outline', color: colors.danger, bg: colors.dangerSurface },
+  promo: { name: 'bullhorn-outline', color: colors.warning, bg: colors.warningSurface },
 };
 
 function formatRelativeTime(dateStr: string): string {
@@ -126,7 +127,7 @@ function NotificationItem({ item }: { item: AppNotification }) {
 function EmptyState() {
   return (
     <View className="flex-1 items-center justify-center px-6">
-      <MaterialCommunityIcons name="bell-off-outline" size={64} color="#E5E7EB" />
+      <MaterialCommunityIcons name="bell-off-outline" size={64} color={colors.line} />
       <Text className="text-base font-semibold text-ink mt-4">
         No notifications yet
       </Text>
@@ -140,7 +141,7 @@ function EmptyState() {
 function ErrorState({ message }: { message: string }) {
   return (
     <View className="flex-1 items-center justify-center px-6">
-      <MaterialCommunityIcons name="wifi-off" size={64} color="#E5E7EB" />
+      <MaterialCommunityIcons name="wifi-off" size={64} color={colors.line} />
       <Text className="text-base font-semibold text-ink mt-4">
         {message}
       </Text>
@@ -301,7 +302,7 @@ export default function NotificationsScreen() {
 
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#472FF8" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : isError && notifications.length === 0 ? (
         <FlatList
@@ -338,7 +339,7 @@ export default function NotificationsScreen() {
           ListFooterComponent={
             isFetchingNextPage ? (
               <View className="py-4 items-center">
-                <ActivityIndicator size="small" color="#472FF8" />
+                <ActivityIndicator size="small" color={colors.primary} />
               </View>
             ) : null
           }

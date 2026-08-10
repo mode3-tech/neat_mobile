@@ -16,8 +16,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { loanService } from '@/services/loan.service';
 import { useLoanStore } from '@/stores/loan.store';
 import type { LoanProduct } from '@/types/loan.types';
+import { colors } from '@/theme/palette';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = colors.primary;
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -159,7 +160,7 @@ export default function ApplyLoanScreen() {
                 store.setFormField('businessValue', cleaned);
               }}
               placeholder="Enter the value of your business"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.inkMuted}
               keyboardType="number-pad"
             />
           </View>
@@ -177,7 +178,7 @@ export default function ApplyLoanScreen() {
                 store.setFormField('businessAge', formatted);
               }}
               placeholder="MM/YYYY"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.inkMuted}
               keyboardType="number-pad"
               maxLength={7}
             />
@@ -192,7 +193,7 @@ export default function ApplyLoanScreen() {
                 setShowDateModal(true);
               }}
             >
-              <MaterialCommunityIcons name="calendar" size={20} color="#9CA3AF" />
+              <MaterialCommunityIcons name="calendar" size={20} color={colors.inkMuted} />
             </TouchableOpacity>
           </View>
           {isValidBusinessAge(store.businessAge) && !isBusinessAgeAtLeastOneYear(store.businessAge) && (
@@ -211,7 +212,7 @@ export default function ApplyLoanScreen() {
               value={store.businessAddress}
               onChangeText={(t) => store.setFormField('businessAddress', t)}
               placeholder="Enter business address"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.inkMuted}
             />
           </View>
         </View>
@@ -229,7 +230,7 @@ export default function ApplyLoanScreen() {
             <Text className={`flex-1 text-[15px] ${store.loanProduct ? 'text-ink' : 'text-ink-muted'}`}>
               {store.loanProduct || 'Enter Loan product'}
             </Text>
-            <MaterialCommunityIcons name="chevron-down" size={20} color="#9CA3AF" />
+            <MaterialCommunityIcons name="chevron-down" size={20} color={colors.inkMuted} />
           </TouchableOpacity>
           {showProductDropdown && (
             <View className="bg-white rounded-xl border border-line mt-1 overflow-hidden">
@@ -275,7 +276,7 @@ export default function ApplyLoanScreen() {
                 store.setFormField('loanAmount', sanitized);
               }}
               placeholder="NGN 0.00"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.inkMuted}
               keyboardType="numeric"
             />
           </View>
@@ -321,7 +322,7 @@ export default function ApplyLoanScreen() {
             <View className="flex-row items-center justify-between mb-5">
               <Text className="text-lg font-bold text-ink">Select Date</Text>
               <TouchableOpacity onPress={() => setShowDateModal(false)}>
-                <MaterialCommunityIcons name="close" size={22} color="#6B7280" />
+                <MaterialCommunityIcons name="close" size={22} color={colors.inkSoft} />
               </TouchableOpacity>
             </View>
 

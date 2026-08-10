@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
+import { colors } from '@/theme/palette';
 
 export default function BiometricsScreen() {
   const storeEnabled = useAuthStore((s) => s.biometricsEnabled);
@@ -67,9 +68,9 @@ export default function BiometricsScreen() {
           value={displayEnabled}
           onValueChange={handleToggle}
           disabled={pending}
-          trackColor={{ false: '#E5E7EB', true: '#472FF8' }}
-          thumbColor="#fff"
-          ios_backgroundColor="#E5E7EB"
+          trackColor={{ false: colors.surfaceDisabled, true: colors.primary }}
+          thumbColor={colors.surface}
+          ios_backgroundColor={colors.surfaceDisabled}
         />
       </View>
 

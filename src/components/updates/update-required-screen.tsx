@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import { openStoreListing } from '@/utils/store-link';
+import { colors } from '@/theme/palette';
 
 type Props = {
   /** Optional `store_url` from GET /app/version. */
@@ -61,16 +62,16 @@ export function UpdateRequiredScreen({ storeUrl }: Props): React.JSX.Element {
           style={{
             width: 80,
             height: 80,
-            backgroundColor: '#EEF0FF',
+            backgroundColor: colors.primarySurface,
             marginBottom: 20,
           }}
         >
-          <Ionicons name="arrow-up-circle-outline" size={40} color="#472FF8" />
+          <Ionicons name="arrow-up-circle-outline" size={40} color={colors.primary} />
         </View>
 
         <Text
           className="text-center font-bold"
-          style={{ fontSize: 22, color: '#472FF8', marginBottom: 12 }}
+          style={{ fontSize: 22, color: colors.primary, marginBottom: 12 }}
         >
           Update required
         </Text>
@@ -79,7 +80,7 @@ export function UpdateRequiredScreen({ storeUrl }: Props): React.JSX.Element {
           className="text-center"
           style={{
             fontSize: 15,
-            color: '#000000',
+            color: colors.overlay,
             opacity: 0.75,
             lineHeight: 22,
             marginBottom: 24,
@@ -96,7 +97,7 @@ export function UpdateRequiredScreen({ storeUrl }: Props): React.JSX.Element {
           }}
           className="items-center rounded-full bg-primary py-4 active:opacity-70"
         >
-          <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '600' }}>
+          <Text style={{ color: colors.inkInverse, fontSize: 15, fontWeight: '600' }}>
             Update Now
           </Text>
         </Pressable>

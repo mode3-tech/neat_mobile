@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { PIN_LENGTH } from '@/constants';
+import { colors } from '@/theme/palette';
 
 interface PinFieldProps {
   label: string;
@@ -25,7 +26,7 @@ export function PinField({ label, value, onChangeText, hasError = false }: PinFi
           value={value}
           onChangeText={(t) => onChangeText(t.replace(/\D/g, '').slice(0, PIN_LENGTH))}
           placeholder="—"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.inkMuted}
           secureTextEntry={!show}
           keyboardType="number-pad"
           maxLength={PIN_LENGTH}

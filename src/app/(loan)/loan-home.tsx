@@ -18,6 +18,7 @@ import { formatNairaWhole } from '@/utils/format';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import RepaymentBottomSheet from '@/components/features/loans/RepaymentBottomSheet';
 import type { ActiveLoan } from '@/types/loan.types';
+import { colors } from '@/theme/palette';
 
 interface ActionItemProps {
   icon: string;
@@ -49,7 +50,7 @@ function ActionItem({ icon, label, onPress, disabled }: ActionItemProps) {
       <MaterialCommunityIcons
         name="chevron-right"
         size={22}
-        color={disabled ? '#D1D5DB' : '#472FF8'}
+        color={disabled ? colors.lineStrong : colors.primary}
       />
     </TouchableOpacity>
   );

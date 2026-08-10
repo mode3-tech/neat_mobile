@@ -16,8 +16,9 @@ import { toast } from 'sonner-native';
 
 import { authService } from '@/services/auth.service';
 import { getErrorMessage } from '@/utils/error';
+import { colors } from '@/theme/palette';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = colors.primary;
 
 export default function ForgotPasswordScreen() {
   const [phone, setPhone] = useState('');
@@ -66,7 +67,7 @@ export default function ForgotPasswordScreen() {
                 value={phone}
                 onChangeText={setPhone}
                 placeholder="Enter your phone number"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.inkMuted}
                 keyboardType="phone-pad"
                 autoCorrect={false}
                 autoFocus
@@ -83,7 +84,7 @@ export default function ForgotPasswordScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.inkInverse} />
             ) : (
               <Text style={[styles.primaryBtnText, !canSubmit && styles.disabledBtnText]}>
                 Submit
@@ -99,7 +100,7 @@ export default function ForgotPasswordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
   },
   flex: {
     flex: 1,
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
   backBtn: {
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.line,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -121,13 +122,13 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.inkBody,
     fontWeight: '500',
   },
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     marginBottom: 28,
   },
   field: {
@@ -136,11 +137,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#374151',
+    color: colors.inkBody,
     marginBottom: 8,
   },
   inputWrap: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.surfaceInput,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 15,
@@ -152,7 +153,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
-    color: '#1A1A1A',
+    color: colors.ink,
     padding: 0,
   },
   footer: {
@@ -166,14 +167,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   disabledBtn: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.surfaceDisabled,
   },
   disabledBtnText: {
-    color: '#9CA3AF',
+    color: colors.inkMuted,
   },
 });

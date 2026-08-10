@@ -1,6 +1,8 @@
 import { ActivityIndicator, Modal, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { colors } from '@/theme/palette';
+
 interface ConfirmModalProps {
   visible: boolean;
   title: string;
@@ -59,7 +61,7 @@ export function ConfirmModal({
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.inkInverse} />
             ) : (
               <Text className="text-white text-base font-semibold">{confirmLabel}</Text>
             )}

@@ -23,6 +23,7 @@ import type { VasBiller } from '@/types/vas.types';
 import { formatNairaWhole } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
+import { colors } from '@/theme/palette';
 
 const QUICK_AMOUNTS = [500, 1000, 2000, 5000, 10000, 20000];
 
@@ -204,9 +205,9 @@ export default function BuyElectricityScreen() {
             {selectedBiller ? selectedBiller.name : 'Select Provider'}
           </Text>
           {billersQuery.isLoading ? (
-            <ActivityIndicator size="small" color="#472FF8" />
+            <ActivityIndicator size="small" color={colors.primary} />
           ) : (
-            <MaterialCommunityIcons name="chevron-down" size={22} color="#6B7280" />
+            <MaterialCommunityIcons name="chevron-down" size={22} color={colors.inkSoft} />
           )}
         </TouchableOpacity>
 
@@ -218,10 +219,10 @@ export default function BuyElectricityScreen() {
             value={meter}
             onChangeText={(t) => setMeter(t.replace(/\D/g, ''))}
             placeholder="Meter Number"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.inkMuted}
             keyboardType="number-pad"
           />
-          <MaterialCommunityIcons name="card-outline" size={22} color="#6B7280" />
+          <MaterialCommunityIcons name="card-outline" size={22} color={colors.inkSoft} />
         </View>
 
         {/* Amount */}
@@ -232,7 +233,7 @@ export default function BuyElectricityScreen() {
             value={amount}
             onChangeText={(t) => setAmount(t.replace(/\D/g, ''))}
             placeholder="Amount"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.inkMuted}
             keyboardType="number-pad"
           />
         </View>
@@ -312,13 +313,13 @@ export default function BuyElectricityScreen() {
                     Select Provider
                   </Text>
                   <TouchableOpacity onPress={closeProviderModal}>
-                    <MaterialCommunityIcons name="close" size={24} color="#374151" />
+                    <MaterialCommunityIcons name="close" size={24} color={colors.inkBody} />
                   </TouchableOpacity>
                 </View>
 
                 {billersQuery.isLoading ? (
                   <View className="h-24 items-center justify-center">
-                    <ActivityIndicator color="#472FF8" />
+                    <ActivityIndicator color={colors.primary} />
                   </View>
                 ) : billersQuery.isError ? (
                   <View className="h-24 items-center justify-center px-6">
@@ -342,20 +343,20 @@ export default function BuyElectricityScreen() {
                   <>
                     <View className="px-6 mb-3">
                       <View className="bg-surface-input rounded-xl px-4 py-3 flex-row items-center">
-                        <MaterialCommunityIcons name="magnify" size={20} color="#9CA3AF" />
+                        <MaterialCommunityIcons name="magnify" size={20} color={colors.inkMuted} />
                         <TextInput
                           className="flex-1 text-[15px] text-ink p-0 ml-2"
                           value={providerSearch}
                           onChangeText={setProviderSearch}
                           placeholder="Search providers"
-                          placeholderTextColor="#9CA3AF"
+                          placeholderTextColor={colors.inkMuted}
                         />
                         {providerSearch.length > 0 && (
                           <TouchableOpacity onPress={() => setProviderSearch('')}>
                             <MaterialCommunityIcons
                               name="close-circle"
                               size={18}
-                              color="#9CA3AF"
+                              color={colors.inkMuted}
                             />
                           </TouchableOpacity>
                         )}
@@ -398,7 +399,7 @@ export default function BuyElectricityScreen() {
                                 <MaterialCommunityIcons
                                   name="check-circle"
                                   size={20}
-                                  color="#472FF8"
+                                  color={colors.primary}
                                 />
                               )}
                             </TouchableOpacity>

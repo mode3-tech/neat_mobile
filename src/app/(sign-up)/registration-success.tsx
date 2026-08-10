@@ -2,8 +2,10 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
-const PRIMARY = '#472FF8';
-const SUCCESS_COLOR = '#16A34A';
+import { colors } from '@/theme/palette';
+
+const PRIMARY = colors.primary;
+const SUCCESS_COLOR = colors.success;
 
 export default function RegistrationSuccessScreen() {
   return (
@@ -32,7 +34,7 @@ export default function RegistrationSuccessScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     paddingHorizontal: 24,
   },
   content: {
@@ -50,20 +52,20 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   checkMark: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 32,
     fontWeight: '700',
   },
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.inkSoft,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -77,7 +79,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },

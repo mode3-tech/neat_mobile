@@ -17,6 +17,7 @@ import { PIN_LENGTH } from '@/constants';
 import { authService } from '@/services/auth.service';
 import { clearStoredTransactionPin } from '@/services/biometric.service';
 import { getErrorMessage } from '@/utils/error';
+import { colors } from '@/theme/palette';
 
 export default function ResetPinScreen() {
   const { verificationId } = useLocalSearchParams<{ verificationId: string }>();
@@ -106,7 +107,7 @@ export default function ResetPinScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.inkInverse} />
             ) : (
               <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-gray-400'}`}>
                 Reset PIN

@@ -14,11 +14,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 
+import { colors } from '@/theme/palette';
+
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const SLIDE_DURATION = 3000;
-const PRIMARY_COLOR = '#472FF8';
-const BG_COLOR = '#d4d8FF';
+const PRIMARY_COLOR = colors.primary;
+const BG_COLOR = colors.primarySurfaceStrong;
 
 interface Slide {
   id: string;
@@ -217,7 +219,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: '#000000',
+    color: colors.overlay,
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -256,18 +258,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryButtonText: {
-    color: '#FFFFFF',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   secondaryButton: {
     paddingVertical: 12,
     alignItems: 'center',
-    backgroundColor:"#FFFFFF",
+    backgroundColor:colors.surface,
      borderRadius: 50,
   },
   secondaryButtonText: {
-    color: "#472FF8",
+    color: colors.primary,
     fontSize: 16,
     fontWeight: '500',
   },

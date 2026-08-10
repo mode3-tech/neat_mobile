@@ -1,6 +1,6 @@
 import { Image, View } from 'react-native';
 
-// Static logo on #472FF8, identical to the native splash (same asset, same
+// Static logo on the brand primary, identical to the native splash (same asset, same
 // size, same background) so the native→JS hand-off is seamless — no fade or
 // scale entrance that would make the logo blink/re-animate on swap.
 export function SplashScreenComponent(): React.JSX.Element {

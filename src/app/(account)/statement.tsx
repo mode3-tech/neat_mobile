@@ -24,6 +24,7 @@ import type { StatementFormat } from '@/types/account.types';
 import { downloadToAndroidDownloads } from '@/utils/download';
 import { formatDateShort } from '@/utils/format';
 import { shareFile } from '@/utils/receipt';
+import { colors } from '@/theme/palette';
 
 interface FileTypeOption {
   label: string;
@@ -219,7 +220,7 @@ export default function StatementScreen() {
               <MaterialCommunityIcons
                 name="calendar-blank-outline"
                 size={20}
-                color="#9CA3AF"
+                color={colors.inkMuted}
               />
             </TouchableOpacity>
           </View>
@@ -243,7 +244,7 @@ export default function StatementScreen() {
               <MaterialCommunityIcons
                 name="calendar-blank-outline"
                 size={20}
-                color="#9CA3AF"
+                color={colors.inkMuted}
               />
             </TouchableOpacity>
             {rangeInvalid && (
@@ -276,7 +277,7 @@ export default function StatementScreen() {
               <MaterialCommunityIcons
                 name="chevron-right"
                 size={20}
-                color="#9CA3AF"
+                color={colors.inkMuted}
               />
             </TouchableOpacity>
           </View>
@@ -286,7 +287,7 @@ export default function StatementScreen() {
             <View className="mt-6">
               {isProcessing && (
                 <View className="bg-primary-surface rounded-xl px-5 py-5 flex-row items-center">
-                  <ActivityIndicator size="small" color="#472FF8" />
+                  <ActivityIndicator size="small" color={colors.primary} />
                   <View className="ml-3 flex-1">
                     <Text className="text-sm font-semibold text-ink">
                       Generating your statement...
@@ -307,7 +308,7 @@ export default function StatementScreen() {
                           (selectedFileType?.icon ?? 'file-document-outline') as any
                         }
                         size={24}
-                        color="#472FF8"
+                        color={colors.primary}
                       />
                     </View>
                     <View className="ml-3 flex-1">
@@ -329,13 +330,13 @@ export default function StatementScreen() {
                     activeOpacity={0.85}
                   >
                     {downloading ? (
-                      <ActivityIndicator size="small" color="#fff" />
+                      <ActivityIndicator size="small" color={colors.inkInverse} />
                     ) : (
                       <>
                         <MaterialCommunityIcons
                           name="download"
                           size={18}
-                          color="#fff"
+                          color={colors.inkInverse}
                         />
                         <Text className="text-white text-sm font-semibold ml-2">
                           Download
@@ -352,7 +353,7 @@ export default function StatementScreen() {
                     <MaterialCommunityIcons
                       name="alert-circle-outline"
                       size={24}
-                      color="#EF4444"
+                      color={colors.danger}
                     />
                     <View className="ml-3 flex-1">
                       <Text className="text-sm font-semibold text-ink">
@@ -396,7 +397,7 @@ export default function StatementScreen() {
             activeOpacity={0.85}
           >
             {generateMutation.isPending ? (
-              <ActivityIndicator size="small" color="#fff" />
+              <ActivityIndicator size="small" color={colors.inkInverse} />
             ) : (
               <Text
                 className={`text-base font-semibold ${
@@ -487,7 +488,7 @@ export default function StatementScreen() {
                 Select File Type
               </Text>
               <TouchableOpacity onPress={() => setFileTypeModal(false)}>
-                <MaterialCommunityIcons name="close" size={24} color="#374151" />
+                <MaterialCommunityIcons name="close" size={24} color={colors.inkBody} />
               </TouchableOpacity>
             </View>
 
@@ -508,7 +509,7 @@ export default function StatementScreen() {
                     <MaterialCommunityIcons
                       name={option.icon}
                       size={22}
-                      color="#472FF8"
+                      color={colors.primary}
                     />
                   </View>
                   <Text className="text-[15px] text-ink ml-3 flex-1">
@@ -518,7 +519,7 @@ export default function StatementScreen() {
                     <MaterialCommunityIcons
                       name="check-circle"
                       size={20}
-                      color="#472FF8"
+                      color={colors.primary}
                     />
                   )}
                 </TouchableOpacity>

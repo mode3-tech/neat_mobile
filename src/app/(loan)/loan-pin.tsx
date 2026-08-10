@@ -17,6 +17,7 @@ import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { loanService } from '@/services/loan.service';
 import { useLoanStore } from '@/stores/loan.store';
 import { getErrorMessage } from '@/utils/error';
+import { colors } from '@/theme/palette';
 
 export default function LoanPinScreen() {
   const store = useLoanStore();
@@ -97,7 +98,7 @@ export default function LoanPinScreen() {
               setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH))
             }
             placeholder="••••"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.inkMuted}
             secureTextEntry={!showPin}
             keyboardType="number-pad"
             maxLength={PIN_LENGTH}
@@ -106,7 +107,7 @@ export default function LoanPinScreen() {
             <MaterialCommunityIcons
               name={showPin ? 'eye-off-outline' : 'eye-outline'}
               size={20}
-              color="#9CA3AF"
+              color={colors.inkMuted}
             />
           </TouchableOpacity>
         </View>
@@ -123,7 +124,7 @@ export default function LoanPinScreen() {
           activeOpacity={0.85}
         >
           {submitting ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={colors.inkInverse} />
           ) : (
             <Text className={`text-base font-semibold ${canConfirm ? 'text-white' : 'text-ink-muted'}`}>
               Confirm
@@ -141,7 +142,7 @@ export default function LoanPinScreen() {
             <MaterialCommunityIcons
               name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
               size={28}
-              color="#472FF8"
+              color={colors.primary}
             />
           </TouchableOpacity>
         )}

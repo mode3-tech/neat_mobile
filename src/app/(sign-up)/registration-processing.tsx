@@ -17,8 +17,9 @@ import { useSignUpStore } from '@/stores/sign-up.store';
 import { getErrorMessage } from '@/utils/error';
 import { getRegisterErrorAction, type RegisterErrorAction } from '@/utils/register-errors';
 import { buildRegisterPayload } from '@/utils/register-payload';
+import { colors } from '@/theme/palette';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = colors.primary;
 const POLL_INTERVAL_MS = 3000;
 const SLOW_NETWORK_THRESHOLD_MS = 30000;
 
@@ -240,7 +241,7 @@ export default function RegistrationProcessingScreen() {
             activeOpacity={0.85}
           >
             {retrying ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.inkInverse} />
             ) : (
               <Text style={styles.primaryBtnText}>
                 {errorAction ? errorAction.ctaLabel : 'Retry'}
@@ -263,7 +264,7 @@ export default function RegistrationProcessingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     paddingHorizontal: 24,
   },
   content: {
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1A1A1A',
+    color: colors.ink,
     textAlign: 'center',
     marginBottom: 8,
   },
@@ -283,7 +284,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.inkSoft,
     textAlign: 'center',
     lineHeight: 20,
     paddingHorizontal: 12,
@@ -292,13 +293,13 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: '#EF4444',
+    backgroundColor: colors.danger,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 24,
   },
   errorMark: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 36,
     fontWeight: '700',
   },
@@ -313,7 +314,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },

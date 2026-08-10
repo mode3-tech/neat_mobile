@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 
 import { accountService } from '@/services/account.service';
 import { useSavingsStore } from '@/stores/savings.store';
+import { colors } from '@/theme/palette';
 
 const formatCurrency = (val: number | undefined) =>
   val !== undefined
@@ -77,7 +78,7 @@ export default function EnterAmountScreen() {
             value={store.amount}
             onChangeText={(t) => store.setAmount(t.replace(/\D/g, ''))}
             placeholder="Enter amount"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.inkMuted}
             keyboardType="number-pad"
           />
         </View>

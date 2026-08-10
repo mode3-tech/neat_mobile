@@ -20,6 +20,7 @@ import { loanService } from '@/services/loan.service';
 import { formatDateLong } from '@/utils/format';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
+import { accents, colors } from '@/theme/palette';
 
 function formatCurrency(amount: number): string {
   return '₦' + new Intl.NumberFormat('en-NG', {
@@ -71,7 +72,7 @@ function ScheduleRow({
       ? 'bg-warning-border-strong'
       : 'bg-primary-surface';
   const iconColor =
-    item.status === 'overdue' ? '#EF4444' : isNextUpcoming ? '#F59E0B' : '#472FF8';
+    item.status === 'overdue' ? colors.danger : isNextUpcoming ? colors.warning : colors.primary;
   return (
     <View className={`flex-row items-center justify-between rounded-2xl px-4 py-3 mb-3 ${highlight}`}>
       <View className="flex-row items-center gap-3">
@@ -195,7 +196,7 @@ export default function RepaymentScheduleScreen() {
 
         {isLoading && (
           <View className="py-20 items-center justify-center">
-            <ActivityIndicator size="small" color="#472FF8" />
+            <ActivityIndicator size="small" color={colors.primary} />
           </View>
         )}
 
@@ -204,7 +205,7 @@ export default function RepaymentScheduleScreen() {
             <MaterialCommunityIcons
               name={!loanId ? 'file-document-outline' : 'alert-circle-outline'}
               size={64}
-              color="#E5E7EB"
+              color={colors.line}
             />
             <Text className="text-base font-semibold text-ink mt-3">
               {!loanId ? 'No active loan' : "Couldn't load repayment details"}
@@ -224,7 +225,7 @@ export default function RepaymentScheduleScreen() {
               {/* Amount Paid Card */}
               <View className="flex-1 rounded-2xl p-4 bg-success-surface">
                 <View className="w-9 h-9 rounded-xl bg-success-surface-strong items-center justify-center mb-3">
-                  <MaterialCommunityIcons name="wallet-outline" size={20} color="#472FF8" />
+                  <MaterialCommunityIcons name="wallet-outline" size={20} color={colors.primary} />
                 </View>
                 <Text className="text-xs text-ink-soft mb-1">Amount paid</Text>
                 <Text className="text-[18px] font-bold text-ink">
@@ -238,7 +239,7 @@ export default function RepaymentScheduleScreen() {
               {/* Yet to Pay Card */}
               <View className="flex-1 rounded-2xl p-4 bg-accent-loan">
                 <View className="w-9 h-9 rounded-xl bg-accent-loan-strong items-center justify-center mb-3">
-                  <MaterialCommunityIcons name="cash-clock" size={20} color="#7C3AED" />
+                  <MaterialCommunityIcons name="cash-clock" size={20} color={accents.loan.icon} />
                 </View>
                 <Text className="text-xs text-ink-soft mb-1">Yet to Pay</Text>
                 <Text className="text-[18px] font-bold text-ink">
@@ -266,7 +267,7 @@ export default function RepaymentScheduleScreen() {
             <Text className="text-base font-bold text-ink mb-3">Payment Schedule</Text>
             {scheduleLoading ? (
               <View className="py-6 items-center">
-                <ActivityIndicator size="small" color="#472FF8" />
+                <ActivityIndicator size="small" color={colors.primary} />
               </View>
             ) : (schedule?.length ?? 0) === 0 ? (
               <Text className="text-[13px] text-ink-soft mb-6">No scheduled payments yet.</Text>
@@ -340,7 +341,7 @@ export default function RepaymentScheduleScreen() {
                   onChangeText={setAmount}
                   keyboardType="decimal-pad"
                   placeholder="0.00"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.inkMuted}
                 />
               </View>
               <Text className="text-xs mb-5">
@@ -358,7 +359,7 @@ export default function RepaymentScheduleScreen() {
                   value={pin}
                   onChangeText={(t) => setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH))}
                   placeholder="••••"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.inkMuted}
                   secureTextEntry={!showPin}
                   keyboardType="number-pad"
                   maxLength={PIN_LENGTH}
@@ -367,7 +368,7 @@ export default function RepaymentScheduleScreen() {
                   <MaterialCommunityIcons
                     name={showPin ? 'eye-off-outline' : 'eye-outline'}
                     size={20}
-                    color="#9CA3AF"
+                    color={colors.inkMuted}
                   />
                 </TouchableOpacity>
               </View>
@@ -407,7 +408,7 @@ export default function RepaymentScheduleScreen() {
                     <MaterialCommunityIcons
                       name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
                       size={28}
-                      color="#472FF8"
+                      color={colors.primary}
                     />
                   </TouchableOpacity>
                 )}

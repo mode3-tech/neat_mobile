@@ -18,6 +18,7 @@ import { authService } from '@/services/auth.service';
 import { clearStoredTransactionPin } from '@/services/biometric.service';
 import { useSecurityChangeStore } from '@/stores/security-change.store';
 import { getErrorMessage } from '@/utils/error';
+import { colors } from '@/theme/palette';
 
 export default function ChangePinScreen() {
   const [currentPin, setCurrentPin] = useState('');
@@ -141,7 +142,7 @@ export default function ChangePinScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.inkInverse} />
             ) : (
               <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-gray-400'}`}>
                 Change PIN

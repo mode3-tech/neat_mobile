@@ -3,6 +3,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useNetworkStatus } from '@/hooks/use-network-status';
+import { colors } from '@/theme/palette';
 
 /**
  * App-wide connectivity banner. Pinned to the top and shown for the whole time
@@ -23,7 +24,7 @@ export function OfflineBanner() {
       <MaterialCommunityIcons
         name="wifi-off"
         size={18}
-        color="#EF4444"
+        color={colors.danger}
         style={{ marginTop: 1 }}
       />
       <View className="flex-1 ml-2">

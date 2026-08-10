@@ -20,6 +20,7 @@ import { useNetworkStatus } from '@/hooks/use-network-status';
 import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
 import { getErrorMessage } from '@/utils/error';
+import { colors } from '@/theme/palette';
 
 function formatCurrency(amount: number): string {
   return (
@@ -51,7 +52,7 @@ function SummaryRow({
       <Text className="text-[13px] text-ink-soft shrink-0">{label}</Text>
       <Text
         className="text-sm font-semibold flex-1 text-right"
-        style={{ color: valueColor ?? '#1A1A1A' }}
+        style={{ color: valueColor ?? colors.ink }}
       >
         {value}
       </Text>
@@ -141,10 +142,10 @@ export default function TransferReviewScreen() {
     { label: 'Recipient Account', value: store.accountNumber },
     { label: 'Recipient Name', value: store.accountName },
     ...(store.transferType === 'other_bank'
-      ? [{ label: 'Bank Name', value: store.bankName, valueColor: '#472FF8' }]
+      ? [{ label: 'Bank Name', value: store.bankName, valueColor: colors.primary }]
       : []),
     { label: 'Commission', value: formatCurrency(TRANSFER_FEE) },
-    // { label: 'Total Debit', value: formatCurrency(parsedAmount), valueColor: '#472FF8' },
+    // { label: 'Total Debit', value: formatCurrency(parsedAmount), valueColor: colors.primary },
   ];
 
   return (
@@ -191,7 +192,7 @@ export default function TransferReviewScreen() {
                 setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH))
               }
               placeholder="••••"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.inkMuted}
               secureTextEntry={!showPin}
               keyboardType="number-pad"
               maxLength={PIN_LENGTH}
@@ -200,7 +201,7 @@ export default function TransferReviewScreen() {
               <MaterialCommunityIcons
                 name={showPin ? 'eye-off-outline' : 'eye-outline'}
                 size={20}
-                color="#9CA3AF"
+                color={colors.inkMuted}
               />
             </TouchableOpacity>
           </View>
@@ -218,7 +219,7 @@ export default function TransferReviewScreen() {
             activeOpacity={0.85}
           >
             {submitting ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.inkInverse} />
             ) : (
               <Text
                 className={`text-base font-semibold ${
@@ -240,7 +241,7 @@ export default function TransferReviewScreen() {
               <MaterialCommunityIcons
                 name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
                 size={28}
-                color="#472FF8"
+                color={colors.primary}
               />
             </TouchableOpacity>
           )}

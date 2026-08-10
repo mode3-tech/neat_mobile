@@ -1,7 +1,9 @@
 import { RefreshControl, type RefreshControlProps } from 'react-native';
 
+import { colors } from '@/theme/palette';
+
 /**
- * Pull-to-refresh control tinted with the NEAT brand color (#472FF8).
+ * Pull-to-refresh control tinted with the NEAT brand color (`colors.primary`).
  *
  * IMPORTANT: this must forward ALL props to the underlying RefreshControl.
  * When a ScrollView renders a `refreshControl` on Android it calls
@@ -12,5 +14,5 @@ import { RefreshControl, type RefreshControlProps } from 'react-native';
  * brand colors.
  */
 export function PrimaryRefreshControl(props: RefreshControlProps) {
-  return <RefreshControl {...props} tintColor="#472FF8" colors={['#472FF8']} />;
+  return <RefreshControl {...props} tintColor={colors.primary} colors={[colors.primary]} />;
 }

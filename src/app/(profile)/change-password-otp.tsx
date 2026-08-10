@@ -10,6 +10,7 @@ import { authService } from '@/services/auth.service';
 import { accountService } from '@/services/account.service';
 import { useSecurityChangeStore } from '@/stores/security-change.store';
 import { maskPhone } from '@/utils/mask';
+import { colors } from '@/theme/palette';
 
 const RESEND_SECONDS = 90;
 
@@ -121,7 +122,7 @@ export default function ChangePasswordOtpScreen() {
           activeOpacity={0.85}
         >
           {loading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={colors.inkInverse} />
           ) : (
             <Text className={`text-base font-semibold ${canVerify ? 'text-white' : 'text-gray-400'}`}>
               Confirm

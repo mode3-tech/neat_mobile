@@ -29,6 +29,7 @@ import {
   takeDeepLink,
 } from '@/utils/pending-deep-link';
 import type { PushNotificationData } from '@/types/notification.types';
+import { colors } from '@/theme/palette';
 
 // Keep the native (expo-splash-screen) splash visible until the first real
 // screen has painted. Called at module scope here — the earliest point that
@@ -227,7 +228,7 @@ export default function RootLayout(): React.JSX.Element {
             <Stack.Screen name="index" options={{ animation: 'none' }} />
             <Stack.Screen
               name="welcome"
-              options={{ contentStyle: { backgroundColor: '#d4d8FF' } }}
+              options={{ contentStyle: { backgroundColor: colors.primarySurfaceStrong } }}
             />
             <Stack.Screen name="(sign-in)" />
             <Stack.Screen

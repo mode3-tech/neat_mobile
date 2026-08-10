@@ -11,6 +11,7 @@ import { router } from 'expo-router';
 
 import { useLoanStore } from '@/stores/loan.store';
 import { titleCase } from '@/utils/format';
+import { colors } from '@/theme/palette';
 
 function formatCurrency(amount: number): string {
   return '₦' + new Intl.NumberFormat('en-NG', {
@@ -72,7 +73,7 @@ export default function LoanSuccessScreen() {
       <ScrollView showsVerticalScrollIndicator={false} className="pt-10">
         <View className="items-center mb-5">
           <View className="w-16 h-16 rounded-full bg-success items-center justify-center">
-            <MaterialCommunityIcons name="check" size={32} color="#fff" />
+            <MaterialCommunityIcons name="check" size={32} color={colors.inkInverse} />
           </View>
         </View>
 

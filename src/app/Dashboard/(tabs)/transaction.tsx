@@ -15,6 +15,7 @@ import { useTransactions } from '@/hooks/use-transactions';
 import { openTransactionDetails } from '@/utils/transaction-nav';
 import { TransactionRow } from '@/components/features/transaction/TransactionRow';
 import type { TransactionFilter, Transaction } from '@/types/transaction.types';
+import { colors } from '@/theme/palette';
 
 const FILTERS: { key: TransactionFilter; label: string }[] = [
   { key: 'all', label: 'All' },
@@ -63,7 +64,7 @@ function EmptyState({ isFiltered }: { isFiltered: boolean }) {
       <MaterialCommunityIcons
         name={isFiltered ? 'magnify' : 'receipt'}
         size={64}
-        color="#E5E7EB"
+        color={colors.line}
       />
       <Text className="text-base font-semibold text-ink mt-4">
         {isFiltered ? 'No matching transactions' : 'No transactions yet'}
@@ -80,7 +81,7 @@ function EmptyState({ isFiltered }: { isFiltered: boolean }) {
 function ErrorState({ message }: { message: string }) {
   return (
     <View className="flex-1 items-center justify-center px-6">
-      <MaterialCommunityIcons name="wifi-off" size={64} color="#E5E7EB" />
+      <MaterialCommunityIcons name="wifi-off" size={64} color={colors.line} />
       <Text className="text-base font-semibold text-ink mt-4">
         {message}
       </Text>
@@ -117,7 +118,7 @@ export default function TransactionScreen() {
   return (
     <View className="flex-1 bg-white">
       {/* Gradient Header */}
-      <LinearGradient colors={['#0D0B2E', '#472FF8']}>
+      <LinearGradient colors={[colors.primaryDeep, colors.primary]}>
         <SafeAreaView edges={['top']}>
           <View className="px-6 pt-2 pb-6">
             <View className="flex-row items-center justify-between mb-4">
@@ -149,11 +150,11 @@ export default function TransactionScreen() {
         <TextInput
           className="flex-1 text-[15px] text-ink p-0"
           placeholder="Search"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.inkMuted}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-        <MaterialCommunityIcons name="magnify" size={20} color="#9CA3AF" />
+        <MaterialCommunityIcons name="magnify" size={20} color={colors.inkMuted} />
       </View>
 
       {/* Filter Tabs */}
@@ -162,7 +163,7 @@ export default function TransactionScreen() {
       {/* Transaction List */}
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#472FF8" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : isError && sections.length === 0 ? (
         <SectionList
@@ -200,7 +201,7 @@ export default function TransactionScreen() {
           ListFooterComponent={
             isFetchingNextPage ? (
               <View className="py-4 items-center">
-                <ActivityIndicator size="small" color="#472FF8" />
+                <ActivityIndicator size="small" color={colors.primary} />
               </View>
             ) : null
           }

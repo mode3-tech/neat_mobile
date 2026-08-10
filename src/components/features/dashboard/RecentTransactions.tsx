@@ -9,13 +9,14 @@ import { openTransactionDetails } from '@/utils/transaction-nav';
 import { getTransactionIcon, STATUS_COLORS } from '@/components/features/transaction/TransactionRow';
 import { QUERY_KEYS } from '@/constants';
 import type { Transaction } from '@/types/transaction.types';
+import { colors } from '@/theme/palette';
 
 function RecentTransactionRow({ transaction }: { transaction: Transaction }) {
   const { icon, bgColor, iconColor } = getTransactionIcon(transaction.description);
   const isCredit = transaction.type === 'credit';
   const prefix = isCredit ? '+' : '-';
   const formattedAmount = formatNairaWhole(transaction.amount);
-  const statusColor = STATUS_COLORS[transaction.status] ?? '#6B7280';
+  const statusColor = STATUS_COLORS[transaction.status] ?? colors.inkSoft;
 
   return (
     <TouchableOpacity
@@ -70,7 +71,7 @@ export default function RecentTransactions() {
 
       {isLoading && (
         <View className="items-center py-8">
-          <ActivityIndicator size="small" color="#472FF8" />
+          <ActivityIndicator size="small" color={colors.primary} />
         </View>
       )}
 

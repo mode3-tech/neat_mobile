@@ -4,7 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
-const PRIMARY = '#472FF8';
+import { colors } from '@/theme/palette';
+
+const PRIMARY = colors.primary;
 
 export default function PasswordResetSuccessScreen() {
   const scale = useRef(new Animated.Value(0)).current;
@@ -31,7 +33,7 @@ export default function PasswordResetSuccessScreen() {
       <View style={styles.content}>
         <Animated.View style={[styles.iconOuter, { transform: [{ scale }] }]}>
           <View style={styles.iconInner}>
-            <Ionicons name="checkmark" size={44} color="#fff" />
+            <Ionicons name="checkmark" size={44} color={colors.inkInverse} />
           </View>
         </Animated.View>
 
@@ -59,7 +61,7 @@ export default function PasswordResetSuccessScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     paddingHorizontal: 24,
   },
   content: {
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
     width: 112,
     height: 112,
     borderRadius: 56,
-    backgroundColor: '#ECFDF5',
+    backgroundColor: colors.successSurface,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 32,
@@ -80,20 +82,20 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#16A34A',
+    backgroundColor: colors.success,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     textAlign: 'center',
     marginBottom: 12,
   },
   message: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.inkSoft,
     textAlign: 'center',
     lineHeight: 22,
     paddingHorizontal: 16,
@@ -108,7 +110,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },

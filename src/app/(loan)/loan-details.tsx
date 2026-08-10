@@ -16,6 +16,7 @@ import { QUERY_KEYS } from '@/constants';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import { formatNairaWhole, formatDateLong } from '@/utils/format';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
+import { colors } from '@/theme/palette';
 
 function statusLabel(status: LoanHistoryStatus): string {
   switch (status) {
@@ -57,7 +58,7 @@ function ScheduleRow({ item }: { item: LoanHistoryItem }) {
       }`}
     >
       <View className="w-9 h-9 rounded-lg bg-primary-surface items-center justify-center mr-3">
-        <MaterialCommunityIcons name="package-variant" size={18} color="#472FF8" />
+        <MaterialCommunityIcons name="package-variant" size={18} color={colors.primary} />
       </View>
       <View className="flex-1">
         <Text className="text-xs text-ink-soft mb-1">Loan Amount</Text>
@@ -134,7 +135,7 @@ export default function LoanDetailsScreen() {
 
         {isLoading && (
           <View className="py-20 items-center justify-center">
-            <ActivityIndicator size="small" color="#472FF8" />
+            <ActivityIndicator size="small" color={colors.primary} />
           </View>
         )}
 
@@ -143,7 +144,7 @@ export default function LoanDetailsScreen() {
             <MaterialCommunityIcons
               name={!loanId ? 'file-document-outline' : 'alert-circle-outline'}
               size={64}
-              color="#E5E7EB"
+              color={colors.line}
             />
             <Text className="text-base font-semibold text-ink mt-3">
               {!loanId ? 'No loan selected' : "Couldn't load loan details"}

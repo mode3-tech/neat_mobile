@@ -3,6 +3,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { formatCapExpiry, formatNairaShort } from '@/utils/format';
 import type { AccountLimits } from '@/types/account.types';
+import { colors } from '@/theme/palette';
 
 interface ActivationCapBannerProps {
   limits?: AccountLimits;
@@ -32,7 +33,7 @@ export function ActivationCapBanner({ limits }: ActivationCapBannerProps) {
       <MaterialCommunityIcons
         name="information-outline"
         size={18}
-        color="#472FF8"
+        color={colors.primary}
         style={{ marginTop: 1 }}
       />
       <View className="flex-1 ml-2">

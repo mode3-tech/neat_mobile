@@ -17,8 +17,9 @@ import { useSignUpStore } from '@/stores/sign-up.store';
 import { useNetworkStatus } from '@/hooks/use-network-status';
 import { OTP_LENGTH } from '@/constants';
 import { maskEmail } from '@/utils/mask';
+import { colors } from '@/theme/palette';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = colors.primary;
 const RESEND_SECONDS = 90;
 
 export default function EmailOtpScreen() {
@@ -119,7 +120,7 @@ export default function EmailOtpScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.inkInverse} />
             ) : (
               <Text style={[styles.primaryBtnText, !canVerify && styles.disabledBtnText]}>
                 Verify & Continue
@@ -146,7 +147,7 @@ export default function EmailOtpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
   },
   scrollContent: {
     flexGrow: 1,
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
   backBtn: {
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.line,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -165,23 +166,23 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.inkBody,
     fontWeight: '500',
   },
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: colors.ink,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.inkSoft,
     lineHeight: 20,
     marginBottom: 32,
   },
   emailHighlight: {
-    color: '#1A1A1A',
+    color: colors.ink,
     fontWeight: '500',
   },
   otpWrap: {
@@ -210,15 +211,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: colors.inkInverse,
     fontSize: 16,
     fontWeight: '600',
   },
   disabledBtn: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.surfaceDisabled,
   },
   disabledBtnText: {
-    color: '#9CA3AF',
+    color: colors.inkMuted,
   },
   resendRow: {
     flexDirection: 'row',
@@ -227,7 +228,7 @@ const styles = StyleSheet.create({
   },
   resendLabel: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.inkSoft,
   },
   resendLink: {
     fontSize: 13,

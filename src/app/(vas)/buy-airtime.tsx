@@ -20,6 +20,7 @@ import { useAccountSummary } from '@/hooks/use-account-summary';
 import type { VasBiller } from '@/types/vas.types';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
+import { colors } from '@/theme/palette';
 
 const PHONE_LENGTH = 11;
 const QUICK_AMOUNTS = [100, 200, 500, 1000, 2000, 5000];
@@ -148,7 +149,7 @@ export default function BuyAirtimeScreen() {
 
           {billersQuery.isLoading ? (
             <View className="h-[68px] items-center justify-center">
-              <ActivityIndicator color="#472FF8" />
+              <ActivityIndicator color={colors.primary} />
             </View>
           ) : billersQuery.isError ? (
             <View className="h-[68px] items-center justify-center">
@@ -189,14 +190,14 @@ export default function BuyAirtimeScreen() {
             value={phone}
             onChangeText={(t) => setPhone(t.replace(/\D/g, '').slice(0, PHONE_LENGTH))}
             placeholder="Phone Number"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.inkMuted}
             keyboardType="phone-pad"
             maxLength={PHONE_LENGTH}
           />
           <MaterialCommunityIcons
             name="account-circle-outline"
             size={22}
-            color="#6B7280"
+            color={colors.inkSoft}
           />
         </View>
 
@@ -208,7 +209,7 @@ export default function BuyAirtimeScreen() {
             value={amount}
             onChangeText={(t) => setAmount(t.replace(/\D/g, ''))}
             placeholder="Amount"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.inkMuted}
             keyboardType="number-pad"
           />
         </View>
@@ -259,7 +260,7 @@ export default function BuyAirtimeScreen() {
           activeOpacity={0.85}
         >
           {productsQuery.isLoading && !!selectedBillerId ? (
-            <ActivityIndicator color="#9CA3AF" />
+            <ActivityIndicator color={colors.inkMuted} />
           ) : (
             <Text
               className={`text-base font-semibold ${
