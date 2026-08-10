@@ -248,7 +248,7 @@ export default function StatementScreen() {
               />
             </TouchableOpacity>
             {rangeInvalid && (
-              <Text className="text-xs text-red-500 mt-1.5">
+              <Text className="text-xs text-danger mt-1.5">
                 End date must be on or after start date
               </Text>
             )}
@@ -382,7 +382,7 @@ export default function StatementScreen() {
         {/* Generate button */}
         <View className="pb-4">
           {errorMsg !== '' && (
-            <Text className="text-xs text-red-500 text-center mb-2">
+            <Text className="text-xs text-danger text-center mb-2">
               {errorMsg}
             </Text>
           )}

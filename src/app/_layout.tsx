@@ -30,6 +30,7 @@ import {
 } from '@/utils/pending-deep-link';
 import type { PushNotificationData } from '@/types/notification.types';
 import { colors } from '@/theme/palette';
+import { useAppFonts } from '@/theme/use-app-fonts';
 
 // Keep the native (expo-splash-screen) splash visible until the first real
 // screen has painted. Called at module scope here — the earliest point that
@@ -59,8 +60,11 @@ const queryClient = new QueryClient({
   },
 });
 
-export default function RootLayout(): React.JSX.Element {
+export default function RootLayout(): React.JSX.Element | null {
   const router = useRouter();
+  // No custom font is bundled yet, so this is `true` on the very first render —
+  // see src/theme/use-app-fonts.ts. It becomes a real gate in Stage 2.
+  const fontsReady = useAppFonts();
   const { onTouchActivity } = useSessionTimeout(router);
   const hasBackgrounded = useRef(AppState.currentState === 'background');
 
@@ -210,6 +214,13 @@ export default function RootLayout(): React.JSX.Element {
     });
     return () => subscription.remove();
   }, []);
+
+  // Hold the tree back until the typeface is in memory, so no text ever paints
+  // in the fallback font and then reflows. Below every hook, so hook order is
+  // unaffected. Unreachable today (fontsReady starts `true`); rendering nothing
+  // also keeps the native splash up, because hideAsync() lives in index.tsx and
+  // index cannot mount until this returns.
+  if (!fontsReady) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

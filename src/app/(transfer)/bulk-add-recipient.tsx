@@ -277,7 +277,7 @@ export default function BulkAddRecipientScreen() {
           </View>
         </View>
         {exceedsBalance && (
-          <Text className="text-xs text-red-500 mb-4">
+          <Text className="text-xs text-danger mb-4">
             Total payment exceeds your available balance.
           </Text>
         )}
@@ -376,7 +376,7 @@ export default function BulkAddRecipientScreen() {
               </Text>
             )}
             {validationError !== '' && (
-              <Text className="text-xs text-red-500 mt-1.5">
+              <Text className="text-xs text-danger mt-1.5">
                 {validationError}
               </Text>
             )}

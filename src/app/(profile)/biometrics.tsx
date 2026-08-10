@@ -49,10 +49,10 @@ export default function BiometricsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-full px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm text-gray-700 font-medium">Back</Text>
+        <Text className="text-sm text-ink-body font-medium">Back</Text>
       </TouchableOpacity>
 
       <Text className="text-[22px] font-bold text-ink mb-6">Biometric Settings</Text>
@@ -60,7 +60,7 @@ export default function BiometricsScreen() {
       <View className="bg-surface-input rounded-2xl px-4 py-4 flex-row items-center">
         <View className="flex-1 pr-3">
           <Text className="text-[15px] font-semibold text-ink">Enable Biometrics</Text>
-          <Text className="text-[12px] text-gray-500 mt-0.5">
+          <Text className="text-[12px] text-ink-soft mt-0.5">
             Use fingerprint or Face ID for sign-in and transactions
           </Text>
         </View>

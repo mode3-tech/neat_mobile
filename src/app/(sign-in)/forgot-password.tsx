@@ -17,6 +17,7 @@ import { toast } from 'sonner-native';
 import { authService } from '@/services/auth.service';
 import { getErrorMessage } from '@/utils/error';
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 const PRIMARY = colors.primary;
 
@@ -123,11 +124,11 @@ const styles = StyleSheet.create({
   backText: {
     fontSize: 14,
     color: colors.inkBody,
-    fontWeight: '500',
+    ...weight.medium,
   },
   title: {
     fontSize: 26,
-    fontWeight: '700',
+    ...weight.bold,
     color: colors.ink,
     marginBottom: 28,
   },
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 13,
-    fontWeight: '600',
+    ...weight.semibold,
     color: colors.inkBody,
     marginBottom: 8,
   },
@@ -169,7 +170,7 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     color: colors.inkInverse,
     fontSize: 16,
-    fontWeight: '600',
+    ...weight.semibold,
   },
   disabledBtn: {
     backgroundColor: colors.surfaceDisabled,

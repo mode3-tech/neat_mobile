@@ -41,7 +41,7 @@ export default function CloseAccountNoticeScreen() {
       {/* Header */}
       <View className="flex-row items-center px-6 pt-2 pb-4">
         <TouchableOpacity
-          className="border border-gray-200 rounded-full w-10 h-10 items-center justify-center"
+          className="border border-line rounded-full w-10 h-10 items-center justify-center"
           onPress={() => router.back()}
         >
           <MaterialCommunityIcons name="chevron-left" size={24} color={colors.inkBody} />
@@ -58,7 +58,7 @@ export default function CloseAccountNoticeScreen() {
         <Text className="text-[20px] font-bold text-ink mt-2">
           NEATPay – Close Account
         </Text>
-        <Text className="text-[13px] text-gray-400 mt-1 mb-3">Version 1.0</Text>
+        <Text className="text-[13px] text-ink-muted mt-1 mb-3">Version 1.0</Text>
 
         <Paragraph>
           Before you cancel your NEATPay account, please read the following information

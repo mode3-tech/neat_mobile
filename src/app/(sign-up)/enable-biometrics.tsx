@@ -16,6 +16,7 @@ import { useSignUpStore } from '@/stores/sign-up.store';
 import { getRegisterErrorAction, type RegisterErrorAction } from '@/utils/register-errors';
 import { buildRegisterPayload } from '@/utils/register-payload';
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 const PRIMARY = colors.primary;
 
@@ -149,11 +150,11 @@ const styles = StyleSheet.create({
   backText: {
     fontSize: 14,
     color: colors.inkBody,
-    fontWeight: '500',
+    ...weight.medium,
   },
   title: {
     fontSize: 22,
-    fontWeight: '700',
+    ...weight.bold,
     color: colors.ink,
     marginBottom: 6,
   },
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
   toggleLabel: {
     fontSize: 15,
     color: colors.ink,
-    fontWeight: '500',
+    ...weight.medium,
   },
   redeemBlock: {
     marginTop: 20,
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
   redeemLabel: {
     fontSize: 13,
     color: colors.inkSoft,
-    fontWeight: '500',
+    ...weight.medium,
     marginBottom: 8,
   },
   redeemInput: {
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
   recoveryBtnText: {
     fontSize: 15,
     color: colors.inkBody,
-    fontWeight: '600',
+    ...weight.semibold,
   },
   btnOuter: {
     borderWidth: 2,
@@ -239,6 +240,6 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     color: colors.inkInverse,
     fontSize: 16,
-    fontWeight: '600',
+    ...weight.semibold,
   },
 });

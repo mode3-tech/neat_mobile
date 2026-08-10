@@ -46,7 +46,7 @@ export function ConfirmModal({
           style={{ paddingBottom: 20 + insets.bottom }}
           onPress={(e) => e.stopPropagation()}
         >
-          <View className="w-12 h-1 rounded-full bg-gray-300 self-center mb-6" />
+          <View className="w-12 h-1 rounded-full bg-line-strong self-center mb-6" />
 
           <Text className="text-xl font-bold text-ink text-center mb-6">
             {title}
@@ -74,7 +74,7 @@ export function ConfirmModal({
               disabled={loading}
               activeOpacity={0.85}
             >
-              <Text className={`text-base font-semibold ${loading ? 'text-gray-400' : 'text-primary'}`}>
+              <Text className={`text-base font-semibold ${loading ? 'text-ink-muted' : 'text-primary'}`}>
                 {cancelLabel}
               </Text>
             </TouchableOpacity>

@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 const PRIMARY = colors.primary;
 
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: '800',
+    ...weight.extrabold,
     color: colors.ink,
     textAlign: 'center',
     marginBottom: 12,
@@ -82,6 +83,6 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     color: colors.inkInverse,
     fontSize: 16,
-    fontWeight: '600',
+    ...weight.semibold,
   },
 });

@@ -15,7 +15,7 @@ export function PinField({ label, value, onChangeText, hasError = false }: PinFi
   const [show, setShow] = useState(false);
   return (
     <View className="mb-5">
-      <Text className="text-[13px] font-semibold text-gray-700 mb-2">{label}</Text>
+      <Text className="text-[13px] font-semibold text-ink-body mb-2">{label}</Text>
       <View
         className={`flex-row items-center rounded-xl px-4 py-[14px] border-[1.5px] ${
           hasError ? 'bg-white border-danger' : 'bg-surface-input border-transparent'
@@ -32,7 +32,7 @@ export function PinField({ label, value, onChangeText, hasError = false }: PinFi
           maxLength={PIN_LENGTH}
         />
         <TouchableOpacity onPress={() => setShow((v) => !v)}>
-          <Text className="text-base text-gray-400">{show ? '👁' : '👁‍🗨'}</Text>
+          <Text className="text-base text-ink-muted">{show ? '👁' : '👁‍🗨'}</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -13,6 +13,7 @@ import { router } from 'expo-router';
 import { useSignUpStore } from '@/stores/sign-up.store';
 import { PIN_LENGTH } from '@/constants';
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 const PRIMARY = colors.primary;
 const ERROR_COLOR = colors.danger;
@@ -181,11 +182,11 @@ const styles = StyleSheet.create({
   backText: {
     fontSize: 14,
     color: colors.inkBody,
-    fontWeight: '500',
+    ...weight.medium,
   },
   title: {
     fontSize: 22,
-    fontWeight: '700',
+    ...weight.bold,
     color: colors.ink,
     marginBottom: 6,
   },
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 13,
-    fontWeight: '600',
+    ...weight.semibold,
     color: colors.inkBody,
     marginBottom: 8,
   },
@@ -248,7 +249,7 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     color: colors.inkInverse,
     fontSize: 16,
-    fontWeight: '600',
+    ...weight.semibold,
   },
   disabledBtn: {
     backgroundColor: colors.surfaceDisabled,
@@ -279,11 +280,11 @@ const styles = StyleSheet.create({
   checkMark: {
     color: colors.inkInverse,
     fontSize: 12,
-    fontWeight: '700',
+    ...weight.bold,
   },
   setTitle: {
     fontSize: 14,
-    fontWeight: '600',
+    ...weight.semibold,
     color: colors.ink,
   },
   setBody: {
@@ -293,7 +294,7 @@ const styles = StyleSheet.create({
   },
   changeLink: {
     fontSize: 13,
-    fontWeight: '600',
+    ...weight.semibold,
     color: PRIMARY,
     marginTop: 4,
   },

@@ -20,6 +20,7 @@ import { useSignUpStore } from '@/stores/sign-up.store';
 import { OTP_LENGTH } from '@/constants';
 import { maskPhone } from '@/utils/mask';
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 const PRIMARY = colors.primary;
 const RESEND_SECONDS = 90;
@@ -194,11 +195,11 @@ const styles = StyleSheet.create({
   backText: {
     fontSize: 14,
     color: colors.inkBody,
-    fontWeight: '500',
+    ...weight.medium,
   },
   title: {
     fontSize: 26,
-    fontWeight: '700',
+    ...weight.bold,
     color: colors.ink,
     marginBottom: 6,
   },
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
   },
   phoneHighlight: {
     color: colors.ink,
-    fontWeight: '500',
+    ...weight.medium,
   },
   otpWrap: {
     marginBottom: 12,
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
   changeNumberText: {
     fontSize: 13,
     color: PRIMARY,
-    fontWeight: '600',
+    ...weight.semibold,
   },
   spacer: {
     flex: 1,
@@ -240,7 +241,7 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     color: colors.inkInverse,
     fontSize: 16,
-    fontWeight: '600',
+    ...weight.semibold,
   },
   disabledBtn: {
     backgroundColor: colors.surfaceDisabled,
@@ -260,11 +261,11 @@ const styles = StyleSheet.create({
   resendLink: {
     fontSize: 13,
     color: PRIMARY,
-    fontWeight: '600',
+    ...weight.semibold,
   },
   timerText: {
     fontSize: 13,
     color: PRIMARY,
-    fontWeight: '600',
+    ...weight.semibold,
   },
 });

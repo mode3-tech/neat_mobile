@@ -179,7 +179,7 @@ export default function TransactionScreen() {
           sections={sections}
           keyExtractor={(item: Transaction) => item.id}
           renderSectionHeader={({ section }) => (
-            <Text className="text-xs font-semibold text-gray-500 px-6 pt-5 pb-2">
+            <Text className="text-xs font-semibold text-ink-soft px-6 pt-5 pb-2">
               {section.title}
             </Text>
           )}

@@ -31,16 +31,16 @@ function RecentTransactionRow({ transaction }: { transaction: Transaction }) {
         <MaterialCommunityIcons name={icon} size={20} color={iconColor} />
       </View>
       <View className="flex-1 ml-3">
-        <Text className="text-sm font-semibold text-gray-900" numberOfLines={1}>
+        <Text className="text-sm font-semibold text-ink" numberOfLines={1}>
           {transaction.description}
         </Text>
-        <Text className="text-xs text-gray-600 mt-0.5">
+        <Text className="text-xs text-ink-soft mt-0.5">
           {formatTransactionDate(transaction.date)}
         </Text>
       </View>
       <View className="items-end ml-2">
         <Text
-          className={`text-sm font-bold ${isCredit ? 'text-primary' : 'text-gray-900'}`}
+          className={`text-sm font-bold ${isCredit ? 'text-primary' : 'text-ink'}`}
         >
           {prefix}{formattedAmount}
         </Text>
@@ -63,7 +63,7 @@ export default function RecentTransactions() {
   return (
     <View className="mt-2 px-6">
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-base font-semibold text-gray-900">Recent Transactions</Text>
+        <Text className="text-base font-semibold text-ink">Recent Transactions</Text>
         <TouchableOpacity onPress={() => router.navigate('/Dashboard/(tabs)/transaction' as any)}>
           <Text className="text-[13px] font-semibold text-primary">View All</Text>
         </TouchableOpacity>

@@ -18,6 +18,7 @@ import { getErrorMessage } from '@/utils/error';
 import { getRegisterErrorAction, type RegisterErrorAction } from '@/utils/register-errors';
 import { buildRegisterPayload } from '@/utils/register-payload';
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 const PRIMARY = colors.primary;
 const POLL_INTERVAL_MS = 3000;
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
+    ...weight.semibold,
     color: colors.ink,
     textAlign: 'center',
     marginBottom: 8,
@@ -301,7 +302,7 @@ const styles = StyleSheet.create({
   errorMark: {
     color: colors.inkInverse,
     fontSize: 36,
-    fontWeight: '700',
+    ...weight.bold,
   },
   footer: {
     paddingBottom: 16,
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     color: colors.inkInverse,
     fontSize: 16,
-    fontWeight: '600',
+    ...weight.semibold,
   },
   secondaryBtn: {
     paddingVertical: 12,
@@ -325,6 +326,6 @@ const styles = StyleSheet.create({
   secondaryBtnText: {
     color: PRIMARY,
     fontSize: 15,
-    fontWeight: '500',
+    ...weight.medium,
   },
 });

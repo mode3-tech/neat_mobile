@@ -89,10 +89,10 @@ export function PhotoPickerSheet({
           style={{ paddingBottom: 24 + insets.bottom }}
           onPress={(e) => e.stopPropagation()}
         >
-          <View className="w-12 h-1 rounded-full bg-gray-300 self-center mb-6" />
+          <View className="w-12 h-1 rounded-full bg-line-strong self-center mb-6" />
 
           <View className="items-center mb-6">
-            <View className="w-28 h-28 rounded-full bg-gray-100 items-center justify-center overflow-hidden">
+            <View className="w-28 h-28 rounded-full bg-surface-subtle items-center justify-center overflow-hidden">
               {currentPhotoUri ? (
                 <Image source={{ uri: currentPhotoUri }} className="w-full h-full" />
               ) : (

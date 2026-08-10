@@ -36,7 +36,7 @@ function PwField({ label, value, onChangeText, hasError, placeholder }: PwFieldP
   const [show, setShow] = useState(false);
   return (
     <View className="mb-5">
-      <Text className="text-[13px] font-semibold text-gray-700 mb-2">{label}</Text>
+      <Text className="text-[13px] font-semibold text-ink-body mb-2">{label}</Text>
       <View
         className={`flex-row items-center rounded-xl px-4 py-[14px] border-[1.5px] ${
           hasError ? 'bg-white border-danger' : 'bg-surface-input border-transparent'
@@ -53,7 +53,7 @@ function PwField({ label, value, onChangeText, hasError, placeholder }: PwFieldP
           autoCorrect={false}
         />
         <TouchableOpacity onPress={() => setShow((v) => !v)}>
-          <Text className="text-base text-gray-400">{show ? '👁' : '👁‍🗨'}</Text>
+          <Text className="text-base text-ink-muted">{show ? '👁' : '👁‍🗨'}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -132,10 +132,10 @@ export default function ChangePasswordScreen() {
         bottomOffset={20}
       >
           <TouchableOpacity
-            className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
+            className="self-start border border-line rounded-full px-4 py-1.5 mt-2 mb-6"
             onPress={() => router.back()}
           >
-            <Text className="text-sm text-gray-700 font-medium">Back</Text>
+            <Text className="text-sm text-ink-body font-medium">Back</Text>
           </TouchableOpacity>
 
           <Text className="text-[22px] font-bold text-ink mb-6">Change Password</Text>
@@ -163,15 +163,15 @@ export default function ChangePasswordScreen() {
           />
 
           <View className="mb-5 -mt-2">
-            <Text className={`text-xs leading-[18px] mb-1 ${hasError && !isValidNew ? 'text-danger' : 'text-gray-500'}`}>
+            <Text className={`text-xs leading-[18px] mb-1 ${hasError && !isValidNew ? 'text-danger' : 'text-ink-soft'}`}>
               Make sure your password is 8 or more characters and has at least 3 of the following:
             </Text>
             {REQUIREMENTS.map((r) => (
               <View key={r.label} className="flex-row gap-1.5">
-                <Text className={`text-xs leading-[18px] ${hasError && !isValidNew ? 'text-danger' : 'text-gray-500'}`}>
+                <Text className={`text-xs leading-[18px] ${hasError && !isValidNew ? 'text-danger' : 'text-ink-soft'}`}>
                   •
                 </Text>
-                <Text className={`text-xs leading-[18px] ${hasError && !isValidNew ? 'text-danger' : 'text-gray-500'}`}>
+                <Text className={`text-xs leading-[18px] ${hasError && !isValidNew ? 'text-danger' : 'text-ink-soft'}`}>
                   {r.label}
                 </Text>
               </View>
@@ -204,7 +204,7 @@ export default function ChangePasswordScreen() {
             {loading ? (
               <ActivityIndicator color={colors.inkInverse} />
             ) : (
-              <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-gray-400'}`}>
+              <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-ink-muted'}`}>
                 Change Password
               </Text>
             )}

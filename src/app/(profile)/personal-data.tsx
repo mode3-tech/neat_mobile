@@ -68,7 +68,7 @@ function Field({
 
   return (
     <View className="mb-4">
-      <Text className="text-[13px] font-semibold text-gray-700 mb-2">{label}</Text>
+      <Text className="text-[13px] font-semibold text-ink-body mb-2">{label}</Text>
       <View className={`rounded-xl ${containerBg} ${borderClass}`}>
         <TextInput
           ref={inputRef}
@@ -81,7 +81,7 @@ function Field({
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           autoCorrect={false}
-          className={`text-[15px] px-4 py-[14px] ${editable ? 'text-ink' : 'text-gray-500'}`}
+          className={`text-[15px] px-4 py-[14px] ${editable ? 'text-ink' : 'text-ink-soft'}`}
         />
       </View>
       {error ? (
@@ -102,10 +102,10 @@ export default function PersonalDataScreen() {
       <SafeAreaView className="flex-1 bg-white">
         <View className="px-6 pt-2">
           <TouchableOpacity
-            className="self-start border border-gray-200 rounded-full px-4 py-1.5"
+            className="self-start border border-line rounded-full px-4 py-1.5"
             onPress={() => router.back()}
           >
-            <Text className="text-sm text-gray-700 font-medium">Back</Text>
+            <Text className="text-sm text-ink-body font-medium">Back</Text>
           </TouchableOpacity>
         </View>
         <View className="flex-1 items-center justify-center px-6">
@@ -114,7 +114,7 @@ export default function PersonalDataScreen() {
               <Text className="text-base font-semibold text-ink mb-2">
                 Couldn&apos;t load your profile
               </Text>
-              <Text className="text-sm text-gray-500 text-center mb-6">
+              <Text className="text-sm text-ink-soft text-center mb-6">
                 Please check your connection and try again.
               </Text>
               <TouchableOpacity
@@ -200,10 +200,10 @@ function PersonalDataForm({ summary }: { summary: AccountSummary }) {
         bottomOffset={20}
       >
         <TouchableOpacity
-          className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
+          className="self-start border border-line rounded-full px-4 py-1.5 mt-2 mb-6"
           onPress={() => router.back()}
         >
-          <Text className="text-sm text-gray-700 font-medium">Back</Text>
+          <Text className="text-sm text-ink-body font-medium">Back</Text>
         </TouchableOpacity>
 
         <Text className="text-[22px] font-bold text-ink mb-6">Personal Data</Text>

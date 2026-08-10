@@ -101,8 +101,8 @@ export default function HomeScreen() {
             )}
           </View>
           <View>
-            {/* <Text className="text-xs font-normal text-gray-500">Welcome Back,</Text> */}
-            <Text className="text-base font-bold text-gray-900">
+            {/* <Text className="text-xs font-normal text-ink-soft">Welcome Back,</Text> */}
+            <Text className="text-base font-bold text-ink">
               {firstName ? `Hi, ${firstName} 👋` : 'Hi 👋'}
             </Text>
           </View>
@@ -150,9 +150,9 @@ export default function HomeScreen() {
         <ServicesGrid />
 
         {/* 1-Tap Payments Banner */}
-        {/* <View className="flex-row items-center gap-2 bg-amber-50 rounded-xl p-3.5 mx-6 mt-2">
+        {/* <View className="flex-row items-center gap-2 bg-warning-surface rounded-xl p-3.5 mx-6 mt-2">
           <MaterialCommunityIcons name="information" size={20} color={colors.warning} />
-          <Text className="flex-1 text-[13px] text-gray-700">
+          <Text className="flex-1 text-[13px] text-ink-body">
             You don't have any 1-tap payments set up yet.
           </Text>
         </View> */}

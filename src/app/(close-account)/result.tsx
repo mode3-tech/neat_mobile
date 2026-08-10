@@ -51,7 +51,7 @@ export default function CloseAccountResultScreen() {
         >
           {title}
         </Text>
-        <Text className="text-[14px] text-gray-500 text-center leading-[22px] px-4">
+        <Text className="text-[14px] text-ink-soft text-center leading-[22px] px-4">
           {body}
         </Text>
       </View>

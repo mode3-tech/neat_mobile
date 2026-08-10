@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -211,7 +212,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: '700',
+    ...weight.bold,
     color: PRIMARY_COLOR,
     textAlign: 'center',
     marginBottom: 10,
@@ -260,7 +261,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: colors.inkInverse,
     fontSize: 16,
-    fontWeight: '600',
+    ...weight.semibold,
   },
   secondaryButton: {
     paddingVertical: 12,
@@ -271,6 +272,6 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     color: colors.primary,
     fontSize: 16,
-    fontWeight: '500',
+    ...weight.medium,
   },
 });

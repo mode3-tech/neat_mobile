@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { openStoreListing } from '@/utils/store-link';
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 type Props = {
   /** Optional `store_url` from GET /app/version. */
@@ -97,7 +98,7 @@ export function UpdateRequiredScreen({ storeUrl }: Props): React.JSX.Element {
           }}
           className="items-center rounded-full bg-primary py-4 active:opacity-70"
         >
-          <Text style={{ color: colors.inkInverse, fontSize: 15, fontWeight: '600' }}>
+          <Text style={{ color: colors.inkInverse, fontSize: 15, ...weight.semibold }}>
             Update Now
           </Text>
         </Pressable>

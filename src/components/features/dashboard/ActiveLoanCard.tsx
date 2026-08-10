@@ -21,7 +21,7 @@ export default function ActiveLoanCard({ loans }: ActiveLoanCardProps) {
 
   return (
     <View className="mx-6 mt-5">
-      <Text className="text-base font-semibold text-gray-900 mb-2">Active Loan</Text>
+      <Text className="text-base font-semibold text-ink mb-2">Active Loan</Text>
 
       <View className="bg-primary rounded-2xl p-5">
         {/* Arrow icon */}

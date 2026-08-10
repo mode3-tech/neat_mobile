@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 interface OtpInputProps {
   value: string;
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
   },
   digit: {
     fontSize: 20,
-    fontWeight: '600',
+    ...weight.semibold,
     color: colors.ink,
   },
   hiddenInput: {

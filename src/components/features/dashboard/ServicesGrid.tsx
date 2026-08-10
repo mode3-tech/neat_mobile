@@ -87,7 +87,7 @@ export default function ServicesGrid() {
 
   return (
     <View className="mt-7 px-6">
-      <Text className="text-base font-semibold text-gray-900 mb-4">Services Just for You</Text>
+      <Text className="text-base font-semibold text-ink mb-4">Services Just for You</Text>
       {SERVICES.map((row, rowIndex) => (
         <View key={rowIndex} className="flex-row justify-between mb-4">
           {row.map((item) => (
@@ -100,7 +100,7 @@ export default function ServicesGrid() {
               <View className="w-12 h-12 rounded-full bg-primary items-center justify-center">
                 <MaterialCommunityIcons name={item.icon} size={22} color={colors.inkInverse} />
               </View>
-              <Text className="text-[10px] text-gray-700 text-center mt-1.5" numberOfLines={1}>
+              <Text className="text-[10px] text-ink-body text-center mt-1.5" numberOfLines={1}>
                 {item.label}
               </Text>
             </TouchableOpacity>

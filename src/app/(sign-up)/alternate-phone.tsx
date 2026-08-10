@@ -14,6 +14,7 @@ import { router } from 'expo-router';
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 const PRIMARY = colors.primary;
 const PHONE_REGEX = /^\+?\d{10,14}$/;
@@ -147,11 +148,11 @@ const styles = StyleSheet.create({
   backText: {
     fontSize: 14,
     color: colors.inkBody,
-    fontWeight: '500',
+    ...weight.medium,
   },
   title: {
     fontSize: 22,
-    fontWeight: '700',
+    ...weight.bold,
     color: colors.ink,
     marginBottom: 6,
   },
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
   field: {},
   label: {
     fontSize: 13,
-    fontWeight: '600',
+    ...weight.semibold,
     color: colors.inkBody,
     marginBottom: 8,
   },
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
   },
   infoTitle: {
     fontSize: 13,
-    fontWeight: '700',
+    ...weight.bold,
     color: colors.ink,
   },
   infoBody: {
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     color: colors.inkInverse,
     fontSize: 16,
-    fontWeight: '600',
+    ...weight.semibold,
   },
   disabledBtn: {
     backgroundColor: colors.surfaceDisabled,

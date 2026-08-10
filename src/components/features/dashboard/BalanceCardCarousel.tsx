@@ -289,7 +289,7 @@ export default function BalanceCardCarousel({
           <View
             key={card.id}
             className={`rounded-full ${
-              i === activeIndex % CARDS.length ? 'w-2 h-2 bg-primary' : 'w-1.5 h-1.5 bg-gray-300'
+              i === activeIndex % CARDS.length ? 'w-2 h-2 bg-primary' : 'w-1.5 h-1.5 bg-line-strong'
             }`}
           />
         ))}

@@ -92,14 +92,14 @@ export default function ChangePasswordOtpScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-full px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm text-gray-700 font-medium">Back</Text>
+        <Text className="text-sm text-ink-body font-medium">Back</Text>
       </TouchableOpacity>
 
       <Text className="text-[22px] font-bold text-ink mb-2">Enter OTP Code</Text>
-      <Text className="text-[13px] text-gray-500 leading-5 mb-8">
+      <Text className="text-[13px] text-ink-soft leading-5 mb-8">
         Please check the OTP that has been sent to your phone number{' '}
         <Text className="text-primary font-semibold">{maskPhone(summary?.phone_number)}</Text>.
       </Text>
@@ -124,14 +124,14 @@ export default function ChangePasswordOtpScreen() {
           {loading ? (
             <ActivityIndicator color={colors.inkInverse} />
           ) : (
-            <Text className={`text-base font-semibold ${canVerify ? 'text-white' : 'text-gray-400'}`}>
+            <Text className={`text-base font-semibold ${canVerify ? 'text-white' : 'text-ink-muted'}`}>
               Confirm
             </Text>
           )}
         </TouchableOpacity>
 
         <View className="flex-row justify-center items-center mt-4">
-          <Text className="text-[13px] text-gray-500">Didn't get a code? </Text>
+          <Text className="text-[13px] text-ink-soft">Didn't get a code? </Text>
           {canResend ? (
             <TouchableOpacity onPress={handleResend}>
               <Text className="text-[13px] text-primary font-semibold">Resend code</Text>

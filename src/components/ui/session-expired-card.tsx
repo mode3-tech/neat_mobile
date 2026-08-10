@@ -11,7 +11,7 @@ export function SessionExpiredCard({ message }: SessionExpiredCardProps) {
     <SafeAreaView className="flex-1 bg-white px-6 justify-center items-center">
       <View className="bg-danger-surface rounded-2xl px-6 py-8 items-center w-full">
         <Text className="text-lg font-bold text-ink mb-2">Session Expired</Text>
-        <Text className="text-[13px] text-gray-500 text-center leading-5 mb-6">{message}</Text>
+        <Text className="text-[13px] text-ink-soft text-center leading-5 mb-6">{message}</Text>
         <TouchableOpacity
           className="bg-primary rounded-full py-3.5 px-10"
           onPress={() => router.back()}

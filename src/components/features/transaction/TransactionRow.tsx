@@ -76,10 +76,10 @@ export function TransactionRow({
 
       {/* Description + Date */}
       <View className="flex-1 ml-3">
-        <Text className="text-sm font-semibold text-gray-900" numberOfLines={1}>
+        <Text className="text-sm font-semibold text-ink" numberOfLines={1}>
           {transaction.description}
         </Text>
-        <Text className="text-xs text-gray-500 mt-0.5">
+        <Text className="text-xs text-ink-soft mt-0.5">
           {formatTransactionDateTime(transaction.date)}
         </Text>
       </View>
@@ -87,7 +87,7 @@ export function TransactionRow({
       {/* Amount + Status */}
       <View className="items-end ml-2">
         <Text
-          className={`text-sm font-bold ${isCredit ? 'text-primary' : 'text-gray-900'}`}
+          className={`text-sm font-bold ${isCredit ? 'text-primary' : 'text-ink'}`}
         >
           {prefix}{formattedAmount}
         </Text>

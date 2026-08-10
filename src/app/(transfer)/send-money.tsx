@@ -486,7 +486,7 @@ export default function SendMoneyScreen() {
               </Text>
             )}
             {validationError !== '' && (
-              <Text className="text-xs text-red-500 mt-1.5">
+              <Text className="text-xs text-danger mt-1.5">
                 {validationError}
               </Text>
             )}
@@ -535,13 +535,13 @@ export default function SendMoneyScreen() {
               />
             </View>
             {exceedsCap && outflowRemaining != null && (
-              <Text className="text-xs text-red-500 mt-1.5">
+              <Text className="text-xs text-danger mt-1.5">
                 Exceeds your remaining {formatNairaShort(outflowRemaining)}{' '}
                 24-hour limit.
               </Text>
             )}
             {exceedsBalance && (
-              <Text className="text-xs text-red-500 mt-1.5">
+              <Text className="text-xs text-danger mt-1.5">
                 {INSUFFICIENT_FUNDS_MESSAGE}
               </Text>
             )}
@@ -711,7 +711,7 @@ export default function SendMoneyScreen() {
                 keyboardShouldPersistTaps="handled"
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    className="px-6 py-4 bg-gray-100 border-b border-line-subtle"
+                    className="px-6 py-4 bg-surface-subtle border-b border-line-subtle"
                     onPress={() => handleSelectBeneficiary(item)}
                   >
                     <Text className="text-[20px] font-bold text-ink">

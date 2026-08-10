@@ -93,10 +93,10 @@ export default function ChangePinScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <TouchableOpacity
-          className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
+          className="self-start border border-line rounded-full px-4 py-1.5 mt-2 mb-6"
           onPress={() => router.back()}
         >
-          <Text className="text-sm text-gray-700 font-medium">Back</Text>
+          <Text className="text-sm text-ink-body font-medium">Back</Text>
         </TouchableOpacity>
 
         <Text className="text-[22px] font-bold text-ink mb-6">Change Transaction PIN</Text>
@@ -144,7 +144,7 @@ export default function ChangePinScreen() {
             {loading ? (
               <ActivityIndicator color={colors.inkInverse} />
             ) : (
-              <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-gray-400'}`}>
+              <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-ink-muted'}`}>
                 Change PIN
               </Text>
             )}

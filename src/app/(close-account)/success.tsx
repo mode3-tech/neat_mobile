@@ -70,7 +70,7 @@ export default function CloseAccountSuccessScreen() {
         </Animated.Text>
         <Animated.Text
           style={{ opacity }}
-          className="text-[14px] text-gray-500 text-center leading-[22px] px-4"
+          className="text-[14px] text-ink-soft text-center leading-[22px] px-4"
         >
           Your NEATPay account has been closed. We&rsquo;re sorry to see you go.
         </Animated.Text>

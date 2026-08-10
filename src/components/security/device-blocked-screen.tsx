@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 const SUPPORT_EMAIL = 'support@neatpay.ng';
 
@@ -80,7 +81,7 @@ export function DeviceBlockedScreen(): React.JSX.Element {
             opacity: pressed ? 0.7 : 1,
           })}
         >
-          <Text style={{ color: colors.primary, fontSize: 15, fontWeight: '600' }}>
+          <Text style={{ color: colors.primary, fontSize: 15, ...weight.semibold }}>
             Contact Support
           </Text>
         </Pressable>

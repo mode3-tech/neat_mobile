@@ -20,6 +20,7 @@ import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { getErrorMessage } from '@/utils/error';
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 const PRIMARY = colors.primary;
 
@@ -244,7 +245,7 @@ const styles = StyleSheet.create({
   },
   brandName: {
     fontSize: 22,
-    fontWeight: '700',
+    ...weight.bold,
     color: colors.ink,
     marginBottom: 4,
   },
@@ -260,7 +261,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 13,
-    fontWeight: '600',
+    ...weight.semibold,
     color: colors.inkBody,
     marginBottom: 8,
   },
@@ -295,7 +296,7 @@ const styles = StyleSheet.create({
   forgotText: {
     fontSize: 13,
     color: PRIMARY,
-    fontWeight: '600',
+    ...weight.semibold,
   },
   footer: {
     gap: 16,
@@ -309,7 +310,7 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     color: colors.inkInverse,
     fontSize: 16,
-    fontWeight: '600',
+    ...weight.semibold,
   },
   disabledBtn: {
     backgroundColor: colors.surfaceDisabled,
@@ -330,7 +331,7 @@ const styles = StyleSheet.create({
   biometricText: {
     fontSize: 14,
     color: colors.inkBody,
-    fontWeight: '500',
+    ...weight.medium,
   },
   signUpText: {
     fontSize: 14,
@@ -339,7 +340,7 @@ const styles = StyleSheet.create({
   },
   signUpLink: {
     color: PRIMARY,
-    fontWeight: '600' as const,
+    ...weight.semibold,
   },
 
 

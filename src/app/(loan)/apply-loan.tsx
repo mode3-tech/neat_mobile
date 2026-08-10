@@ -197,7 +197,7 @@ export default function ApplyLoanScreen() {
             </TouchableOpacity>
           </View>
           {isValidBusinessAge(store.businessAge) && !isBusinessAgeAtLeastOneYear(store.businessAge) && (
-            <Text className="text-xs text-red-500 mt-1.5">
+            <Text className="text-xs text-danger mt-1.5">
               Business must be at least 1 year old
             </Text>
           )}

@@ -20,7 +20,7 @@ export default function CloseAccountIntroScreen() {
       {/* Header */}
       <View className="flex-row items-center px-6 pt-2 pb-4 bg-white">
         <TouchableOpacity
-          className="border border-gray-200 rounded-full w-10 h-10 items-center justify-center"
+          className="border border-line rounded-full w-10 h-10 items-center justify-center"
           onPress={() => router.back()}
         >
           <MaterialCommunityIcons name="chevron-left" size={24} color={colors.inkBody} />
@@ -60,7 +60,7 @@ export default function CloseAccountIntroScreen() {
 
       {/* Footer */}
       <View className="px-6 pt-2 pb-4">
-        <Text className="text-[13px] text-gray-400 leading-5 mb-4">
+        <Text className="text-[13px] text-ink-muted leading-5 mb-4">
           For more details on Account Cancellation, please refer to{' '}
           <Text
             className="text-primary font-medium"

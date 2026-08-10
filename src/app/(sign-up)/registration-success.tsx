@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import { colors } from '@/theme/palette';
+import { weight } from '@/theme/typography';
 
 const PRIMARY = colors.primary;
 const SUCCESS_COLOR = colors.success;
@@ -54,11 +55,11 @@ const styles = StyleSheet.create({
   checkMark: {
     color: colors.inkInverse,
     fontSize: 32,
-    fontWeight: '700',
+    ...weight.bold,
   },
   title: {
     fontSize: 22,
-    fontWeight: '700',
+    ...weight.bold,
     color: colors.ink,
     marginBottom: 8,
     textAlign: 'center',
@@ -81,6 +82,6 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     color: colors.inkInverse,
     fontSize: 16,
-    fontWeight: '600',
+    ...weight.semibold,
   },
 });

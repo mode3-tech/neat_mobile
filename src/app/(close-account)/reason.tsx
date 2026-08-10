@@ -77,7 +77,7 @@ export default function CloseAccountReasonScreen() {
       {/* Header */}
       <View className="flex-row items-center px-6 pt-2 pb-4 bg-white">
         <TouchableOpacity
-          className="border border-gray-200 rounded-full w-10 h-10 items-center justify-center"
+          className="border border-line rounded-full w-10 h-10 items-center justify-center"
           onPress={() => router.back()}
         >
           <MaterialCommunityIcons name="chevron-left" size={24} color={colors.inkBody} />
@@ -117,7 +117,7 @@ export default function CloseAccountReasonScreen() {
               {reason.value === 'other' && isSelected && (
                 <View className="bg-white rounded-2xl px-4 py-3 mb-3">
                   <View className="flex-row justify-end mb-1">
-                    <Text className="text-[12px] text-gray-400">
+                    <Text className="text-[12px] text-ink-muted">
                       {otherText.length}/{MAX_REASON_CHARS}
                     </Text>
                   </View>
@@ -153,7 +153,7 @@ export default function CloseAccountReasonScreen() {
           ) : (
             <Text
               className={`text-base font-semibold ${
-                canSubmit ? 'text-white' : 'text-gray-400'
+                canSubmit ? 'text-white' : 'text-ink-muted'
               }`}
             >
               Submit

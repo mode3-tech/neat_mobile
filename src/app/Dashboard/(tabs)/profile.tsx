@@ -35,7 +35,7 @@ function SettingsRow({ icon, label, onPress, disabled }: RowProps) {
       <View className="w-9 h-9 rounded-full bg-primary-surface items-center justify-center mr-3">
         <MaterialCommunityIcons name={icon} size={18} color={colors.primary} />
       </View>
-      <Text className={`flex-1 text-[15px] ${disabled ? 'text-gray-400' : 'text-ink'}`}>
+      <Text className={`flex-1 text-[15px] ${disabled ? 'text-ink-muted' : 'text-ink'}`}>
         {label}
       </Text>
       <MaterialCommunityIcons name="chevron-right" size={22} color={colors.inkMuted} />
@@ -147,10 +147,10 @@ export default function ProfileScreen() {
         {/* Header */}
         <View className="flex-row items-center px-6 pt-2 pb-4">
           {/* <TouchableOpacity
-            className="border border-gray-200 rounded-full px-4 py-1.5 bg-white"
+            className="border border-line rounded-full px-4 py-1.5 bg-white"
             onPress={() => router.back()}
           >
-            <Text className="text-sm text-gray-700 font-medium">Back</Text>
+            <Text className="text-sm text-ink-body font-medium">Back</Text>
           </TouchableOpacity> */}
           <Text className="flex-1 text-center text-lg font-bold text-ink">
             Profile
@@ -192,7 +192,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* PROFILE section */}
-        <Text className="px-6 text-xs font-semibold text-gray-500 tracking-wide mb-2">
+        <Text className="px-6 text-xs font-semibold text-ink-soft tracking-wide mb-2">
           PROFILE
         </Text>
         <View className="px-6">
@@ -205,7 +205,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* SECURITY section */}
-        <Text className="px-6 text-xs font-semibold text-gray-500 tracking-wide mb-2 mt-4">
+        <Text className="px-6 text-xs font-semibold text-ink-soft tracking-wide mb-2 mt-4">
           SECURITY & SETTINGS
         </Text>
         <View className="px-6">
