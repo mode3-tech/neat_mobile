@@ -44,7 +44,9 @@ export function AppVersionGate({
     process.env.EXPO_PUBLIC_APP_VARIANT === 'production';
 
   if (__DEV__ || !isProductionBuild) {
-    // if (__DEV__) { // ← swap back to this to also gate preview/internal APKs
+    // if (false) { // ← local testing: forces the gate to run in a dev build so
+    //              //   GET /app/version/<platform> actually fires. Never commit.
+    // if (__DEV__) { // ← swap to this to also gate preview/internal APKs
     return <>{children}</>;
   }
   return <ActiveAppVersionGate>{children}</ActiveAppVersionGate>;
