@@ -31,11 +31,11 @@ function statusLabel(status: LoanHistoryStatus): string {
 function statusColorClass(status: LoanHistoryStatus): string {
   switch (status) {
     case 'paid':
-      return 'text-[#16A34A]';
+      return 'text-success';
     case 'overdue':
-      return 'text-[#EF4444]';
+      return 'text-danger';
     case 'upcoming':
-      return 'text-[#6B7280]';
+      return 'text-ink-soft';
   }
 }
 
@@ -53,20 +53,20 @@ function ScheduleRow({ item }: { item: LoanHistoryItem }) {
   return (
     <View
       className={`flex-row items-center rounded-2xl px-4 py-4 mb-3 ${
-        isUpcoming ? 'bg-[#FEF3E2]' : 'bg-[#F9FAFB]'
+        isUpcoming ? 'bg-legacy-warning-surface' : 'bg-surface-muted'
       }`}
     >
-      <View className="w-9 h-9 rounded-lg bg-[#EEF0FF] items-center justify-center mr-3">
+      <View className="w-9 h-9 rounded-lg bg-primary-surface items-center justify-center mr-3">
         <MaterialCommunityIcons name="package-variant" size={18} color="#472FF8" />
       </View>
       <View className="flex-1">
-        <Text className="text-xs text-[#6B7280] mb-1">Loan Amount</Text>
-        <Text className="text-sm font-semibold text-[#1A1A1A]">
+        <Text className="text-xs text-ink-soft mb-1">Loan Amount</Text>
+        <Text className="text-sm font-semibold text-ink">
           {formatDateLong(item.payment_date)}
         </Text>
       </View>
       <View className="items-end">
-        <Text className="text-[15px] font-bold text-[#1A1A1A]">
+        <Text className="text-[15px] font-bold text-ink">
           {formatNairaWhole(item.loan_amount)}
         </Text>
         <Text className={`text-xs ${statusColorClass(item.status)}`}>
@@ -116,10 +116,10 @@ export default function LoanDetailsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
 
       <ScrollView
@@ -130,7 +130,7 @@ export default function LoanDetailsScreen() {
           <PrimaryRefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
       >
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">Loan Details</Text>
+        <Text className="text-[22px] font-bold text-ink mb-5">Loan Details</Text>
 
         {isLoading && (
           <View className="py-20 items-center justify-center">
@@ -145,10 +145,10 @@ export default function LoanDetailsScreen() {
               size={64}
               color="#E5E7EB"
             />
-            <Text className="text-base font-semibold text-[#1A1A1A] mt-3">
+            <Text className="text-base font-semibold text-ink mt-3">
               {!loanId ? 'No loan selected' : "Couldn't load loan details"}
             </Text>
-            <Text className="text-[13px] text-[#6B7280] mt-1 text-center">
+            <Text className="text-[13px] text-ink-soft mt-1 text-center">
               {!loanId
                 ? 'Please choose a loan from the history list.'
                 : 'Please check your connection and try again.'}
@@ -158,7 +158,7 @@ export default function LoanDetailsScreen() {
 
         {!isLoading && details && (
           <>
-            <View className="bg-[#472FF8] rounded-2xl p-5 mb-6 overflow-hidden">
+            <View className="bg-primary rounded-2xl p-5 mb-6 overflow-hidden">
               <View className="flex-row items-start">
                 <View className="flex-1">
                   <SummaryRow
@@ -186,13 +186,13 @@ export default function LoanDetailsScreen() {
               </View>
             </View>
 
-            <Text className="text-base font-bold text-[#1A1A1A] mt-2 mb-4">
+            <Text className="text-base font-bold text-ink mt-2 mb-4">
               Payment Schedule
             </Text>
 
             {(schedule ?? []).length === 0 ? (
               <View className="py-10 items-center justify-center">
-                <Text className="text-sm text-[#6B7280]">No payment records yet.</Text>
+                <Text className="text-sm text-ink-soft">No payment records yet.</Text>
               </View>
             ) : (
               (schedule ?? []).map((item, idx) => (

@@ -34,9 +34,9 @@ export default function TransactionSummaryModal({
     >
       <View className="flex-1 justify-end bg-black/40">
         <View className="bg-white rounded-t-3xl px-6 pt-3 pb-16">
-          <View className="w-10 h-1 rounded-full bg-[#D1D5DB] self-center mb-5" />
+          <View className="w-10 h-1 rounded-full bg-line-strong self-center mb-5" />
 
-          <Text className="text-xl font-bold text-[#1A1A1A] mb-5">
+          <Text className="text-xl font-bold text-ink mb-5">
             Transaction Summary
           </Text>
 
@@ -56,7 +56,7 @@ export default function TransactionSummaryModal({
           </View>
 
           <TouchableOpacity
-            className="bg-[#472FF8] rounded-full py-4 items-center mb-3"
+            className="bg-primary rounded-full py-4 items-center mb-3"
             onPress={onSave}
             activeOpacity={0.85}
           >
@@ -64,11 +64,11 @@ export default function TransactionSummaryModal({
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="border-[1.5px] border-[#472FF8] rounded-full py-4 items-center"
+            className="border-[1.5px] border-primary rounded-full py-4 items-center"
             onPress={onClose}
             activeOpacity={0.85}
           >
-            <Text className="text-[#472FF8] text-base font-semibold">Cancel</Text>
+            <Text className="text-primary text-base font-semibold">Cancel</Text>
           </TouchableOpacity>
         </View>
       </View>

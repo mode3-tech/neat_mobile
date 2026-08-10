@@ -238,13 +238,13 @@ export default function BulkAddRecipientScreen() {
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 px-6">
         <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-6"
+          className="self-start border border-line rounded-[20px] px-6 py-1.5 mt-2 mb-6"
           onPress={() => router.back()}
         >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
+          <Text className="text-sm font-medium text-ink-body">Back</Text>
         </TouchableOpacity>
 
-        <Text className="text-[20px] font-medium text-[#1A1A1A] mb-5">
+        <Text className="text-[20px] font-medium text-ink mb-5">
           Add recipient
         </Text>
 
@@ -252,23 +252,23 @@ export default function BulkAddRecipientScreen() {
         <View
           className={`rounded-xl p-4 border mb-2 ${
             exceedsBalance
-              ? 'bg-[#FEF2F2] border-[#EF4444]/40'
-              : 'bg-[#EEF0FF] border-[#472FF8]/30'
+              ? 'bg-danger-surface border-danger/40'
+              : 'bg-primary-surface border-primary/30'
           }`}
         >
           <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-[13px] text-[#1A1A1A]">Available Balance</Text>
-            <Text className="text-[13px] font-semibold text-[#1A1A1A]">
+            <Text className="text-[13px] text-ink">Available Balance</Text>
+            <Text className="text-[13px] font-semibold text-ink">
               {formatNaira(availableBalance)}
             </Text>
           </View>
           <View className="flex-row justify-between items-center">
-            <Text className="text-[13px] text-[#1A1A1A]">
+            <Text className="text-[13px] text-ink">
               Total Payment Amount
             </Text>
             <Text
               className={`text-[13px] font-semibold ${
-                exceedsBalance ? 'text-[#EF4444]' : 'text-[#1A1A1A]'
+                exceedsBalance ? 'text-danger' : 'text-ink'
               }`}
             >
               {formatNaira(totalPayment)}
@@ -287,17 +287,17 @@ export default function BulkAddRecipientScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          <Text className="text-sm font-semibold text-[#1A1A1A] mb-3">
+          <Text className="text-sm font-semibold text-ink mb-3">
             Transfer to:
           </Text>
 
           {/* Tab pills */}
-          <View className="flex-row bg-[#F3F3F4] rounded-full py-2 px-2 mb-5">
+          <View className="flex-row bg-legacy-surface-2 rounded-full py-2 px-2 mb-5">
             {TABS.map((tab) => (
               <TouchableOpacity
                 key={tab.key}
                 className={`flex-1 py-2.5 rounded-full items-center ${
-                  activeTab === tab.key ? 'bg-[#472FF8]' : ''
+                  activeTab === tab.key ? 'bg-primary' : ''
                 }`}
                 onPress={() => {
                   setActiveTab(tab.key);
@@ -307,7 +307,7 @@ export default function BulkAddRecipientScreen() {
               >
                 <Text
                   className={`text-[12px] font-semibold ${
-                    activeTab === tab.key ? 'text-white' : 'text-[#6B7280]'
+                    activeTab === tab.key ? 'text-white' : 'text-ink-soft'
                   }`}
                 >
                   {tab.label}
@@ -318,11 +318,11 @@ export default function BulkAddRecipientScreen() {
 
           {activeTab === 'other_bank' && (
             <View className="mb-4">
-              <Text className="text-[13px] font-semibold text-[#374151] mb-2">
+              <Text className="text-[13px] font-semibold text-ink-body mb-2">
                 Bank
               </Text>
               <TouchableOpacity
-                className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center justify-between"
+                className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center justify-between"
                 onPress={() => {
                   fetchBanks();
                   setBankModalVisible(true);
@@ -330,7 +330,7 @@ export default function BulkAddRecipientScreen() {
               >
                 <Text
                   className={`text-[15px] ${
-                    selectedBank ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'
+                    selectedBank ? 'text-ink' : 'text-ink-muted'
                   }`}
                 >
                   {selectedBank?.name ?? 'Select a bank'}
@@ -346,16 +346,16 @@ export default function BulkAddRecipientScreen() {
 
           {/* Account Number */}
           <View className="mb-4">
-            <Text className="text-[13px] font-semibold text-[#374151] mb-2">
+            <Text className="text-[13px] font-semibold text-ink-body mb-2">
               Account Number
             </Text>
             <View
-              className={`bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] ${
-                validationError ? 'border-[#EF4444] bg-white' : 'border-transparent'
+              className={`bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] ${
+                validationError ? 'border-danger bg-white' : 'border-transparent'
               } flex-row items-center`}
             >
               <TextInput
-                className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+                className="flex-1 text-[15px] text-ink p-0"
                 value={accountNumber}
                 onChangeText={(t) =>
                   setAccountNumber(
@@ -370,7 +370,7 @@ export default function BulkAddRecipientScreen() {
               {validating && <ActivityIndicator size="small" color="#472FF8" />}
             </View>
             {accountName !== '' && (
-              <Text className="text-[13px] text-[#16A34A] mt-1.5 font-medium">
+              <Text className="text-[13px] text-success mt-1.5 font-medium">
                 {accountName}
               </Text>
             )}
@@ -383,13 +383,13 @@ export default function BulkAddRecipientScreen() {
 
           {/* Amount */}
           <View className="mb-4">
-            <Text className="text-[13px] font-semibold text-[#374151] mb-2">
+            <Text className="text-[13px] font-semibold text-ink-body mb-2">
               Amount
             </Text>
-            <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
-              <Text className="text-[15px] text-[#9CA3AF] mr-1">₦</Text>
+            <View className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
+              <Text className="text-[15px] text-ink-muted mr-1">₦</Text>
               <TextInput
-                className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+                className="flex-1 text-[15px] text-ink p-0"
                 value={amount}
                 onChangeText={formatAmount}
                 placeholder="0"
@@ -401,12 +401,12 @@ export default function BulkAddRecipientScreen() {
 
           {/* Narration */}
           <View className="mb-5">
-            <Text className="text-[13px] font-semibold text-[#374151] mb-2">
+            <Text className="text-[13px] font-semibold text-ink-body mb-2">
               Narration
             </Text>
-            <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent">
+            <View className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent">
               <TextInput
-                className="text-[15px] text-[#1A1A1A] p-0"
+                className="text-[15px] text-ink p-0"
                 value={narration}
                 onChangeText={setNarration}
                 placeholder="Enter narration"
@@ -418,7 +418,7 @@ export default function BulkAddRecipientScreen() {
           {/* Add recipient button */}
           <TouchableOpacity
             className={`rounded-full py-4 items-center flex-row justify-center border-[1.5px] mb-6 ${
-              canAdd ? 'border-[#472FF8]' : 'border-[#E5E7EB]'
+              canAdd ? 'border-primary' : 'border-line'
             }`}
             onPress={handleAddRecipient}
             disabled={!canAdd}
@@ -431,7 +431,7 @@ export default function BulkAddRecipientScreen() {
             />
             <Text
               className={`text-base font-semibold ml-1 ${
-                canAdd ? 'text-[#472FF8]' : 'text-[#9CA3AF]'
+                canAdd ? 'text-primary' : 'text-ink-muted'
               }`}
             >
               Add recipient
@@ -440,42 +440,42 @@ export default function BulkAddRecipientScreen() {
 
           {recipients.length > 0 && (
             <>
-              <Text className="text-base font-semibold text-[#1A1A1A] mt-2 mb-3">
+              <Text className="text-base font-semibold text-ink mt-2 mb-3">
                 Added Recipients ({recipients.length})
               </Text>
               <View className="mb-4">
                 {recipients.map((r, i) => (
                   <View
                     key={r.id}
-                    className="flex-row items-start py-4 border-b border-[#F3F4F6]"
+                    className="flex-row items-start py-4 border-b border-line-subtle"
                   >
-                    <View className="w-8 h-8 rounded-full bg-[#F59E0B] items-center justify-center mr-3 mt-0.5">
+                    <View className="w-8 h-8 rounded-full bg-warning items-center justify-center mr-3 mt-0.5">
                       <Text className="text-white text-[13px] font-bold">
                         {i + 1}
                       </Text>
                     </View>
                     <View className="flex-1 pr-2">
                       <Text
-                        className="text-[14px] font-bold text-[#1A1A1A]"
+                        className="text-[14px] font-bold text-ink"
                         numberOfLines={1}
                       >
                         {r.account_name}
                       </Text>
                       <Text
-                        className="text-[12px] text-[#6B7280] mt-0.5"
+                        className="text-[12px] text-ink-soft mt-0.5"
                         numberOfLines={1}
                       >
                         {r.account_number}
                       </Text>
                       <Text
-                        className="text-[12px] text-[#472FF8] mt-0.5"
+                        className="text-[12px] text-primary mt-0.5"
                         numberOfLines={2}
                       >
                         {r.bank_name}
                       </Text>
                     </View>
                     <View className="items-end">
-                      <Text className="text-[14px] font-bold text-[#16A34A]">
+                      <Text className="text-[14px] font-bold text-success">
                         {formatNaira(r.amount)}
                       </Text>
                       <TouchableOpacity
@@ -501,7 +501,7 @@ export default function BulkAddRecipientScreen() {
           <View className="pb-4">
             <TouchableOpacity
               className={`rounded-full py-4 items-center ${
-                exceedsBalance ? 'bg-[#E5E7EB]' : 'bg-[#472FF8]'
+                exceedsBalance ? 'bg-surface-disabled' : 'bg-primary'
               }`}
               onPress={handleProceed}
               disabled={exceedsBalance}
@@ -509,7 +509,7 @@ export default function BulkAddRecipientScreen() {
             >
               <Text
                 className={`text-base font-semibold ${
-                  exceedsBalance ? 'text-[#9CA3AF]' : 'text-white'
+                  exceedsBalance ? 'text-ink-muted' : 'text-white'
                 }`}
               >
                 Proceed
@@ -524,7 +524,7 @@ export default function BulkAddRecipientScreen() {
         <View className="flex-1 bg-black/50 justify-end">
           <View className="bg-white rounded-t-3xl flex-1 mt-[60%] pt-4 pb-8">
             <View className="flex-row items-center justify-between px-6 mb-4">
-              <Text className="text-lg font-bold text-[#1A1A1A]">
+              <Text className="text-lg font-bold text-ink">
                 Select Bank
               </Text>
               <TouchableOpacity onPress={() => setBankModalVisible(false)}>
@@ -537,14 +537,14 @@ export default function BulkAddRecipientScreen() {
             </View>
 
             <View className="px-6 mb-3">
-              <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
+              <View className="bg-surface-input rounded-xl px-4 py-3 flex-row items-center">
                 <MaterialCommunityIcons
                   name="magnify"
                   size={20}
                   color="#9CA3AF"
                 />
                 <TextInput
-                  className="flex-1 text-[15px] text-[#1A1A1A] ml-2 p-0"
+                  className="flex-1 text-[15px] text-ink ml-2 p-0"
                   value={bankSearch}
                   onChangeText={setBankSearch}
                   placeholder="Search bank"
@@ -567,18 +567,18 @@ export default function BulkAddRecipientScreen() {
                 keyboardShouldPersistTaps="handled"
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    className={`px-6 py-4 border-b border-[#F3F4F6] ${
-                      selectedBank?.code === item.code ? 'bg-[#EEF0FF]' : ''
+                    className={`px-6 py-4 border-b border-line-subtle ${
+                      selectedBank?.code === item.code ? 'bg-primary-surface' : ''
                     }`}
                     onPress={() => handleSelectBank(item)}
                   >
-                    <Text className="text-[15px] text-[#1A1A1A]">
+                    <Text className="text-[15px] text-ink">
                       {item.name}
                     </Text>
                   </TouchableOpacity>
                 )}
                 ListEmptyComponent={
-                  <Text className="text-center text-[#9CA3AF] mt-8">
+                  <Text className="text-center text-ink-muted mt-8">
                     No banks found
                   </Text>
                 }

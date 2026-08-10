@@ -123,31 +123,31 @@ export default function TransferSuccessScreen() {
         pointerEvents="none"
       >
         <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 1 }}>
-          <View className="bg-white px-5 py-6 border border-[#E5E7EB] rounded-[16px]">
+          <View className="bg-white px-5 py-6 border border-line rounded-[16px]">
             <View className="flex-row items-center justify-between">
               <Image
                 source={require('../../../assets/images/welcome/NeatLogo.png')}
                 className="w-16 h-12"
                 resizeMode="contain"
               />
-              <Text className="text-[15px] font-medium text-[#1A1A1A]">
+              <Text className="text-[15px] font-medium text-ink">
                 Transaction Receipt
               </Text>
             </View>
 
-            <View className="border-b border-[#E5E7EB] my-4" />
+            <View className="border-b border-line my-4" />
 
-            <Text className="text-[26px] font-bold text-[#472FF8] text-center mt-2">
+            <Text className="text-[26px] font-bold text-primary text-center mt-2">
               {formatNairaDecimal(result.amount)}
             </Text>
-            <Text className="text-[13px] text-[#6B7280] text-center mt-1">
+            <Text className="text-[13px] text-ink-soft text-center mt-1">
               Successful
             </Text>
-            <Text className="text-[12px] text-[#9CA3AF] text-center mt-1">
+            <Text className="text-[12px] text-ink-muted text-center mt-1">
               {formatTransactionDateTime(receiptDate.toISOString())}
             </Text>
 
-            <View className="border-b border-[#E5E7EB] my-4" />
+            <View className="border-b border-line my-4" />
 
             {store.senderName ? (
               <DetailRow label="Sender" value={store.senderName} />
@@ -168,7 +168,7 @@ export default function TransferSuccessScreen() {
       {/* Done */}
       <View className="px-6 pt-2 flex-row justify-end">
         <TouchableOpacity onPress={handleBack} hitSlop={8} activeOpacity={0.7}>
-          <Text className="text-base font-semibold text-[#472FF8]">Done</Text>
+          <Text className="text-base font-semibold text-primary">Done</Text>
         </TouchableOpacity>
       </View>
 
@@ -176,15 +176,15 @@ export default function TransferSuccessScreen() {
       <View className="flex-1 px-6 items-center pt-4">
         <SuccessCelebration />
 
-        <Text className="text-[15px] text-[#6B7280] text-center mt-4">
+        <Text className="text-[15px] text-ink-soft text-center mt-4">
           Transfer successful
         </Text>
-        <Text className="text-[28px] font-bold text-[#1A1A1A] text-center mt-1">
+        <Text className="text-[28px] font-bold text-ink text-center mt-1">
           {formatNairaWhole(result.amount)}
         </Text>
 
-        <View className="bg-[#EEF0FF] border border-[#472FF8]/30 rounded-[14px] px-4 py-4 mt-6 w-full">
-          <Text className="text-[13px] text-[#472FF8] text-center leading-5">
+        <View className="bg-primary-surface border border-primary/30 rounded-[14px] px-4 py-4 mt-6 w-full">
+          <Text className="text-[13px] text-primary text-center leading-5">
             The recipient account is expected to be credited within 5 minutes,
             subject to notification by the bank.
           </Text>
@@ -198,7 +198,7 @@ export default function TransferSuccessScreen() {
             onPress={handleAddBeneficiary}
             disabled={beneficiaryAdded}
           >
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+            <View className="w-14 h-14 rounded-2xl bg-primary-surface items-center justify-center mb-2">
               {addingBeneficiary ? (
                 <ActivityIndicator size="small" color="#472FF8" />
               ) : (
@@ -209,7 +209,7 @@ export default function TransferSuccessScreen() {
                 />
               )}
             </View>
-            <Text className="text-xs text-[#374151] text-center">
+            <Text className="text-xs text-ink-body text-center">
               {beneficiaryAdded ? 'Added' : `Add to${'\n'}Beneficiary`}
             </Text>
           </TouchableOpacity>
@@ -219,14 +219,14 @@ export default function TransferSuccessScreen() {
             className="items-center w-20"
             onPress={handleShareAsImage}
           >
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+            <View className="w-14 h-14 rounded-2xl bg-primary-surface items-center justify-center mb-2">
               <MaterialCommunityIcons
                 name="image-outline"
                 size={22}
                 color="#472FF8"
               />
             </View>
-            <Text className="text-xs text-[#374151] text-center">
+            <Text className="text-xs text-ink-body text-center">
               Share{'\n'}Image
             </Text>
           </TouchableOpacity>
@@ -236,14 +236,14 @@ export default function TransferSuccessScreen() {
             className="items-center w-20"
             onPress={handleShareAsPdf}
           >
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+            <View className="w-14 h-14 rounded-2xl bg-primary-surface items-center justify-center mb-2">
               <MaterialCommunityIcons
                 name="file-pdf-box"
                 size={22}
                 color="#472FF8"
               />
             </View>
-            <Text className="text-xs text-[#374151] text-center">
+            <Text className="text-xs text-ink-body text-center">
               Download{'\n'}PDF
             </Text>
           </TouchableOpacity>

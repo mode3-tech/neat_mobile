@@ -103,17 +103,17 @@ export default function RepaymentBottomSheet({
             bounces={false}
           >
             <View className="bg-white rounded-t-3xl px-6 pt-3 pb-16">
-              <View className="w-10 h-1 rounded-full bg-[#D1D5DB] self-center mb-5" />
+              <View className="w-10 h-1 rounded-full bg-line-strong self-center mb-5" />
 
-              <Text className="text-xl font-bold text-[#1A1A1A] text-center mb-6">
+              <Text className="text-xl font-bold text-ink text-center mb-6">
                 Make Payment
               </Text>
 
               {/* Amount */}
-              <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Amount</Text>
-              <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-1.5">
+              <Text className="text-sm font-medium text-ink mb-2">Amount</Text>
+              <View className="bg-surface-input rounded-xl px-4 py-[15px] mb-1.5">
                 <TextInput
-                  className="text-[15px] text-[#1A1A1A] p-0"
+                  className="text-[15px] text-ink p-0"
                   value={amount}
                   onChangeText={(t) => {
                     setAmount(t);
@@ -125,13 +125,13 @@ export default function RepaymentBottomSheet({
                 />
               </View>
               {exceedsBalance ? (
-                <Text className="text-xs text-[#EF4444] mb-5">
+                <Text className="text-xs text-danger mb-5">
                   Amount exceeds available balance
                 </Text>
               ) : (
                 <Text className="text-xs mb-5">
-                  <Text className="text-[#6B7280]">Balance: </Text>
-                  <Text className="text-[#472FF8] font-medium">
+                  <Text className="text-ink-soft">Balance: </Text>
+                  <Text className="text-primary font-medium">
                     {availableBalance != null
                       ? formatCurrency(availableBalance)
                       : '—'}
@@ -140,10 +140,10 @@ export default function RepaymentBottomSheet({
               )}
 
               {/* PIN */}
-              <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Enter PIN</Text>
-              <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-8 flex-row items-center">
+              <Text className="text-sm font-medium text-ink mb-2">Enter PIN</Text>
+              <View className="bg-surface-input rounded-xl px-4 py-[15px] mb-8 flex-row items-center">
                 <TextInput
-                  className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+                  className="flex-1 text-[15px] text-ink p-0"
                   value={pin}
                   onChangeText={(t) => {
                     setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH));
@@ -165,15 +165,15 @@ export default function RepaymentBottomSheet({
               </View>
 
               {errorMessage ? (
-                <View className="bg-[#FEF2F2] rounded-xl px-4 py-3 mb-4">
-                  <Text className="text-[13px] text-[#EF4444]">{errorMessage}</Text>
+                <View className="bg-danger-surface rounded-xl px-4 py-3 mb-4">
+                  <Text className="text-[13px] text-danger">{errorMessage}</Text>
                 </View>
               ) : null}
 
               {/* Confirm */}
               <TouchableOpacity
                 className={`rounded-full py-4 items-center mb-3 ${
-                  hasValidInput ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+                  hasValidInput ? 'bg-primary' : 'bg-surface-disabled'
                 }`}
                 onPress={onConfirm}
                 disabled={!canConfirm}
@@ -184,7 +184,7 @@ export default function RepaymentBottomSheet({
                 ) : (
                   <Text
                     className={`text-base font-semibold ${
-                      hasValidInput ? 'text-white' : 'text-[#9CA3AF]'
+                      hasValidInput ? 'text-white' : 'text-ink-muted'
                     }`}
                   >
                     Confirm
@@ -194,12 +194,12 @@ export default function RepaymentBottomSheet({
 
               {/* Cancel */}
               <TouchableOpacity
-                className="border-[1.5px] border-[#472FF8] rounded-full py-4 items-center"
+                className="border-[1.5px] border-primary rounded-full py-4 items-center"
                 onPress={onClose}
                 activeOpacity={0.85}
                 disabled={isPending}
               >
-                <Text className="text-[#472FF8] text-base font-semibold">Cancel</Text>
+                <Text className="text-primary text-base font-semibold">Cancel</Text>
               </TouchableOpacity>
             </View>
           </KeyboardAwareScrollView>
@@ -215,7 +215,7 @@ export default function RepaymentBottomSheet({
       >
         <View className="flex-1 justify-end bg-black/40">
           <View className="bg-white rounded-t-3xl px-6 pt-3 pb-16 items-center">
-            <View className="w-10 h-1 rounded-full bg-[#D1D5DB] self-center mb-8" />
+            <View className="w-10 h-1 rounded-full bg-line-strong self-center mb-8" />
 
             <MaterialCommunityIcons
               name="check-decagram"
@@ -223,12 +223,12 @@ export default function RepaymentBottomSheet({
               color="#16A34A"
             />
 
-            <Text className="text-xl font-bold text-[#1A1A1A] mt-4 mb-8">
+            <Text className="text-xl font-bold text-ink mt-4 mb-8">
               Payment Successful!
             </Text>
 
             <TouchableOpacity
-              className="bg-[#472FF8] rounded-full py-4 items-center w-full"
+              className="bg-primary rounded-full py-4 items-center w-full"
               onPress={() => setSuccessVisible(false)}
               activeOpacity={0.85}
             >

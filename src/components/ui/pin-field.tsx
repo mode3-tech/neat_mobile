@@ -17,11 +17,11 @@ export function PinField({ label, value, onChangeText, hasError = false }: PinFi
       <Text className="text-[13px] font-semibold text-gray-700 mb-2">{label}</Text>
       <View
         className={`flex-row items-center rounded-xl px-4 py-[14px] border-[1.5px] ${
-          hasError ? 'bg-white border-[#EF4444]' : 'bg-[#F5F5F5] border-transparent'
+          hasError ? 'bg-white border-danger' : 'bg-surface-input border-transparent'
         }`}
       >
         <TextInput
-          className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+          className="flex-1 text-[15px] text-ink p-0"
           value={value}
           onChangeText={(t) => onChangeText(t.replace(/\D/g, '').slice(0, PIN_LENGTH))}
           placeholder="—"

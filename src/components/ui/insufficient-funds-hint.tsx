@@ -18,7 +18,7 @@ export function InsufficientFundsHint({
 }: InsufficientFundsHintProps) {
   if (!show) return <View className={spacing} />;
   return (
-    <Text className={`text-xs text-[#EF4444] ${spacing}`}>
+    <Text className={`text-xs text-danger ${spacing}`}>
       {INSUFFICIENT_FUNDS_MESSAGE}
     </Text>
   );

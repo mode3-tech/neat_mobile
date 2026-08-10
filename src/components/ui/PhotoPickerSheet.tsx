@@ -100,19 +100,19 @@ export function PhotoPickerSheet({
           </View>
 
           <TouchableOpacity
-            className="rounded-full py-4 items-center border-2 border-[#472FF8] mb-3"
+            className="rounded-full py-4 items-center border-2 border-primary mb-3"
             onPress={pickFromAlbum}
             activeOpacity={0.85}
           >
-            <Text className="text-[#472FF8] text-base font-semibold">Select from album</Text>
+            <Text className="text-primary text-base font-semibold">Select from album</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="rounded-full py-4 items-center border-2 border-[#472FF8]"
+            className="rounded-full py-4 items-center border-2 border-primary"
             onPress={takePhoto}
             activeOpacity={0.85}
           >
-            <Text className="text-[#472FF8] text-base font-semibold">Take a Photo</Text>
+            <Text className="text-primary text-base font-semibold">Take a Photo</Text>
           </TouchableOpacity>
         </Pressable>
       </Pressable>

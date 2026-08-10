@@ -96,7 +96,7 @@ export default function ServicesGrid() {
               activeOpacity={0.7}
               onPress={() => handlePress(item)}
             >
-              <View className="w-12 h-12 rounded-full bg-[#472FF8] items-center justify-center">
+              <View className="w-12 h-12 rounded-full bg-primary items-center justify-center">
                 <MaterialCommunityIcons name={item.icon} size={22} color="#FFFFFF" />
               </View>
               <Text className="text-[10px] text-gray-700 text-center mt-1.5" numberOfLines={1}>

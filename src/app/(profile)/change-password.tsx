@@ -38,11 +38,11 @@ function PwField({ label, value, onChangeText, hasError, placeholder }: PwFieldP
       <Text className="text-[13px] font-semibold text-gray-700 mb-2">{label}</Text>
       <View
         className={`flex-row items-center rounded-xl px-4 py-[14px] border-[1.5px] ${
-          hasError ? 'bg-white border-[#EF4444]' : 'bg-[#F5F5F5] border-transparent'
+          hasError ? 'bg-white border-danger' : 'bg-surface-input border-transparent'
         }`}
       >
         <TextInput
-          className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+          className="flex-1 text-[15px] text-ink p-0"
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
@@ -137,7 +137,7 @@ export default function ChangePasswordScreen() {
             <Text className="text-sm text-gray-700 font-medium">Back</Text>
           </TouchableOpacity>
 
-          <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Change Password</Text>
+          <Text className="text-[22px] font-bold text-ink mb-6">Change Password</Text>
 
           <PwField
             label="Current Password"
@@ -162,15 +162,15 @@ export default function ChangePasswordScreen() {
           />
 
           <View className="mb-5 -mt-2">
-            <Text className={`text-xs leading-[18px] mb-1 ${hasError && !isValidNew ? 'text-[#EF4444]' : 'text-gray-500'}`}>
+            <Text className={`text-xs leading-[18px] mb-1 ${hasError && !isValidNew ? 'text-danger' : 'text-gray-500'}`}>
               Make sure your password is 8 or more characters and has at least 3 of the following:
             </Text>
             {REQUIREMENTS.map((r) => (
               <View key={r.label} className="flex-row gap-1.5">
-                <Text className={`text-xs leading-[18px] ${hasError && !isValidNew ? 'text-[#EF4444]' : 'text-gray-500'}`}>
+                <Text className={`text-xs leading-[18px] ${hasError && !isValidNew ? 'text-danger' : 'text-gray-500'}`}>
                   •
                 </Text>
-                <Text className={`text-xs leading-[18px] ${hasError && !isValidNew ? 'text-[#EF4444]' : 'text-gray-500'}`}>
+                <Text className={`text-xs leading-[18px] ${hasError && !isValidNew ? 'text-danger' : 'text-gray-500'}`}>
                   {r.label}
                 </Text>
               </View>
@@ -188,14 +188,14 @@ export default function ChangePasswordScreen() {
             placeholder="Re-enter new password"
           />
           {hasError && !isMatch && confirmNewPassword.length > 0 && (
-            <Text className="text-xs text-[#EF4444] -mt-3">Passwords do not match</Text>
+            <Text className="text-xs text-danger -mt-3">Passwords do not match</Text>
           )}
 
         <View className="flex-1" />
 
         <View className="pb-4">
           <TouchableOpacity
-            className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+            className={`rounded-full py-4 items-center ${canProceed ? 'bg-primary' : 'bg-surface-disabled'}`}
             onPress={handleChangePassword}
             disabled={!canProceed || loading}
             activeOpacity={0.85}

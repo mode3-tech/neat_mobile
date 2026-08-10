@@ -31,10 +31,10 @@ function SettingsRow({ icon, label, onPress, disabled }: RowProps) {
       disabled={disabled}
       activeOpacity={0.7}
     >
-      <View className="w-9 h-9 rounded-full bg-[#EEF0FF] items-center justify-center mr-3">
+      <View className="w-9 h-9 rounded-full bg-primary-surface items-center justify-center mr-3">
         <MaterialCommunityIcons name={icon} size={18} color="#472FF8" />
       </View>
-      <Text className={`flex-1 text-[15px] ${disabled ? 'text-gray-400' : 'text-[#1A1A1A]'}`}>
+      <Text className={`flex-1 text-[15px] ${disabled ? 'text-gray-400' : 'text-ink'}`}>
         {label}
       </Text>
       <MaterialCommunityIcons name="chevron-right" size={22} color="#9CA3AF" />
@@ -135,7 +135,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F3F4F6]" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-surface-subtle" edges={['top']}>
       <ScrollView
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
@@ -151,7 +151,7 @@ export default function ProfileScreen() {
           >
             <Text className="text-sm text-gray-700 font-medium">Back</Text>
           </TouchableOpacity> */}
-          <Text className="flex-1 text-center text-lg font-bold text-[#1A1A1A]">
+          <Text className="flex-1 text-center text-lg font-bold text-ink">
             Profile
           </Text>
         </View>
@@ -159,7 +159,7 @@ export default function ProfileScreen() {
         {/* Avatar */}
         <View className="items-center mb-4">
           <View className="relative">
-            <View className="w-24 h-24 rounded-full bg-[#472FF8] items-center justify-center overflow-hidden">
+            <View className="w-24 h-24 rounded-full bg-primary items-center justify-center overflow-hidden">
               {avatarUri && !imageLoadFailed ? (
                 <Image
                   source={{ uri: avatarUri }}
@@ -176,7 +176,7 @@ export default function ProfileScreen() {
               )}
             </View>
             <TouchableOpacity
-              className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#472FF8] items-center justify-center border-2 border-white"
+              className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary items-center justify-center border-2 border-white"
               onPress={() => setPhotoSheetVisible(true)}
               activeOpacity={0.85}
               disabled={uploadPhotoMutation.isPending}
@@ -184,10 +184,10 @@ export default function ProfileScreen() {
               <MaterialCommunityIcons name="camera" size={16} color="#fff" />
             </TouchableOpacity>
           </View>
-          <Text className="mt-3 text-base font-semibold text-[#1A1A1A]">
+          <Text className="mt-3 text-base font-semibold text-ink">
             {fullName || 'Loading...'}
           </Text>
-          {/* <Text className="text-sm text-[#16A34A] font-medium">Verified</Text> */}
+          {/* <Text className="text-sm text-success font-medium">Verified</Text> */}
         </View>
 
         {/* PROFILE section */}
@@ -238,12 +238,12 @@ export default function ProfileScreen() {
         {/* Logout */}
         <View className="px-6 mt-6">
           <TouchableOpacity
-            className="flex-row items-center justify-center rounded-full py-4 border border-[#FECACA] bg-[#FEF2F2]"
+            className="flex-row items-center justify-center rounded-full py-4 border border-danger-border bg-danger-surface"
             onPress={() => setLogoutVisible(true)}
             activeOpacity={0.85}
           >
             <MaterialCommunityIcons name="logout" size={18} color="#EF4444" />
-            <Text className="text-[#EF4444] text-base font-semibold ml-2">Log Out</Text>
+            <Text className="text-danger text-base font-semibold ml-2">Log Out</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

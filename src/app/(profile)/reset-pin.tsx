@@ -73,7 +73,7 @@ export default function ResetPinScreen() {
           <Text className="text-sm text-gray-700 font-medium">Back</Text>
         </TouchableOpacity>
 
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Reset Transaction PIN</Text>
+        <Text className="text-[22px] font-bold text-ink mb-6">Reset Transaction PIN</Text>
 
         <PinField
           label="New PIN"
@@ -93,14 +93,14 @@ export default function ResetPinScreen() {
           hasError={errorField === 'confirm'}
         />
         {errorField === 'confirm' && (
-          <Text className="text-xs text-[#EF4444] -mt-3 mb-2">PINs do not match</Text>
+          <Text className="text-xs text-danger -mt-3 mb-2">PINs do not match</Text>
         )}
 
         <View className="flex-1" />
 
         <View className="pb-4">
           <TouchableOpacity
-            className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+            className={`rounded-full py-4 items-center ${canProceed ? 'bg-primary' : 'bg-surface-disabled'}`}
             onPress={handleResetPin}
             disabled={!canProceed || loading}
             activeOpacity={0.85}

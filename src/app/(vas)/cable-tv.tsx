@@ -133,19 +133,19 @@ export default function CableTvScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+          className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
           onPress={() => router.back()}
         >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
+          <Text className="text-sm font-medium text-ink-body">Back</Text>
         </TouchableOpacity>
 
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">
+        <Text className="text-[22px] font-bold text-ink mb-6">
           Cable Subscription
         </Text>
 
         {/* Provider selector */}
-        <View className="bg-[#F9FAFB] rounded-2xl p-4 mb-6">
-          <Text className="text-sm font-medium text-[#1A1A1A] mb-3">
+        <View className="bg-surface-muted rounded-2xl p-4 mb-6">
+          <Text className="text-sm font-medium text-ink mb-3">
             Pick Service Provider
           </Text>
 
@@ -155,7 +155,7 @@ export default function CableTvScreen() {
             </View>
           ) : billersQuery.isError ? (
             <View className="h-[68px] items-center justify-center">
-              <Text className="text-[13px] text-[#EF4444]">
+              <Text className="text-[13px] text-danger">
                 Couldn't load providers. Pull back and try again.
               </Text>
             </View>
@@ -169,7 +169,7 @@ export default function CableTvScreen() {
                     activeOpacity={0.8}
                     onPress={() => selectProvider(biller)}
                     className={`w-[23%] aspect-square rounded-2xl bg-white overflow-hidden items-center justify-center border-2 p-2 ${
-                      isSelected ? 'border-[#472FF8]' : 'border-[#EFEFEF]'
+                      isSelected ? 'border-primary' : 'border-legacy-surface-3'
                     }`}
                   >
                     {/* Cable biller logos are wide, full-bleed branded JPEGs (not
@@ -196,12 +196,12 @@ export default function CableTvScreen() {
         </View>
 
         {/* Smartcard number */}
-        <Text className="text-sm font-medium text-[#1A1A1A] mb-2">
+        <Text className="text-sm font-medium text-ink mb-2">
           Smartcard Number
         </Text>
-        <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-6 flex-row items-center">
+        <View className="bg-surface-input rounded-xl px-4 py-[15px] mb-6 flex-row items-center">
           <TextInput
-            className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+            className="flex-1 text-[15px] text-ink p-0"
             value={smartcard}
             onChangeText={(t) => setSmartcard(t.replace(/\D/g, ''))}
             placeholder="Smartcard Number"
@@ -212,16 +212,16 @@ export default function CableTvScreen() {
         </View>
 
         {/* Package selector */}
-        <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Select Package</Text>
+        <Text className="text-sm font-medium text-ink mb-2">Select Package</Text>
         <TouchableOpacity
-          className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-6 flex-row items-center"
+          className="bg-surface-input rounded-xl px-4 py-[15px] mb-6 flex-row items-center"
           activeOpacity={0.8}
           disabled={!selectedBillerId}
           onPress={() => setPackageModalVisible(true)}
         >
           <Text
             className={`flex-1 text-[15px] ${
-              selectedPackage ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'
+              selectedPackage ? 'text-ink' : 'text-ink-muted'
             }`}
             numberOfLines={1}
           >
@@ -235,11 +235,11 @@ export default function CableTvScreen() {
         </TouchableOpacity>
 
         {/* Number of months */}
-        <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Number of Months</Text>
-        <View className="bg-[#F5F5F5] rounded-xl px-2 py-2 mb-6 flex-row items-center justify-between">
+        <Text className="text-sm font-medium text-ink mb-2">Number of Months</Text>
+        <View className="bg-surface-input rounded-xl px-2 py-2 mb-6 flex-row items-center justify-between">
           <TouchableOpacity
             className={`w-10 h-10 rounded-lg items-center justify-center ${
-              months <= MONTH_MIN ? 'bg-[#E5E7EB]' : 'bg-white'
+              months <= MONTH_MIN ? 'bg-surface-disabled' : 'bg-white'
             }`}
             activeOpacity={0.7}
             disabled={months <= MONTH_MIN}
@@ -251,12 +251,12 @@ export default function CableTvScreen() {
               color={months <= MONTH_MIN ? '#9CA3AF' : '#472FF8'}
             />
           </TouchableOpacity>
-          <Text className="text-base font-semibold text-[#1A1A1A]">
+          <Text className="text-base font-semibold text-ink">
             {months} {months === 1 ? 'Month' : 'Months'}
           </Text>
           <TouchableOpacity
             className={`w-10 h-10 rounded-lg items-center justify-center ${
-              months >= MONTH_MAX ? 'bg-[#E5E7EB]' : 'bg-white'
+              months >= MONTH_MAX ? 'bg-surface-disabled' : 'bg-white'
             }`}
             activeOpacity={0.7}
             disabled={months >= MONTH_MAX}
@@ -271,11 +271,11 @@ export default function CableTvScreen() {
         </View>
 
         {/* Amount (read-only, derived from package × months) */}
-        <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Amount</Text>
-        <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-1.5">
+        <Text className="text-sm font-medium text-ink mb-2">Amount</Text>
+        <View className="bg-surface-input rounded-xl px-4 py-[15px] mb-1.5">
           <Text
             className={`text-[15px] ${
-              selectedPackage ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'
+              selectedPackage ? 'text-ink' : 'text-ink-muted'
             }`}
           >
             {selectedPackage ? formatNairaWhole(totalAmount) : 'Amount'}
@@ -287,7 +287,7 @@ export default function CableTvScreen() {
       <View className="px-6 pb-4">
         <TouchableOpacity
           className={`rounded-full py-4 items-center ${
-            canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+            canProceed ? 'bg-primary' : 'bg-surface-disabled'
           }`}
           onPress={handleProceed}
           disabled={!canProceed}
@@ -295,7 +295,7 @@ export default function CableTvScreen() {
         >
           <Text
             className={`text-base font-semibold ${
-              canProceed ? 'text-white' : 'text-[#9CA3AF]'
+              canProceed ? 'text-white' : 'text-ink-muted'
             }`}
           >
             Proceed
@@ -315,7 +315,7 @@ export default function CableTvScreen() {
             <View className="flex-1 bg-black/50 justify-end">
               <View className="bg-white rounded-t-3xl pt-4 pb-10 max-h-[70%]">
             <View className="flex-row items-center justify-between px-6 mb-4">
-              <Text className="text-lg font-bold text-[#1A1A1A]">Select Package</Text>
+              <Text className="text-lg font-bold text-ink">Select Package</Text>
               <TouchableOpacity onPress={closePackageModal}>
                 <MaterialCommunityIcons name="close" size={24} color="#374151" />
               </TouchableOpacity>
@@ -327,29 +327,29 @@ export default function CableTvScreen() {
               </View>
             ) : packagesQuery.isError ? (
               <View className="h-24 items-center justify-center px-6">
-                <Text className="text-[13px] text-[#EF4444] mb-3 text-center">
+                <Text className="text-[13px] text-danger mb-3 text-center">
                   Couldn't load packages.
                 </Text>
                 <TouchableOpacity
-                  className="border-[1.5px] border-[#472FF8] rounded-full px-6 py-2"
+                  className="border-[1.5px] border-primary rounded-full px-6 py-2"
                   onPress={() => packagesQuery.refetch()}
                 >
-                  <Text className="text-[#472FF8] text-sm font-semibold">Retry</Text>
+                  <Text className="text-primary text-sm font-semibold">Retry</Text>
                 </TouchableOpacity>
               </View>
             ) : !packagesQuery.data?.length ? (
               <View className="h-24 items-center justify-center px-6">
-                <Text className="text-[13px] text-[#6B7280]">
+                <Text className="text-[13px] text-ink-soft">
                   No packages available for this provider.
                 </Text>
               </View>
             ) : (
               <>
                 <View className="px-6 mb-3">
-                  <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
+                  <View className="bg-surface-input rounded-xl px-4 py-3 flex-row items-center">
                     <MaterialCommunityIcons name="magnify" size={20} color="#9CA3AF" />
                     <TextInput
-                      className="flex-1 text-[15px] text-[#1A1A1A] p-0 ml-2"
+                      className="flex-1 text-[15px] text-ink p-0 ml-2"
                       value={packageSearch}
                       onChangeText={setPackageSearch}
                       placeholder="Search packages"
@@ -369,7 +369,7 @@ export default function CableTvScreen() {
 
                 {filteredPackages.length === 0 ? (
                   <View className="h-24 items-center justify-center px-6">
-                    <Text className="text-[13px] text-[#6B7280] text-center">
+                    <Text className="text-[13px] text-ink-soft text-center">
                       No packages match "{packageSearch.trim()}".
                     </Text>
                   </View>
@@ -384,8 +384,8 @@ export default function CableTvScreen() {
                       return (
                         <TouchableOpacity
                           key={pkg.unique_code}
-                          className={`px-6 py-4 border-b border-[#F3F4F6] flex-row items-center ${
-                            isSelected ? 'bg-[#EEF0FF]' : ''
+                          className={`px-6 py-4 border-b border-line-subtle flex-row items-center ${
+                            isSelected ? 'bg-primary-surface' : ''
                           }`}
                           onPress={() => {
                             setSelectedPackage(pkg);
@@ -393,7 +393,7 @@ export default function CableTvScreen() {
                           }}
                         >
                           <Text
-                            className="text-[15px] text-[#1A1A1A] flex-1 mr-3"
+                            className="text-[15px] text-ink flex-1 mr-3"
                             numberOfLines={1}
                           >
                             {pkg.name}

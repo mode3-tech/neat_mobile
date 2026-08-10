@@ -6,15 +6,15 @@ import { router } from 'expo-router';
 function Bullet({ text }: { text: string }) {
   return (
     <View className="flex-row mb-4">
-      <Text className="text-[15px] text-[#374151] mr-2 leading-6">{'•'}</Text>
-      <Text className="flex-1 text-[15px] text-[#374151] leading-6">{text}</Text>
+      <Text className="text-[15px] text-ink-body mr-2 leading-6">{'•'}</Text>
+      <Text className="flex-1 text-[15px] text-ink-body leading-6">{text}</Text>
     </View>
   );
 }
 
 export default function CloseAccountIntroScreen() {
   return (
-    <SafeAreaView className="flex-1 bg-[#F3F4F6]" edges={['top', 'bottom']}>
+    <SafeAreaView className="flex-1 bg-surface-subtle" edges={['top', 'bottom']}>
       {/* Header */}
       <View className="flex-row items-center px-6 pt-2 pb-4 bg-white">
         <TouchableOpacity
@@ -23,7 +23,7 @@ export default function CloseAccountIntroScreen() {
         >
           <MaterialCommunityIcons name="chevron-left" size={24} color="#374151" />
         </TouchableOpacity>
-        <Text className="flex-1 text-center text-lg font-bold text-[#1A1A1A] mr-10">
+        <Text className="flex-1 text-center text-lg font-bold text-ink mr-10">
           Close Account
         </Text>
       </View>
@@ -34,12 +34,12 @@ export default function CloseAccountIntroScreen() {
       >
         {/* Warning badge */}
         <View className="items-center mt-6 mb-6">
-          <View className="w-16 h-16 rounded-full bg-[#EF4444] items-center justify-center">
+          <View className="w-16 h-16 rounded-full bg-danger items-center justify-center">
             <MaterialCommunityIcons name="exclamation-thick" size={34} color="#fff" />
           </View>
         </View>
 
-        <Text className="text-center text-[17px] font-bold text-[#1A1A1A] mb-5">
+        <Text className="text-center text-[17px] font-bold text-ink mb-5">
           After Successful Account Cancellation:
         </Text>
 
@@ -48,8 +48,8 @@ export default function CloseAccountIntroScreen() {
           <Bullet text="Permanently unable to log in or use your account" />
           <Bullet text="Your ID, account and transaction information will be cleared" />
           <View className="flex-row">
-            <Text className="text-[15px] text-[#374151] mr-2 leading-6">{'•'}</Text>
-            <Text className="flex-1 text-[15px] text-[#374151] leading-6">
+            <Text className="text-[15px] text-ink-body mr-2 leading-6">{'•'}</Text>
+            <Text className="flex-1 text-[15px] text-ink-body leading-6">
               All rewards, referral bonuses and saved beneficiaries will be cleared
             </Text>
           </View>
@@ -61,7 +61,7 @@ export default function CloseAccountIntroScreen() {
         <Text className="text-[13px] text-gray-400 leading-5 mb-4">
           For more details on Account Cancellation, please refer to{' '}
           <Text
-            className="text-[#472FF8] font-medium"
+            className="text-primary font-medium"
             onPress={() => router.push('/(close-account)/notice' as any)}
           >
             &lsquo;NEATPay Account Cancellation Notice&rsquo;
@@ -69,7 +69,7 @@ export default function CloseAccountIntroScreen() {
         </Text>
 
         <TouchableOpacity
-          className="rounded-full py-4 items-center bg-[#472FF8]"
+          className="rounded-full py-4 items-center bg-primary"
           onPress={() => router.push('/(close-account)/reason' as any)}
           activeOpacity={0.85}
         >

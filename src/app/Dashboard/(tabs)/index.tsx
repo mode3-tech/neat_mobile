@@ -88,7 +88,7 @@ export default function HomeScreen() {
       {/* Header (pinned — stays fixed above the scrolling content) */}
       <View className="flex-row justify-between items-center px-6 pt-2 pb-3">
         <View className="flex-row items-center gap-2.5">
-          <View className="w-12 h-12 rounded-full bg-[#472FF8] items-center justify-center overflow-hidden">
+          <View className="w-12 h-12 rounded-full bg-primary items-center justify-center overflow-hidden">
             {avatarUri && !imageLoadFailed ? (
               <Image
                 source={{ uri: avatarUri }}
@@ -113,7 +113,7 @@ export default function HomeScreen() {
           >
             <Ionicons name="notifications-outline" size={24} color="#1A1A1A" />
             {unreadCount > 0 && (
-              <View className="absolute -top-1 -right-1 bg-[#EF4444] rounded-full min-w-[16px] h-4 items-center justify-center px-1">
+              <View className="absolute -top-1 -right-1 bg-danger rounded-full min-w-[16px] h-4 items-center justify-center px-1">
                 <Text className="text-white text-[10px] font-bold">
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </Text>

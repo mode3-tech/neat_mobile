@@ -138,21 +138,21 @@ export default function ApplyLoanScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
 
       <KeyboardAwareScrollView showsVerticalScrollIndicator={false} className="flex-1">
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Apply for Loan</Text>
+        <Text className="text-[22px] font-bold text-ink mb-6">Apply for Loan</Text>
 
        
         <View className="mb-5">
-          <Text className="text-[13px] font-semibold text-[#374151] mb-2">Business Value</Text>
-          <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
+          <Text className="text-[13px] font-semibold text-ink-body mb-2">Business Value</Text>
+          <View className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
             <TextInput
-              className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+              className="flex-1 text-[15px] text-ink p-0"
               value={store.businessValue}
               onChangeText={(t) => {
                 const cleaned = t.replace(/[^0-9]/g, '');
@@ -167,10 +167,10 @@ export default function ApplyLoanScreen() {
 
       
         <View className="mb-5">
-          <Text className="text-[13px] font-semibold text-[#374151] mb-2">Age of Business</Text>
-          <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
+          <Text className="text-[13px] font-semibold text-ink-body mb-2">Age of Business</Text>
+          <View className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
             <TextInput
-              className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+              className="flex-1 text-[15px] text-ink p-0"
               value={store.businessAge}
               onChangeText={(t) => {
                 const formatted = formatBusinessAge(t);
@@ -204,10 +204,10 @@ export default function ApplyLoanScreen() {
 
         {/* Business Address */}
         <View className="mb-5">
-          <Text className="text-[13px] font-semibold text-[#374151] mb-2">Business Address</Text>
-          <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
+          <Text className="text-[13px] font-semibold text-ink-body mb-2">Business Address</Text>
+          <View className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
             <TextInput
-              className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+              className="flex-1 text-[15px] text-ink p-0"
               value={store.businessAddress}
               onChangeText={(t) => store.setFormField('businessAddress', t)}
               placeholder="Enter business address"
@@ -218,28 +218,28 @@ export default function ApplyLoanScreen() {
 
         {/* Loan Product (dropdown) */}
         <View className="mb-5">
-          <Text className="text-[13px] font-semibold text-[#374151] mb-2">Loan Product</Text>
+          <Text className="text-[13px] font-semibold text-ink-body mb-2">Loan Product</Text>
           <TouchableOpacity
-            className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center"
+            className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center"
             onPress={() => {
               setShowProductDropdown((v) => !v);
             }}
             activeOpacity={0.7}
           >
-            <Text className={`flex-1 text-[15px] ${store.loanProduct ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'}`}>
+            <Text className={`flex-1 text-[15px] ${store.loanProduct ? 'text-ink' : 'text-ink-muted'}`}>
               {store.loanProduct || 'Enter Loan product'}
             </Text>
             <MaterialCommunityIcons name="chevron-down" size={20} color="#9CA3AF" />
           </TouchableOpacity>
           {showProductDropdown && (
-            <View className="bg-white rounded-xl border border-[#E5E7EB] mt-1 overflow-hidden">
+            <View className="bg-white rounded-xl border border-line mt-1 overflow-hidden">
               {loading ? (
                 <ActivityIndicator color={PRIMARY} style={{ padding: 12 }} />
               ) : (
                 products.map((p) => (
                   <TouchableOpacity
                     key={p.id}
-                    className="px-4 py-[14px] border-b border-[#F3F4F6]"
+                    className="px-4 py-[14px] border-b border-line-subtle"
                     onPress={() => {
                       setSelectedProduct(p);
                       store.setFormField('loanProduct', p.name);
@@ -251,7 +251,7 @@ export default function ApplyLoanScreen() {
                       setShowProductDropdown(false);
                     }}
                   >
-                    <Text className="text-sm text-[#1A1A1A]">{p.name}</Text>
+                    <Text className="text-sm text-ink">{p.name}</Text>
                   </TouchableOpacity>
                 ))
               )}
@@ -261,10 +261,10 @@ export default function ApplyLoanScreen() {
 
         {/* Loan Amount */}
         <View className="mb-5">
-          <Text className="text-[13px] font-semibold text-[#374151] mb-2">Loan Amount</Text>
-          <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
+          <Text className="text-[13px] font-semibold text-ink-body mb-2">Loan Amount</Text>
+          <View className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
             <TextInput
-              className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+              className="flex-1 text-[15px] text-ink p-0"
               value={store.loanAmount}
               onChangeText={(t) => {
                 const cleaned = t.replace(/[^0-9.]/g, '');
@@ -279,11 +279,11 @@ export default function ApplyLoanScreen() {
               keyboardType="numeric"
             />
           </View>
-          <Text className="text-xs text-[#472FF8] mt-1.5">
+          <Text className="text-xs text-primary mt-1.5">
             Min - Max amount: (₦ {formatCurrency(minAmount)} - ₦ {formatCurrency(maxAmount)})
           </Text>
           {exceedsBizValueHalf && (
-            <Text className="text-xs text-[#F59E0B] mt-1">
+            <Text className="text-xs text-warning mt-1">
               ⚠️ Warning: Amount requested exceeds 50% of business value (₦{formatCurrency(maxLoanByBusiness)})
             </Text>
           )}
@@ -291,9 +291,9 @@ export default function ApplyLoanScreen() {
 
         {/* Repayment Frequency (auto-filled from selected product) */}
         <View className="mb-5">
-          <Text className="text-[13px] font-semibold text-[#374151] mb-2">Repayment Frequency</Text>
-          <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
-            <Text className={`flex-1 text-[15px] ${store.repaymentFrequency ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'}`}>
+          <Text className="text-[13px] font-semibold text-ink-body mb-2">Repayment Frequency</Text>
+          <View className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
+            <Text className={`flex-1 text-[15px] ${store.repaymentFrequency ? 'text-ink' : 'text-ink-muted'}`}>
               {store.repaymentFrequency || 'Select a loan product first'}
             </Text>
           </View>
@@ -304,12 +304,12 @@ export default function ApplyLoanScreen() {
 
       <View className="pb-4">
         <TouchableOpacity
-          className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+          className={`rounded-full py-4 items-center ${canProceed ? 'bg-primary' : 'bg-surface-disabled'}`}
           onPress={handleProceed}
           disabled={!canProceed}
           activeOpacity={0.85}
         >
-          <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-[#9CA3AF]'}`}>
+          <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-ink-muted'}`}>
             Proceed
           </Text>
         </TouchableOpacity>
@@ -319,7 +319,7 @@ export default function ApplyLoanScreen() {
         <View className="flex-1 justify-end bg-black/40">
           <View className="bg-white rounded-t-3xl px-6 pt-5 pb-16">
             <View className="flex-row items-center justify-between mb-5">
-              <Text className="text-lg font-bold text-[#1A1A1A]">Select Date</Text>
+              <Text className="text-lg font-bold text-ink">Select Date</Text>
               <TouchableOpacity onPress={() => setShowDateModal(false)}>
                 <MaterialCommunityIcons name="close" size={22} color="#6B7280" />
               </TouchableOpacity>
@@ -327,18 +327,18 @@ export default function ApplyLoanScreen() {
 
             <View className="flex-row gap-4 mb-6">
               {/* Month list */}
-              <View className="flex-1 h-[200px] border border-[#E5E7EB] rounded-xl overflow-hidden">
+              <View className="flex-1 h-[200px] border border-line rounded-xl overflow-hidden">
                 <FlatList
                   data={MONTHS}
                   keyExtractor={(item) => item}
                   showsVerticalScrollIndicator={false}
                   renderItem={({ item, index }) => (
                     <TouchableOpacity
-                      className={`px-4 py-3 ${selectedMonth === index ? 'bg-[#EEF0FF]' : ''}`}
+                      className={`px-4 py-3 ${selectedMonth === index ? 'bg-primary-surface' : ''}`}
                       onPress={() => setSelectedMonth(index)}
                     >
                       <Text
-                        className={`text-sm ${selectedMonth === index ? 'font-semibold text-[#472FF8]' : 'text-[#374151]'}`}
+                        className={`text-sm ${selectedMonth === index ? 'font-semibold text-primary' : 'text-ink-body'}`}
                       >
                         {item}
                       </Text>
@@ -348,18 +348,18 @@ export default function ApplyLoanScreen() {
               </View>
 
               {/* Year list */}
-              <View className="flex-1 h-[200px] border border-[#E5E7EB] rounded-xl overflow-hidden">
+              <View className="flex-1 h-[200px] border border-line rounded-xl overflow-hidden">
                 <FlatList
                   data={YEARS}
                   keyExtractor={(item) => item.toString()}
                   showsVerticalScrollIndicator={false}
                   renderItem={({ item }) => (
                     <TouchableOpacity
-                      className={`px-4 py-3 ${selectedYear === item ? 'bg-[#EEF0FF]' : ''}`}
+                      className={`px-4 py-3 ${selectedYear === item ? 'bg-primary-surface' : ''}`}
                       onPress={() => setSelectedYear(item)}
                     >
                       <Text
-                        className={`text-sm ${selectedYear === item ? 'font-semibold text-[#472FF8]' : 'text-[#374151]'}`}
+                        className={`text-sm ${selectedYear === item ? 'font-semibold text-primary' : 'text-ink-body'}`}
                       >
                         {item}
                       </Text>
@@ -370,7 +370,7 @@ export default function ApplyLoanScreen() {
             </View>
 
             <TouchableOpacity
-              className="bg-[#472FF8] rounded-full py-4 items-center"
+              className="bg-primary rounded-full py-4 items-center"
               onPress={() => {
                 const mm = String(selectedMonth + 1).padStart(2, '0');
                 store.setFormField('businessAge', `${mm}/${selectedYear}`);

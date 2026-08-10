@@ -28,7 +28,7 @@ function StatTile({
   // footer: string;
 }) {
   return (
-    <View className="flex-1 bg-[#472FF8] rounded-2xl p-5">
+    <View className="flex-1 bg-primary rounded-2xl p-5">
       <View className="w-10 h-10 rounded-full bg-white/20 items-center justify-center mb-6">
         <MaterialCommunityIcons name={icon} size={20} color="#FFFFFF" />
       </View>
@@ -51,11 +51,11 @@ function DetailRow({
   return (
     <View
       className={`flex-row justify-between py-4 ${
-        isLast ? '' : 'border-b border-[#D9DCF4]'
+        isLast ? '' : 'border-b border-primary-border'
       }`}
     >
-      <Text className="text-sm text-[#6B7280]">{label}</Text>
-      <Text className="text-sm font-semibold text-[#1A1A1A]">{value}</Text>
+      <Text className="text-sm text-ink-soft">{label}</Text>
+      <Text className="text-sm font-semibold text-ink">{value}</Text>
     </View>
   );
 }
@@ -90,13 +90,13 @@ function LoanStatusCard({ loan }: { loan: LoanStatusItem }) {
   const statusDisplay = getStatusDisplay(loan.status);
 
   return (
-    <View className="border border-[#E5E7EB] rounded-2xl p-6 mb-4">
+    <View className="border border-line rounded-2xl p-6 mb-4">
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
-          <Text className="text-[16px] font-semibold text-[#1A1A1A]">
+          <Text className="text-[16px] font-semibold text-ink">
             Active Loan
           </Text>
-          <Text className="text-xs text-[#6B7280] mt-1">
+          <Text className="text-xs text-ink-soft mt-1">
             ID: {loan.loan_id}
           </Text>
         </View>
@@ -126,7 +126,7 @@ function LoanStatusCard({ loan }: { loan: LoanStatusItem }) {
         />
       </View>
 
-      <View className="bg-[#EEF0FF] rounded-2xl px-5 py-2 mt-5">
+      <View className="bg-primary-surface rounded-2xl px-5 py-2 mt-5">
         <DetailRow
           label="Periodic Payment"
           value={formatNairaWhole(loan.periodic_payment)}
@@ -153,13 +153,13 @@ export default function LoanStatusScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">
+      <Text className="text-[22px] font-bold text-ink mb-5">
         Loan Status
       </Text>
 
@@ -183,7 +183,7 @@ export default function LoanStatusScreen() {
                 size={48}
                 color="#EF4444"
               />
-              <Text className="text-sm text-[#6B7280] mt-3 text-center">
+              <Text className="text-sm text-ink-soft mt-3 text-center">
                 Could not load loan status.{'\n'}Please try again.
               </Text>
             </View>

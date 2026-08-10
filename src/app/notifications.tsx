@@ -85,7 +85,7 @@ function NotificationItem({ item }: { item: AppNotification }) {
 
   return (
     <View
-      className="flex-row items-start gap-3 mx-6 mb-3 p-4 rounded-2xl bg-[#F9FAFB] border border-[#F3F4F6]"
+      className="flex-row items-start gap-3 mx-6 mb-3 p-4 rounded-2xl bg-surface-muted border border-line-subtle"
     >
       <View
         className="w-11 h-11 rounded-full items-center justify-center"
@@ -103,19 +103,19 @@ function NotificationItem({ item }: { item: AppNotification }) {
       </View>
       <View className="flex-1">
         <View className="flex-row items-center justify-between mb-1">
-          <Text className="text-[11px] text-[#29292a]">
+          <Text className="text-[11px] text-legacy-text-3">
             {formatRelativeTime(item.created_at)}
           </Text>
           {!item.is_read && (
-            <View className="w-2 h-2 rounded-full bg-[#472FF8]" />
+            <View className="w-2 h-2 rounded-full bg-primary" />
           )}
         </View>
         <Text
-          className={`text-[14px] ${!item.is_read ? 'font-bold' : 'font-semibold'} text-[#272626] mb-1`}
+          className={`text-[14px] ${!item.is_read ? 'font-bold' : 'font-semibold'} text-legacy-text-2 mb-1`}
         >
           {item.title}
         </Text>
-        <Text className="text-[13px] text-[#161617] leading-[18px]">
+        <Text className="text-[13px] text-legacy-text-1 leading-[18px]">
           {item.body}
         </Text>
       </View>
@@ -127,10 +127,10 @@ function EmptyState() {
   return (
     <View className="flex-1 items-center justify-center px-6">
       <MaterialCommunityIcons name="bell-off-outline" size={64} color="#E5E7EB" />
-      <Text className="text-base font-semibold text-[#1A1A1A] mt-4">
+      <Text className="text-base font-semibold text-ink mt-4">
         No notifications yet
       </Text>
-      <Text className="text-[13px] text-[#6B7280] text-center mt-1">
+      <Text className="text-[13px] text-ink-soft text-center mt-1">
         {"We'll notify you when something important happens."}
       </Text>
     </View>
@@ -141,10 +141,10 @@ function ErrorState({ message }: { message: string }) {
   return (
     <View className="flex-1 items-center justify-center px-6">
       <MaterialCommunityIcons name="wifi-off" size={64} color="#E5E7EB" />
-      <Text className="text-base font-semibold text-[#1A1A1A] mt-4">
+      <Text className="text-base font-semibold text-ink mt-4">
         {message}
       </Text>
-      <Text className="text-[13px] text-[#6B7280] text-center mt-1">
+      <Text className="text-[13px] text-ink-soft text-center mt-1">
         Pull down to try again
       </Text>
     </View>
@@ -275,10 +275,10 @@ export default function NotificationsScreen() {
       {/* Header */}
       <View className="flex-row items-center justify-between px-6 pt-2 pb-4">
         <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5"
+          className="self-start border border-line rounded-[20px] px-4 py-1.5"
           onPress={() => router.back()}
         >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
+          <Text className="text-sm font-medium text-ink-body">Back</Text>
         </TouchableOpacity>
 
         {hasUnread && (
@@ -286,7 +286,7 @@ export default function NotificationsScreen() {
             onPress={() => markAllReadMutation.mutate()}
             disabled={markAllReadMutation.isPending}
           >
-            <Text className="text-sm font-medium text-[#472FF8]">
+            <Text className="text-sm font-medium text-primary">
               Mark all as read
             </Text>
           </TouchableOpacity>
@@ -294,7 +294,7 @@ export default function NotificationsScreen() {
       </View>
 
       <View className="px-6 mb-4">
-        <Text className="text-[22px] font-bold text-[#1A1A1A]">
+        <Text className="text-[22px] font-bold text-ink">
           Notifications
         </Text>
       </View>
@@ -319,7 +319,7 @@ export default function NotificationsScreen() {
           renderItem={({ item }) => <NotificationItem item={item} />}
           renderSectionHeader={({ section: { title } }) => (
             <View className="bg-white px-6 pt-5 pb-3">
-              <Text className="text-[11px] font-semibold text-[#2c2d2d] uppercase tracking-[1.5px]">
+              <Text className="text-[11px] font-semibold text-legacy-text-4 uppercase tracking-[1.5px]">
                 {title}
               </Text>
             </View>

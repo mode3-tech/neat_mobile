@@ -28,11 +28,11 @@ function SummaryRow({
   return (
     <View
       className={`flex-row justify-between items-center py-[14px] ${
-        !isLast ? 'border-b border-[#E5E7EB]' : ''
+        !isLast ? 'border-b border-line' : ''
       }`}
     >
-      <Text className="text-[13px] text-[#6B7280]">{label}</Text>
-      <Text className="text-sm font-semibold text-[#1A1A1A]">{value}</Text>
+      <Text className="text-[13px] text-ink-soft">{label}</Text>
+      <Text className="text-sm font-semibold text-ink">{value}</Text>
     </View>
   );
 }
@@ -61,17 +61,17 @@ export default function BulkTransferReviewScreen() {
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 px-6">
         <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-6"
+          className="self-start border border-line rounded-[20px] px-6 py-1.5 mt-2 mb-6"
           onPress={() => router.back()}
         >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
+          <Text className="text-sm font-medium text-ink-body">Back</Text>
         </TouchableOpacity>
 
-        <Text className="text-[20px] font-medium text-[#1A1A1A] mb-6">
+        <Text className="text-[20px] font-medium text-ink mb-6">
           Review Payment
         </Text>
 
-        <View className="bg-[#EEF0FF] border border-[#472FF8]/30 rounded-[14px] px-4 mb-6">
+        <View className="bg-primary-surface border border-primary/30 rounded-[14px] px-4 mb-6">
           <SummaryRow label="Total Amount" value={formatNaira(totalAmount)} />
           <SummaryRow
             label="No. of recipient"
@@ -84,7 +84,7 @@ export default function BulkTransferReviewScreen() {
           />
         </View>
 
-        <Text className="text-base font-semibold text-[#1A1A1A] mb-3">
+        <Text className="text-base font-semibold text-ink mb-3">
           Payment Breakdown
         </Text>
 
@@ -95,34 +95,34 @@ export default function BulkTransferReviewScreen() {
           {recipients.map((r, i) => (
             <View
               key={r.id}
-              className="flex-row items-start py-4 border-b border-[#F3F4F6]"
+              className="flex-row items-start py-4 border-b border-line-subtle"
             >
-              <View className="w-8 h-8 rounded-full bg-[#F59E0B] items-center justify-center mr-3 mt-0.5">
+              <View className="w-8 h-8 rounded-full bg-warning items-center justify-center mr-3 mt-0.5">
                 <Text className="text-white text-[13px] font-bold">
                   {i + 1}
                 </Text>
               </View>
               <View className="flex-1 pr-2">
                 <Text
-                  className="text-[14px] font-bold text-[#1A1A1A]"
+                  className="text-[14px] font-bold text-ink"
                   numberOfLines={1}
                 >
                   {r.account_name}
                 </Text>
                 <Text
-                  className="text-[12px] text-[#6B7280] mt-0.5"
+                  className="text-[12px] text-ink-soft mt-0.5"
                   numberOfLines={1}
                 >
                   {r.account_number}
                 </Text>
                 <Text
-                  className="text-[12px] text-[#472FF8] mt-0.5"
+                  className="text-[12px] text-primary mt-0.5"
                   numberOfLines={2}
                 >
                   {r.bank_name}
                 </Text>
               </View>
-              <Text className="text-[14px] font-bold text-[#16A34A]">
+              <Text className="text-[14px] font-bold text-success">
                 {formatNaira(r.amount)}
               </Text>
             </View>
@@ -131,7 +131,7 @@ export default function BulkTransferReviewScreen() {
 
         <View className="pb-4 pt-4">
           <TouchableOpacity
-            className="rounded-full py-4 items-center bg-[#472FF8] mb-3"
+            className="rounded-full py-4 items-center bg-primary mb-3"
             onPress={() => router.push('/(transfer)/bulk-transfer-pin')}
             activeOpacity={0.85}
           >
@@ -140,11 +140,11 @@ export default function BulkTransferReviewScreen() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className="rounded-full py-4 items-center border-[1.5px] border-[#472FF8]"
+            className="rounded-full py-4 items-center border-[1.5px] border-primary"
             onPress={handleCancel}
             activeOpacity={0.85}
           >
-            <Text className="text-[#472FF8] text-base font-semibold">
+            <Text className="text-primary text-base font-semibold">
               Cancel
             </Text>
           </TouchableOpacity>

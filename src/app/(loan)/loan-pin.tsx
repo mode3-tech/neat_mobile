@@ -77,21 +77,21 @@ export default function LoanPinScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-1.5">Enter PIN</Text>
-      <Text className="text-[13px] text-[#6B7280] leading-5 mb-7">
+      <Text className="text-[22px] font-bold text-ink mb-1.5">Enter PIN</Text>
+      <Text className="text-[13px] text-ink-soft leading-5 mb-7">
         Enter your 4-digit PIN to confirm loan application
       </Text>
 
       <View className="mb-5">
-        <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
+        <View className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
           <TextInput
-            className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+            className="flex-1 text-[15px] text-ink p-0"
             value={pin}
             onChangeText={(t) =>
               setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH))
@@ -117,7 +117,7 @@ export default function LoanPinScreen() {
 
       <View className="flex-row items-center gap-3 pb-4">
         <TouchableOpacity
-          className={`flex-1 rounded-full py-4 items-center ${canConfirm ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+          className={`flex-1 rounded-full py-4 items-center ${canConfirm ? 'bg-primary' : 'bg-surface-disabled'}`}
           onPress={handleConfirm}
           disabled={!canConfirm || submitting}
           activeOpacity={0.85}
@@ -125,7 +125,7 @@ export default function LoanPinScreen() {
           {submitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text className={`text-base font-semibold ${canConfirm ? 'text-white' : 'text-[#9CA3AF]'}`}>
+            <Text className={`text-base font-semibold ${canConfirm ? 'text-white' : 'text-ink-muted'}`}>
               Confirm
             </Text>
           )}
@@ -133,7 +133,7 @@ export default function LoanPinScreen() {
 
         {isBiometricReady && (
           <TouchableOpacity
-            className="w-14 h-14 rounded-full border border-[#E5E7EB] items-center justify-center"
+            className="w-14 h-14 rounded-full border border-line items-center justify-center"
             activeOpacity={0.7}
             onPress={handleBiometric}
             disabled={authenticating || submitting}

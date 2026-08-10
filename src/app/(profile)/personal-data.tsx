@@ -62,8 +62,8 @@ function Field({
     }
   }, []);
 
-  const containerBg = !editable ? 'bg-[#ECECEC]' : 'bg-[#F5F5F5]';
-  const borderClass = error ? 'border border-[#EF4444]' : '';
+  const containerBg = !editable ? 'bg-legacy-surface-4' : 'bg-surface-input';
+  const borderClass = error ? 'border border-danger' : '';
 
   return (
     <View className="mb-4">
@@ -80,11 +80,11 @@ function Field({
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           autoCorrect={false}
-          className={`text-[15px] px-4 py-[14px] ${editable ? 'text-[#1A1A1A]' : 'text-gray-500'}`}
+          className={`text-[15px] px-4 py-[14px] ${editable ? 'text-ink' : 'text-gray-500'}`}
         />
       </View>
       {error ? (
-        <Text className="text-[12px] text-[#EF4444] mt-1.5">{error}</Text>
+        <Text className="text-[12px] text-danger mt-1.5">{error}</Text>
       ) : null}
     </View>
   );
@@ -110,14 +110,14 @@ export default function PersonalDataScreen() {
         <View className="flex-1 items-center justify-center px-6">
           {isError ? (
             <>
-              <Text className="text-base font-semibold text-[#1A1A1A] mb-2">
+              <Text className="text-base font-semibold text-ink mb-2">
                 Couldn&apos;t load your profile
               </Text>
               <Text className="text-sm text-gray-500 text-center mb-6">
                 Please check your connection and try again.
               </Text>
               <TouchableOpacity
-                className="rounded-full py-3 px-8 bg-[#472FF8]"
+                className="rounded-full py-3 px-8 bg-primary"
                 onPress={() => refetch()}
                 disabled={isFetching}
                 activeOpacity={0.85}
@@ -205,7 +205,7 @@ function PersonalDataForm({ summary }: { summary: AccountSummary }) {
           <Text className="text-sm text-gray-700 font-medium">Back</Text>
         </TouchableOpacity>
 
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Personal Data</Text>
+        <Text className="text-[22px] font-bold text-ink mb-6">Personal Data</Text>
 
         <Field
           label="Full Name"
@@ -248,7 +248,7 @@ function PersonalDataForm({ summary }: { summary: AccountSummary }) {
 
       <View className="px-6 pb-4">
         <TouchableOpacity
-          className="rounded-full py-4 items-center bg-[#472FF8]"
+          className="rounded-full py-4 items-center bg-primary"
           onPress={handleSave}
           disabled={saving}
           activeOpacity={0.85}

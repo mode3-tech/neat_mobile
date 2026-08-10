@@ -185,13 +185,13 @@ export default function StatementScreen() {
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 px-6">
         <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-12"
+          className="self-start border border-line rounded-[20px] px-6 py-1.5 mt-2 mb-12"
           onPress={() => router.back()}
         >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
+          <Text className="text-sm font-medium text-ink-body">Back</Text>
         </TouchableOpacity>
 
-        <Text className="text-[20px] font-medium text-[#1A1A1A] mb-8">
+        <Text className="text-[20px] font-medium text-ink mb-8">
           Account Statement
         </Text>
 
@@ -202,16 +202,16 @@ export default function StatementScreen() {
         >
           {/* Start Date */}
           <View className="mb-5">
-            <Text className="text-[13px] font-semibold text-[#374151] mb-2">
+            <Text className="text-[13px] font-semibold text-ink-body mb-2">
               Start Date
             </Text>
             <TouchableOpacity
-              className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center justify-between"
+              className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center justify-between"
               onPress={() => setShowStartPicker(true)}
             >
               <Text
                 className={`text-[15px] ${
-                  startDate ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'
+                  startDate ? 'text-ink' : 'text-ink-muted'
                 }`}
               >
                 {startDate ? formatDateShort(startDate) : 'Select start date'}
@@ -226,16 +226,16 @@ export default function StatementScreen() {
 
           {/* End Date */}
           <View className="mb-5">
-            <Text className="text-[13px] font-semibold text-[#374151] mb-2">
+            <Text className="text-[13px] font-semibold text-ink-body mb-2">
               End Date
             </Text>
             <TouchableOpacity
-              className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center justify-between"
+              className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center justify-between"
               onPress={() => setShowEndPicker(true)}
             >
               <Text
                 className={`text-[15px] ${
-                  endDate ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'
+                  endDate ? 'text-ink' : 'text-ink-muted'
                 }`}
               >
                 {endDate ? formatDateShort(endDate) : 'Select end date'}
@@ -255,20 +255,20 @@ export default function StatementScreen() {
 
           {/* File Type */}
           <View className="mb-5 mt-2">
-            <Text className="text-base font-bold text-[#1A1A1A] mb-1">
+            <Text className="text-base font-bold text-ink mb-1">
               File Type
             </Text>
-            <Text className="text-[13px] text-[#6B7280] leading-5 mb-3">
+            <Text className="text-[13px] text-ink-soft leading-5 mb-3">
               Select the format in which you would like to receive your account
               statement
             </Text>
             <TouchableOpacity
-              className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center justify-between"
+              className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center justify-between"
               onPress={() => setFileTypeModal(true)}
             >
               <Text
                 className={`text-[15px] ${
-                  selectedFileType ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'
+                  selectedFileType ? 'text-ink' : 'text-ink-muted'
                 }`}
               >
                 {selectedFileType?.label ?? 'Select file type'}
@@ -285,13 +285,13 @@ export default function StatementScreen() {
           {jobId && (
             <View className="mt-6">
               {isProcessing && (
-                <View className="bg-[#EEF0FF] rounded-xl px-5 py-5 flex-row items-center">
+                <View className="bg-primary-surface rounded-xl px-5 py-5 flex-row items-center">
                   <ActivityIndicator size="small" color="#472FF8" />
                   <View className="ml-3 flex-1">
-                    <Text className="text-sm font-semibold text-[#1A1A1A]">
+                    <Text className="text-sm font-semibold text-ink">
                       Generating your statement...
                     </Text>
-                    <Text className="text-xs text-[#6B7280] mt-0.5">
+                    <Text className="text-xs text-ink-soft mt-0.5">
                       This usually takes a few seconds.
                     </Text>
                   </View>
@@ -299,7 +299,7 @@ export default function StatementScreen() {
               )}
 
               {jobStatus === 'ready' && downloadUrl && (
-                <View className="bg-[#EEF0FF] rounded-xl px-5 py-5">
+                <View className="bg-primary-surface rounded-xl px-5 py-5">
                   <View className="flex-row items-center mb-4">
                     <View className="w-11 h-11 rounded-full bg-white items-center justify-center">
                       <MaterialCommunityIcons
@@ -311,11 +311,11 @@ export default function StatementScreen() {
                       />
                     </View>
                     <View className="ml-3 flex-1">
-                      <Text className="text-sm font-semibold text-[#1A1A1A]">
+                      <Text className="text-sm font-semibold text-ink">
                         Statement Ready
                       </Text>
                       {startDate && endDate && (
-                        <Text className="text-xs text-[#6B7280] mt-0.5">
+                        <Text className="text-xs text-ink-soft mt-0.5">
                           {formatDateShort(startDate)} – {formatDateShort(endDate)}
                           {selectedFileType ? ` • ${selectedFileType.label}` : ''}
                         </Text>
@@ -323,7 +323,7 @@ export default function StatementScreen() {
                     </View>
                   </View>
                   <TouchableOpacity
-                    className="bg-[#472FF8] rounded-full py-3 items-center flex-row justify-center"
+                    className="bg-primary rounded-full py-3 items-center flex-row justify-center"
                     onPress={handleDownload}
                     disabled={downloading}
                     activeOpacity={0.85}
@@ -347,7 +347,7 @@ export default function StatementScreen() {
               )}
 
               {jobStatus === 'failed' && (
-                <View className="bg-[#FEF2F2] rounded-xl px-5 py-5">
+                <View className="bg-danger-surface rounded-xl px-5 py-5">
                   <View className="flex-row items-center mb-4">
                     <MaterialCommunityIcons
                       name="alert-circle-outline"
@@ -355,16 +355,16 @@ export default function StatementScreen() {
                       color="#EF4444"
                     />
                     <View className="ml-3 flex-1">
-                      <Text className="text-sm font-semibold text-[#1A1A1A]">
+                      <Text className="text-sm font-semibold text-ink">
                         Statement generation failed
                       </Text>
-                      <Text className="text-xs text-[#6B7280] mt-0.5">
+                      <Text className="text-xs text-ink-soft mt-0.5">
                         Please try again.
                       </Text>
                     </View>
                   </View>
                   <TouchableOpacity
-                    className="bg-[#472FF8] rounded-full py-3 items-center"
+                    className="bg-primary rounded-full py-3 items-center"
                     onPress={handleGenerate}
                     activeOpacity={0.85}
                   >
@@ -388,8 +388,8 @@ export default function StatementScreen() {
           <TouchableOpacity
             className={`rounded-full py-4 items-center ${
               canGenerate || generateMutation.isPending
-                ? 'bg-[#472FF8]'
-                : 'bg-[#E5E7EB]'
+                ? 'bg-primary'
+                : 'bg-surface-disabled'
             }`}
             onPress={handleGenerate}
             disabled={!canGenerate}
@@ -400,7 +400,7 @@ export default function StatementScreen() {
             ) : (
               <Text
                 className={`text-base font-semibold ${
-                  canGenerate ? 'text-white' : 'text-[#9CA3AF]'
+                  canGenerate ? 'text-white' : 'text-ink-muted'
                 }`}
               >
                 Generate Statement
@@ -442,14 +442,14 @@ export default function StatementScreen() {
         >
           <View className="flex-1 bg-black/50 justify-end">
             <View className="bg-white rounded-t-3xl pb-16">
-              <View className="flex-row justify-end px-5 py-3 border-b border-[#F3F4F6]">
+              <View className="flex-row justify-end px-5 py-3 border-b border-line-subtle">
                 <TouchableOpacity
                   onPress={() => {
                     setShowStartPicker(false);
                     setShowEndPicker(false);
                   }}
                 >
-                  <Text className="text-base font-semibold text-[#472FF8]">
+                  <Text className="text-base font-semibold text-primary">
                     Done
                   </Text>
                 </TouchableOpacity>
@@ -483,7 +483,7 @@ export default function StatementScreen() {
         <View className="flex-1 bg-black/50 justify-end">
           <View className="bg-white rounded-t-3xl pt-4 pb-16">
             <View className="flex-row items-center justify-between px-6 mb-4">
-              <Text className="text-lg font-bold text-[#1A1A1A]">
+              <Text className="text-lg font-bold text-ink">
                 Select File Type
               </Text>
               <TouchableOpacity onPress={() => setFileTypeModal(false)}>
@@ -496,22 +496,22 @@ export default function StatementScreen() {
               return (
                 <TouchableOpacity
                   key={option.value}
-                  className={`px-6 py-4 border-b border-[#F3F4F6] flex-row items-center ${
-                    isSelected ? 'bg-[#EEF0FF]' : ''
+                  className={`px-6 py-4 border-b border-line-subtle flex-row items-center ${
+                    isSelected ? 'bg-primary-surface' : ''
                   }`}
                   onPress={() => {
                     setFormat(option.value);
                     setFileTypeModal(false);
                   }}
                 >
-                  <View className="w-10 h-10 rounded-full bg-[#F5F5F5] items-center justify-center">
+                  <View className="w-10 h-10 rounded-full bg-surface-input items-center justify-center">
                     <MaterialCommunityIcons
                       name={option.icon}
                       size={22}
                       color="#472FF8"
                     />
                   </View>
-                  <Text className="text-[15px] text-[#1A1A1A] ml-3 flex-1">
+                  <Text className="text-[15px] text-ink ml-3 flex-1">
                     {option.label}
                   </Text>
                   {isSelected && (

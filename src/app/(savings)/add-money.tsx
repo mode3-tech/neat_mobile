@@ -43,20 +43,20 @@ export default function AddMoneyScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-1">
+      <Text className="text-[22px] font-bold text-ink mb-1">
         Add Money to Savings
       </Text>
-      <Text className="text-[13px] text-[#6B7280] mb-7">
+      <Text className="text-[13px] text-ink-soft mb-7">
         Choose funding method
       </Text>
 
-      <View className="bg-[#EEF0FF] rounded-2xl p-4 gap-3">
+      <View className="bg-primary-surface rounded-2xl p-4 gap-3">
         {FUNDING_OPTIONS.map((option) => (
           <TouchableOpacity
             key={option.label}
@@ -71,10 +71,10 @@ export default function AddMoneyScreen() {
             />
 
             <View className="flex-1">
-              <Text className="text-[15px] font-semibold text-[#1A1A1A]">
+              <Text className="text-[15px] font-semibold text-ink">
                 {option.label}
               </Text>
-              <Text className="text-[12px] text-[#6B7280] mt-0.5">
+              <Text className="text-[12px] text-ink-soft mt-0.5">
                 {option.description}
               </Text>
             </View>

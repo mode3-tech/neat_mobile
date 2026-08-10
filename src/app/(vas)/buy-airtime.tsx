@@ -132,17 +132,17 @@ export default function BuyAirtimeScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+          className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
           onPress={() => router.back()}
         >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
+          <Text className="text-sm font-medium text-ink-body">Back</Text>
         </TouchableOpacity>
 
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Buy Airtime</Text>
+        <Text className="text-[22px] font-bold text-ink mb-6">Buy Airtime</Text>
 
         {/* Provider selector */}
-        <View className="bg-[#F9FAFB] rounded-2xl p-4 mb-6">
-          <Text className="text-sm font-medium text-[#1A1A1A] mb-3">
+        <View className="bg-surface-muted rounded-2xl p-4 mb-6">
+          <Text className="text-sm font-medium text-ink mb-3">
             Select Service Provider
           </Text>
 
@@ -152,7 +152,7 @@ export default function BuyAirtimeScreen() {
             </View>
           ) : billersQuery.isError ? (
             <View className="h-[68px] items-center justify-center">
-              <Text className="text-[13px] text-[#EF4444]">
+              <Text className="text-[13px] text-danger">
                 Couldn't load providers. Pull back and try again.
               </Text>
             </View>
@@ -166,7 +166,7 @@ export default function BuyAirtimeScreen() {
                     activeOpacity={0.8}
                     onPress={() => selectProvider(biller)}
                     className={`w-[68px] h-[68px] rounded-2xl bg-white items-center justify-center border-2 ${
-                      isSelected ? 'border-[#472FF8]' : 'border-transparent'
+                      isSelected ? 'border-primary' : 'border-transparent'
                     }`}
                   >
                     <Image
@@ -182,10 +182,10 @@ export default function BuyAirtimeScreen() {
         </View>
 
         {/* Phone number */}
-        <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Phone Number</Text>
-        <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-6 flex-row items-center">
+        <Text className="text-sm font-medium text-ink mb-2">Phone Number</Text>
+        <View className="bg-surface-input rounded-xl px-4 py-[15px] mb-6 flex-row items-center">
           <TextInput
-            className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+            className="flex-1 text-[15px] text-ink p-0"
             value={phone}
             onChangeText={(t) => setPhone(t.replace(/\D/g, '').slice(0, PHONE_LENGTH))}
             placeholder="Phone Number"
@@ -201,10 +201,10 @@ export default function BuyAirtimeScreen() {
         </View>
 
         {/* Amount */}
-        <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Amount</Text>
-        <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-1.5">
+        <Text className="text-sm font-medium text-ink mb-2">Amount</Text>
+        <View className="bg-surface-input rounded-xl px-4 py-[15px] mb-1.5">
           <TextInput
-            className="text-[15px] text-[#1A1A1A] p-0"
+            className="text-[15px] text-ink p-0"
             value={amount}
             onChangeText={(t) => setAmount(t.replace(/\D/g, ''))}
             placeholder="Amount"
@@ -213,7 +213,7 @@ export default function BuyAirtimeScreen() {
           />
         </View>
         {amountOutOfRange && product ? (
-          <Text className="text-xs text-[#EF4444] mb-3">
+          <Text className="text-xs text-danger mb-3">
             Enter an amount between {formatNaira(product.min_amount)} and{' '}
             {formatNaira(product.max_amount)}
           </Text>
@@ -232,13 +232,13 @@ export default function BuyAirtimeScreen() {
                 onPress={() => setAmount(String(value))}
                 className={`w-[31%] rounded-xl py-3 items-center mb-3 border ${
                   isActive
-                    ? 'bg-[#EEF0FF] border-[#472FF8]'
-                    : 'bg-[#F5F5F5] border-[#F5F5F5]'
+                    ? 'bg-primary-surface border-primary'
+                    : 'bg-surface-input border-surface-input'
                 }`}
               >
                 <Text
                   className={`text-sm font-medium ${
-                    isActive ? 'text-[#472FF8]' : 'text-[#374151]'
+                    isActive ? 'text-primary' : 'text-ink-body'
                   }`}
                 >
                   {formatNaira(value)}
@@ -252,7 +252,7 @@ export default function BuyAirtimeScreen() {
       <View className="px-6 pb-4">
         <TouchableOpacity
           className={`rounded-full py-4 items-center ${
-            canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+            canProceed ? 'bg-primary' : 'bg-surface-disabled'
           }`}
           onPress={handleProceed}
           disabled={!canProceed}
@@ -263,7 +263,7 @@ export default function BuyAirtimeScreen() {
           ) : (
             <Text
               className={`text-base font-semibold ${
-                canProceed ? 'text-white' : 'text-[#9CA3AF]'
+                canProceed ? 'text-white' : 'text-ink-muted'
               }`}
             >
               Proceed

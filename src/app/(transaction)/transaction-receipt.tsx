@@ -114,7 +114,7 @@ export default function TransactionReceiptScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F5F5]">
+    <SafeAreaView className="flex-1 bg-surface-input">
       {/* Header */}
       <View className="flex-row items-center px-6 py-3">
         <TouchableOpacity
@@ -124,7 +124,7 @@ export default function TransactionReceiptScreen() {
         >
           <MaterialCommunityIcons name="chevron-left" size={26} color="#1A1A1A" />
         </TouchableOpacity>
-        <Text className="text-lg font-semibold text-[#1A1A1A]">
+        <Text className="text-lg font-semibold text-ink">
           Share Receipt
         </Text>
       </View>
@@ -143,24 +143,24 @@ export default function TransactionReceiptScreen() {
                 className="w-16 h-12"
                 resizeMode="contain"
               />
-              <Text className="text-[15px] font-medium text-[#1A1A1A]">
+              <Text className="text-[15px] font-medium text-ink">
                 Transaction Receipt
               </Text>
             </View>
 
-            <View className="border-b border-[#E5E7EB] my-4" />
+            <View className="border-b border-line my-4" />
 
-            <Text className="text-[26px] font-bold text-[#472FF8] text-center mt-2">
+            <Text className="text-[26px] font-bold text-primary text-center mt-2">
               {formatNairaDecimal(transaction.amount)}
             </Text>
-            <Text className="text-[13px] text-[#6B7280] text-center mt-1">
+            <Text className="text-[13px] text-ink-soft text-center mt-1">
               {statusLabel}
             </Text>
-            <Text className="text-[12px] text-[#9CA3AF] text-center mt-1">
+            <Text className="text-[12px] text-ink-muted text-center mt-1">
               {formatTransactionDateTime(transaction.date)}
             </Text>
 
-            <View className="border-b border-[#E5E7EB] my-4" />
+            <View className="border-b border-line my-4" />
 
             {receiptRows.map((row, i) => (
               <DetailRow
@@ -176,19 +176,19 @@ export default function TransactionReceiptScreen() {
       </ScrollView>
 
       {/* Share options */}
-      <View className="flex-row border-t border-[#E5E7EB] bg-white">
+      <View className="flex-row border-t border-line bg-white">
         <TouchableOpacity
           className="flex-1 flex-row items-center justify-center py-5"
           onPress={handleShareAsImage}
           activeOpacity={0.7}
         >
           <MaterialCommunityIcons name="image-outline" size={20} color="#472FF8" />
-          <Text className="text-[15px] font-semibold text-[#472FF8] ml-2">
+          <Text className="text-[15px] font-semibold text-primary ml-2">
             Share as image
           </Text>
         </TouchableOpacity>
 
-        <View className="w-px my-4 bg-[#E5E7EB]" />
+        <View className="w-px my-4 bg-surface-disabled" />
 
         <TouchableOpacity
           className="flex-1 flex-row items-center justify-center py-5"
@@ -196,7 +196,7 @@ export default function TransactionReceiptScreen() {
           activeOpacity={0.7}
         >
           <MaterialCommunityIcons name="file-pdf-box" size={20} color="#472FF8" />
-          <Text className="text-[15px] font-semibold text-[#472FF8] ml-2">
+          <Text className="text-[15px] font-semibold text-primary ml-2">
             Share as PDF
           </Text>
         </TouchableOpacity>

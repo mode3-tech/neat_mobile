@@ -351,13 +351,13 @@ export default function SendMoneyScreen() {
       <View className="flex-1 px-6">
         {/* Back button */}
         <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-12"
+          className="self-start border border-line rounded-[20px] px-6 py-1.5 mt-2 mb-12"
           onPress={() => router.back()}
         >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
+          <Text className="text-sm font-medium text-ink-body">Back</Text>
         </TouchableOpacity>
 
-        <Text className="text-[20px] font-medium text-[#1A1A1A] mb-8">
+        <Text className="text-[20px] font-medium text-ink mb-8">
           Send Money
         </Text>
 
@@ -365,7 +365,7 @@ export default function SendMoneyScreen() {
         <ActivationCapBanner limits={limits} />
 
         {/* Transfer Type label */}
-        <Text className="text-sm font-semibold text-[#1A1A1A] mb-6">
+        <Text className="text-sm font-semibold text-ink mb-6">
           Transfer to:
         </Text>
 
@@ -373,14 +373,14 @@ export default function SendMoneyScreen() {
         {/* When locked, render only the active pill. Switching tabs would fire
             the reset effect and wipe the prefill, and a disabled-but-visible
             second pill is a dead affordance — a lone pill reads as a label. */}
-        <View className="flex-row bg-[#F3F3F4] rounded-full py-3 px-3 mb-6">
+        <View className="flex-row bg-legacy-surface-2 rounded-full py-3 px-3 mb-6">
           {TABS.filter(
             (tab) => !lockedRecipient || tab.key === activeTab,
           ).map((tab) => (
             <TouchableOpacity
               key={tab.key}
               className={`flex-1 py-3 rounded-full items-center ${
-                activeTab === tab.key ? 'bg-[#472FF8]' : ''
+                activeTab === tab.key ? 'bg-primary' : ''
               }`}
               onPress={() => {
                 setActiveTab(tab.key);
@@ -391,7 +391,7 @@ export default function SendMoneyScreen() {
             >
               <Text
                 className={`text-[13px] font-semibold ${
-                  activeTab === tab.key ? 'text-white' : 'text-[#6B7280]'
+                  activeTab === tab.key ? 'text-white' : 'text-ink-soft'
                 }`}
               >
                 {tab.label}
@@ -407,11 +407,11 @@ export default function SendMoneyScreen() {
         >
           {activeTab === 'other_bank' && (
             <View className="mb-5">
-              <Text className="text-[13px] font-semibold text-[#374151] mb-2">
+              <Text className="text-[13px] font-semibold text-ink-body mb-2">
                 Bank
               </Text>
               <TouchableOpacity
-                className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center justify-between"
+                className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center justify-between"
                 onPress={() => {
                   fetchBanks();
                   setBankModalVisible(true);
@@ -421,7 +421,7 @@ export default function SendMoneyScreen() {
               >
                 <Text
                   className={`text-[15px] ${
-                    selectedBank ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'
+                    selectedBank ? 'text-ink' : 'text-ink-muted'
                   }`}
                 >
                   {selectedBank?.name ??
@@ -443,19 +443,19 @@ export default function SendMoneyScreen() {
 
           {/* Account Number */}
           <View className="mb-5">
-            <Text className="text-[13px] font-semibold text-[#374151] mb-2">
+            <Text className="text-[13px] font-semibold text-ink-body mb-2">
               Account Number
             </Text>
             <View
-              className={`bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] ${
-                validationError ? 'border-[#EF4444] bg-white' : 'border-transparent'
+              className={`bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] ${
+                validationError ? 'border-danger bg-white' : 'border-transparent'
               } flex-row items-center`}
             >
               {/* Keep the text colour explicit: on Android an editable={false}
                   input renders dimmed, which would read as broken rather than
                   intentionally locked. The lock icon carries that meaning. */}
               <TextInput
-                className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+                className="flex-1 text-[15px] text-ink p-0"
                 value={accountNumber}
                 onChangeText={(t) =>
                   setAccountNumber(t.replace(/\D/g, '').slice(0, ACCOUNT_NUMBER_LENGTH))
@@ -478,7 +478,7 @@ export default function SendMoneyScreen() {
             {displayName !== '' && (
               <Text
                 className={`text-[13px] mt-1.5 font-medium ${
-                  accountName !== '' ? 'text-[#16A34A]' : 'text-[#6B7280]'
+                  accountName !== '' ? 'text-success' : 'text-ink-soft'
                 }`}
               >
                 {displayName}
@@ -491,7 +491,7 @@ export default function SendMoneyScreen() {
             )}
             {lockedRecipient && validationError !== '' && (
               <TouchableOpacity className="mt-2" onPress={handleClearPrefill}>
-                <Text className="text-[13px] font-medium text-[#472FF8]">
+                <Text className="text-[13px] font-medium text-primary">
                   Send to a different account
                 </Text>
               </TouchableOpacity>
@@ -510,7 +510,7 @@ export default function SendMoneyScreen() {
                   size={20}
                   color="#472FF8"
                 />
-                <Text className="text-[13px] font-medium text-[#472FF8] ml-1.5">
+                <Text className="text-[13px] font-medium text-primary ml-1.5">
                   Select from Beneficiary
                 </Text>
               </TouchableOpacity>
@@ -519,13 +519,13 @@ export default function SendMoneyScreen() {
 
           {/* Amount */}
           <View className="mb-5">
-            <Text className="text-[13px] font-semibold text-[#374151] mb-2">
+            <Text className="text-[13px] font-semibold text-ink-body mb-2">
               Amount
             </Text>
-            <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
-              <Text className="text-[15px] text-[#9CA3AF] mr-1">₦</Text>
+            <View className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
+              <Text className="text-[15px] text-ink-muted mr-1">₦</Text>
               <TextInput
-                className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+                className="flex-1 text-[15px] text-ink p-0"
                 value={amount}
                 onChangeText={formatAmount}
                 placeholder="0"
@@ -548,12 +548,12 @@ export default function SendMoneyScreen() {
 
           {/* Narration */}
           <View className="mb-5">
-            <Text className="text-[13px] font-semibold text-[#374151] mb-2">
+            <Text className="text-[13px] font-semibold text-ink-body mb-2">
               Narration
             </Text>
-            <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent">
+            <View className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent">
               <TextInput
-                className="text-[15px] text-[#1A1A1A] p-0"
+                className="text-[15px] text-ink p-0"
                 value={narration}
                 onChangeText={setNarration}
                 placeholder="Enter narration"
@@ -567,7 +567,7 @@ export default function SendMoneyScreen() {
         <View className="pb-4">
           <TouchableOpacity
             className={`rounded-full py-4 items-center ${
-              canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+              canProceed ? 'bg-primary' : 'bg-surface-disabled'
             }`}
             onPress={handleProceed}
             disabled={!canProceed}
@@ -575,7 +575,7 @@ export default function SendMoneyScreen() {
           >
             <Text
               className={`text-base font-semibold ${
-                canProceed ? 'text-white' : 'text-[#9CA3AF]'
+                canProceed ? 'text-white' : 'text-ink-muted'
               }`}
             >
               Proceed
@@ -589,7 +589,7 @@ export default function SendMoneyScreen() {
         <View className="flex-1 bg-black/50 justify-end">
           <View className="bg-white rounded-t-3xl flex-1 mt-[60%] pt-4 pb-8">
             <View className="flex-row items-center justify-between px-6 mb-4">
-              <Text className="text-lg font-bold text-[#1A1A1A]">
+              <Text className="text-lg font-bold text-ink">
                 Select Bank
               </Text>
               <TouchableOpacity onPress={() => setBankModalVisible(false)}>
@@ -603,14 +603,14 @@ export default function SendMoneyScreen() {
 
             {/* Search */}
             <View className="px-6 mb-3">
-              <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
+              <View className="bg-surface-input rounded-xl px-4 py-3 flex-row items-center">
                 <MaterialCommunityIcons
                   name="magnify"
                   size={20}
                   color="#9CA3AF"
                 />
                 <TextInput
-                  className="flex-1 text-[15px] text-[#1A1A1A] ml-2 p-0"
+                  className="flex-1 text-[15px] text-ink ml-2 p-0"
                   value={bankSearch}
                   onChangeText={setBankSearch}
                   placeholder="Search bank"
@@ -633,18 +633,18 @@ export default function SendMoneyScreen() {
                 keyboardShouldPersistTaps="handled"
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    className={`px-6 py-4 border-b border-[#F3F4F6] ${
-                      selectedBank?.code === item.code ? 'bg-[#EEF0FF]' : ''
+                    className={`px-6 py-4 border-b border-line-subtle ${
+                      selectedBank?.code === item.code ? 'bg-primary-surface' : ''
                     }`}
                     onPress={() => handleSelectBank(item)}
                   >
-                    <Text className="text-[15px] text-[#1A1A1A]">
+                    <Text className="text-[15px] text-ink">
                       {item.name}
                     </Text>
                   </TouchableOpacity>
                 )}
                 ListEmptyComponent={
-                  <Text className="text-center text-[#9CA3AF] mt-8">
+                  <Text className="text-center text-ink-muted mt-8">
                     No banks found
                   </Text>
                 }
@@ -659,7 +659,7 @@ export default function SendMoneyScreen() {
         <View className="flex-1 bg-black/50 justify-end">
           <View className="bg-white rounded-t-3xl flex-1 mt-[30%] pt-4 pb-8">
             <View className="flex-row items-center justify-between px-6 mb-4">
-              <Text className="text-lg font-bold text-[#1A1A1A]">
+              <Text className="text-lg font-bold text-ink">
                 Select Beneficiary
               </Text>
               <TouchableOpacity
@@ -678,14 +678,14 @@ export default function SendMoneyScreen() {
 
             {/* Search */}
             <View className="px-6 mb-3">
-              <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
+              <View className="bg-surface-input rounded-xl px-4 py-3 flex-row items-center">
                 <MaterialCommunityIcons
                   name="magnify"
                   size={20}
                   color="#9CA3AF"
                 />
                 <TextInput
-                  className="flex-1 text-[15px] text-[#1A1A1A] ml-2 p-0"
+                  className="flex-1 text-[15px] text-ink ml-2 p-0"
                   value={beneficiarySearch}
                   onChangeText={setBeneficiarySearch}
                   placeholder="Search beneficiary"
@@ -710,19 +710,19 @@ export default function SendMoneyScreen() {
                 keyboardShouldPersistTaps="handled"
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    className="px-6 py-4 bg-gray-100 border-b border-[#F3F4F6]"
+                    className="px-6 py-4 bg-gray-100 border-b border-line-subtle"
                     onPress={() => handleSelectBeneficiary(item)}
                   >
-                    <Text className="text-[20px] font-bold text-[#1A1A1A]">
+                    <Text className="text-[20px] font-bold text-ink">
                       {item.account_name}
                     </Text>
-                    <Text className="text-[13px] text-[#6B7280] mt-0.5">
+                    <Text className="text-[13px] text-ink-soft mt-0.5">
                       {getBankName(item.bank_code)}  •  {item.account_number}
                     </Text>
                   </TouchableOpacity>
                 )}
                 ListEmptyComponent={
-                  <Text className="text-center text-[#9CA3AF] mt-8">
+                  <Text className="text-center text-ink-muted mt-8">
                     No beneficiaries found
                   </Text>
                 }

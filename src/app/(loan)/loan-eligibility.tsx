@@ -27,15 +27,15 @@ export default function LoanEligibilityScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">Loan Eligibility</Text>
+      <Text className="text-[22px] font-bold text-ink mb-5">Loan Eligibility</Text>
 
-      <View className="bg-[#472FF8] rounded-2xl p-6 mb-8">
+      <View className="bg-primary rounded-2xl p-6 mb-8">
         <Text className="text-[13px] text-white/80 mb-2">You're eligible for up to</Text>
         <Text className="text-[26px] font-bold text-white">NGN {formattedAmount}</Text>
       </View>
@@ -43,8 +43,8 @@ export default function LoanEligibilityScreen() {
       <View className="gap-4">
         {BENEFITS.map((benefit) => (
           <View key={benefit} className="flex-row items-start gap-3">
-            <Text className="text-lg text-[#1A1A1A] leading-[22px]">•</Text>
-            <Text className="text-[15px] text-[#1A1A1A] leading-[22px] flex-1">{benefit}</Text>
+            <Text className="text-lg text-ink leading-[22px]">•</Text>
+            <Text className="text-[15px] text-ink leading-[22px] flex-1">{benefit}</Text>
           </View>
         ))}
       </View>
@@ -53,7 +53,7 @@ export default function LoanEligibilityScreen() {
 
       <View className="pb-4">
         <TouchableOpacity
-          className="bg-[#472FF8] rounded-full py-4 items-center"
+          className="bg-primary rounded-full py-4 items-center"
           onPress={() => router.push('/(loan)/apply-loan')}
           activeOpacity={0.85}
         >

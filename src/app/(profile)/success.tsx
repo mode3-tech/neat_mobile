@@ -30,16 +30,16 @@ export default function SuccessScreen() {
       <View className="flex-1 items-center justify-center">
         <Animated.View
           style={{ transform: [{ scale }] }}
-          className="w-28 h-28 rounded-full bg-[#ECFDF5] items-center justify-center mb-8"
+          className="w-28 h-28 rounded-full bg-success-surface items-center justify-center mb-8"
         >
-          <View className="w-20 h-20 rounded-full bg-[#16A34A] items-center justify-center">
+          <View className="w-20 h-20 rounded-full bg-success items-center justify-center">
             <Ionicons name="checkmark" size={44} color="#fff" />
           </View>
         </Animated.View>
 
         <Animated.Text
           style={{ opacity }}
-          className="text-[22px] font-bold text-[#1A1A1A] text-center mb-3"
+          className="text-[22px] font-bold text-ink text-center mb-3"
         >
           {title ?? 'Success'}
         </Animated.Text>
@@ -53,7 +53,7 @@ export default function SuccessScreen() {
 
       <View className="pb-4">
         <TouchableOpacity
-          className="rounded-full py-4 items-center bg-[#472FF8]"
+          className="rounded-full py-4 items-center bg-primary"
           onPress={() => router.replace('/Dashboard/profile' as any)}
           activeOpacity={0.85}
         >

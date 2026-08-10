@@ -33,18 +33,18 @@ export default function CloseAccountResultScreen() {
     <SafeAreaView className="flex-1 bg-white px-6">
       <View className="flex-1 items-center justify-center">
         {isBlocked ? (
-          <View className="w-[72px] h-[72px] rounded-full bg-[#F59E0B] items-center justify-center mb-8">
+          <View className="w-[72px] h-[72px] rounded-full bg-warning items-center justify-center mb-8">
             <MaterialCommunityIcons name="alert" size={40} color="#fff" />
           </View>
         ) : (
-          <View className="w-[72px] h-[72px] rounded-2xl bg-[#EF4444] items-center justify-center mb-8">
+          <View className="w-[72px] h-[72px] rounded-2xl bg-danger items-center justify-center mb-8">
             <MaterialCommunityIcons name="close" size={40} color="#fff" />
           </View>
         )}
 
         <Text
           className={`text-[22px] font-bold text-center mb-3 ${
-            isBlocked ? 'text-[#1A1A1A]' : 'text-[#EF4444]'
+            isBlocked ? 'text-ink' : 'text-danger'
           }`}
         >
           {title}
@@ -56,7 +56,7 @@ export default function CloseAccountResultScreen() {
 
       <View className="pb-4">
         <TouchableOpacity
-          className="rounded-full py-4 items-center bg-[#472FF8]"
+          className="rounded-full py-4 items-center bg-primary"
           onPress={handlePress}
           activeOpacity={0.85}
         >

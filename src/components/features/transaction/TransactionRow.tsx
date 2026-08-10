@@ -86,7 +86,7 @@ export function TransactionRow({
       {/* Amount + Status */}
       <View className="items-end ml-2">
         <Text
-          className={`text-sm font-bold ${isCredit ? 'text-[#472FF8]' : 'text-gray-900'}`}
+          className={`text-sm font-bold ${isCredit ? 'text-primary' : 'text-gray-900'}`}
         >
           {prefix}{formattedAmount}
         </Text>

@@ -30,10 +30,10 @@ export function DetailRow({
   return (
     <View
       className={`flex-row justify-between items-start gap-4 py-[14px] ${
-        !isLast ? 'border-b border-[#F3F4F6]' : ''
+        !isLast ? 'border-b border-line-subtle' : ''
       }`}
     >
-      <Text className="text-[13px] text-[#6B7280] shrink-0">{label}</Text>
+      <Text className="text-[13px] text-ink-soft shrink-0">{label}</Text>
       {copyValue ? (
         <View className="flex-row items-center justify-end gap-2 flex-1">
           <Text

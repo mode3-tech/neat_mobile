@@ -33,34 +33,34 @@ export default function EnterAmountScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-1">
+      <Text className="text-[22px] font-bold text-ink mb-1">
         Enter Amount
       </Text>
-      <Text className="text-[13px] text-[#6B7280] mb-7">
+      <Text className="text-[13px] text-ink-soft mb-7">
         How much do you want to deposit?
       </Text>
 
       {/* Balance card */}
-      <View className="bg-[#EEF0FF] rounded-xl px-4 py-4 mb-6">
+      <View className="bg-primary-surface rounded-xl px-4 py-4 mb-6">
         <View className="flex-row justify-between mb-2">
-          <Text className="text-[13px] text-[#374151] font-medium">
+          <Text className="text-[13px] text-ink-body font-medium">
             Savings Balance
           </Text>
-          <Text className="text-[13px] font-semibold text-[#1A1A1A]">
+          <Text className="text-[13px] font-semibold text-ink">
             ₦0.00
           </Text>
         </View>
         <View className="flex-row justify-between">
-          <Text className="text-[13px] text-[#374151] font-medium">
+          <Text className="text-[13px] text-ink-body font-medium">
             Main Balance
           </Text>
-          <Text className="text-[13px] font-semibold text-[#1A1A1A]">
+          <Text className="text-[13px] font-semibold text-ink">
             {formatCurrency(accountSummary?.available_balance)}
           </Text>
         </View>
@@ -68,12 +68,12 @@ export default function EnterAmountScreen() {
 
       {/* Amount input */}
       <View className="mb-5">
-        <Text className="text-[13px] font-semibold text-[#374151] mb-2">
+        <Text className="text-[13px] font-semibold text-ink-body mb-2">
           Amount
         </Text>
-        <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent">
+        <View className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent">
           <TextInput
-            className="text-[15px] text-[#1A1A1A] p-0"
+            className="text-[15px] text-ink p-0"
             value={store.amount}
             onChangeText={(t) => store.setAmount(t.replace(/\D/g, ''))}
             placeholder="Enter amount"
@@ -88,13 +88,13 @@ export default function EnterAmountScreen() {
       {/* Proceed button */}
       <View className="pb-4">
         <TouchableOpacity
-          className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+          className={`rounded-full py-4 items-center ${canProceed ? 'bg-primary' : 'bg-surface-disabled'}`}
           onPress={handleProceed}
           disabled={!canProceed}
           activeOpacity={0.85}
         >
           <Text
-            className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-[#9CA3AF]'}`}
+            className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-ink-muted'}`}
           >
             Proceed
           </Text>

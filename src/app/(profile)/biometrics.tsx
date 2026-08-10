@@ -54,11 +54,11 @@ export default function BiometricsScreen() {
         <Text className="text-sm text-gray-700 font-medium">Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Biometric Settings</Text>
+      <Text className="text-[22px] font-bold text-ink mb-6">Biometric Settings</Text>
 
-      <View className="bg-[#F5F5F5] rounded-2xl px-4 py-4 flex-row items-center">
+      <View className="bg-surface-input rounded-2xl px-4 py-4 flex-row items-center">
         <View className="flex-1 pr-3">
-          <Text className="text-[15px] font-semibold text-[#1A1A1A]">Enable Biometrics</Text>
+          <Text className="text-[15px] font-semibold text-ink">Enable Biometrics</Text>
           <Text className="text-[12px] text-gray-500 mt-0.5">
             Use fingerprint or Face ID for sign-in and transactions
           </Text>
@@ -74,7 +74,7 @@ export default function BiometricsScreen() {
       </View>
 
       {error ? (
-        <Text className="text-[12px] text-[#EF4444] mt-3">{error}</Text>
+        <Text className="text-[12px] text-danger mt-3">{error}</Text>
       ) : null}
     </SafeAreaView>
   );

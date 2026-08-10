@@ -83,7 +83,7 @@ export function UpdateAvailableSheet({
           onPress={() => {
             void openStoreListing(storeUrl);
           }}
-          className="items-center rounded-full bg-[#472FF8] py-4 active:opacity-70"
+          className="items-center rounded-full bg-primary py-4 active:opacity-70"
         >
           <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '600' }}>
             Update Now

@@ -28,7 +28,7 @@ export function ActivationCapBanner({ limits }: ActivationCapBannerProps) {
     .join('  •  ');
 
   return (
-    <View className="bg-[#EEF0FF] border border-[#472FF8]/30 rounded-[14px] p-4 mb-6 flex-row">
+    <View className="bg-primary-surface border border-primary/30 rounded-[14px] p-4 mb-6 flex-row">
       <MaterialCommunityIcons
         name="information-outline"
         size={18}
@@ -36,11 +36,11 @@ export function ActivationCapBanner({ limits }: ActivationCapBannerProps) {
         style={{ marginTop: 1 }}
       />
       <View className="flex-1 ml-2">
-        <Text className="text-[13px] font-semibold text-[#472FF8] leading-5">
+        <Text className="text-[13px] font-semibold text-primary leading-5">
           {capLabel} limit during your first 24 hours
         </Text>
         {detail !== '' && (
-          <Text className="text-[12px] text-[#472FF8] mt-0.5 leading-5">
+          <Text className="text-[12px] text-primary mt-0.5 leading-5">
             {detail}
           </Text>
         )}

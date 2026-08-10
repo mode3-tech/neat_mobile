@@ -257,7 +257,7 @@ export default function BalanceCardCarousel({
             {btn.icon && (
               <Feather name={btn.icon} size={16} color="#472FF8" style={{ marginRight: 8 }} />
             )}
-            <Text className="text-sm font-semibold text-[#472FF8]">
+            <Text className="text-sm font-semibold text-primary">
               {btn.label}
             </Text>
           </TouchableOpacity>
@@ -287,7 +287,7 @@ export default function BalanceCardCarousel({
           <View
             key={card.id}
             className={`rounded-full ${
-              i === activeIndex % CARDS.length ? 'w-2 h-2 bg-[#472FF8]' : 'w-1.5 h-1.5 bg-gray-300'
+              i === activeIndex % CARDS.length ? 'w-2 h-2 bg-primary' : 'w-1.5 h-1.5 bg-gray-300'
             }`}
           />
         ))}

@@ -23,7 +23,7 @@ export default function ActiveLoanCard({ loans }: ActiveLoanCardProps) {
     <View className="mx-6 mt-5">
       <Text className="text-base font-semibold text-gray-900 mb-2">Active Loan</Text>
 
-      <View className="bg-[#472FF8] rounded-2xl p-5">
+      <View className="bg-primary rounded-2xl p-5">
         {/* Arrow icon */}
         <View className="w-10 h-10 rounded-full bg-black/20 items-center justify-center mb-4">
           <Ionicons name="arrow-forward" size={20} color="white" />

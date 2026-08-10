@@ -117,18 +117,18 @@ export default function ForgotPinOtpScreen() {
           <Text className="text-sm text-gray-700 font-medium">Back</Text>
         </TouchableOpacity>
 
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-2">Enter OTP Code</Text>
+        <Text className="text-[22px] font-bold text-ink mb-2">Enter OTP Code</Text>
         <Text className="text-[13px] text-gray-500 leading-5 mb-8">
           To reset your transaction PIN, please enter the OTP that has been sent to your phone
           number{' '}
-          <Text className="text-[#472FF8] font-semibold">{maskPhone(summary?.phone_number)}</Text>.
+          <Text className="text-primary font-semibold">{maskPhone(summary?.phone_number)}</Text>.
         </Text>
 
         <OtpInput value={otp} onChange={(v) => { setOtp(v); setError(''); }} length={OTP_LENGTH} />
 
         {error ? (
-          <View className="bg-[#FEF2F2] rounded-xl px-4 py-3 mt-3">
-            <Text className="text-[13px] text-[#EF4444]">{error}</Text>
+          <View className="bg-danger-surface rounded-xl px-4 py-3 mt-3">
+            <Text className="text-[13px] text-danger">{error}</Text>
           </View>
         ) : null}
 
@@ -136,7 +136,7 @@ export default function ForgotPinOtpScreen() {
 
         <View className="pb-4">
           <TouchableOpacity
-            className={`rounded-full py-4 items-center ${canVerify ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+            className={`rounded-full py-4 items-center ${canVerify ? 'bg-primary' : 'bg-surface-disabled'}`}
             onPress={handleVerify}
             disabled={!canVerify || loading}
             activeOpacity={0.85}
@@ -154,10 +154,10 @@ export default function ForgotPinOtpScreen() {
             <Text className="text-[13px] text-gray-500">Didn&apos;t get a code? </Text>
             {canResend ? (
               <TouchableOpacity onPress={handleResend}>
-                <Text className="text-[13px] text-[#472FF8] font-semibold">Resend code</Text>
+                <Text className="text-[13px] text-primary font-semibold">Resend code</Text>
               </TouchableOpacity>
             ) : (
-              <Text className="text-[13px] text-[#472FF8] font-semibold">{timer}</Text>
+              <Text className="text-[13px] text-primary font-semibold">{timer}</Text>
             )}
           </View>
         </View>

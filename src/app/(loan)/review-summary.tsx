@@ -19,9 +19,9 @@ function formatCurrency(amount: number): string {
 
 function SummaryRow({ label, value, isLast }: { label: string; value: string; isLast?: boolean }) {
   return (
-    <View className={`flex-row justify-between items-center py-[14px] ${!isLast ? 'border-b border-[#F3F4F6]' : ''}`}>
-      <Text className="text-[13px] text-[#6B7280]">{label}</Text>
-      <Text className="text-sm font-semibold text-[#1A1A1A]">{value}</Text>
+    <View className={`flex-row justify-between items-center py-[14px] ${!isLast ? 'border-b border-line-subtle' : ''}`}>
+      <Text className="text-[13px] text-ink-soft">{label}</Text>
+      <Text className="text-sm font-semibold text-ink">{value}</Text>
     </View>
   );
 }
@@ -50,16 +50,16 @@ export default function ReviewSummaryScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
 
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Review Summary</Text>
+        <Text className="text-[22px] font-bold text-ink mb-6">Review Summary</Text>
 
-        <View className="border border-[#E5E7EB] rounded-[14px] px-4 mb-5">
+        <View className="border border-line rounded-[14px] px-4 mb-5">
           {rows.map((row, i) => (
             <SummaryRow
               key={row.label}
@@ -70,31 +70,31 @@ export default function ReviewSummaryScreen() {
           ))}
         </View>
 
-        <View className="flex-row items-center bg-[#F9FAFB] rounded-[14px] p-4 gap-[14px] mb-6">
-          <View className="w-11 h-11 rounded-full bg-[#EEF0FF] items-center justify-center">
+        <View className="flex-row items-center bg-surface-muted rounded-[14px] p-4 gap-[14px] mb-6">
+          <View className="w-11 h-11 rounded-full bg-primary-surface items-center justify-center">
             <MaterialCommunityIcons name="home" size={22} color="#472FF8" />
           </View>
           <View className="flex-1">
-            <Text className="text-[13px] font-semibold text-[#374151] mb-1">Business Address</Text>
-            <Text className="text-xs text-[#6B7280] leading-[18px]">{store.businessAddress}</Text>
+            <Text className="text-[13px] font-semibold text-ink-body mb-1">Business Address</Text>
+            <Text className="text-xs text-ink-soft leading-[18px]">{store.businessAddress}</Text>
           </View>
         </View>
       </ScrollView>
 
       <View className="pb-4 gap-3">
         <TouchableOpacity
-          className="bg-[#472FF8] rounded-full py-4 items-center"
+          className="bg-primary rounded-full py-4 items-center"
           onPress={() => router.push('/(loan)/loan-pin')}
           activeOpacity={0.85}
         >
           <Text className="text-white text-base font-semibold">Accept & continue</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="border-[1.5px] border-[#472FF8] rounded-full py-4 items-center"
+          className="border-[1.5px] border-primary rounded-full py-4 items-center"
           onPress={() => router.back()}
           activeOpacity={0.85}
         >
-          <Text className="text-[#472FF8] text-base font-semibold">Cancel</Text>
+          <Text className="text-primary text-base font-semibold">Cancel</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -5,21 +5,21 @@ import { router } from 'expo-router';
 
 function SectionTitle({ children }: { children: string }) {
   return (
-    <Text className="text-[16px] font-bold text-[#1A1A1A] mt-6 mb-2">{children}</Text>
+    <Text className="text-[16px] font-bold text-ink mt-6 mb-2">{children}</Text>
   );
 }
 
 function Paragraph({ children }: { children: React.ReactNode }) {
   return (
-    <Text className="text-[14px] text-[#6B7280] leading-6 mb-3">{children}</Text>
+    <Text className="text-[14px] text-ink-soft leading-6 mb-3">{children}</Text>
   );
 }
 
 function Bullet({ children }: { children: React.ReactNode }) {
   return (
     <View className="flex-row mb-2">
-      <Text className="text-[14px] text-[#6B7280] mr-2 leading-6">{'•'}</Text>
-      <Text className="flex-1 text-[14px] text-[#6B7280] leading-6">{children}</Text>
+      <Text className="text-[14px] text-ink-soft mr-2 leading-6">{'•'}</Text>
+      <Text className="flex-1 text-[14px] text-ink-soft leading-6">{children}</Text>
     </View>
   );
 }
@@ -27,8 +27,8 @@ function Bullet({ children }: { children: React.ReactNode }) {
 function Lettered({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <View className="flex-row mb-3">
-      <Text className="text-[14px] text-[#6B7280] mr-2 leading-6 w-6">{label}</Text>
-      <Text className="flex-1 text-[14px] text-[#6B7280] leading-6">{children}</Text>
+      <Text className="text-[14px] text-ink-soft mr-2 leading-6 w-6">{label}</Text>
+      <Text className="flex-1 text-[14px] text-ink-soft leading-6">{children}</Text>
     </View>
   );
 }
@@ -44,7 +44,7 @@ export default function CloseAccountNoticeScreen() {
         >
           <MaterialCommunityIcons name="chevron-left" size={24} color="#374151" />
         </TouchableOpacity>
-        <Text className="flex-1 text-center text-lg font-bold text-[#1A1A1A] mr-10">
+        <Text className="flex-1 text-center text-lg font-bold text-ink mr-10">
           Account Cancellation Notice
         </Text>
       </View>
@@ -53,7 +53,7 @@ export default function CloseAccountNoticeScreen() {
         contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        <Text className="text-[20px] font-bold text-[#1A1A1A] mt-2">
+        <Text className="text-[20px] font-bold text-ink mt-2">
           NEATPay – Close Account
         </Text>
         <Text className="text-[13px] text-gray-400 mt-1 mb-3">Version 1.0</Text>

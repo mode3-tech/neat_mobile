@@ -20,7 +20,7 @@ export default function NewDeviceDetectedScreen() {
   }, [sessionToken]);
 
   return ( 
-    <View className="flex-1 bg-[#F5F5F5]">
+    <View className="flex-1 bg-surface-input">
      
       <View className="flex-[0.65] justify-end items-center">
         <Image
@@ -40,7 +40,7 @@ export default function NewDeviceDetectedScreen() {
           <Text className="text-[32px] font-extrabold text-white text-center mb-4">
             New Device{'\n'}Detected
           </Text>
-          <Text className="text-sm text-[#B0B0C0] text-center leading-[22px]">
+          <Text className="text-sm text-legacy-text-faint text-center leading-[22px]">
             You're trying to log in from a new device.{'\n'}
             For security, we need to verify it's you.
           </Text>

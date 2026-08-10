@@ -17,7 +17,7 @@ export function OfflineBanner() {
 
   return (
     <View
-      className="absolute left-0 right-0 top-0 z-50 bg-[#FEF2F2] border-b border-[#EF4444]/30 px-4 pb-3 flex-row"
+      className="absolute left-0 right-0 top-0 z-50 bg-danger-surface border-b border-danger/30 px-4 pb-3 flex-row"
       style={{ paddingTop: insets.top + 8 }}
     >
       <MaterialCommunityIcons
@@ -27,10 +27,10 @@ export function OfflineBanner() {
         style={{ marginTop: 1 }}
       />
       <View className="flex-1 ml-2">
-        <Text className="text-[13px] font-semibold text-[#EF4444] leading-5">
+        <Text className="text-[13px] font-semibold text-danger leading-5">
           No internet connection
         </Text>
-        <Text className="text-[12px] text-[#EF4444] mt-0.5 leading-5">
+        <Text className="text-[12px] text-danger mt-0.5 leading-5">
           Some actions are unavailable until you reconnect.
         </Text>
       </View>

@@ -45,10 +45,10 @@ function SummaryRow({
   return (
     <View
       className={`flex-row justify-between items-start py-[14px] gap-4 ${
-        !isLast ? 'border-b border-[#E5E7EB]' : ''
+        !isLast ? 'border-b border-line' : ''
       }`}
     >
-      <Text className="text-[13px] text-[#6B7280] shrink-0">{label}</Text>
+      <Text className="text-[13px] text-ink-soft shrink-0">{label}</Text>
       <Text
         className="text-sm font-semibold flex-1 text-right"
         style={{ color: valueColor ?? '#1A1A1A' }}
@@ -150,10 +150,10 @@ export default function TransferReviewScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
 
       <KeyboardAwareScrollView
@@ -161,12 +161,12 @@ export default function TransferReviewScreen() {
         className="flex-1"
         keyboardShouldPersistTaps="handled"
       >
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">
+        <Text className="text-[22px] font-bold text-ink mb-6">
           Review
         </Text>
 
         {/* Summary card */}
-        <View className="bg-[#F6F5F8] rounded-[14px] px-4 mb-10">
+        <View className="bg-legacy-surface-1 rounded-[14px] px-4 mb-10">
           {summaryRows.map((row, i) => (
             <SummaryRow
               key={row.label}
@@ -179,13 +179,13 @@ export default function TransferReviewScreen() {
         </View>
 
         {/* PIN section */}
-        <Text className="text-[13px] font-semibold text-[#374151] mb-3">
+        <Text className="text-[13px] font-semibold text-ink-body mb-3">
           Enter Transaction PIN
         </Text>
         <View className="mb-6">
-          <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
+          <View className="bg-surface-input rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
             <TextInput
-              className="flex-1 text-[15px] text-[#1A1A1A] p-0 text-center tracking-[8px]"
+              className="flex-1 text-[15px] text-ink p-0 text-center tracking-[8px]"
               value={pin}
               onChangeText={(t) =>
                 setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH))
@@ -211,7 +211,7 @@ export default function TransferReviewScreen() {
         <View className="flex-row items-center gap-3 mb-8">
           <TouchableOpacity
             className={`flex-1 rounded-full py-4 items-center ${
-              canConfirm || submitting ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+              canConfirm || submitting ? 'bg-primary' : 'bg-surface-disabled'
             }`}
             onPress={handleConfirm}
             disabled={!canConfirm || submitting}
@@ -222,7 +222,7 @@ export default function TransferReviewScreen() {
             ) : (
               <Text
                 className={`text-base font-semibold ${
-                  canConfirm ? 'text-white' : 'text-[#9CA3AF]'
+                  canConfirm ? 'text-white' : 'text-ink-muted'
                 }`}
               >
                 Confirm
@@ -232,7 +232,7 @@ export default function TransferReviewScreen() {
 
           {isBiometricReady && (
             <TouchableOpacity
-              className="w-14 h-14 rounded-full border border-[#E5E7EB] items-center justify-center"
+              className="w-14 h-14 rounded-full border border-line items-center justify-center"
               activeOpacity={0.7}
               onPress={handleBiometric}
               disabled={authenticating || submitting}
@@ -248,11 +248,11 @@ export default function TransferReviewScreen() {
 
         {/* Cancel */}
         <TouchableOpacity
-          className="rounded-full py-4 items-center border-[1.5px] border-[#472FF8] mb-6"
+          className="rounded-full py-4 items-center border-[1.5px] border-primary mb-6"
           onPress={handleCancel}
           activeOpacity={0.85}
         >
-          <Text className="text-base font-semibold text-[#472FF8]">Cancel</Text>
+          <Text className="text-base font-semibold text-primary">Cancel</Text>
         </TouchableOpacity>
       </KeyboardAwareScrollView>
     </SafeAreaView>

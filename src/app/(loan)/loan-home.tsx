@@ -30,7 +30,7 @@ function ActionItem({ icon, label, onPress, disabled }: ActionItemProps) {
   return (
     <TouchableOpacity
       className={`flex-row items-center justify-between rounded-[14px] px-4 py-[18px] ${
-        disabled ? 'bg-[#F3F4F6]' : 'bg-[#F9FAFB]'
+        disabled ? 'bg-surface-subtle' : 'bg-surface-muted'
       }`}
       onPress={disabled ? undefined : onPress}
       activeOpacity={disabled ? 1 : 0.7}
@@ -40,7 +40,7 @@ function ActionItem({ icon, label, onPress, disabled }: ActionItemProps) {
         <Text className={`text-xl ${disabled ? 'opacity-40' : ''}`}>{icon}</Text>
         <Text
           className={`text-[15px] font-medium ${
-            disabled ? 'text-[#9CA3AF]' : 'text-[#1A1A1A]'
+            disabled ? 'text-ink-muted' : 'text-ink'
           }`}
         >
           {label}
@@ -57,7 +57,7 @@ function ActionItem({ icon, label, onPress, disabled }: ActionItemProps) {
 
 function EmptyBalanceCard() {
   return (
-    <View className="bg-[#472FF8] rounded-2xl p-6 mb-7">
+    <View className="bg-primary rounded-2xl p-6 mb-7">
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
           <Text className="text-sm text-white/80 mb-2">Outstanding Balance</Text>
@@ -86,7 +86,7 @@ function EmptyBalanceCard() {
         activeOpacity={0.8}
         onPress={() => router.push('/(loan)/loan-eligibility')}
       >
-        <Text className="text-[15px] font-semibold text-[#472FF8]">Apply for a Loan</Text>
+        <Text className="text-[15px] font-semibold text-primary">Apply for a Loan</Text>
       </TouchableOpacity>
     </View>
   );
@@ -97,7 +97,7 @@ function EmptyBalanceCard() {
 // loan. Mirrors the real card's structure/height (no spinner, no layout jump).
 function BalanceCardSkeleton() {
   return (
-    <View className="bg-[#472FF8] rounded-2xl p-6 mb-7">
+    <View className="bg-primary rounded-2xl p-6 mb-7">
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
           <Text className="text-sm text-white/80 mb-2">Outstanding Balance</Text>
@@ -128,7 +128,7 @@ function BalanceCardSkeleton() {
 
 function ActiveBalanceCard({ loan, onMakeRepayment }: { loan: ActiveLoan; onMakeRepayment: () => void }) {
   return (
-    <View className="bg-[#472FF8] rounded-2xl p-6 mb-7">
+    <View className="bg-primary rounded-2xl p-6 mb-7">
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
           <Text className="text-sm text-white/80 mb-2">Outstanding Balance</Text>
@@ -163,7 +163,7 @@ function ActiveBalanceCard({ loan, onMakeRepayment }: { loan: ActiveLoan; onMake
         activeOpacity={0.8}
         onPress={onMakeRepayment}
       >
-        <Text className="text-[15px] font-semibold text-[#472FF8]">Make Repayment</Text>
+        <Text className="text-[15px] font-semibold text-primary">Make Repayment</Text>
       </TouchableOpacity>
     </View>
   );
@@ -212,14 +212,14 @@ export default function LoanHomeScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-1">Loans</Text>
-      <Text className="text-[13px] text-[#6B7280] mb-5">Manage your loans and applications</Text>
+      <Text className="text-[22px] font-bold text-ink mb-1">Loans</Text>
+      <Text className="text-[13px] text-ink-soft mb-5">Manage your loans and applications</Text>
 
       <ScrollView
         className="flex-1"

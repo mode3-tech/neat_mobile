@@ -21,9 +21,9 @@ function formatCurrency(amount: number): string {
 
 function SummaryRow({ label, value, isLast }: { label: string; value: string; isLast?: boolean }) {
   return (
-    <View className={`flex-row justify-between items-center py-[14px] ${!isLast ? 'border-b border-[#F3F4F6]' : ''}`}>
-      <Text className="text-[13px] text-[#6B7280]">{label}</Text>
-      <Text className="text-sm font-semibold text-[#1A1A1A]">{value}</Text>
+    <View className={`flex-row justify-between items-center py-[14px] ${!isLast ? 'border-b border-line-subtle' : ''}`}>
+      <Text className="text-[13px] text-ink-soft">{label}</Text>
+      <Text className="text-sm font-semibold text-ink">{value}</Text>
     </View>
   );
 }
@@ -71,19 +71,19 @@ export default function LoanSuccessScreen() {
     <SafeAreaView className="flex-1 bg-white px-6">
       <ScrollView showsVerticalScrollIndicator={false} className="pt-10">
         <View className="items-center mb-5">
-          <View className="w-16 h-16 rounded-full bg-[#16A34A] items-center justify-center">
+          <View className="w-16 h-16 rounded-full bg-success items-center justify-center">
             <MaterialCommunityIcons name="check" size={32} color="#fff" />
           </View>
         </View>
 
-        <Text className="text-[22px] font-bold text-[#1A1A1A] text-center mb-2">
+        <Text className="text-[22px] font-bold text-ink text-center mb-2">
           Loan Application Successful
         </Text>
-        <Text className="text-[13px] text-[#6B7280] text-center leading-5 mb-7">
+        <Text className="text-[13px] text-ink-soft text-center leading-5 mb-7">
           You will be notified once the loan is{'\n'}approved and disbursed.
         </Text>
 
-        <View className="border border-[#E5E7EB] rounded-[14px] px-4 mb-5">
+        <View className="border border-line rounded-[14px] px-4 mb-5">
           {rows.map((row, i) => (
             <SummaryRow
               key={row.label}
@@ -97,7 +97,7 @@ export default function LoanSuccessScreen() {
 
       <View className="pb-4">
         <TouchableOpacity
-          className="bg-[#472FF8] rounded-full py-4 items-center"
+          className="bg-primary rounded-full py-4 items-center"
           onPress={handleGoToStatus}
           activeOpacity={0.85}
         >

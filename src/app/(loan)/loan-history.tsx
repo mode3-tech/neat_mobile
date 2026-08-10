@@ -40,11 +40,11 @@ function statusLabel(status: LoanHistoryStatus): string {
 function statusColorClass(status: LoanHistoryStatus): string {
   switch (status) {
     case 'paid':
-      return 'text-[#16A34A]';
+      return 'text-success';
     case 'overdue':
-      return 'text-[#EF4444]';
+      return 'text-danger';
     case 'upcoming':
-      return 'text-[#6B7280]';
+      return 'text-ink-soft';
   }
 }
 
@@ -58,24 +58,24 @@ function HistoryRow({ item }: { item: LoanHistoryItem }) {
           params: { loanId: item.loan_id },
         })
       }
-      className="flex-row items-center justify-between bg-[#F9FAFB] rounded-2xl px-4 py-4 mb-3"
+      className="flex-row items-center justify-between bg-surface-muted rounded-2xl px-4 py-4 mb-3"
     >
       <View>
-        <Text className="text-xs text-[#6B7280] mb-1">Loan Amount</Text>
-        <Text className="text-sm font-semibold text-[#1A1A1A]">
+        <Text className="text-xs text-ink-soft mb-1">Loan Amount</Text>
+        <Text className="text-sm font-semibold text-ink">
           {formatDateLong(item.payment_date)}
         </Text>
       </View>
       <View className="flex-row items-center gap-3">
         <View className="items-end">
-          <Text className="text-[15px] font-bold text-[#1A1A1A]">
+          <Text className="text-[15px] font-bold text-ink">
             {formatNairaWhole(item.loan_amount)}
           </Text>
           <Text className={`text-xs ${statusColorClass(item.status)}`}>
             {statusLabel(item.status)}
           </Text>
         </View>
-        <View className="w-7 h-7 rounded-md bg-[#EEF0FF] items-center justify-center">
+        <View className="w-7 h-7 rounded-md bg-primary-surface items-center justify-center">
           <MaterialCommunityIcons name="chevron-right" size={18} color="#472FF8" />
         </View>
       </View>
@@ -103,13 +103,13 @@ export default function LoanHistoryScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">Loan History</Text>
+      <Text className="text-[22px] font-bold text-ink mb-5">Loan History</Text>
 
       <View className="flex-row gap-2 mb-5">
         {TABS.map((t) => {
@@ -121,13 +121,13 @@ export default function LoanHistoryScreen() {
               activeOpacity={0.85}
               className={`flex-1 py-2 rounded-full border items-center ${
                 active
-                  ? 'bg-[#472FF8] border-[#472FF8]'
-                  : 'bg-white border-[#472FF8]'
+                  ? 'bg-primary border-primary'
+                  : 'bg-white border-primary'
               }`}
             >
               <Text
                 className={`text-xs font-semibold ${
-                  active ? 'text-white' : 'text-[#472FF8]'
+                  active ? 'text-white' : 'text-primary'
                 }`}
               >
                 {t.label}
@@ -157,7 +157,7 @@ export default function LoanHistoryScreen() {
                 size={48}
                 color="#EF4444"
               />
-              <Text className="text-sm text-[#6B7280] mt-3 text-center">
+              <Text className="text-sm text-ink-soft mt-3 text-center">
                 Could not load loan history.{'\n'}Please try again.
               </Text>
             </View>
@@ -168,7 +168,7 @@ export default function LoanHistoryScreen() {
                 size={48}
                 color="#E5E7EB"
               />
-              <Text className="text-sm text-[#6B7280] mt-3 text-center">
+              <Text className="text-sm text-ink-soft mt-3 text-center">
                 No loans to show here yet.
               </Text>
             </View>

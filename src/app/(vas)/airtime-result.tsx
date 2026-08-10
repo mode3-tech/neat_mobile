@@ -56,7 +56,7 @@ export default function AirtimeResultScreen() {
               color="#16A34A"
             />
           ) : (
-            <View className="w-[72px] h-[72px] rounded-2xl bg-[#EF4444] items-center justify-center">
+            <View className="w-[72px] h-[72px] rounded-2xl bg-danger items-center justify-center">
               <MaterialCommunityIcons name="close" size={40} color="#fff" />
             </View>
           )}
@@ -64,22 +64,22 @@ export default function AirtimeResultScreen() {
 
         <Text
           className={`text-[22px] font-bold text-center mb-2 ${
-            isSuccess ? 'text-[#1A1A1A]' : 'text-[#EF4444]'
+            isSuccess ? 'text-ink' : 'text-danger'
           }`}
         >
           {isSuccess ? 'Successful!' : 'Transaction failed!'}
         </Text>
-        <Text className="text-[13px] text-[#6B7280] text-center leading-5 mb-8">
+        <Text className="text-[13px] text-ink-soft text-center leading-5 mb-8">
           {params.message}
         </Text>
 
         {/* Prepaid electricity recharge token — the customer needs this to load
             their meter, so surface it prominently with a copy action. */}
         {isSuccess && params.token ? (
-          <View className="bg-[#EEF0FF] rounded-[14px] p-4 mb-5">
-            <Text className="text-[13px] text-[#6B7280] mb-1.5">Recharge Token</Text>
+          <View className="bg-primary-surface rounded-[14px] p-4 mb-5">
+            <Text className="text-[13px] text-ink-soft mb-1.5">Recharge Token</Text>
             <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-bold text-[#1A1A1A] flex-1 mr-3">
+              <Text className="text-lg font-bold text-ink flex-1 mr-3">
                 {params.token}
               </Text>
               <TouchableOpacity
@@ -92,11 +92,11 @@ export default function AirtimeResultScreen() {
                   size={18}
                   color="#472FF8"
                 />
-                <Text className="text-[13px] font-semibold text-[#472FF8]">Copy</Text>
+                <Text className="text-[13px] font-semibold text-primary">Copy</Text>
               </TouchableOpacity>
             </View>
             {params.units ? (
-              <Text className="text-[13px] text-[#374151] mt-2">
+              <Text className="text-[13px] text-ink-body mt-2">
                 Units: <Text className="font-semibold">{params.units}</Text>
               </Text>
             ) : null}
@@ -120,7 +120,7 @@ export default function AirtimeResultScreen() {
       <View className="pb-4">
         {isSuccess ? (
           <TouchableOpacity
-            className="bg-[#472FF8] rounded-full py-4 items-center"
+            className="bg-primary rounded-full py-4 items-center"
             onPress={handleBackToDashboard}
             activeOpacity={0.85}
           >
@@ -130,7 +130,7 @@ export default function AirtimeResultScreen() {
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
-            className="bg-[#472FF8] rounded-full py-4 flex-row items-center justify-center gap-2"
+            className="bg-primary rounded-full py-4 flex-row items-center justify-center gap-2"
             onPress={() => router.back()}
             activeOpacity={0.85}
           >

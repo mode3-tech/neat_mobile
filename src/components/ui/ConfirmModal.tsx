@@ -46,13 +46,13 @@ export function ConfirmModal({
         >
           <View className="w-12 h-1 rounded-full bg-gray-300 self-center mb-6" />
 
-          <Text className="text-xl font-bold text-[#1A1A1A] text-center mb-6">
+          <Text className="text-xl font-bold text-ink text-center mb-6">
             {title}
           </Text>
 
           <TouchableOpacity
             className={`rounded-full py-4 items-center ${hideCancel ? '' : 'mb-3'} ${
-              confirmStyle === 'danger' ? 'bg-[#EF4444]' : 'bg-[#472FF8]'
+              confirmStyle === 'danger' ? 'bg-danger' : 'bg-primary'
             }`}
             onPress={onConfirm}
             disabled={loading}
@@ -67,12 +67,12 @@ export function ConfirmModal({
 
           {!hideCancel && (
             <TouchableOpacity
-              className="rounded-full py-4 items-center bg-[#F3F4F6]"
+              className="rounded-full py-4 items-center bg-surface-subtle"
               onPress={onCancel}
               disabled={loading}
               activeOpacity={0.85}
             >
-              <Text className={`text-base font-semibold ${loading ? 'text-gray-400' : 'text-[#472FF8]'}`}>
+              <Text className={`text-base font-semibold ${loading ? 'text-gray-400' : 'text-primary'}`}>
                 {cancelLabel}
               </Text>
             </TouchableOpacity>

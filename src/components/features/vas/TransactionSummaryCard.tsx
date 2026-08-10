@@ -32,11 +32,11 @@ function SummaryRow({
   return (
     <View
       className={`flex-row justify-between items-center py-[14px] ${
-        !isLast ? 'border-b border-[#F3F4F6]' : ''
+        !isLast ? 'border-b border-line-subtle' : ''
       }`}
     >
-      <Text className="text-[13px] text-[#6B7280]">{label}</Text>
-      <Text className="text-sm font-semibold text-[#1A1A1A]">{value}</Text>
+      <Text className="text-[13px] text-ink-soft">{label}</Text>
+      <Text className="text-sm font-semibold text-ink">{value}</Text>
     </View>
   );
 }
@@ -67,7 +67,7 @@ export default function TransactionSummaryCard({
   ];
 
   return (
-    <View className="bg-[#F9FAFB] rounded-[14px] px-4">
+    <View className="bg-surface-muted rounded-[14px] px-4">
       {rows.map((row, i) => (
         <SummaryRow
           key={row.label}

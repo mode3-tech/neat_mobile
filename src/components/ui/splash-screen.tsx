@@ -5,7 +5,7 @@ import { Image, View } from 'react-native';
 // scale entrance that would make the logo blink/re-animate on swap.
 export function SplashScreenComponent(): React.JSX.Element {
   return (
-    <View className="flex-1 bg-[#472FF8] items-center justify-center">
+    <View className="flex-1 bg-primary items-center justify-center">
       <Image
         source={require('../../../assets/images/welcome/NeatLogo.png')}
         className="w-[200px] h-[200px]"

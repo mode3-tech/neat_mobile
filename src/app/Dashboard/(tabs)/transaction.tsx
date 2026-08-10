@@ -38,14 +38,14 @@ function FilterTabs({
             key={f.key}
             className={`px-5 py-2 rounded-full ${
               isActive
-                ? 'bg-[#472FF8]'
-                : 'border border-[#E5E7EB]'
+                ? 'bg-primary'
+                : 'border border-line'
             }`}
             onPress={() => onChange(f.key)}
           >
             <Text
               className={`text-[13px] font-semibold ${
-                isActive ? 'text-white' : 'text-[#374151]'
+                isActive ? 'text-white' : 'text-ink-body'
               }`}
             >
               {f.label}
@@ -65,10 +65,10 @@ function EmptyState({ isFiltered }: { isFiltered: boolean }) {
         size={64}
         color="#E5E7EB"
       />
-      <Text className="text-base font-semibold text-[#1A1A1A] mt-4">
+      <Text className="text-base font-semibold text-ink mt-4">
         {isFiltered ? 'No matching transactions' : 'No transactions yet'}
       </Text>
-      <Text className="text-[13px] text-[#6B7280] text-center mt-1">
+      <Text className="text-[13px] text-ink-soft text-center mt-1">
         {isFiltered
           ? 'Try adjusting your search or filter.'
           : 'Your transactions will appear here.'}
@@ -81,10 +81,10 @@ function ErrorState({ message }: { message: string }) {
   return (
     <View className="flex-1 items-center justify-center px-6">
       <MaterialCommunityIcons name="wifi-off" size={64} color="#E5E7EB" />
-      <Text className="text-base font-semibold text-[#1A1A1A] mt-4">
+      <Text className="text-base font-semibold text-ink mt-4">
         {message}
       </Text>
-      <Text className="text-[13px] text-[#6B7280] text-center mt-1">
+      <Text className="text-[13px] text-ink-soft text-center mt-1">
         Pull down to try again
       </Text>
     </View>
@@ -145,9 +145,9 @@ export default function TransactionScreen() {
       </LinearGradient>
 
       {/* Search Bar */}
-      <View className="mx-6 mt-4 bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
+      <View className="mx-6 mt-4 bg-surface-input rounded-xl px-4 py-3 flex-row items-center">
         <TextInput
-          className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+          className="flex-1 text-[15px] text-ink p-0"
           placeholder="Search"
           placeholderTextColor="#9CA3AF"
           value={searchQuery}

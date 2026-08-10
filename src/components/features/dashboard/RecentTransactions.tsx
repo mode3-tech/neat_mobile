@@ -39,7 +39,7 @@ function RecentTransactionRow({ transaction }: { transaction: Transaction }) {
       </View>
       <View className="items-end ml-2">
         <Text
-          className={`text-sm font-bold ${isCredit ? 'text-[#472FF8]' : 'text-gray-900'}`}
+          className={`text-sm font-bold ${isCredit ? 'text-primary' : 'text-gray-900'}`}
         >
           {prefix}{formattedAmount}
         </Text>
@@ -64,7 +64,7 @@ export default function RecentTransactions() {
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-base font-semibold text-gray-900">Recent Transactions</Text>
         <TouchableOpacity onPress={() => router.navigate('/Dashboard/(tabs)/transaction' as any)}>
-          <Text className="text-[13px] font-semibold text-[#472FF8]">View All</Text>
+          <Text className="text-[13px] font-semibold text-primary">View All</Text>
         </TouchableOpacity>
       </View>
 

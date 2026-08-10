@@ -68,12 +68,12 @@ export default function TransactionDetailsScreen() {
   const header = (
     <View className="px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-6 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
-      <Text className="text-[20px] font-medium text-[#1A1A1A]">
+      <Text className="text-[20px] font-medium text-ink">
         Transaction Details
       </Text>
     </View>
@@ -97,11 +97,11 @@ export default function TransactionDetailsScreen() {
           </View>
         ) : (
           <View className="flex-1 items-center justify-center px-6">
-            <Text className="text-[15px] text-[#6B7280] text-center">
+            <Text className="text-[15px] text-ink-soft text-center">
               We couldn&apos;t load this transaction.
             </Text>
             <TouchableOpacity
-              className="mt-4 bg-[#472FF8] rounded-[50px] px-6 py-3"
+              className="mt-4 bg-primary rounded-[50px] px-6 py-3"
               onPress={() => refetch()}
               activeOpacity={0.85}
             >
@@ -214,19 +214,19 @@ export default function TransactionDetailsScreen() {
         contentContainerStyle={{ paddingBottom: 24 }}
       >
         {/* Summary card */}
-        <View className="mx-6 mt-6 items-center rounded-[16px] border border-[#F3F4F6] bg-white px-5 py-6">
+        <View className="mx-6 mt-6 items-center rounded-[16px] border border-line-subtle bg-white px-5 py-6">
           <View
             className="w-14 h-14 rounded-2xl items-center justify-center"
             style={{ backgroundColor: bgColor }}
           >
             <MaterialCommunityIcons name={icon} size={28} color={iconColor} />
           </View>
-          <Text className="text-[15px] font-semibold text-[#1A1A1A] text-center mt-4">
+          <Text className="text-[15px] font-semibold text-ink text-center mt-4">
             {transaction.description}
           </Text>
           <Text
             className={`text-[28px] font-bold mt-2 ${
-              isCredit ? 'text-[#472FF8]' : 'text-[#1A1A1A]'
+              isCredit ? 'text-primary' : 'text-ink'
             }`}
           >
             {prefix}
@@ -241,8 +241,8 @@ export default function TransactionDetailsScreen() {
         </View>
 
         {/* Transaction Details section */}
-        <View className="mx-6 mt-4 rounded-[16px] border border-[#F3F4F6] bg-white px-5 py-2">
-          <Text className="text-base font-semibold text-[#1A1A1A] pt-3 pb-1">
+        <View className="mx-6 mt-4 rounded-[16px] border border-line-subtle bg-white px-5 py-2">
+          <Text className="text-base font-semibold text-ink pt-3 pb-1">
             Transaction Details
           </Text>
           {detailRows.map((row, i) => (
@@ -259,8 +259,8 @@ export default function TransactionDetailsScreen() {
       </ScrollView>
 
       {/* More Actions */}
-      <View className="px-6 pt-4 pb-6 border-t border-[#F3F4F6]">
-        <Text className="text-base font-semibold text-[#1A1A1A] mb-4">
+      <View className="px-6 pt-4 pb-6 border-t border-line-subtle">
+        <Text className="text-base font-semibold text-ink mb-4">
           More Actions
         </Text>
         <View className="flex-row">
@@ -270,14 +270,14 @@ export default function TransactionDetailsScreen() {
               onPress={handleTransferAgain}
               activeOpacity={0.85}
             >
-              <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+              <View className="w-14 h-14 rounded-2xl bg-primary-surface items-center justify-center mb-2">
                 <MaterialCommunityIcons
                   name={isCredit ? 'arrow-u-left-top' : 'repeat'}
                   size={22}
                   color="#472FF8"
                 />
               </View>
-              <Text className="text-xs text-[#374151] text-center">
+              <Text className="text-xs text-ink-body text-center">
                 {isCredit ? `Transfer${'\n'}Back` : `Transfer${'\n'}Again`}
               </Text>
             </TouchableOpacity>
@@ -288,14 +288,14 @@ export default function TransactionDetailsScreen() {
             onPress={handleShareReceipt}
             activeOpacity={0.85}
           >
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+            <View className="w-14 h-14 rounded-2xl bg-primary-surface items-center justify-center mb-2">
               <MaterialCommunityIcons
                 name="share-variant"
                 size={22}
                 color="#472FF8"
               />
             </View>
-            <Text className="text-xs text-[#374151] text-center">
+            <Text className="text-xs text-ink-body text-center">
               Share{'\n'}Receipt
             </Text>
           </TouchableOpacity>

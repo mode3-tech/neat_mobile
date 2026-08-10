@@ -30,9 +30,9 @@ function formatCurrency(amount: number): string {
 
 function SummaryRow({ label, value, isLast }: { label: string; value: string; isLast?: boolean }) {
   return (
-    <View className={`flex-row justify-between items-center py-[14px] ${!isLast ? 'border-b border-[#F3F4F6]' : ''}`}>
-      <Text className="text-[13px] text-[#6B7280]">{label}</Text>
-      <Text className="text-sm font-semibold text-[#1A1A1A]">{value}</Text>
+    <View className={`flex-row justify-between items-center py-[14px] ${!isLast ? 'border-b border-line-subtle' : ''}`}>
+      <Text className="text-[13px] text-ink-soft">{label}</Text>
+      <Text className="text-sm font-semibold text-ink">{value}</Text>
     </View>
   );
 }
@@ -43,10 +43,10 @@ function statusLabel(s: LoanHistoryStatus) {
 
 function statusColorClass(s: LoanHistoryStatus) {
   return s === 'paid'
-    ? 'text-[#16A34A]'
+    ? 'text-success'
     : s === 'overdue'
-    ? 'text-[#EF4444]'
-    : 'text-[#F59E0B]';
+    ? 'text-danger'
+    : 'text-warning';
 }
 
 function ScheduleRow({
@@ -60,16 +60,16 @@ function ScheduleRow({
 }) {
   const highlight =
     item.status === 'overdue'
-      ? 'bg-[#FEF2F2] border border-[#FECACA]'
+      ? 'bg-danger-surface border border-danger-border'
       : isNextUpcoming
-      ? 'bg-[#FFF7ED] border border-[#FED7AA]'
-      : 'bg-[#F9FAFB]';
+      ? 'bg-warning-surface-alt border border-warning-border'
+      : 'bg-surface-muted';
   const iconBg =
     item.status === 'overdue'
-      ? 'bg-[#FEE2E2]'
+      ? 'bg-danger-surface-strong'
       : isNextUpcoming
-      ? 'bg-[#FFEDD5]'
-      : 'bg-[#EEF0FF]';
+      ? 'bg-warning-border-strong'
+      : 'bg-primary-surface';
   const iconColor =
     item.status === 'overdue' ? '#EF4444' : isNextUpcoming ? '#F59E0B' : '#472FF8';
   return (
@@ -79,12 +79,12 @@ function ScheduleRow({
           <MaterialCommunityIcons name="cube-outline" size={18} color={iconColor} />
         </View>
         <View>
-          <Text className="text-[13px] font-semibold text-[#1A1A1A]">Week {index + 1}</Text>
-          <Text className="text-xs text-[#6B7280] mt-0.5">{formatDateLong(item.payment_date)}</Text>
+          <Text className="text-[13px] font-semibold text-ink">Week {index + 1}</Text>
+          <Text className="text-xs text-ink-soft mt-0.5">{formatDateLong(item.payment_date)}</Text>
         </View>
       </View>
       <View className="items-end">
-        <Text className="text-sm font-bold text-[#1A1A1A]">
+        <Text className="text-sm font-bold text-ink">
           {formatCurrency(item.status === 'paid' ? item.amount_paid : item.loan_amount)}
         </Text>
         <Text className={`text-xs ${statusColorClass(item.status)}`}>{statusLabel(item.status)}</Text>
@@ -177,10 +177,10 @@ export default function RepaymentScheduleScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-line rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
       >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
+        <Text className="text-sm font-medium text-ink-body">Back</Text>
       </TouchableOpacity>
 
       <ScrollView
@@ -191,7 +191,7 @@ export default function RepaymentScheduleScreen() {
           <PrimaryRefreshControl refreshing={isRefetching} onRefresh={onRefresh} />
         }
       >
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">Repayment Schedule</Text>
+        <Text className="text-[22px] font-bold text-ink mb-5">Repayment Schedule</Text>
 
         {isLoading && (
           <View className="py-20 items-center justify-center">
@@ -206,10 +206,10 @@ export default function RepaymentScheduleScreen() {
               size={64}
               color="#E5E7EB"
             />
-            <Text className="text-base font-semibold text-[#1A1A1A] mt-3">
+            <Text className="text-base font-semibold text-ink mt-3">
               {!loanId ? 'No active loan' : "Couldn't load repayment details"}
             </Text>
-            <Text className="text-[13px] text-[#6B7280] mt-1 text-center">
+            <Text className="text-[13px] text-ink-soft mt-1 text-center">
               {!loanId
                 ? 'You have no active loan to show a repayment schedule for.'
                 : 'Please check your connection and try again.'}
@@ -222,15 +222,15 @@ export default function RepaymentScheduleScreen() {
             {/* Summary Cards */}
             <View className="flex-row gap-3 mb-6">
               {/* Amount Paid Card */}
-              <View className="flex-1 rounded-2xl p-4 bg-[#ECFDF5]">
-                <View className="w-9 h-9 rounded-xl bg-[#D1FAE5] items-center justify-center mb-3">
+              <View className="flex-1 rounded-2xl p-4 bg-success-surface">
+                <View className="w-9 h-9 rounded-xl bg-success-surface-strong items-center justify-center mb-3">
                   <MaterialCommunityIcons name="wallet-outline" size={20} color="#472FF8" />
                 </View>
-                <Text className="text-xs text-[#6B7280] mb-1">Amount paid</Text>
-                <Text className="text-[18px] font-bold text-[#1A1A1A]">
+                <Text className="text-xs text-ink-soft mb-1">Amount paid</Text>
+                <Text className="text-[18px] font-bold text-ink">
                   {formatCurrency(repayment.amount_paid)}
                 </Text>
-                <Text className="text-[11px] text-[#6B7280] mt-0.5">
+                <Text className="text-[11px] text-ink-soft mt-0.5">
                   {paidPercent}% Paid
                 </Text>
               </View>
@@ -240,18 +240,18 @@ export default function RepaymentScheduleScreen() {
                 <View className="w-9 h-9 rounded-xl bg-[#E9D5FF] items-center justify-center mb-3">
                   <MaterialCommunityIcons name="cash-clock" size={20} color="#7C3AED" />
                 </View>
-                <Text className="text-xs text-[#6B7280] mb-1">Yet to Pay</Text>
-                <Text className="text-[18px] font-bold text-[#1A1A1A]">
+                <Text className="text-xs text-ink-soft mb-1">Yet to Pay</Text>
+                <Text className="text-[18px] font-bold text-ink">
                   {formatCurrency(repayment.yet_to_pay)}
                 </Text>
-                <Text className="text-[11px] text-[#6B7280] mt-0.5">
+                <Text className="text-[11px] text-ink-soft mt-0.5">
                   {remainingPercent}% remaining
                 </Text>
               </View>
             </View>
 
             {/* Loan Details Table */}
-            <View className="border border-[#E5E7EB] rounded-[14px] px-4 mb-6">
+            <View className="border border-line rounded-[14px] px-4 mb-6">
               {rows.map((row, i) => (
                 <SummaryRow
                   key={row.label}
@@ -263,13 +263,13 @@ export default function RepaymentScheduleScreen() {
             </View>
 
             {/* Payment Schedule */}
-            <Text className="text-base font-bold text-[#1A1A1A] mb-3">Payment Schedule</Text>
+            <Text className="text-base font-bold text-ink mb-3">Payment Schedule</Text>
             {scheduleLoading ? (
               <View className="py-6 items-center">
                 <ActivityIndicator size="small" color="#472FF8" />
               </View>
             ) : (schedule?.length ?? 0) === 0 ? (
-              <Text className="text-[13px] text-[#6B7280] mb-6">No scheduled payments yet.</Text>
+              <Text className="text-[13px] text-ink-soft mb-6">No scheduled payments yet.</Text>
             ) : (
               <View className="mb-6">
                 {(() => {
@@ -295,18 +295,18 @@ export default function RepaymentScheduleScreen() {
       {/* {!isLoading && repayment && (
         <View className="pb-4 gap-3">
           <TouchableOpacity
-            className="bg-[#472FF8] rounded-full py-4 items-center"
+            className="bg-primary rounded-full py-4 items-center"
             activeOpacity={0.85}
             onPress={() => openModal('now')}
           >
             <Text className="text-white text-base font-semibold">Pay Now</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className="border-[1.5px] border-[#472FF8] rounded-full py-4 items-center"
+            className="border-[1.5px] border-primary rounded-full py-4 items-center"
             activeOpacity={0.85}
             onPress={() => openModal('early')}
           >
-            <Text className="text-[#472FF8] text-base font-semibold">Pay Off Early</Text>
+            <Text className="text-primary text-base font-semibold">Pay Off Early</Text>
           </TouchableOpacity>
         </View>
       )} */}
@@ -325,17 +325,17 @@ export default function RepaymentScheduleScreen() {
           >
             <View className="bg-white rounded-t-3xl px-6 pt-3 pb-16">
               {/* Drag handle */}
-              <View className="w-10 h-1 rounded-full bg-[#D1D5DB] self-center mb-5" />
+              <View className="w-10 h-1 rounded-full bg-line-strong self-center mb-5" />
 
-              <Text className="text-xl font-bold text-[#1A1A1A] text-center mb-6">
+              <Text className="text-xl font-bold text-ink text-center mb-6">
                 Make Payment
               </Text>
 
               {/* Amount */}
-              <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Amount</Text>
-              <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-1.5">
+              <Text className="text-sm font-medium text-ink mb-2">Amount</Text>
+              <View className="bg-surface-input rounded-xl px-4 py-[15px] mb-1.5">
                 <TextInput
-                  className="text-[15px] text-[#1A1A1A] p-0"
+                  className="text-[15px] text-ink p-0"
                   value={amount}
                   onChangeText={setAmount}
                   keyboardType="decimal-pad"
@@ -344,17 +344,17 @@ export default function RepaymentScheduleScreen() {
                 />
               </View>
               <Text className="text-xs mb-5">
-                <Text className="text-[#6B7280]">Balance: </Text>
-                <Text className="text-[#472FF8] font-medium">
+                <Text className="text-ink-soft">Balance: </Text>
+                <Text className="text-primary font-medium">
                   {formatCurrency(balance)}
                 </Text>
               </Text>
 
               {/* PIN */}
-              <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Enter PIN</Text>
-              <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-8 flex-row items-center">
+              <Text className="text-sm font-medium text-ink mb-2">Enter PIN</Text>
+              <View className="bg-surface-input rounded-xl px-4 py-[15px] mb-8 flex-row items-center">
                 <TextInput
-                  className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+                  className="flex-1 text-[15px] text-ink p-0"
                   value={pin}
                   onChangeText={(t) => setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH))}
                   placeholder="••••"
@@ -375,7 +375,7 @@ export default function RepaymentScheduleScreen() {
               {/* Confirm + Biometric */}
               <View className="flex-row items-center gap-3 mb-3">
                 <TouchableOpacity
-                  className={`flex-1 rounded-full py-4 items-center ${canConfirm ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+                  className={`flex-1 rounded-full py-4 items-center ${canConfirm ? 'bg-primary' : 'bg-surface-disabled'}`}
                   onPress={async () => {
                     if (canConfirm) {
                       await onManualPinSuccess(pin);
@@ -385,14 +385,14 @@ export default function RepaymentScheduleScreen() {
                   disabled={!canConfirm}
                   activeOpacity={0.85}
                 >
-                  <Text className={`text-base font-semibold ${canConfirm ? 'text-white' : 'text-[#9CA3AF]'}`}>
+                  <Text className={`text-base font-semibold ${canConfirm ? 'text-white' : 'text-ink-muted'}`}>
                     Confirm
                   </Text>
                 </TouchableOpacity>
 
                 {isBiometricReady && (
                   <TouchableOpacity
-                    className="w-14 h-14 rounded-full border border-[#E5E7EB] items-center justify-center"
+                    className="w-14 h-14 rounded-full border border-line items-center justify-center"
                     activeOpacity={0.7}
                     onPress={async () => {
                       if (authenticating) return;
@@ -415,11 +415,11 @@ export default function RepaymentScheduleScreen() {
 
               {/* Cancel */}
               <TouchableOpacity
-                className="border-[1.5px] border-[#472FF8] rounded-full py-4 items-center"
+                className="border-[1.5px] border-primary rounded-full py-4 items-center"
                 onPress={closeModal}
                 activeOpacity={0.85}
               >
-                <Text className="text-[#472FF8] text-base font-semibold">Cancel</Text>
+                <Text className="text-primary text-base font-semibold">Cancel</Text>
               </TouchableOpacity>
             </View>
           </KeyboardAwareScrollView>
