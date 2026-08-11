@@ -16,6 +16,7 @@ import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import { formatNairaWhole, formatDateLong } from '@/utils/format';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
 import { Icon } from '@/theme/icons';
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 
 function statusLabel(status: LoanHistoryStatus): string {
@@ -180,7 +181,7 @@ export default function LoanDetailsScreen() {
                   />
                 </View>
                 <Image
-                  source={require('../../../assets/images/pig.png')}
+                  source={images.loanCard}
                   className="w-[80px] h-[80px] opacity-30"
                   resizeMode="contain"
                 />

@@ -9,6 +9,7 @@ import { getTransactionIcon, STATUS_COLORS } from '@/components/features/transac
 import { QUERY_KEYS } from '@/constants';
 import type { Transaction } from '@/types/transaction.types';
 import { Icon } from '@/theme/icons';
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 
 function RecentTransactionRow({ transaction }: { transaction: Transaction }) {
@@ -86,7 +87,7 @@ export default function RecentTransactions() {
       {!isLoading && !hasTransactions && (
         <View className="items-center pt-6">
           <Image
-            source={require('../../../../assets/images/dashboard/phone.png')}
+            source={images.recentEmpty}
             className="w-[240px] h-[240px]"
             resizeMode="contain"
           />

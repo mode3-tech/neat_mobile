@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 import { weight } from '@/theme/typography';
 
@@ -33,28 +34,28 @@ interface Slide {
 const SLIDES: Slide[] = [
   {
     id: '1',
-    image: require('../../assets/images/welcome/frame1.png'),
+    image: images.onboarding[0],
     title: 'Instant Transfers',
     description:
       'Open your account in minutes, access instant loans, transfer money securely.',
   },
   {
     id: '2',
-    image: require('../../assets/images/welcome/frame2.png'),
+    image: images.onboarding[1],
     title: 'Secure & Protected',
     description:
       'Your data and money are protected with advanced security and real-time monitoring.',
   },
   {
     id: '3',
-    image: require('../../assets/images/welcome/frame3.png'),
+    image: images.onboarding[2],
     title: 'Get Quick Loans',
     description:
       'Apply in minutes, get fast approval, and receive funds directly to your wallet.',
   },
   {
     id: '4',
-    image: require('../../assets/images/welcome/frame.png'),
+    image: images.onboarding[3],
     title: 'Airtime & Data Topup',
     description:
       'Verify your identity, get your account instantly, and enjoy seamless transfers.',

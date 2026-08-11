@@ -18,6 +18,7 @@ import { useTransferStore } from '@/stores/transfer.store';
 import { DetailRow } from '@/components/features/transaction/DetailRow';
 import { buildReceiptHtml, shareFile } from '@/utils/receipt';
 import { Icon } from '@/theme/icons';
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 import {
   formatNairaDecimal,
@@ -127,7 +128,7 @@ export default function TransferSuccessScreen() {
           <View className="bg-white px-5 py-6 border border-line rounded-[16px]">
             <View className="flex-row items-center justify-between">
               <Image
-                source={require('../../../assets/images/welcome/NeatLogo.png')}
+                source={images.logo}
                 className="w-16 h-12"
                 resizeMode="contain"
               />

@@ -12,6 +12,7 @@ import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 import { weight } from '@/theme/typography';
 
@@ -54,7 +55,7 @@ export default function PhoneValidationScreen() {
 
       <View style={styles.body}>
         <Image
-          source={require('../../../assets/images/fone.png')}
+          source={images.phoneVerify}
           style={styles.illustration}
           resizeMode="contain"
         />

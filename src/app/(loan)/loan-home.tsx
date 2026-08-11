@@ -18,6 +18,7 @@ import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import RepaymentBottomSheet from '@/components/features/loans/RepaymentBottomSheet';
 import type { ActiveLoan } from '@/types/loan.types';
 import { Icon } from '@/theme/icons';
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 
 interface ActionItemProps {
@@ -65,7 +66,7 @@ function EmptyBalanceCard() {
           <Text className="text-[28px] font-bold text-white">₦ 0.00</Text>
         </View>
         <Image
-          source={require('../../../assets/images/pig.png')}
+          source={images.loanCard}
           className="w-[80px] h-[80px]"
           resizeMode="contain"
         />
@@ -105,7 +106,7 @@ function BalanceCardSkeleton() {
           <Text className="text-[28px] font-bold text-white/40">₦ —</Text>
         </View>
         <Image
-          source={require('../../../assets/images/pig.png')}
+          source={images.loanCard}
           className="w-[80px] h-[80px]"
           resizeMode="contain"
         />
@@ -138,7 +139,7 @@ function ActiveBalanceCard({ loan, onMakeRepayment }: { loan: ActiveLoan; onMake
           </Text>
         </View>
         <Image
-          source={require('../../../assets/images/pig.png')}
+          source={images.loanCard}
           className="w-[80px] h-[80px]"
           resizeMode="contain"
         />

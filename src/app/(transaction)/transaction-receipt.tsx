@@ -17,6 +17,7 @@ import { useAccountSummary } from '@/hooks/use-account-summary';
 import { useAuthStore } from '@/stores/auth.store';
 import type { Transaction } from '@/types/transaction.types';
 import { Icon } from '@/theme/icons';
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 
 export default function TransactionReceiptScreen() {
@@ -140,7 +141,7 @@ export default function TransactionReceiptScreen() {
             {/* Logo (left) + tag (right) */}
             <View className="flex-row items-center justify-between">
               <Image
-                source={require('../../../assets/images/welcome/NeatLogo.png')}
+                source={images.logo}
                 className="w-16 h-12"
                 resizeMode="contain"
               />

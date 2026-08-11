@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import { Icon } from '@/theme/icons';
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 
 interface FundingOption {
@@ -21,20 +22,20 @@ interface FundingOption {
 
 const FUNDING_OPTIONS: FundingOption[] = [
   {
-    image: require('../../../assets/images/deposit/Barnk.png'),
+    image: images.deposit.bank,
     label: 'Bank Transfer',
     description: 'Pay fast and securely.',
     onPress: () => router.push('/(savings)/bank-transfer'),
   },
   {
-    image: require('../../../assets/images/deposit/Card.png'),
+    image: images.deposit.card,
     label: 'Debit Card',
     description: 'Instant transfer',
     onPress: () =>
       Alert.alert('Coming Soon', 'Debit card deposits will be available soon.'),
   },
   {
-    image: require('../../../assets/images/deposit/Cards.png'),
+    image: images.deposit.cards,
     label: 'From Main Balance',
     description: 'Transfer from wallet',
     onPress: () => router.push('/(savings)/enter-amount'),

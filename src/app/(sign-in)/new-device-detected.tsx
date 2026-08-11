@@ -3,6 +3,7 @@ import { Image, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 
 export default function NewDeviceDetectedScreen() {
@@ -26,7 +27,7 @@ export default function NewDeviceDetectedScreen() {
      
       <View className="flex-[0.65] justify-end items-center">
         <Image
-          source={require('../../../assets/images/device.png')}
+          source={images.deviceVerify}
           className="w-[380px] h-[380px] -mb-12 z-10"
           resizeMode="contain"
         />

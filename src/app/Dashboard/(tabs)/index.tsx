@@ -18,6 +18,7 @@ import ActiveLoanCard from '@/components/features/dashboard/ActiveLoanCard';
 import RepaymentBottomSheet from '@/components/features/loans/RepaymentBottomSheet';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import { Icon } from '@/theme/icons';
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 
 export default function HomeScreen() {
@@ -122,7 +123,7 @@ export default function HomeScreen() {
             )}
           </TouchableOpacity>
           <Image
-            source={require('../../../../assets/images/welcome/NeatLogo.png')}
+            source={images.logo}
             className="w-12 h-10"
             resizeMode="contain"
           />

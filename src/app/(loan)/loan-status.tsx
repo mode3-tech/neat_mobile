@@ -16,6 +16,7 @@ import { formatNairaWhole, titleCase } from '@/utils/format';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import type { LoanStatusItem } from '@/types/loan.types';
 import { Icon, type IconName } from '@/theme/icons';
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 
 function StatTile({
@@ -191,7 +192,7 @@ export default function LoanStatusScreen() {
           ) : isEmpty ? (
             <View className="flex-1 items-center justify-center py-16">
               <Image
-                source={require('../../../assets/images/loan-status.png')}
+                source={images.loanStatusEmpty}
                 className="w-[280px] h-[280px]"
                 resizeMode="contain"
               />

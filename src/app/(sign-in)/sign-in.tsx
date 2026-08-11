@@ -19,6 +19,7 @@ import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { getErrorMessage } from '@/utils/error';
 import { Icon } from '@/theme/icons';
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 import { weight } from '@/theme/typography';
 
@@ -93,8 +94,8 @@ export default function SignInScreen() {
         >
           <View style={styles.logoWrap}>
             <Image
-              // source={require('../../../assets/images/sign.png')}
-              source={require('../../../assets/images/welcome/NeatLogo.png')}
+              // source={images.signIn}
+              source={images.logo}
               style={styles.logo}
               resizeMode="contain"
             />

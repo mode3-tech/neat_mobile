@@ -14,6 +14,7 @@ import * as Clipboard from 'expo-clipboard';
 import { router } from 'expo-router';
 
 import { Icon, type IconName } from '@/theme/icons';
+import { images } from '@/theme/images';
 import { colors } from '@/theme/palette';
 
 const CARD_MARGIN = 24;
@@ -62,7 +63,7 @@ function buildCards(
       title: 'Available Balance',
       amount: fmtBalance(availableBalance),
       buttons: [{ label: 'Send Money', icon: 'sendAction' }, { label: 'Deposit', icon: 'plusAction' }],
-      image: require('../../../../assets/images/dashboard/ball.png'),
+      image: images.balanceCard.available,
       imageSize: { width: 70, height: 70 },
     },
     // {
@@ -73,7 +74,7 @@ function buildCards(
     //   title: 'Total Savings',
     //   amount: '---',
     //   buttons: [{ label: 'Deposit' }],
-    //   image: require('../../../../assets/images/dashboard/bag.png'),
+    //   image: images.balanceCard.savings,
     //   imageSize: { width: 80, height: 70 },
     // },
     {
@@ -84,7 +85,7 @@ function buildCards(
       title: 'Loan Balance',
       amount: fmtBalance(loanBalance),
       buttons: [{ label: 'Make Repayment', disabled: !hasActiveLoan }],
-      image: require('../../../../assets/images/dashboard/barg.png'),
+      image: images.balanceCard.loan,
       imageSize: { width: 80, height: 70 },
     },
   ];
