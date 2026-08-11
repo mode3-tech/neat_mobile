@@ -16,7 +16,8 @@ import { useSignUpStore } from '@/stores/sign-up.store';
 import { BVN_LENGTH } from '@/constants';
 import type { BvnData } from '@/types/sign-up.types';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#FDC800';
+const PRIMARY_TEXT = '#032252';
 const ERROR_COLOR = '#EF4444';
 
 type Status = 'idle' | 'loading' | 'error' | 'verified';
@@ -121,7 +122,7 @@ export default function BvnVerificationScreen() {
               activeOpacity={0.85}
             >
               {isLoading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={PRIMARY_TEXT} />
               ) : (
                 <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
                   Verify BVN
@@ -172,12 +173,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: '#272757',
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 13,
-    color: '#6B7280',
+    color: '#272757',
     lineHeight: 20,
     marginBottom: 28,
   },
@@ -214,7 +215,7 @@ const styles = StyleSheet.create({
   },
   helpLink: {
     fontSize: 12,
-    color: PRIMARY,
+    color: '#032252',
     marginLeft: 'auto',
   },
   errorText: {
@@ -223,8 +224,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   infoCard: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: '#FFFBEF',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#F9B700',
     padding: 16,
     marginTop: 16,
     gap: 8,
@@ -257,7 +260,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },

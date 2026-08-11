@@ -9,8 +9,9 @@ import {
   View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { toast } from 'sonner-native';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -23,6 +24,7 @@ import { getErrorMessage } from '@/utils/error';
 const PRIMARY = '#472FF8';
 
 export default function SignInScreen() {
+  const insets = useSafeAreaInsets();
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -82,7 +84,10 @@ export default function SignInScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    // Bottom edge is left out on purpose: the navy needs to run under the system
+    // nav bar rather than stopping above it. The footer pads itself with the inset.
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+        <StatusBar style="light" />
         <KeyboardAwareScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
@@ -145,7 +150,7 @@ export default function SignInScreen() {
 
           <View style={styles.spacer} />
 
-          <View style={styles.footer}>
+          <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
             <TouchableOpacity
               style={[styles.primaryBtn, !canSignIn && styles.disabledBtn]}
               onPress={handleSignIn}
@@ -205,13 +210,13 @@ export default function SignInScreen() {
                   <MaterialCommunityIcons
                     name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
                     size={24}
-                    color={PRIMARY}
+                    color={'#FDC800'}
                   />
                 )}
                 <Text style={styles.biometricText}>
                   {biometricLoading
                     ? 'Signing in...'
-                    : `Sign in with ${biometryType === 'FACE' ? 'Face ID' : 'fingerprint'}`}
+                    : `Signs in with ${biometryType === 'FACE' ? 'Face ID' : 'fingerprint'}`}
                 </Text>
               </TouchableOpacity>
             )}
@@ -224,7 +229,7 @@ export default function SignInScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#032252',
   },
   scrollContent: {
     flexGrow: 1,
@@ -260,23 +265,23 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#374151',
+    color: '#B4BAC4',
     marginBottom: 8,
   },
   inputWrap: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: 'transparent',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 15,
     borderWidth: 1.5,
-    borderColor: 'transparent',
+    borderColor: '#8D8D8D',
     flexDirection: 'row',
     alignItems: 'center',
   },
   input: {
     flex: 1,
     fontSize: 15,
-    color: '#1A1A1A',
+    color: '#B4BAC4',
     padding: 0,
   },
   eyeIcon: {
@@ -293,28 +298,28 @@ const styles = StyleSheet.create({
   },
   forgotText: {
     fontSize: 13,
-    color: PRIMARY,
+    color:'#B4BAC4',
     fontWeight: '600',
   },
   footer: {
     gap: 16,
   },
   primaryBtn: {
-    backgroundColor: PRIMARY,
+    backgroundColor:'#FDC800',
     borderRadius: 50,
     paddingVertical: 16,
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: '#032252',
     fontSize: 16,
     fontWeight: '600',
   },
   disabledBtn: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: '#FDC800',
   },
   disabledBtnText: {
-    color: '#9CA3AF',
+    color: '#032252',
   },
   biometricBtn: {
     flexDirection: 'row',
@@ -322,22 +327,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     borderWidth: 1.5,
-    borderColor: '#E5E7EB',
+    borderColor: '#FDC800',
     borderRadius: 50,
     paddingVertical: 14,
   },
   biometricText: {
     fontSize: 14,
-    color: '#374151',
+    color: '#B4BAC4',
     fontWeight: '500',
   },
   signUpText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: '#B4BAC4',
     textAlign: 'center' as const,
   },
   signUpLink: {
-    color: PRIMARY,
+    color: '#FDC800',
     fontWeight: '600' as const,
   },
 

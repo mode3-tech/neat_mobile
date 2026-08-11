@@ -13,7 +13,8 @@ import { router } from 'expo-router';
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#FDC800';
+const PRIMARY_TEXT = '#032252';
 
 export default function PhoneValidationScreen() {
   const phone = useSignUpStore((s) => s.phone);
@@ -73,7 +74,7 @@ export default function PhoneValidationScreen() {
           activeOpacity={0.85}
         >
           {loading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={PRIMARY_TEXT} />
           ) : (
             <Text style={styles.primaryBtnText}>Send OTP</Text>
           )}
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 13,
-    color: '#6B7280',
+    color: '#272757',
     lineHeight: 20,
   },
   phoneHighlight: {
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
   },
   hint: {
     fontSize: 14,
-    color: '#374151',
+    color: '#272757',
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },

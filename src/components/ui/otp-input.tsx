@@ -67,11 +67,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   activeBox: {
-    borderColor: '#472FF8',
+    borderColor: '#FDC800',
     backgroundColor: '#fff',
   },
   filledBox: {
-    borderColor: '#472FF8',
+    borderColor: '#FDC800',
     backgroundColor: '#fff',
   },
   digit: {
