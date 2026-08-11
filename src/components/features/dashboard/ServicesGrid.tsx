@@ -1,5 +1,4 @@
 import { Text, TouchableOpacity, View } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner-native';
@@ -7,10 +6,11 @@ import { toast } from 'sonner-native';
 import { QUERY_KEYS } from '@/constants';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
+import { Icon, type IconName } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 interface ServiceItem {
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  icon: IconName;
   label: string;
   route?: string;
   /** VAS category name to resolve a category_id from /vas/categories. */
@@ -37,17 +37,17 @@ const CATEGORY_ROUTE: Record<string, string> = {
 const SERVICES: ServiceItem[][] = [
   [
 
-    { icon: 'cash-multiple', label: 'Loans', route: '/(loan)/loan-home' },
-    { icon: 'file-document-outline', label: 'Statement', route: '/(account)/statement' },
-     { icon: 'television', label: 'Cable TV', categoryName: 'CABLE TV' },
-    { icon: 'wifi', label: 'Buy Data', categoryName: 'DATA' },
+    { icon: 'loans', label: 'Loans', route: '/(loan)/loan-home' },
+    { icon: 'document', label: 'Statement', route: '/(account)/statement' },
+     { icon: 'cableTv', label: 'Cable TV', categoryName: 'CABLE TV' },
+    { icon: 'data', label: 'Buy Data', categoryName: 'DATA' },
   ],
   [
-    // { icon: 'television', label: 'Cable TV', categoryName: 'CABLE TV' },
-    { icon: 'flash', label: 'Electricity', categoryName: 'ELECTRICITY' },
-    { icon: 'trophy', label: 'Buy Airtime', categoryName: 'AIRTIME' },
-     { icon: 'qrcode-scan', label: 'QR Code', comingSoon: true },
-    { icon: 'dots-horizontal', label: 'More', comingSoon: true },
+    // { icon: 'cableTv', label: 'Cable TV', categoryName: 'CABLE TV' },
+    { icon: 'electricity', label: 'Electricity', categoryName: 'ELECTRICITY' },
+    { icon: 'betting', label: 'Buy Airtime', categoryName: 'AIRTIME' },
+     { icon: 'qrCode', label: 'QR Code', comingSoon: true },
+    { icon: 'more', label: 'More', comingSoon: true },
   ],
 ];
 
@@ -98,7 +98,7 @@ export default function ServicesGrid() {
               onPress={() => handlePress(item)}
             >
               <View className="w-12 h-12 rounded-full bg-primary items-center justify-center">
-                <MaterialCommunityIcons name={item.icon} size={22} color={colors.inkInverse} />
+                <Icon name={item.icon} size={22} color={colors.inkInverse} />
               </View>
               <Text className="text-[10px] text-ink-body text-center mt-1.5" numberOfLines={1}>
                 {item.label}

@@ -1,8 +1,8 @@
 import { Text, View } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useNetworkStatus } from '@/hooks/use-network-status';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 /**
@@ -21,8 +21,8 @@ export function OfflineBanner() {
       className="absolute left-0 right-0 top-0 z-50 bg-danger-surface border-b border-danger/30 px-4 pb-3 flex-row"
       style={{ paddingTop: insets.top + 8 }}
     >
-      <MaterialCommunityIcons
-        name="wifi-off"
+      <Icon
+        name="offline"
         size={18}
         color={colors.danger}
         style={{ marginTop: 1 }}

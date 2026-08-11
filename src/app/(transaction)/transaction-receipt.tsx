@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import * as Print from 'expo-print';
@@ -17,6 +16,7 @@ import {
 import { useAccountSummary } from '@/hooks/use-account-summary';
 import { useAuthStore } from '@/stores/auth.store';
 import type { Transaction } from '@/types/transaction.types';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 export default function TransactionReceiptScreen() {
@@ -123,7 +123,7 @@ export default function TransactionReceiptScreen() {
           hitSlop={8}
           className="mr-3"
         >
-          <MaterialCommunityIcons name="chevron-left" size={26} color={colors.ink} />
+          <Icon name="back" size={26} color={colors.ink} />
         </TouchableOpacity>
         <Text className="text-lg font-semibold text-ink">
           Share Receipt
@@ -183,7 +183,7 @@ export default function TransactionReceiptScreen() {
           onPress={handleShareAsImage}
           activeOpacity={0.7}
         >
-          <MaterialCommunityIcons name="image-outline" size={20} color={colors.primary} />
+          <Icon name="image" size={20} color={colors.primary} />
           <Text className="text-[15px] font-semibold text-primary ml-2">
             Share as image
           </Text>
@@ -196,7 +196,7 @@ export default function TransactionReceiptScreen() {
           onPress={handleShareAsPdf}
           activeOpacity={0.7}
         >
-          <MaterialCommunityIcons name="file-pdf-box" size={20} color={colors.primary} />
+          <Icon name="pdf" size={20} color={colors.primary} />
           <Text className="text-[15px] font-semibold text-primary ml-2">
             Share as PDF
           </Text>

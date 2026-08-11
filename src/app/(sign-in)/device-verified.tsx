@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 import { weight } from '@/theme/typography';
 
@@ -21,7 +21,7 @@ export default function DeviceVerifiedScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <View style={styles.iconWrap}>
-          <Ionicons name="checkmark-circle" size={100} color={colors.successBright} />
+          <Icon name="successCircle" size={100} color={colors.successBright} />
         </View>
 
         <Text style={styles.title}>Device Verified{'\n'}Successfully</Text>

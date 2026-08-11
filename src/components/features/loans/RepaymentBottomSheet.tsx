@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { loanService } from '@/services/loan.service';
 import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
 import { getErrorMessage } from '@/utils/error';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 interface RepaymentBottomSheetProps {
@@ -157,8 +157,8 @@ export default function RepaymentBottomSheet({
                   maxLength={PIN_LENGTH}
                 />
                 <TouchableOpacity onPress={() => setShowPin((v) => !v)}>
-                  <MaterialCommunityIcons
-                    name={showPin ? 'eye-off-outline' : 'eye-outline'}
+                  <Icon
+                    name={showPin ? 'eyeOff' : 'eye'}
                     size={20}
                     color={colors.inkMuted}
                   />
@@ -218,8 +218,8 @@ export default function RepaymentBottomSheet({
           <View className="bg-white rounded-t-3xl px-6 pt-3 pb-16 items-center">
             <View className="w-10 h-1 rounded-full bg-line-strong self-center mb-8" />
 
-            <MaterialCommunityIcons
-              name="check-decagram"
+            <Icon
+              name="verified"
               size={72}
               color={colors.success}
             />

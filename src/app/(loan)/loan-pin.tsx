@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
 
@@ -17,6 +16,7 @@ import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { loanService } from '@/services/loan.service';
 import { useLoanStore } from '@/stores/loan.store';
 import { getErrorMessage } from '@/utils/error';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 export default function LoanPinScreen() {
@@ -104,8 +104,8 @@ export default function LoanPinScreen() {
             maxLength={PIN_LENGTH}
           />
           <TouchableOpacity onPress={() => setShowPin((v) => !v)}>
-            <MaterialCommunityIcons
-              name={showPin ? 'eye-off-outline' : 'eye-outline'}
+            <Icon
+              name={showPin ? 'eyeOff' : 'eye'}
               size={20}
               color={colors.inkMuted}
             />
@@ -139,8 +139,8 @@ export default function LoanPinScreen() {
             onPress={handleBiometric}
             disabled={authenticating || submitting}
           >
-            <MaterialCommunityIcons
-              name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
+            <Icon
+              name={biometryType === 'FACE' ? 'faceId' : 'fingerprint'}
               size={28}
               color={colors.primary}
             />

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
+import { Icon } from '@/theme/icons';
 import { colors, confetti } from '@/theme/palette';
 
 /**
@@ -116,7 +116,7 @@ export function SuccessCelebration() {
             justifyContent: 'center',
           }}
         >
-          <Ionicons name="checkmark" size={44} color={colors.inkInverse} />
+          <Icon name="successTick" size={44} color={colors.inkInverse} />
         </View>
       </Animated.View>
     </View>

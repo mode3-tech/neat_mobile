@@ -1,8 +1,8 @@
 import { Text, View } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { formatCapExpiry, formatNairaShort } from '@/utils/format';
 import type { AccountLimits } from '@/types/account.types';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 interface ActivationCapBannerProps {
@@ -30,8 +30,8 @@ export function ActivationCapBanner({ limits }: ActivationCapBannerProps) {
 
   return (
     <View className="bg-primary-surface border border-primary/30 rounded-[14px] p-4 mb-6 flex-row">
-      <MaterialCommunityIcons
-        name="information-outline"
+      <Icon
+        name="infoOutline"
         size={18}
         color={colors.primary}
         style={{ marginTop: 1 }}

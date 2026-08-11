@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardProvider, KeyboardAvoidingView } from 'react-native-keyboard-controller';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
@@ -23,6 +22,7 @@ import type { VasBiller, VasProduct } from '@/types/vas.types';
 import { formatNairaWhole } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 const PHONE_LENGTH = 11;
@@ -192,8 +192,8 @@ export default function BuyDataScreen() {
             keyboardType="phone-pad"
             maxLength={PHONE_LENGTH}
           />
-          <MaterialCommunityIcons
-            name="account-circle-outline"
+          <Icon
+            name="user"
             size={22}
             color={colors.inkSoft}
           />
@@ -218,7 +218,7 @@ export default function BuyDataScreen() {
           {plansQuery.isLoading && !!selectedBillerId ? (
             <ActivityIndicator size="small" color={colors.primary} />
           ) : (
-            <MaterialCommunityIcons name="chevron-down" size={22} color={colors.inkSoft} />
+            <Icon name="chevronDown" size={22} color={colors.inkSoft} />
           )}
         </TouchableOpacity>
         <InsufficientFundsHint show={exceedsBalance} spacing="mb-5" />
@@ -257,7 +257,7 @@ export default function BuyDataScreen() {
             <View className="flex-row items-center justify-between px-6 mb-4">
               <Text className="text-lg font-bold text-ink">Select Plan</Text>
               <TouchableOpacity onPress={closePlanModal}>
-                <MaterialCommunityIcons name="close" size={24} color={colors.inkBody} />
+                <Icon name="close" size={24} color={colors.inkBody} />
               </TouchableOpacity>
             </View>
 
@@ -287,7 +287,7 @@ export default function BuyDataScreen() {
               <>
                 <View className="px-6 mb-3">
                   <View className="bg-surface-input rounded-xl px-4 py-3 flex-row items-center">
-                    <MaterialCommunityIcons name="magnify" size={20} color={colors.inkMuted} />
+                    <Icon name="search" size={20} color={colors.inkMuted} />
                     <TextInput
                       className="flex-1 text-[15px] text-ink p-0 ml-2"
                       value={planSearch}
@@ -297,8 +297,8 @@ export default function BuyDataScreen() {
                     />
                     {planSearch.length > 0 && (
                       <TouchableOpacity onPress={() => setPlanSearch('')}>
-                        <MaterialCommunityIcons
-                          name="close-circle"
+                        <Icon
+                          name="clear"
                           size={18}
                           color={colors.inkMuted}
                         />
@@ -339,8 +339,8 @@ export default function BuyDataScreen() {
                             {plan.name}
                           </Text>
                           {isSelected && (
-                            <MaterialCommunityIcons
-                              name="check-circle"
+                            <Icon
+                              name="checkCircle"
                               size={20}
                               color={colors.primary}
                             />

@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
+import { Icon, type IconName } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 interface ChoiceCardProps {
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  icon: IconName;
   title: string;
   subtitle: string;
   onPress: () => void;
@@ -22,13 +22,13 @@ function ChoiceCard({ icon, title, subtitle, onPress }: ChoiceCardProps) {
       onPress={onPress}
     >
       <View className="w-10 h-10 rounded-xl bg-primary items-center justify-center mr-3">
-        <MaterialCommunityIcons name={icon} size={20} color={colors.inkInverse} />
+        <Icon name={icon} size={20} color={colors.inkInverse} />
       </View>
       <View className="flex-1">
         <Text className="text-[15px] font-semibold text-ink">{title}</Text>
         <Text className="text-[12px] text-ink-soft mt-0.5">{subtitle}</Text>
       </View>
-      <MaterialCommunityIcons name="chevron-right" size={22} color={colors.inkMuted} />
+      <Icon name="chevronRight" size={22} color={colors.inkMuted} />
     </TouchableOpacity>
   );
 }
@@ -64,7 +64,7 @@ export default function BulkTransferScreen() {
         />
 
         <ChoiceCard
-          icon="file-excel-outline"
+          icon="excelSheet"
           title="Upload Excel File"
           subtitle="Import multiple recipients at once"
           onPress={() =>

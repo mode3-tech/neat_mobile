@@ -1,5 +1,4 @@
 import { ActivityIndicator, Image, Text, TouchableOpacity, View } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 
@@ -9,6 +8,7 @@ import { openTransactionDetails } from '@/utils/transaction-nav';
 import { getTransactionIcon, STATUS_COLORS } from '@/components/features/transaction/TransactionRow';
 import { QUERY_KEYS } from '@/constants';
 import type { Transaction } from '@/types/transaction.types';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 function RecentTransactionRow({ transaction }: { transaction: Transaction }) {
@@ -28,7 +28,7 @@ function RecentTransactionRow({ transaction }: { transaction: Transaction }) {
         className="w-10 h-10 rounded-xl items-center justify-center"
         style={{ backgroundColor: bgColor }}
       >
-        <MaterialCommunityIcons name={icon} size={20} color={iconColor} />
+        <Icon name={icon} size={20} color={iconColor} />
       </View>
       <View className="flex-1 ml-3">
         <Text className="text-sm font-semibold text-ink" numberOfLines={1}>

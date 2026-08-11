@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 
@@ -26,6 +25,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import { transactionService } from '@/services/transaction.service';
 import { ACCOUNT_NUMBER_LENGTH, QUERY_KEYS } from '@/constants';
 import type { Transaction } from '@/types/transaction.types';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 export default function TransactionDetailsScreen() {
@@ -220,7 +220,7 @@ export default function TransactionDetailsScreen() {
             className="w-14 h-14 rounded-2xl items-center justify-center"
             style={{ backgroundColor: bgColor }}
           >
-            <MaterialCommunityIcons name={icon} size={28} color={iconColor} />
+            <Icon name={icon} size={28} color={iconColor} />
           </View>
           <Text className="text-[15px] font-semibold text-ink text-center mt-4">
             {transaction.description}
@@ -272,8 +272,8 @@ export default function TransactionDetailsScreen() {
               activeOpacity={0.85}
             >
               <View className="w-14 h-14 rounded-2xl bg-primary-surface items-center justify-center mb-2">
-                <MaterialCommunityIcons
-                  name={isCredit ? 'arrow-u-left-top' : 'repeat'}
+                <Icon
+                  name={isCredit ? 'refund' : 'repeatTransfer'}
                   size={22}
                   color={colors.primary}
                 />
@@ -290,8 +290,8 @@ export default function TransactionDetailsScreen() {
             activeOpacity={0.85}
           >
             <View className="w-14 h-14 rounded-2xl bg-primary-surface items-center justify-center mb-2">
-              <MaterialCommunityIcons
-                name="share-variant"
+              <Icon
+                name="share"
                 size={22}
                 color={colors.primary}
               />

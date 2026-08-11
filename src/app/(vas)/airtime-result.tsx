@@ -5,13 +5,13 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import { toast } from 'sonner-native';
 
 import { useVasStore } from '@/stores/vas.store';
 import TransactionSummaryCard from '@/components/features/vas/TransactionSummaryCard';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 export default function AirtimeResultScreen() {
@@ -51,14 +51,14 @@ export default function AirtimeResultScreen() {
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1 pt-12">
         <View className="items-center mb-5">
           {isSuccess ? (
-            <MaterialCommunityIcons
-              name="check-decagram"
+            <Icon
+              name="verified"
               size={72}
               color={colors.success}
             />
           ) : (
             <View className="w-[72px] h-[72px] rounded-2xl bg-danger items-center justify-center">
-              <MaterialCommunityIcons name="close" size={40} color={colors.inkInverse} />
+              <Icon name="close" size={40} color={colors.inkInverse} />
             </View>
           )}
         </View>
@@ -88,8 +88,8 @@ export default function AirtimeResultScreen() {
                 activeOpacity={0.7}
                 onPress={copyToken}
               >
-                <MaterialCommunityIcons
-                  name="content-copy"
+                <Icon
+                  name="copy"
                   size={18}
                   color={colors.primary}
                 />
@@ -135,7 +135,7 @@ export default function AirtimeResultScreen() {
             onPress={() => router.back()}
             activeOpacity={0.85}
           >
-            <MaterialCommunityIcons name="refresh" size={18} color={colors.inkInverse} />
+            <Icon name="refresh" size={18} color={colors.inkInverse} />
             <Text className="text-white text-base font-semibold">Retry</Text>
           </TouchableOpacity>
         )}

@@ -1,8 +1,8 @@
 import { Linking, Platform, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
 
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 import { weight } from '@/theme/typography';
 
@@ -27,7 +27,7 @@ export function DeviceBlockedScreen(): React.JSX.Element {
             marginBottom: 24,
           }}
         >
-          <Ionicons name="shield-outline" size={48} color={colors.primary} />
+          <Icon name="shield" size={48} color={colors.primary} />
         </View>
 
         <Text

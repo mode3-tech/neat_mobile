@@ -9,7 +9,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
@@ -20,6 +19,7 @@ import { useAccountSummary } from '@/hooks/use-account-summary';
 import type { VasBiller } from '@/types/vas.types';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 const PHONE_LENGTH = 11;
@@ -194,8 +194,8 @@ export default function BuyAirtimeScreen() {
             keyboardType="phone-pad"
             maxLength={PHONE_LENGTH}
           />
-          <MaterialCommunityIcons
-            name="account-circle-outline"
+          <Icon
+            name="user"
             size={22}
             color={colors.inkSoft}
           />

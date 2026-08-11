@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
@@ -16,6 +15,7 @@ import { QUERY_KEYS } from '@/constants';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import { formatNairaWhole, formatDateLong } from '@/utils/format';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 function statusLabel(status: LoanHistoryStatus): string {
@@ -58,7 +58,7 @@ function ScheduleRow({ item }: { item: LoanHistoryItem }) {
       }`}
     >
       <View className="w-9 h-9 rounded-lg bg-primary-surface items-center justify-center mr-3">
-        <MaterialCommunityIcons name="package-variant" size={18} color={colors.primary} />
+        <Icon name="plan" size={18} color={colors.primary} />
       </View>
       <View className="flex-1">
         <Text className="text-xs text-ink-soft mb-1">Loan Amount</Text>
@@ -141,8 +141,8 @@ export default function LoanDetailsScreen() {
 
         {!isLoading && (!loanId || detailsError || !details) && (
           <View className="py-20 items-center justify-center px-6">
-            <MaterialCommunityIcons
-              name={!loanId ? 'file-document-outline' : 'alert-circle-outline'}
+            <Icon
+              name={!loanId ? 'document' : 'alertCircle'}
               size={64}
               color={colors.line}
             />

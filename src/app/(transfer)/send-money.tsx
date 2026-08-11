@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 
 import {
@@ -29,6 +28,7 @@ import { ActivationCapBanner } from '@/components/ActivationCapBanner';
 import { getErrorMessage } from '@/utils/error';
 import { formatNairaShort } from '@/utils/format';
 import type { Bank, Beneficiary, TransferType } from '@/types/transfer.types';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 const TABS: { key: TransferType; label: string }[] = [
@@ -432,8 +432,8 @@ export default function SendMoneyScreen() {
                 {lockedRecipient && !selectedBank && banksLoading ? (
                   <ActivityIndicator size="small" color={colors.primary} />
                 ) : (
-                  <MaterialCommunityIcons
-                    name={lockedRecipient ? 'lock-outline' : 'chevron-down'}
+                  <Icon
+                    name={lockedRecipient ? 'lock' : 'chevronDown'}
                     size={lockedRecipient ? 18 : 20}
                     color={colors.inkMuted}
                   />
@@ -469,8 +469,8 @@ export default function SendMoneyScreen() {
               />
               {validating && <ActivityIndicator size="small" color={colors.primary} />}
               {lockedRecipient && !validating && (
-                <MaterialCommunityIcons
-                  name="lock-outline"
+                <Icon
+                  name="lock"
                   size={16}
                   color={colors.inkMuted}
                 />
@@ -506,8 +506,8 @@ export default function SendMoneyScreen() {
                   setBeneficiaryModalVisible(true);
                 }}
               >
-                <MaterialCommunityIcons
-                  name="account-circle-outline"
+                <Icon
+                  name="user"
                   size={20}
                   color={colors.primary}
                 />
@@ -594,7 +594,7 @@ export default function SendMoneyScreen() {
                 Select Bank
               </Text>
               <TouchableOpacity onPress={() => setBankModalVisible(false)}>
-                <MaterialCommunityIcons
+                <Icon
                   name="close"
                   size={24}
                   color={colors.inkBody}
@@ -605,8 +605,8 @@ export default function SendMoneyScreen() {
             {/* Search */}
             <View className="px-6 mb-3">
               <View className="bg-surface-input rounded-xl px-4 py-3 flex-row items-center">
-                <MaterialCommunityIcons
-                  name="magnify"
+                <Icon
+                  name="search"
                   size={20}
                   color={colors.inkMuted}
                 />
@@ -669,7 +669,7 @@ export default function SendMoneyScreen() {
                   setBeneficiarySearch('');
                 }}
               >
-                <MaterialCommunityIcons
+                <Icon
                   name="close"
                   size={24}
                   color={colors.inkBody}
@@ -680,8 +680,8 @@ export default function SendMoneyScreen() {
             {/* Search */}
             <View className="px-6 mb-3">
               <View className="bg-surface-input rounded-xl px-4 py-3 flex-row items-center">
-                <MaterialCommunityIcons
-                  name="magnify"
+                <Icon
+                  name="search"
                   size={20}
                   color={colors.inkMuted}
                 />

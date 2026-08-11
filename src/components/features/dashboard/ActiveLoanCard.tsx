@@ -1,8 +1,8 @@
 import { Text, TouchableOpacity, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 import type { ActiveLoan } from '@/types/account.types';
 import { formatNairaWhole } from '@/utils/format';
+import { Icon } from '@/theme/icons';
 
 interface ActiveLoanCardProps {
   loans: ActiveLoan[];
@@ -26,7 +26,7 @@ export default function ActiveLoanCard({ loans }: ActiveLoanCardProps) {
       <View className="bg-primary rounded-2xl p-5">
         {/* Arrow icon */}
         <View className="w-10 h-10 rounded-full bg-black/20 items-center justify-center mb-4">
-          <Ionicons name="arrow-forward" size={20} color="white" />
+          <Icon name="arrowForward" size={20} color="white" />
         </View>
 
         {/* Loan details */}

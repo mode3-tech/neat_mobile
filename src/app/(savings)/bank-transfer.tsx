@@ -1,11 +1,11 @@
 import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import * as Clipboard from 'expo-clipboard';
 import { router } from 'expo-router';
 
 import { accountService } from '@/services/account.service';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 export default function BankTransferScreen() {
@@ -48,8 +48,8 @@ export default function BankTransferScreen() {
             {accountSummary?.account_number ?? '---'}
           </Text>
           <TouchableOpacity onPress={copyAccountNumber} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <MaterialCommunityIcons
-              name="content-copy"
+            <Icon
+              name="copy"
               size={18}
               color={colors.inkMuted}
             />

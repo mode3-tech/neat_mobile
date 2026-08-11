@@ -1,11 +1,9 @@
 import { Text, TouchableOpacity, View } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { formatNairaWhole, formatTransactionDateTime } from '@/utils/format';
 import type { Transaction } from '@/types/transaction.types';
+import { Icon, type IconName } from '@/theme/icons';
 import { accents, colors } from '@/theme/palette';
-
-type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
 interface TransactionIconConfig {
   keywords: string[];
@@ -15,17 +13,17 @@ interface TransactionIconConfig {
 }
 
 const ICON_MAP: TransactionIconConfig[] = [
-  { keywords: ['airtime'], icon: 'phone', bgColor: accents.airtime.surface, iconColor: accents.airtime.icon },
-  { keywords: ['transfer', 'send'], icon: 'bank-transfer', bgColor: accents.transfer.surface, iconColor: accents.transfer.icon },
-  { keywords: ['data'], icon: 'wifi', bgColor: accents.data.surface, iconColor: accents.data.icon },
-  { keywords: ['electricity'], icon: 'flash', bgColor: accents.electricity.surface, iconColor: accents.electricity.icon },
-  { keywords: ['cable', 'tv'], icon: 'television', bgColor: accents.cable.surface, iconColor: accents.cable.icon },
-  { keywords: ['betting'], icon: 'trophy', bgColor: accents.betting.surface, iconColor: accents.betting.icon },
-  { keywords: ['bonus', 'cashback', 'reward'], icon: 'gift', bgColor: accents.reward.surface, iconColor: accents.reward.icon },
+  { keywords: ['airtime'], icon: 'tabSupport', bgColor: accents.airtime.surface, iconColor: accents.airtime.icon },
+  { keywords: ['transfer', 'send'], icon: 'transfer', bgColor: accents.transfer.surface, iconColor: accents.transfer.icon },
+  { keywords: ['data'], icon: 'data', bgColor: accents.data.surface, iconColor: accents.data.icon },
+  { keywords: ['electricity'], icon: 'electricity', bgColor: accents.electricity.surface, iconColor: accents.electricity.icon },
+  { keywords: ['cable', 'tv'], icon: 'cableTv', bgColor: accents.cable.surface, iconColor: accents.cable.icon },
+  { keywords: ['betting'], icon: 'betting', bgColor: accents.betting.surface, iconColor: accents.betting.icon },
+  { keywords: ['bonus', 'cashback', 'reward'], icon: 'reward', bgColor: accents.reward.surface, iconColor: accents.reward.icon },
 ];
 
 const DEFAULT_ICON: Omit<TransactionIconConfig, 'keywords'> = {
-  icon: 'swap-horizontal',
+  icon: 'swap',
   bgColor: accents.fallback.surface,
   iconColor: accents.fallback.icon,
 };
@@ -71,7 +69,7 @@ export function TransactionRow({
         className="w-10 h-10 rounded-xl items-center justify-center"
         style={{ backgroundColor: bgColor }}
       >
-        <MaterialCommunityIcons name={icon} size={20} color={iconColor} />
+        <Icon name={icon} size={20} color={iconColor} />
       </View>
 
       {/* Description + Date */}

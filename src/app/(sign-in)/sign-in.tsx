@@ -13,12 +13,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
 
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useBiometricSignIn } from '@/hooks/use-biometric-sign-in';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { getErrorMessage } from '@/utils/error';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 import { weight } from '@/theme/typography';
 
@@ -204,8 +204,8 @@ export default function SignInScreen() {
                 {biometricLoading ? (
                   <ActivityIndicator size="small" color={PRIMARY} />
                 ) : (
-                  <MaterialCommunityIcons
-                    name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
+                  <Icon
+                    name={biometryType === 'FACE' ? 'faceId' : 'fingerprint'}
                     size={24}
                     color={PRIMARY}
                   />

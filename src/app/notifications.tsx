@@ -9,7 +9,6 @@ import {
   type ViewToken,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -20,13 +19,14 @@ import {
 } from '@/services/notification.service';
 import { useNotificationStore } from '@/stores/notification.store';
 import type { AppNotification, NotificationType } from '@/types/notification.types';
+import { Icon, type IconName } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
-const TYPE_ICONS: Record<NotificationType, { name: string; color: string; bg: string }> = {
-  loan: { name: 'wallet-outline', color: colors.primary, bg: colors.primarySurface },
-  transaction: { name: 'swap-horizontal', color: colors.success, bg: colors.successSurfaceAlt },
-  security: { name: 'shield-lock-outline', color: colors.danger, bg: colors.dangerSurface },
-  promo: { name: 'bullhorn-outline', color: colors.warning, bg: colors.warningSurface },
+const TYPE_ICONS: Record<NotificationType, { name: IconName; color: string; bg: string }> = {
+  loan: { name: 'walletOutline', color: colors.primary, bg: colors.primarySurface },
+  transaction: { name: 'swap', color: colors.success, bg: colors.successSurfaceAlt },
+  security: { name: 'shieldLock', color: colors.danger, bg: colors.dangerSurface },
+  promo: { name: 'announcement', color: colors.warning, bg: colors.warningSurface },
 };
 
 function formatRelativeTime(dateStr: string): string {
@@ -96,8 +96,8 @@ function NotificationItem({ item }: { item: AppNotification }) {
           borderColor: icon.color + '20',
         }}
       >
-        <MaterialCommunityIcons
-          name={icon.name as any}
+        <Icon
+          name={icon.name}
           size={22}
           color={icon.color}
         />
@@ -127,7 +127,7 @@ function NotificationItem({ item }: { item: AppNotification }) {
 function EmptyState() {
   return (
     <View className="flex-1 items-center justify-center px-6">
-      <MaterialCommunityIcons name="bell-off-outline" size={64} color={colors.line} />
+      <Icon name="bellOff" size={64} color={colors.line} />
       <Text className="text-base font-semibold text-ink mt-4">
         No notifications yet
       </Text>
@@ -141,7 +141,7 @@ function EmptyState() {
 function ErrorState({ message }: { message: string }) {
   return (
     <View className="flex-1 items-center justify-center px-6">
-      <MaterialCommunityIcons name="wifi-off" size={64} color={colors.line} />
+      <Icon name="offline" size={64} color={colors.line} />
       <Text className="text-base font-semibold text-ink mt-4">
         {message}
       </Text>

@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import {
@@ -23,6 +22,7 @@ import { useAccountSummary } from '@/hooks/use-account-summary';
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
 import type { Bank, BulkRecipient, TransferType } from '@/types/transfer.types';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 const TABS: { key: TransferType; label: string }[] = [
@@ -336,8 +336,8 @@ export default function BulkAddRecipientScreen() {
                 >
                   {selectedBank?.name ?? 'Select a bank'}
                 </Text>
-                <MaterialCommunityIcons
-                  name="chevron-down"
+                <Icon
+                  name="chevronDown"
                   size={20}
                   color={colors.inkMuted}
                 />
@@ -425,7 +425,7 @@ export default function BulkAddRecipientScreen() {
             disabled={!canAdd}
             activeOpacity={0.85}
           >
-            <MaterialCommunityIcons
+            <Icon
               name="plus"
               size={18}
               color={canAdd ? colors.primary : colors.inkMuted}
@@ -484,8 +484,8 @@ export default function BulkAddRecipientScreen() {
                         onPress={() => handleRemove(r)}
                         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                       >
-                        <MaterialCommunityIcons
-                          name="trash-can-outline"
+                        <Icon
+                          name="trash"
                           size={18}
                           color={colors.danger}
                         />
@@ -529,7 +529,7 @@ export default function BulkAddRecipientScreen() {
                 Select Bank
               </Text>
               <TouchableOpacity onPress={() => setBankModalVisible(false)}>
-                <MaterialCommunityIcons
+                <Icon
                   name="close"
                   size={24}
                   color={colors.inkBody}
@@ -539,8 +539,8 @@ export default function BulkAddRecipientScreen() {
 
             <View className="px-6 mb-3">
               <View className="bg-surface-input rounded-xl px-4 py-3 flex-row items-center">
-                <MaterialCommunityIcons
-                  name="magnify"
+                <Icon
+                  name="search"
                   size={20}
                   color={colors.inkMuted}
                 />

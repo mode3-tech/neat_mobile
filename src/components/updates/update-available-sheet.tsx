@@ -1,8 +1,8 @@
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 
 import { openStoreListing } from '@/utils/store-link';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 import { weight } from '@/theme/typography';
 
@@ -57,7 +57,7 @@ export function UpdateAvailableSheet({
             marginBottom: 16,
           }}
         >
-          <Ionicons name="arrow-up-circle-outline" size={32} color={colors.primary} />
+          <Icon name="updateAvailable" size={32} color={colors.primary} />
         </View>
 
         <Text

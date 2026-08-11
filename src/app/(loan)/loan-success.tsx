@@ -6,11 +6,11 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { useLoanStore } from '@/stores/loan.store';
 import { titleCase } from '@/utils/format';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 function formatCurrency(amount: number): string {
@@ -73,7 +73,7 @@ export default function LoanSuccessScreen() {
       <ScrollView showsVerticalScrollIndicator={false} className="pt-10">
         <View className="items-center mb-5">
           <View className="w-16 h-16 rounded-full bg-success items-center justify-center">
-            <MaterialCommunityIcons name="check" size={32} color={colors.inkInverse} />
+            <Icon name="check" size={32} color={colors.inkInverse} />
           </View>
         </View>
 

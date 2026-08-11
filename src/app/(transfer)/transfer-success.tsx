@@ -8,7 +8,6 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import * as Print from 'expo-print';
@@ -18,6 +17,7 @@ import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
 import { DetailRow } from '@/components/features/transaction/DetailRow';
 import { buildReceiptHtml, shareFile } from '@/utils/receipt';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 import {
   formatNairaDecimal,
@@ -203,8 +203,8 @@ export default function TransferSuccessScreen() {
               {addingBeneficiary ? (
                 <ActivityIndicator size="small" color={colors.primary} />
               ) : (
-                <MaterialCommunityIcons
-                  name={beneficiaryAdded ? 'check-circle' : 'account-plus-outline'}
+                <Icon
+                  name={beneficiaryAdded ? 'checkCircle' : 'userAdd'}
                   size={22}
                   color={colors.primary}
                 />
@@ -221,8 +221,8 @@ export default function TransferSuccessScreen() {
             onPress={handleShareAsImage}
           >
             <View className="w-14 h-14 rounded-2xl bg-primary-surface items-center justify-center mb-2">
-              <MaterialCommunityIcons
-                name="image-outline"
+              <Icon
+                name="image"
                 size={22}
                 color={colors.primary}
               />
@@ -238,8 +238,8 @@ export default function TransferSuccessScreen() {
             onPress={handleShareAsPdf}
           >
             <View className="w-14 h-14 rounded-2xl bg-primary-surface items-center justify-center mb-2">
-              <MaterialCommunityIcons
-                name="file-pdf-box"
+              <Icon
+                name="pdf"
                 size={22}
                 color={colors.primary}
               />

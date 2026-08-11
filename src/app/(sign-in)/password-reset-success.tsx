@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 import { weight } from '@/theme/typography';
 
@@ -34,7 +34,7 @@ export default function PasswordResetSuccessScreen() {
       <View style={styles.content}>
         <Animated.View style={[styles.iconOuter, { transform: [{ scale }] }]}>
           <View style={styles.iconInner}>
-            <Ionicons name="checkmark" size={44} color={colors.inkInverse} />
+            <Icon name="successTick" size={44} color={colors.inkInverse} />
           </View>
         </Animated.View>
 

@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { BackHandler, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 
 import { openStoreListing } from '@/utils/store-link';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 import { weight } from '@/theme/typography';
 
@@ -67,7 +67,7 @@ export function UpdateRequiredScreen({ storeUrl }: Props): React.JSX.Element {
             marginBottom: 20,
           }}
         >
-          <Ionicons name="arrow-up-circle-outline" size={40} color={colors.primary} />
+          <Icon name="updateAvailable" size={40} color={colors.primary} />
         </View>
 
         <Text

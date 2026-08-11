@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardProvider, KeyboardAvoidingView } from 'react-native-keyboard-controller';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
@@ -23,6 +22,7 @@ import type { VasBiller, VasProduct } from '@/types/vas.types';
 import { formatNairaWhole } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 // Smartcard / IUC numbers vary by provider (DSTV 10–11, GOTV 10, StarTimes 11),
@@ -209,7 +209,7 @@ export default function CableTvScreen() {
             placeholderTextColor={colors.inkMuted}
             keyboardType="number-pad"
           />
-          <MaterialCommunityIcons name="card-outline" size={22} color={colors.inkSoft} />
+          <Icon name="meterCard" size={22} color={colors.inkSoft} />
         </View>
 
         {/* Package selector */}
@@ -231,7 +231,7 @@ export default function CableTvScreen() {
           {packagesQuery.isLoading && !!selectedBillerId ? (
             <ActivityIndicator size="small" color={colors.primary} />
           ) : (
-            <MaterialCommunityIcons name="chevron-down" size={22} color={colors.inkSoft} />
+            <Icon name="chevronDown" size={22} color={colors.inkSoft} />
           )}
         </TouchableOpacity>
 
@@ -246,7 +246,7 @@ export default function CableTvScreen() {
             disabled={months <= MONTH_MIN}
             onPress={() => setMonths((m) => Math.max(MONTH_MIN, m - 1))}
           >
-            <MaterialCommunityIcons
+            <Icon
               name="minus"
               size={20}
               color={months <= MONTH_MIN ? colors.inkMuted : colors.primary}
@@ -263,7 +263,7 @@ export default function CableTvScreen() {
             disabled={months >= MONTH_MAX}
             onPress={() => setMonths((m) => Math.min(MONTH_MAX, m + 1))}
           >
-            <MaterialCommunityIcons
+            <Icon
               name="plus"
               size={20}
               color={months >= MONTH_MAX ? colors.inkMuted : colors.primary}
@@ -318,7 +318,7 @@ export default function CableTvScreen() {
             <View className="flex-row items-center justify-between px-6 mb-4">
               <Text className="text-lg font-bold text-ink">Select Package</Text>
               <TouchableOpacity onPress={closePackageModal}>
-                <MaterialCommunityIcons name="close" size={24} color={colors.inkBody} />
+                <Icon name="close" size={24} color={colors.inkBody} />
               </TouchableOpacity>
             </View>
 
@@ -348,7 +348,7 @@ export default function CableTvScreen() {
               <>
                 <View className="px-6 mb-3">
                   <View className="bg-surface-input rounded-xl px-4 py-3 flex-row items-center">
-                    <MaterialCommunityIcons name="magnify" size={20} color={colors.inkMuted} />
+                    <Icon name="search" size={20} color={colors.inkMuted} />
                     <TextInput
                       className="flex-1 text-[15px] text-ink p-0 ml-2"
                       value={packageSearch}
@@ -358,8 +358,8 @@ export default function CableTvScreen() {
                     />
                     {packageSearch.length > 0 && (
                       <TouchableOpacity onPress={() => setPackageSearch('')}>
-                        <MaterialCommunityIcons
-                          name="close-circle"
+                        <Icon
+                          name="clear"
                           size={18}
                           color={colors.inkMuted}
                         />
@@ -400,8 +400,8 @@ export default function CableTvScreen() {
                             {pkg.name}
                           </Text>
                           {isSelected && (
-                            <MaterialCommunityIcons
-                              name="check-circle"
+                            <Icon
+                              name="checkCircle"
                               size={20}
                               color={colors.primary}
                             />

@@ -9,13 +9,13 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import { loanService } from '@/services/loan.service';
 import { useLoanStore } from '@/stores/loan.store';
 import type { LoanProduct } from '@/types/loan.types';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 const PRIMARY = colors.primary;
@@ -193,7 +193,7 @@ export default function ApplyLoanScreen() {
                 setShowDateModal(true);
               }}
             >
-              <MaterialCommunityIcons name="calendar" size={20} color={colors.inkMuted} />
+              <Icon name="calendar" size={20} color={colors.inkMuted} />
             </TouchableOpacity>
           </View>
           {isValidBusinessAge(store.businessAge) && !isBusinessAgeAtLeastOneYear(store.businessAge) && (
@@ -230,7 +230,7 @@ export default function ApplyLoanScreen() {
             <Text className={`flex-1 text-[15px] ${store.loanProduct ? 'text-ink' : 'text-ink-muted'}`}>
               {store.loanProduct || 'Enter Loan product'}
             </Text>
-            <MaterialCommunityIcons name="chevron-down" size={20} color={colors.inkMuted} />
+            <Icon name="chevronDown" size={20} color={colors.inkMuted} />
           </TouchableOpacity>
           {showProductDropdown && (
             <View className="bg-white rounded-xl border border-line mt-1 overflow-hidden">
@@ -322,7 +322,7 @@ export default function ApplyLoanScreen() {
             <View className="flex-row items-center justify-between mb-5">
               <Text className="text-lg font-bold text-ink">Select Date</Text>
               <TouchableOpacity onPress={() => setShowDateModal(false)}>
-                <MaterialCommunityIcons name="close" size={22} color={colors.inkSoft} />
+                <Icon name="close" size={22} color={colors.inkSoft} />
               </TouchableOpacity>
             </View>
 

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
@@ -15,10 +14,11 @@ import { useProfileStore } from '@/stores/profile.store';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { PhotoPickerSheet } from '@/components/ui/PhotoPickerSheet';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
+import { Icon, type IconName } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 interface RowProps {
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  icon: IconName;
   label: string;
   onPress?: () => void;
   disabled?: boolean;
@@ -33,12 +33,12 @@ function SettingsRow({ icon, label, onPress, disabled }: RowProps) {
       activeOpacity={0.7}
     >
       <View className="w-9 h-9 rounded-full bg-primary-surface items-center justify-center mr-3">
-        <MaterialCommunityIcons name={icon} size={18} color={colors.primary} />
+        <Icon name={icon} size={18} color={colors.primary} />
       </View>
       <Text className={`flex-1 text-[15px] ${disabled ? 'text-ink-muted' : 'text-ink'}`}>
         {label}
       </Text>
-      <MaterialCommunityIcons name="chevron-right" size={22} color={colors.inkMuted} />
+      <Icon name="chevronRight" size={22} color={colors.inkMuted} />
     </TouchableOpacity>
   );
 }
@@ -182,7 +182,7 @@ export default function ProfileScreen() {
               activeOpacity={0.85}
               disabled={uploadPhotoMutation.isPending}
             >
-              <MaterialCommunityIcons name="camera" size={16} color={colors.inkInverse} />
+              <Icon name="camera" size={16} color={colors.inkInverse} />
             </TouchableOpacity>
           </View>
           <Text className="mt-3 text-base font-semibold text-ink">
@@ -197,11 +197,11 @@ export default function ProfileScreen() {
         </Text>
         <View className="px-6">
           <SettingsRow
-            icon="account-outline"
+            icon="userSettings"
             label="Change Personal Data"
             onPress={() => router.push('/(profile)/personal-data' as any)}
           />
-          {/* <SettingsRow icon="card-account-details-outline" label="Account Details" disabled /> */}
+          {/* <SettingsRow icon="idCard" label="Account Details" disabled /> */}
         </View>
 
         {/* SECURITY section */}
@@ -210,17 +210,17 @@ export default function ProfileScreen() {
         </Text>
         <View className="px-6">
           <SettingsRow
-            icon="key-outline"
+            icon="key"
             label="Change Transaction PIN"
             onPress={() => router.push('/(profile)/change-pin-otp' as any)}
           />
           <SettingsRow
-            icon="lock-outline"
+            icon="lock"
             label="Change Password"
             onPress={() => router.push('/(profile)/change-password-otp' as any)}
           />
           <SettingsRow
-            icon="bell-outline"
+            icon="bell"
             label="Notifications"
             onPress={() => router.push('/(profile)/notifications' as any)}
           />
@@ -243,7 +243,7 @@ export default function ProfileScreen() {
             onPress={() => setLogoutVisible(true)}
             activeOpacity={0.85}
           >
-            <MaterialCommunityIcons name="logout" size={18} color={colors.danger} />
+            <Icon name="logout" size={18} color={colors.danger} />
             <Text className="text-danger text-base font-semibold ml-2">Log Out</Text>
           </TouchableOpacity>
         </View>

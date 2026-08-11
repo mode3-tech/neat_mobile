@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 export default function BulkTransferSuccessScreen() {
@@ -44,7 +44,7 @@ export default function BulkTransferSuccessScreen() {
 
         <View className="flex-1 items-center justify-center">
           <View className="w-16 h-16 rounded-full bg-success items-center justify-center mb-5">
-            <MaterialCommunityIcons name="check" size={32} color={colors.inkInverse} />
+            <Icon name="check" size={32} color={colors.inkInverse} />
           </View>
           <Text className="text-[22px] font-bold text-primary text-center mb-2">
             Successful!

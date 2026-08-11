@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
 
 import { accountService } from '@/services/account.service';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { getCloseBlockerMessage } from '@/utils/close-account';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 const MAX_REASON_CHARS = 300;
@@ -80,7 +80,7 @@ export default function CloseAccountReasonScreen() {
           className="border border-line rounded-full w-10 h-10 items-center justify-center"
           onPress={() => router.back()}
         >
-          <MaterialCommunityIcons name="chevron-left" size={24} color={colors.inkBody} />
+          <Icon name="back" size={24} color={colors.inkBody} />
         </TouchableOpacity>
         <Text className="flex-1 text-center text-lg font-bold text-ink mr-10">
           Close Account
@@ -107,8 +107,8 @@ export default function CloseAccountReasonScreen() {
                 activeOpacity={0.7}
               >
                 <Text className="flex-1 text-[15px] text-ink">{reason.label}</Text>
-                <MaterialCommunityIcons
-                  name={isSelected ? 'radiobox-marked' : 'radiobox-blank'}
+                <Icon
+                  name={isSelected ? 'radioOn' : 'radioOff'}
                   size={22}
                   color={isSelected ? colors.primary : colors.inkMuted}
                 />

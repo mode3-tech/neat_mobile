@@ -11,10 +11,9 @@ import {
   View,
 } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
-import { Ionicons } from '@expo/vector-icons';
-import Feather from '@expo/vector-icons/Feather';
 import { router } from 'expo-router';
 
+import { Icon, type IconName } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 const CARD_MARGIN = 24;
@@ -38,7 +37,7 @@ interface CardData {
   title: string;
   amount: string;
   // buttons: { label: string; variant: 'dark' | 'light' }[];
-  buttons: { label: string; icon?: keyof typeof Feather.glyphMap; disabled?: boolean }[];
+  buttons: { label: string; icon?: IconName; disabled?: boolean }[];
   image: ImageSourcePropType;
   imageSize?: { width: number; height: number };
 }
@@ -62,7 +61,7 @@ function buildCards(
       accountNumber,
       title: 'Available Balance',
       amount: fmtBalance(availableBalance),
-      buttons: [{ label: 'Send Money', icon: 'send' }, { label: 'Deposit', icon: 'plus' }],
+      buttons: [{ label: 'Send Money', icon: 'sendAction' }, { label: 'Deposit', icon: 'plusAction' }],
       image: require('../../../../assets/images/dashboard/ball.png'),
       imageSize: { width: 70, height: 70 },
     },
@@ -200,7 +199,7 @@ export default function BalanceCardCarousel({
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             onPress={() => Clipboard.setStringAsync(card.accountNumber)}
           >
-            <Feather name="copy" size={14} color="rgba(255,255,255,0.7)" />
+            <Icon name="copyBalance" size={14} color="rgba(255,255,255,0.7)" />
           </TouchableOpacity>
         </View>
       </View>
@@ -213,8 +212,8 @@ export default function BalanceCardCarousel({
           <View className="flex-row items-center gap-2">
             <Text className="text-white/75 text-xs">{card.title}</Text>
             <TouchableOpacity onPress={onToggleVisibility} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Ionicons
-                name={balanceVisible ? 'eye-outline' : 'eye-off-outline'}
+              <Icon
+                name={balanceVisible ? 'eyeBalance' : 'eyeOffBalance'}
                 size={16}
                 color="rgba(255,255,255,0.75)"
               />
@@ -257,7 +256,7 @@ export default function BalanceCardCarousel({
             }}
           >
             {btn.icon && (
-              <Feather name={btn.icon} size={16} color={colors.primary} style={{ marginRight: 8 }} />
+              <Icon name={btn.icon} size={16} color={colors.primary} style={{ marginRight: 8 }} />
             )}
             <Text className="text-sm font-semibold text-primary">
               {btn.label}

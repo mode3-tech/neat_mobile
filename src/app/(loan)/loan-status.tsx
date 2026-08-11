@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
@@ -16,6 +15,7 @@ import { QUERY_KEYS } from '@/constants';
 import { formatNairaWhole, titleCase } from '@/utils/format';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import type { LoanStatusItem } from '@/types/loan.types';
+import { Icon, type IconName } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 function StatTile({
@@ -23,7 +23,7 @@ function StatTile({
   label,
   value,
 }: {
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  icon: IconName;
   label: string;
   value: string;
   // footer: string;
@@ -31,7 +31,7 @@ function StatTile({
   return (
     <View className="flex-1 bg-primary rounded-2xl p-5">
       <View className="w-10 h-10 rounded-full bg-white/20 items-center justify-center mb-6">
-        <MaterialCommunityIcons name={icon} size={20} color={colors.inkInverse} />
+        <Icon name={icon} size={20} color={colors.inkInverse} />
       </View>
       <Text className="text-xs text-white/80 mb-1.5">{label}</Text>
       <Text className="text-[17px] font-bold text-white">{value}</Text>
@@ -116,12 +116,12 @@ function LoanStatusCard({ loan }: { loan: LoanStatusItem }) {
 
       <View className="flex-row gap-3 mt-5">
         <StatTile
-          icon="wallet-outline"
+          icon="walletOutline"
           label="Loan Amount"
           value={formatNairaWhole(loan.loan_amount)}
         />
         <StatTile
-          icon="wallet-outline"
+          icon="walletOutline"
           label="Balance Remaining"
           value={formatNairaWhole(loan.balance_remaining)}
         />
@@ -179,8 +179,8 @@ export default function LoanStatusScreen() {
         >
           {isError ? (
             <View className="flex-1 items-center justify-center py-16">
-              <MaterialCommunityIcons
-                name="alert-circle-outline"
+              <Icon
+                name="alertCircle"
                 size={48}
                 color={colors.danger}
               />

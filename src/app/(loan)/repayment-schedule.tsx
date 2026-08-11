@@ -9,7 +9,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useQuery } from '@tanstack/react-query';
@@ -20,6 +19,7 @@ import { loanService } from '@/services/loan.service';
 import { formatDateLong } from '@/utils/format';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
+import { Icon } from '@/theme/icons';
 import { accents, colors } from '@/theme/palette';
 
 function formatCurrency(amount: number): string {
@@ -77,7 +77,7 @@ function ScheduleRow({
     <View className={`flex-row items-center justify-between rounded-2xl px-4 py-3 mb-3 ${highlight}`}>
       <View className="flex-row items-center gap-3">
         <View className={`w-9 h-9 rounded-lg items-center justify-center ${iconBg}`}>
-          <MaterialCommunityIcons name="cube-outline" size={18} color={iconColor} />
+          <Icon name="bundle" size={18} color={iconColor} />
         </View>
         <View>
           <Text className="text-[13px] font-semibold text-ink">Week {index + 1}</Text>
@@ -202,8 +202,8 @@ export default function RepaymentScheduleScreen() {
 
         {!isLoading && (!loanId || isError || !repayment) && (
           <View className="py-20 items-center justify-center px-6">
-            <MaterialCommunityIcons
-              name={!loanId ? 'file-document-outline' : 'alert-circle-outline'}
+            <Icon
+              name={!loanId ? 'document' : 'alertCircle'}
               size={64}
               color={colors.line}
             />
@@ -225,7 +225,7 @@ export default function RepaymentScheduleScreen() {
               {/* Amount Paid Card */}
               <View className="flex-1 rounded-2xl p-4 bg-success-surface">
                 <View className="w-9 h-9 rounded-xl bg-success-surface-strong items-center justify-center mb-3">
-                  <MaterialCommunityIcons name="wallet-outline" size={20} color={colors.primary} />
+                  <Icon name="walletOutline" size={20} color={colors.primary} />
                 </View>
                 <Text className="text-xs text-ink-soft mb-1">Amount paid</Text>
                 <Text className="text-[18px] font-bold text-ink">
@@ -239,7 +239,7 @@ export default function RepaymentScheduleScreen() {
               {/* Yet to Pay Card */}
               <View className="flex-1 rounded-2xl p-4 bg-accent-loan">
                 <View className="w-9 h-9 rounded-xl bg-accent-loan-strong items-center justify-center mb-3">
-                  <MaterialCommunityIcons name="cash-clock" size={20} color={accents.loan.icon} />
+                  <Icon name="loanPending" size={20} color={accents.loan.icon} />
                 </View>
                 <Text className="text-xs text-ink-soft mb-1">Yet to Pay</Text>
                 <Text className="text-[18px] font-bold text-ink">
@@ -365,8 +365,8 @@ export default function RepaymentScheduleScreen() {
                   maxLength={PIN_LENGTH}
                 />
                 <TouchableOpacity onPress={() => setShowPin((v) => !v)}>
-                  <MaterialCommunityIcons
-                    name={showPin ? 'eye-off-outline' : 'eye-outline'}
+                  <Icon
+                    name={showPin ? 'eyeOff' : 'eye'}
                     size={20}
                     color={colors.inkMuted}
                   />
@@ -405,8 +405,8 @@ export default function RepaymentScheduleScreen() {
                     }}
                     disabled={authenticating}
                   >
-                    <MaterialCommunityIcons
-                      name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
+                    <Icon
+                      name={biometryType === 'FACE' ? 'faceId' : 'fingerprint'}
                       size={28}
                       color={colors.primary}
                     />

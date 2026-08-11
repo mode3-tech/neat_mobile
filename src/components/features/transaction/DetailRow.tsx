@@ -1,8 +1,8 @@
 import { Text, TouchableOpacity, View } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { toast } from 'sonner-native';
 
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 /**
@@ -48,8 +48,8 @@ export function DetailRow({
             onPress={handleCopy}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <MaterialCommunityIcons
-              name="content-copy"
+            <Icon
+              name="copy"
               size={16}
               color={colors.inkMuted}
             />

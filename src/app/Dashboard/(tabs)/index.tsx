@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -18,6 +17,7 @@ import RecentTransactions from '@/components/features/dashboard/RecentTransactio
 import ActiveLoanCard from '@/components/features/dashboard/ActiveLoanCard';
 import RepaymentBottomSheet from '@/components/features/loans/RepaymentBottomSheet';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 export default function HomeScreen() {
@@ -112,7 +112,7 @@ export default function HomeScreen() {
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             onPress={() => router.push('/notifications')}
           >
-            <Ionicons name="notifications-outline" size={24} color={colors.ink} />
+            <Icon name="bellHeader" size={24} color={colors.ink} />
             {unreadCount > 0 && (
               <View className="absolute -top-1 -right-1 bg-danger rounded-full min-w-[16px] h-4 items-center justify-center px-1">
                 <Text className="text-white text-[10px] font-bold">
@@ -151,7 +151,7 @@ export default function HomeScreen() {
 
         {/* 1-Tap Payments Banner */}
         {/* <View className="flex-row items-center gap-2 bg-warning-surface rounded-xl p-3.5 mx-6 mt-2">
-          <MaterialCommunityIcons name="information" size={20} color={colors.warning} />
+          <Icon name="info" size={20} color={colors.warning} />
           <Text className="flex-1 text-[13px] text-ink-body">
             You don't have any 1-tap payments set up yet.
           </Text>

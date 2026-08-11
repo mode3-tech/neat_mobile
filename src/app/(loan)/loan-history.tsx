@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
@@ -16,6 +15,7 @@ import { QUERY_KEYS } from '@/constants';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import { formatNairaWhole, formatDateLong } from '@/utils/format';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 type TabKey = 'all' | 'upcoming' | 'paid' | 'overdue';
@@ -77,7 +77,7 @@ function HistoryRow({ item }: { item: LoanHistoryItem }) {
           </Text>
         </View>
         <View className="w-7 h-7 rounded-md bg-primary-surface items-center justify-center">
-          <MaterialCommunityIcons name="chevron-right" size={18} color={colors.primary} />
+          <Icon name="chevronRight" size={18} color={colors.primary} />
         </View>
       </View>
     </TouchableOpacity>
@@ -153,8 +153,8 @@ export default function LoanHistoryScreen() {
         >
           {isError ? (
             <View className="flex-1 items-center justify-center py-16">
-              <MaterialCommunityIcons
-                name="alert-circle-outline"
+              <Icon
+                name="alertCircle"
                 size={48}
                 color={colors.danger}
               />
@@ -164,8 +164,8 @@ export default function LoanHistoryScreen() {
             </View>
           ) : items.length === 0 ? (
             <View className="flex-1 items-center justify-center py-16">
-              <MaterialCommunityIcons
-                name="file-document-outline"
+              <Icon
+                name="document"
                 size={48}
                 color={colors.line}
               />

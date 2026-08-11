@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
 import { useQueryClient } from '@tanstack/react-query';
@@ -19,6 +18,7 @@ import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { walletService } from '@/services/wallet.service';
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
 import { getErrorMessage } from '@/utils/error';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 export default function BulkTransferPinScreen() {
@@ -127,8 +127,8 @@ export default function BulkTransferPinScreen() {
                 maxLength={PIN_LENGTH}
               />
               <TouchableOpacity onPress={() => setShowPin((v) => !v)}>
-                <MaterialCommunityIcons
-                  name={showPin ? 'eye-off-outline' : 'eye-outline'}
+                <Icon
+                  name={showPin ? 'eyeOff' : 'eye'}
                   size={20}
                   color={colors.inkMuted}
                 />
@@ -168,10 +168,10 @@ export default function BulkTransferPinScreen() {
                 onPress={handleBiometric}
                 disabled={authenticating || submitting}
               >
-                <MaterialCommunityIcons
+                <Icon
                   name={
                     biometryType === 'FACE'
-                      ? 'face-recognition'
+                      ? 'faceId'
                       : 'fingerprint'
                   }
                   size={28}

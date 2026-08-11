@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 export default function CloseAccountSuccessScreen() {
@@ -58,7 +58,7 @@ export default function CloseAccountSuccessScreen() {
           className="w-28 h-28 rounded-full bg-success-surface items-center justify-center mb-8"
         >
           <View className="w-20 h-20 rounded-full bg-success items-center justify-center">
-            <Ionicons name="checkmark" size={44} color={colors.inkInverse} />
+            <Icon name="successTick" size={44} color={colors.inkInverse} />
           </View>
         </Animated.View>
 

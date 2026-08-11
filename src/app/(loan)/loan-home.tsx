@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
@@ -18,6 +17,7 @@ import { formatNairaWhole } from '@/utils/format';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import RepaymentBottomSheet from '@/components/features/loans/RepaymentBottomSheet';
 import type { ActiveLoan } from '@/types/loan.types';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 interface ActionItemProps {
@@ -47,8 +47,8 @@ function ActionItem({ icon, label, onPress, disabled }: ActionItemProps) {
           {label}
         </Text>
       </View>
-      <MaterialCommunityIcons
-        name="chevron-right"
+      <Icon
+        name="chevronRight"
         size={22}
         color={disabled ? colors.lineStrong : colors.primary}
       />

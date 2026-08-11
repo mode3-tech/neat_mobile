@@ -1,8 +1,8 @@
 import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 type Variant = 'error' | 'blocked';
@@ -36,11 +36,11 @@ export default function CloseAccountResultScreen() {
       <View className="flex-1 items-center justify-center">
         {isBlocked ? (
           <View className="w-[72px] h-[72px] rounded-full bg-warning items-center justify-center mb-8">
-            <MaterialCommunityIcons name="alert" size={40} color={colors.inkInverse} />
+            <Icon name="alert" size={40} color={colors.inkInverse} />
           </View>
         ) : (
           <View className="w-[72px] h-[72px] rounded-2xl bg-danger items-center justify-center mb-8">
-            <MaterialCommunityIcons name="close" size={40} color={colors.inkInverse} />
+            <Icon name="close" size={40} color={colors.inkInverse} />
           </View>
         )}
 

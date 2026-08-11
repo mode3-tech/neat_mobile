@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import DateTimePicker, {
@@ -24,17 +23,18 @@ import type { StatementFormat } from '@/types/account.types';
 import { downloadToAndroidDownloads } from '@/utils/download';
 import { formatDateShort } from '@/utils/format';
 import { shareFile } from '@/utils/receipt';
+import { Icon, type IconName } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 interface FileTypeOption {
   label: string;
   value: StatementFormat;
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  icon: IconName;
 }
 
 const FILE_TYPE_OPTIONS: FileTypeOption[] = [
-  { label: 'Excel', value: 'xlsx', icon: 'file-excel-box' },
-  { label: 'PDF', value: 'pdf', icon: 'file-pdf-box' },
+  { label: 'Excel', value: 'xlsx', icon: 'excel' },
+  { label: 'PDF', value: 'pdf', icon: 'pdf' },
 ];
 
 function startOfDay(date: Date): Date {
@@ -217,8 +217,8 @@ export default function StatementScreen() {
               >
                 {startDate ? formatDateShort(startDate) : 'Select start date'}
               </Text>
-              <MaterialCommunityIcons
-                name="calendar-blank-outline"
+              <Icon
+                name="calendarBlank"
                 size={20}
                 color={colors.inkMuted}
               />
@@ -241,8 +241,8 @@ export default function StatementScreen() {
               >
                 {endDate ? formatDateShort(endDate) : 'Select end date'}
               </Text>
-              <MaterialCommunityIcons
-                name="calendar-blank-outline"
+              <Icon
+                name="calendarBlank"
                 size={20}
                 color={colors.inkMuted}
               />
@@ -274,8 +274,8 @@ export default function StatementScreen() {
               >
                 {selectedFileType?.label ?? 'Select file type'}
               </Text>
-              <MaterialCommunityIcons
-                name="chevron-right"
+              <Icon
+                name="chevronRight"
                 size={20}
                 color={colors.inkMuted}
               />
@@ -303,9 +303,9 @@ export default function StatementScreen() {
                 <View className="bg-primary-surface rounded-xl px-5 py-5">
                   <View className="flex-row items-center mb-4">
                     <View className="w-11 h-11 rounded-full bg-white items-center justify-center">
-                      <MaterialCommunityIcons
+                      <Icon
                         name={
-                          (selectedFileType?.icon ?? 'file-document-outline') as any
+                          (selectedFileType?.icon ?? 'document')
                         }
                         size={24}
                         color={colors.primary}
@@ -333,7 +333,7 @@ export default function StatementScreen() {
                       <ActivityIndicator size="small" color={colors.inkInverse} />
                     ) : (
                       <>
-                        <MaterialCommunityIcons
+                        <Icon
                           name="download"
                           size={18}
                           color={colors.inkInverse}
@@ -350,8 +350,8 @@ export default function StatementScreen() {
               {jobStatus === 'failed' && (
                 <View className="bg-danger-surface rounded-xl px-5 py-5">
                   <View className="flex-row items-center mb-4">
-                    <MaterialCommunityIcons
-                      name="alert-circle-outline"
+                    <Icon
+                      name="alertCircle"
                       size={24}
                       color={colors.danger}
                     />
@@ -488,7 +488,7 @@ export default function StatementScreen() {
                 Select File Type
               </Text>
               <TouchableOpacity onPress={() => setFileTypeModal(false)}>
-                <MaterialCommunityIcons name="close" size={24} color={colors.inkBody} />
+                <Icon name="close" size={24} color={colors.inkBody} />
               </TouchableOpacity>
             </View>
 
@@ -506,7 +506,7 @@ export default function StatementScreen() {
                   }}
                 >
                   <View className="w-10 h-10 rounded-full bg-surface-input items-center justify-center">
-                    <MaterialCommunityIcons
+                    <Icon
                       name={option.icon}
                       size={22}
                       color={colors.primary}
@@ -516,8 +516,8 @@ export default function StatementScreen() {
                     {option.label}
                   </Text>
                   {isSelected && (
-                    <MaterialCommunityIcons
-                      name="check-circle"
+                    <Icon
+                      name="checkCircle"
                       size={20}
                       color={colors.primary}
                     />

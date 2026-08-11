@@ -5,10 +5,10 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { useLoanStore } from '@/stores/loan.store';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 function formatCurrency(amount: number): string {
@@ -73,7 +73,7 @@ export default function ReviewSummaryScreen() {
 
         <View className="flex-row items-center bg-surface-muted rounded-[14px] p-4 gap-[14px] mb-6">
           <View className="w-11 h-11 rounded-full bg-primary-surface items-center justify-center">
-            <MaterialCommunityIcons name="home" size={22} color={colors.primary} />
+            <Icon name="tabHome" size={22} color={colors.primary} />
           </View>
           <View className="flex-1">
             <Text className="text-[13px] font-semibold text-ink-body mb-1">Business Address</Text>

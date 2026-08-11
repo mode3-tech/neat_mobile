@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
@@ -18,6 +17,7 @@ import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { savingsService } from '@/services/savings.service';
 import { useSavingsStore } from '@/stores/savings.store';
 import { getErrorMessage } from '@/utils/error';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 export default function SavingsPinScreen() {
@@ -102,8 +102,8 @@ export default function SavingsPinScreen() {
             maxLength={PIN_LENGTH}
           />
           <TouchableOpacity onPress={() => setShowPin((v) => !v)}>
-            <MaterialCommunityIcons
-              name={showPin ? 'eye-off-outline' : 'eye-outline'}
+            <Icon
+              name={showPin ? 'eyeOff' : 'eye'}
               size={20}
               color={colors.inkMuted}
             />
@@ -137,8 +137,8 @@ export default function SavingsPinScreen() {
             onPress={handleBiometric}
             disabled={authenticating || submitting}
           >
-            <MaterialCommunityIcons
-              name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
+            <Icon
+              name={biometryType === 'FACE' ? 'faceId' : 'fingerprint'}
               size={28}
               color={colors.primary}
             />

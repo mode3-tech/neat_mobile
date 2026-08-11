@@ -7,7 +7,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
@@ -15,6 +14,7 @@ import { useTransactions } from '@/hooks/use-transactions';
 import { openTransactionDetails } from '@/utils/transaction-nav';
 import { TransactionRow } from '@/components/features/transaction/TransactionRow';
 import type { TransactionFilter, Transaction } from '@/types/transaction.types';
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 
 const FILTERS: { key: TransactionFilter; label: string }[] = [
@@ -61,8 +61,8 @@ function FilterTabs({
 function EmptyState({ isFiltered }: { isFiltered: boolean }) {
   return (
     <View className="flex-1 items-center justify-center px-6">
-      <MaterialCommunityIcons
-        name={isFiltered ? 'magnify' : 'receipt'}
+      <Icon
+        name={isFiltered ? 'search' : 'tabTransactions'}
         size={64}
         color={colors.line}
       />
@@ -81,7 +81,7 @@ function EmptyState({ isFiltered }: { isFiltered: boolean }) {
 function ErrorState({ message }: { message: string }) {
   return (
     <View className="flex-1 items-center justify-center px-6">
-      <MaterialCommunityIcons name="wifi-off" size={64} color={colors.line} />
+      <Icon name="offline" size={64} color={colors.line} />
       <Text className="text-base font-semibold text-ink mt-4">
         {message}
       </Text>
@@ -132,8 +132,8 @@ export default function TransactionScreen() {
               ) : (
                 <View />
               )}
-              <MaterialCommunityIcons
-                name="swap-vertical"
+              <Icon
+                name="sortDirection"
                 size={22}
                 color="white"
               />
@@ -154,7 +154,7 @@ export default function TransactionScreen() {
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-        <MaterialCommunityIcons name="magnify" size={20} color={colors.inkMuted} />
+        <Icon name="search" size={20} color={colors.inkMuted} />
       </View>
 
       {/* Filter Tabs */}

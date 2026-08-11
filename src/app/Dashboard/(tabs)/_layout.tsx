@@ -1,7 +1,7 @@
 import { Tabs, router } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { Icon } from '@/theme/icons';
 import { colors } from '@/theme/palette';
 import { weight } from '@/theme/typography';
 
@@ -37,7 +37,7 @@ export default function TabsLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home" size={size} color={color} />
+            <Icon name="tabHome" size={size} color={color} />
           ),
         }}
       />
@@ -46,7 +46,7 @@ export default function TabsLayout() {
         options={{
           title: 'Transaction',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="receipt" size={size} color={color} />
+            <Icon name="tabTransactions" size={size} color={color} />
           ),
         }}
       />
@@ -55,7 +55,7 @@ export default function TabsLayout() {
         options={{
           title: 'Loan',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="wallet" size={size} color={color} />
+            <Icon name="tabLoan" size={size} color={color} />
           ),
         }}
         listeners={{
@@ -70,7 +70,7 @@ export default function TabsLayout() {
         options={{
           title: 'Support',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="phone" size={size} color={color} />
+            <Icon name="tabSupport" size={size} color={color} />
           ),
         }}
       /> */}
@@ -79,7 +79,7 @@ export default function TabsLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-circle" size={size} color={color} />
+            <Icon name="tabProfile" size={size} color={color} />
           ),
         }}
       />
