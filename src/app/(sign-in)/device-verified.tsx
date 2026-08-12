@@ -4,7 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#FDC800';
+const PRIMARY_TEXT = '#032252';
 
 export default function DeviceVerifiedScreen() {
   useEffect(() => {
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },

@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useIsFocused } from '@react-navigation/native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { QUERY_KEYS } from '@/constants';
@@ -19,9 +21,12 @@ import ActiveLoanCard from '@/components/features/dashboard/ActiveLoanCard';
 import RepaymentBottomSheet from '@/components/features/loans/RepaymentBottomSheet';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 
+const HEADER_BG = '#032252';
+
 export default function HomeScreen() {
   const user = useAuthStore((s) => s.user);
   const queryClient = useQueryClient();
+  const insets = useSafeAreaInsets();
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [repaymentOpen, setRepaymentOpen] = useState(false);
@@ -83,48 +88,63 @@ export default function HomeScreen() {
     setImageLoadFailed(false);
   }, [avatarUri, summaryUpdatedAt]);
 
+
+  const isFocused = useIsFocused();
+
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+    <View className="flex-1 bg-white">
+      {isFocused && <StatusBar style="light" />}
       {/* Header (pinned — stays fixed above the scrolling content) */}
-      <View className="flex-row justify-between items-center px-6 pt-2 pb-3">
-        <View className="flex-row items-center gap-2.5">
-          <View className="w-12 h-12 rounded-full bg-[#472FF8] items-center justify-center overflow-hidden">
-            {avatarUri && !imageLoadFailed ? (
-              <Image
-                source={{ uri: avatarUri }}
-                className="w-full h-full"
-                onError={() => setImageLoadFailed(true)}
-              />
-            ) : (
-              <Text className="text-white text-base font-bold">{initials}</Text>
-            )}
+      <View
+        className="pl-5 pr-8 pb-4"
+        style={{ backgroundColor: HEADER_BG, paddingTop: insets.top + 8 }}
+      >
+        <View className="flex-row justify-between items-center">
+          <View className="flex-row items-center gap-3 flex-1 mr-2">
+            <View className="w-11 h-11 rounded-full bg-[#032252] border-2 border-white items-center justify-center overflow-hidden">
+              {avatarUri && !imageLoadFailed ? (
+                <Image
+                  source={{ uri: avatarUri }}
+                  className="w-full h-full"
+                  onError={() => setImageLoadFailed(true)}
+                />
+              ) : (
+                <Text className="text-white text-base font-bold">{initials}</Text>
+              )}
+            </View>
+            <View className="flex-1">
+              <Text className="text-[13px] text-white/70">Hello,</Text>
+              <Text
+                className="text-[15px] font-semibold text-white"
+                numberOfLines={1}
+              >
+                {firstName || 'there'}
+              </Text>
+            </View>
           </View>
-          <View>
-            {/* <Text className="text-xs font-normal text-gray-500">Welcome Back,</Text> */}
-            <Text className="text-base font-bold text-gray-900">
-              {firstName ? `Hi, ${firstName} 👋` : 'Hi 👋'}
-            </Text>
+          <View className="flex-row items-center">
+
+            <Image
+              source={require('../../../../assets/images/welcome/NeatPayLogo.png')}
+              className="w-[84px] h-8 mr-4"
+              resizeMode="contain"
+            />
+           
+            <TouchableOpacity
+              className="w-10 h-10  rounded-full bg-white/10 items-center justify-center"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              onPress={() => router.push('/notifications')}
+            >
+              <Ionicons name="notifications-outline" size={20} color="#FFFFFF" />
+              {unreadCount > 0 && (
+                <View className="absolute top-0 right-0 bg-[#EF4444] rounded-full min-w-[16px] h-4 items-center justify-center px-1">
+                  <Text className="text-white text-[10px] font-bold">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
           </View>
-        </View>
-        <View className="flex-row items-center gap-2">
-          <TouchableOpacity
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            onPress={() => router.push('/notifications')}
-          >
-            <Ionicons name="notifications-outline" size={24} color="#1A1A1A" />
-            {unreadCount > 0 && (
-              <View className="absolute -top-1 -right-1 bg-[#EF4444] rounded-full min-w-[16px] h-4 items-center justify-center px-1">
-                <Text className="text-white text-[10px] font-bold">
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
-          <Image
-            source={require('../../../../assets/images/welcome/NeatLogo.png')}
-            className="w-12 h-10"
-            resizeMode="contain"
-          />
         </View>
       </View>
 
@@ -172,6 +192,6 @@ export default function HomeScreen() {
         loan={accountSummary?.active_loans?.[0]}
         availableBalance={accountSummary?.available_balance}
       />
-    </SafeAreaView>
+    </View>
   );
 }

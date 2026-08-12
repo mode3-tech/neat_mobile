@@ -21,7 +21,7 @@ import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { getErrorMessage } from '@/utils/error';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#FDC800';
 
 export default function SignInScreen() {
   const insets = useSafeAreaInsets();
@@ -160,7 +160,7 @@ export default function SignInScreen() {
 
             >
               {loading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color="#032252" />
               ) : (
                 <Text style={[styles.primaryBtnText, !canSignIn && styles.disabledBtnText]}>
                   Sign In

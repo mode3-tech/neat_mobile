@@ -13,7 +13,8 @@ import { router, useLocalSearchParams } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#FDC800';
+const PRIMARY_TEXT = '#032252';
 const ERROR_COLOR = '#EF4444';
 
 const REQUIREMENTS = [
@@ -159,7 +160,7 @@ export default function ResetPasswordScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={PRIMARY_TEXT} />
             ) : (
               <Text style={[styles.primaryBtnText, !canProceed && styles.disabledBtnText]}>
                 Proceed
@@ -293,7 +294,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },

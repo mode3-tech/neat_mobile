@@ -96,10 +96,10 @@ export default function ServicesGrid() {
               activeOpacity={0.7}
               onPress={() => handlePress(item)}
             >
-              <View className="w-12 h-12 rounded-full bg-[#472FF8] items-center justify-center">
-                <MaterialCommunityIcons name={item.icon} size={22} color="#FFFFFF" />
+              <View className="w-14 h-14 rounded-full bg-[#F1F3F8] items-center justify-center">
+                <MaterialCommunityIcons name={item.icon} size={24} color="#032252" />
               </View>
-              <Text className="text-[10px] text-gray-700 text-center mt-1.5" numberOfLines={1}>
+              <Text className="text-[11px] font-medium text-[#032252] text-center mt-2" numberOfLines={1}>
                 {item.label}
               </Text>
             </TouchableOpacity>

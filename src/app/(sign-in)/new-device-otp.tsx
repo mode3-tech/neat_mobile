@@ -15,7 +15,8 @@ import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { OTP_LENGTH } from '@/constants';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#FDC800';
+const PRIMARY_TEXT = '#032252';
 const RESEND_SECONDS = 90;
 
 export default function NewDeviceOtpScreen() {
@@ -105,7 +106,7 @@ export default function NewDeviceOtpScreen() {
           activeOpacity={0.85}
         >
           {loading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={PRIMARY_TEXT} />
           ) : (
             <Text style={[styles.primaryBtnText, !canVerify && styles.disabledBtnText]}>
               Verify Device
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -204,12 +205,12 @@ const styles = StyleSheet.create({
   },
   resendLink: {
     fontSize: 13,
-    color: PRIMARY,
+    color: PRIMARY_TEXT,
     fontWeight: '600',
   },
   timerText: {
     fontSize: 13,
-    color: PRIMARY,
+    color: PRIMARY_TEXT,
     fontWeight: '600',
   },
 });

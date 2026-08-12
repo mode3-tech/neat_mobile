@@ -17,7 +17,8 @@ import { toast } from 'sonner-native';
 import { authService } from '@/services/auth.service';
 import { getErrorMessage } from '@/utils/error';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#FDC800';
+const PRIMARY_TEXT = '#032252';
 
 export default function ForgotPasswordScreen() {
   const [phone, setPhone] = useState('');
@@ -83,7 +84,7 @@ export default function ForgotPasswordScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={PRIMARY_TEXT} />
             ) : (
               <Text style={[styles.primaryBtnText, !canSubmit && styles.disabledBtnText]}>
                 Submit
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },
