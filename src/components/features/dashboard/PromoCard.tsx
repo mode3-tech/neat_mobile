@@ -4,7 +4,7 @@ export default function PromoCard() {
   return (
     <View className="mx-6 rounded-2xl overflow-hidden">
       <Image
-        source={require('../../../../assets/images/dashboard/New Notification.png')}
+        source={require('../../../../assets/images/journey.png')}
         className="w-full h-[180px]"
         resizeMode="contain"
       />

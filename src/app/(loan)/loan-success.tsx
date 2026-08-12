@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
@@ -35,16 +35,11 @@ export default function LoanSuccessScreen() {
 
   const handleGoToStatus = () => {
     leavingRef.current = true;
-    // Collapse the application stack back to its root (loan-home) and open
-    // loan-status on top, so Back goes loan-status → loan-home → Dashboard.
     router.dismissAll();
     router.push('/(loan)/loan-status');
     reset();
   };
 
-  // Guard: if this screen is ever shown without summary data (e.g. stale
-  // navigation), bail back to loan-home — but not while the user is
-  // intentionally leaving (reset() clears summary as we navigate away).
   useEffect(() => {
     if (!summary && !leavingRef.current) {
       router.replace('/(loan)/loan-home');
@@ -68,7 +63,7 @@ export default function LoanSuccessScreen() {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
+    <HeaderScreen>
       <ScrollView showsVerticalScrollIndicator={false} className="pt-10">
         <View className="items-center mb-5">
           <View className="w-16 h-16 rounded-full bg-[#16A34A] items-center justify-center">
@@ -97,13 +92,13 @@ export default function LoanSuccessScreen() {
 
       <View className="pb-4">
         <TouchableOpacity
-          className="bg-[#472FF8] rounded-full py-4 items-center"
+          className="bg-[#F9B700] rounded-full py-4 items-center"
           onPress={handleGoToStatus}
           activeOpacity={0.85}
         >
-          <Text className="text-white text-base font-semibold">View Loan Status</Text>
+          <Text className="text-[#032252] text-base font-semibold">View Loan Status</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

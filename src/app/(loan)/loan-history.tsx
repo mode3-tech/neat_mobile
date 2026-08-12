@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -75,8 +75,8 @@ function HistoryRow({ item }: { item: LoanHistoryItem }) {
             {statusLabel(item.status)}
           </Text>
         </View>
-        <View className="w-7 h-7 rounded-md bg-[#EEF0FF] items-center justify-center">
-          <MaterialCommunityIcons name="chevron-right" size={18} color="#472FF8" />
+        <View className="w-7 h-7 rounded-md bg-[#E8EEF7] items-center justify-center">
+          <MaterialCommunityIcons name="chevron-right" size={18} color="#032252" />
         </View>
       </View>
     </TouchableOpacity>
@@ -101,7 +101,7 @@ export default function LoanHistoryScreen() {
     tab === 'all' ? history ?? [] : (history ?? []).filter((h) => h.status === tab);
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
+    <HeaderScreen>
       <TouchableOpacity
         className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
         onPress={() => router.back()}
@@ -121,13 +121,13 @@ export default function LoanHistoryScreen() {
               activeOpacity={0.85}
               className={`flex-1 py-2 rounded-full border items-center ${
                 active
-                  ? 'bg-[#472FF8] border-[#472FF8]'
-                  : 'bg-white border-[#472FF8]'
+                  ? 'bg-[#032252] border-[#032252]'
+                  : 'bg-white border-[#032252]'
               }`}
             >
               <Text
                 className={`text-xs font-semibold ${
-                  active ? 'text-white' : 'text-[#472FF8]'
+                  active ? 'text-white' : 'text-[#032252]'
                 }`}
               >
                 {t.label}
@@ -139,7 +139,7 @@ export default function LoanHistoryScreen() {
 
       {isLoading ? (
         <View className="h-[180px] items-center justify-center">
-          <ActivityIndicator size="small" color="#472FF8" />
+          <ActivityIndicator size="small" color="#032252" />
         </View>
       ) : (
         <ScrollView
@@ -179,6 +179,6 @@ export default function LoanHistoryScreen() {
           )}
         </ScrollView>
       )}
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

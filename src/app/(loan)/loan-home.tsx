@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -49,7 +49,7 @@ function ActionItem({ icon, label, onPress, disabled }: ActionItemProps) {
       <MaterialCommunityIcons
         name="chevron-right"
         size={22}
-        color={disabled ? '#D1D5DB' : '#472FF8'}
+        color={disabled ? '#D1D5DB' : '#032252'}
       />
     </TouchableOpacity>
   );
@@ -57,11 +57,11 @@ function ActionItem({ icon, label, onPress, disabled }: ActionItemProps) {
 
 function EmptyBalanceCard() {
   return (
-    <View className="bg-[#472FF8] rounded-2xl p-6 mb-7">
+    <View className="bg-[#F9B700] rounded-2xl p-6 mb-7">
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
-          <Text className="text-sm text-white/80 mb-2">Outstanding Balance</Text>
-          <Text className="text-[28px] font-bold text-white">₦ 0.00</Text>
+          <Text className="text-sm text-[#032252]/70 mb-2">Outstanding Balance</Text>
+          <Text className="text-[28px] font-bold text-[#032252]">₦ 0.00</Text>
         </View>
         <Image
           source={require('../../../assets/images/pig.png')}
@@ -72,12 +72,12 @@ function EmptyBalanceCard() {
 
       <View className="flex-row mt-5 mb-5">
         <View className="flex-1">
-          <Text className="text-xs text-white/80 mb-1">Next Payment</Text>
-          <Text className="text-sm font-semibold text-white">₦ 0.00</Text>
+          <Text className="text-xs text-[#032252]/70 mb-1">Next Payment</Text>
+          <Text className="text-sm font-semibold text-[#032252]">₦ 0.00</Text>
         </View>
         <View className="flex-1">
-          <Text className="text-xs text-white/80 mb-1">Due Date</Text>
-          <Text className="text-sm font-semibold text-white">—</Text>
+          <Text className="text-xs text-[#032252]/70 mb-1">Due Date</Text>
+          <Text className="text-sm font-semibold text-[#032252]">—</Text>
         </View>
       </View>
 
@@ -86,22 +86,19 @@ function EmptyBalanceCard() {
         activeOpacity={0.8}
         onPress={() => router.push('/(loan)/loan-eligibility')}
       >
-        <Text className="text-[15px] font-semibold text-[#472FF8]">Apply for a Loan</Text>
+        <Text className="text-[15px] font-semibold text-[#032252]">Apply for a Loan</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
-// Neutral placeholder shown while the active-loans query is loading, so we
-// never flash the "Apply for a Loan" empty state to a user who actually has a
-// loan. Mirrors the real card's structure/height (no spinner, no layout jump).
 function BalanceCardSkeleton() {
   return (
-    <View className="bg-[#472FF8] rounded-2xl p-6 mb-7">
+    <View className="bg-[#F9B700] rounded-2xl p-6 mb-7">
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
-          <Text className="text-sm text-white/80 mb-2">Outstanding Balance</Text>
-          <Text className="text-[28px] font-bold text-white/40">₦ —</Text>
+          <Text className="text-sm text-[#032252]/70 mb-2">Outstanding Balance</Text>
+          <Text className="text-[28px] font-bold text-[#032252]/40">₦ —</Text>
         </View>
         <Image
           source={require('../../../assets/images/pig.png')}
@@ -112,27 +109,27 @@ function BalanceCardSkeleton() {
 
       <View className="flex-row mt-5 mb-5">
         <View className="flex-1">
-          <Text className="text-xs text-white/80 mb-1">Next Payment</Text>
-          <Text className="text-sm font-semibold text-white/40">₦ —</Text>
+          <Text className="text-xs text-[#032252]/70 mb-1">Next Payment</Text>
+          <Text className="text-sm font-semibold text-[#032252]/40">₦ —</Text>
         </View>
         <View className="flex-1">
-          <Text className="text-xs text-white/80 mb-1">Due Date</Text>
-          <Text className="text-sm font-semibold text-white/40">—</Text>
+          <Text className="text-xs text-[#032252]/70 mb-1">Due Date</Text>
+          <Text className="text-sm font-semibold text-[#032252]/40">—</Text>
         </View>
       </View>
 
-      <View className="bg-white/30 rounded-full py-3.5" />
+      <View className="bg-[#032252]/15 rounded-full py-3.5" />
     </View>
   );
 }
 
 function ActiveBalanceCard({ loan, onMakeRepayment }: { loan: ActiveLoan; onMakeRepayment: () => void }) {
   return (
-    <View className="bg-[#472FF8] rounded-2xl p-6 mb-7">
+    <View className="bg-[#F9B700] rounded-2xl p-6 mb-7">
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
-          <Text className="text-sm text-white/80 mb-2">Outstanding Balance</Text>
-          <Text className="text-[28px] font-bold text-white">
+          <Text className="text-sm text-[#032252]/70 mb-2">Outstanding Balance</Text>
+          <Text className="text-[28px] font-bold text-[#032252]">
             {formatNairaWhole(loan.outstanding_balance)}
           </Text>
         </View>
@@ -145,14 +142,14 @@ function ActiveBalanceCard({ loan, onMakeRepayment }: { loan: ActiveLoan; onMake
 
       <View className="flex-row mt-5 mb-5">
         <View className="flex-1">
-          <Text className="text-xs text-white/80 mb-1">Next Payment</Text>
-          <Text className="text-sm font-semibold text-white">
+          <Text className="text-xs text-[#032252]/70 mb-1">Next Payment</Text>
+          <Text className="text-sm font-semibold text-[#032252]">
             {formatNairaWhole(loan.next_payment)}
           </Text>
         </View>
         <View className="flex-1">
-          <Text className="text-xs text-white/80 mb-1">Due Date</Text>
-          <Text className="text-sm font-semibold text-white">
+          <Text className="text-xs text-[#032252]/70 mb-1">Due Date</Text>
+          <Text className="text-sm font-semibold text-[#032252]">
             {loan.due_date}
           </Text>
         </View>
@@ -163,7 +160,7 @@ function ActiveBalanceCard({ loan, onMakeRepayment }: { loan: ActiveLoan; onMake
         activeOpacity={0.8}
         onPress={onMakeRepayment}
       >
-        <Text className="text-[15px] font-semibold text-[#472FF8]">Make Repayment</Text>
+        <Text className="text-[15px] font-semibold text-[#032252]">Make Repayment</Text>
       </TouchableOpacity>
     </View>
   );
@@ -210,9 +207,9 @@ export default function LoanHomeScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
+    <HeaderScreen>
       <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
+        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-4 mb-6"
         onPress={() => router.back()}
       >
         <Text className="text-sm font-medium text-[#374151]">Back</Text>
@@ -274,6 +271,6 @@ export default function LoanHomeScreen() {
         loan={loan}
         availableBalance={availableBalance}
       />
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }
