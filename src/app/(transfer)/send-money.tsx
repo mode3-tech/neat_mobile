@@ -29,6 +29,7 @@ import { ActivationCapBanner } from '@/components/ActivationCapBanner';
 import { getErrorMessage } from '@/utils/error';
 import { formatNairaShort } from '@/utils/format';
 import type { Bank, Beneficiary, TransferType } from '@/types/transfer.types';
+import { BackButton } from '@/components/ui/back-button';
 
 const TABS: { key: TransferType; label: string }[] = [
   { key: 'neatpay', label: 'NEAT Microcredit' },
@@ -350,16 +351,15 @@ export default function SendMoneyScreen() {
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 px-6">
         {/* Back button */}
-        <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-12"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
-        </TouchableOpacity>
-
-        <Text className="text-[20px] font-medium text-[#1A1A1A] mb-8">
-          Send Money
-        </Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-8">
+          <BackButton className="" />
+          <Text
+            className="text-[20px] font-medium text-[#1A1A1A] leading-[24px]"
+            style={{ includeFontPadding: false }}
+          >
+            Send Money
+          </Text>
+        </View>
 
         {/* CBN 24h activation cap disclosure (renders only when active) */}
         <ActivationCapBanner limits={limits} />

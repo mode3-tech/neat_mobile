@@ -3,9 +3,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import * as Clipboard from 'expo-clipboard';
-import { router } from 'expo-router';
 
 import { accountService } from '@/services/account.service';
+import { BackButton } from '@/components/ui/back-button';
 
 export default function BankTransferScreen() {
   const { data: accountSummary } = useQuery({
@@ -21,12 +21,7 @@ export default function BankTransferScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
+      <BackButton className="mt-4 mb-6" />
 
       <Text className="text-[22px] font-bold text-[#1A1A1A] text-center mb-1.5">
         Transfer to Your Account

@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { Switch, Text, TouchableOpacity, View } from 'react-native';
+import { Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { QUERY_KEYS } from '@/constants';
 import { accountService } from '@/services/account.service';
 import { toggleNotifications } from '@/services/notification.service';
 import type { AccountSummary } from '@/types/account.types';
+import { BackButton } from '@/components/ui/back-button';
 
 export default function NotificationsScreen() {
   const queryClient = useQueryClient();
@@ -60,14 +60,15 @@ export default function NotificationsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm text-gray-700 font-medium">Back</Text>
-      </TouchableOpacity>
-
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Notification settings</Text>
+      <View className="flex-row items-center gap-2 mt-4 mb-6">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Notification settings
+        </Text>
+      </View>
 
       <View className="bg-[#F5F5F5] rounded-2xl px-4 py-4 flex-row items-center">
         <View className="flex-1">

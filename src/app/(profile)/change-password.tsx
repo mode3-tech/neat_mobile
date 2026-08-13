@@ -15,6 +15,7 @@ import { SessionExpiredCard } from '@/components/ui/session-expired-card';
 import { authService } from '@/services/auth.service';
 import { useSecurityChangeStore } from '@/stores/security-change.store';
 import { getErrorMessage } from '@/utils/error';
+import { BackButton } from '@/components/ui/back-button';
 
 const REQUIREMENTS = [
   { label: 'An uppercase letter', test: (p: string) => /[A-Z]/.test(p) },
@@ -130,14 +131,15 @@ export default function ChangePasswordScreen() {
         showsVerticalScrollIndicator={false}
         bottomOffset={20}
       >
-          <TouchableOpacity
-            className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
-            onPress={() => router.back()}
-          >
-            <Text className="text-sm text-gray-700 font-medium">Back</Text>
-          </TouchableOpacity>
-
-          <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Change Password</Text>
+          <View className="flex-row items-center gap-2 mt-4 mb-6">
+            <BackButton className="" />
+            <Text
+              className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+              style={{ includeFontPadding: false }}
+            >
+              Change Password
+            </Text>
+          </View>
 
           <PwField
             label="Current Password"

@@ -16,6 +16,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { loanService } from '@/services/loan.service';
 import { useLoanStore } from '@/stores/loan.store';
 import type { LoanProduct } from '@/types/loan.types';
+import { BackButton } from '@/components/ui/back-button';
 
 const PRIMARY = '#032252';
 
@@ -137,15 +138,17 @@ export default function ApplyLoanScreen() {
 
   return (
     <HeaderScreen>
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
+      <View className="flex-row items-center gap-2 mt-4 mb-6">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Apply for Loan
+        </Text>
+      </View>
 
       <KeyboardAwareScrollView showsVerticalScrollIndicator={false} className="flex-1">
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Apply for Loan</Text>
 
        
         <View className="mb-5">

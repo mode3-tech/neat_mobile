@@ -23,6 +23,7 @@ import type { VasBiller, VasProduct } from '@/types/vas.types';
 import { formatNairaWhole } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
+import { BackButton } from '@/components/ui/back-button';
 
 const PHONE_LENGTH = 11;
 
@@ -122,14 +123,15 @@ export default function BuyDataScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
-        </TouchableOpacity>
-
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Data Bundles</Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-6">
+          <BackButton className="" />
+          <Text
+            className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+            style={{ includeFontPadding: false }}
+          >
+            Data Bundles
+          </Text>
+        </View>
 
         {/* Provider selector */}
         <View className="bg-[#F9FAFB] rounded-2xl p-4 mb-6">

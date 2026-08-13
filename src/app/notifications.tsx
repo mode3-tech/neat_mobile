@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -20,6 +19,7 @@ import {
 } from '@/services/notification.service';
 import { useNotificationStore } from '@/stores/notification.store';
 import type { AppNotification, NotificationType } from '@/types/notification.types';
+import { BackButton } from '@/components/ui/back-button';
 
 const TYPE_ICONS: Record<NotificationType, { name: string; color: string; bg: string }> = {
   loan: { name: 'wallet-outline', color: '#472FF8', bg: '#EEF0FF' },
@@ -273,16 +273,21 @@ export default function NotificationsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-6 pt-2 pb-4">
-        <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
-        </TouchableOpacity>
+      <View className="flex-row items-center justify-between px-6 pt-4 pb-4">
+        <View className="flex-1 flex-row items-center gap-2">
+          <BackButton className="" />
+          <Text
+            numberOfLines={1}
+            className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+            style={{ includeFontPadding: false }}
+          >
+            Notifications
+          </Text>
+        </View>
 
         {hasUnread && (
           <TouchableOpacity
+            className="shrink-0 pl-3"
             onPress={() => markAllReadMutation.mutate()}
             disabled={markAllReadMutation.isPending}
           >
@@ -291,12 +296,6 @@ export default function NotificationsScreen() {
             </Text>
           </TouchableOpacity>
         )}
-      </View>
-
-      <View className="px-6 mb-4">
-        <Text className="text-[22px] font-bold text-[#1A1A1A]">
-          Notifications
-        </Text>
       </View>
 
       {isLoading ? (

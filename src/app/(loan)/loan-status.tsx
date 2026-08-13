@@ -1,14 +1,6 @@
-import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
 import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
 import { loanService } from '@/services/loan.service';
@@ -16,6 +8,7 @@ import { QUERY_KEYS } from '@/constants';
 import { formatNairaWhole, titleCase } from '@/utils/format';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import type { LoanStatusItem } from '@/types/loan.types';
+import { BackButton } from '@/components/ui/back-button';
 
 function StatTile({
   icon,
@@ -152,16 +145,15 @@ export default function LoanStatusScreen() {
 
   return (
     <HeaderScreen>
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
-
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">
-        Loan Status
-      </Text>
+      <View className="flex-row items-center gap-2 mt-4 mb-5">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Loan Status
+        </Text>
+      </View>
 
       {isLoading ? (
         <View className="h-[180px] items-center justify-center">

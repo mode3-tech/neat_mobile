@@ -17,6 +17,7 @@ import { PIN_LENGTH } from '@/constants';
 import { authService } from '@/services/auth.service';
 import { clearStoredTransactionPin } from '@/services/biometric.service';
 import { getErrorMessage } from '@/utils/error';
+import { BackButton } from '@/components/ui/back-button';
 
 export default function ResetPinScreen() {
   const { verificationId } = useLocalSearchParams<{ verificationId: string }>();
@@ -66,14 +67,15 @@ export default function ResetPinScreen() {
         className="flex-1 px-6"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <TouchableOpacity
-          className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm text-gray-700 font-medium">Back</Text>
-        </TouchableOpacity>
-
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Reset Transaction PIN</Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-6">
+          <BackButton className="" />
+          <Text
+            className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+            style={{ includeFontPadding: false }}
+          >
+            Reset Transaction PIN
+          </Text>
+        </View>
 
         <PinField
           label="New PIN"

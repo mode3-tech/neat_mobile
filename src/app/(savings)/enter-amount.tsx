@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 
 import { accountService } from '@/services/account.service';
 import { useSavingsStore } from '@/stores/savings.store';
+import { BackButton } from '@/components/ui/back-button';
 
 const formatCurrency = (val: number | undefined) =>
   val !== undefined
@@ -32,16 +33,15 @@ export default function EnterAmountScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
-
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-1">
-        Enter Amount
-      </Text>
+      <View className="flex-row items-center gap-2 mt-4 mb-1">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Enter Amount
+        </Text>
+      </View>
       <Text className="text-[13px] text-[#6B7280] mb-7">
         How much do you want to deposit?
       </Text>

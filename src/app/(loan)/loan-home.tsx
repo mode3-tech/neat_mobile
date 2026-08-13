@@ -18,6 +18,7 @@ import { formatNairaWhole } from '@/utils/format';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import RepaymentBottomSheet from '@/components/features/loans/RepaymentBottomSheet';
 import type { ActiveLoan } from '@/types/loan.types';
+import { BackButton } from '@/components/ui/back-button';
 
 interface ActionItemProps {
   icon: string;
@@ -208,14 +209,15 @@ export default function LoanHomeScreen() {
 
   return (
     <HeaderScreen>
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-4 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
-
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-1">Loans</Text>
+      <View className="flex-row items-center gap-2 mt-4 mb-1">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Loans
+        </Text>
+      </View>
       <Text className="text-[13px] text-[#6B7280] mb-5">Manage your loans and applications</Text>
 
       <ScrollView

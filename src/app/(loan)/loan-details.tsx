@@ -1,14 +1,7 @@
-import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
 import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
 import { loanService } from '@/services/loan.service';
@@ -16,6 +9,7 @@ import { QUERY_KEYS } from '@/constants';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import { formatNairaWhole, formatDateLong } from '@/utils/format';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
+import { BackButton } from '@/components/ui/back-button';
 
 function statusLabel(status: LoanHistoryStatus): string {
   switch (status) {
@@ -115,12 +109,15 @@ export default function LoanDetailsScreen() {
 
   return (
     <HeaderScreen>
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
+      <View className="flex-row items-center gap-2 mt-4 mb-5">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Loan Details
+        </Text>
+      </View>
 
       <ScrollView
         className="flex-1"
@@ -130,7 +127,6 @@ export default function LoanDetailsScreen() {
           <PrimaryRefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
       >
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">Loan Details</Text>
 
         {isLoading && (
           <View className="py-20 items-center justify-center">

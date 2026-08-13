@@ -12,6 +12,7 @@ import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
+import { BackButton } from '@/components/ui/back-button';
 
 const PRIMARY = '#FDC800';
 const PRIMARY_TEXT = '#032252';
@@ -41,11 +42,10 @@ export default function PhoneValidationScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-        <Text style={styles.backText}>Back</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.title}>Phone Validation</Text>
+      <View className="flex-row items-center gap-2 mt-4 mb-1.5">
+        <BackButton className="" />
+        <Text style={styles.title}>Phone Validation</Text>
+      </View>
       <Text style={styles.subtitle}>
         We'll send an OTP to:{' '}
         <Text style={styles.phoneHighlight}>{phone} </Text>or the mail attached to your BVN
@@ -90,26 +90,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 24,
   },
-  backBtn: {
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    marginTop: 8,
-    marginBottom: 24,
-  },
-  backText: {
-    fontSize: 14,
-    color: '#374151',
-    fontWeight: '500',
-  },
   title: {
     fontSize: 22,
+    lineHeight: 26,
+    includeFontPadding: false,
     fontWeight: '700',
     color: '#1A1A1A',
-    marginBottom: 6,
   },
   subtitle: {
     fontSize: 13,

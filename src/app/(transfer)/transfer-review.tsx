@@ -20,6 +20,7 @@ import { useNetworkStatus } from '@/hooks/use-network-status';
 import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
 import { getErrorMessage } from '@/utils/error';
+import { BackButton } from '@/components/ui/back-button';
 
 function formatCurrency(amount: number): string {
   return (
@@ -149,21 +150,21 @@ export default function TransferReviewScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
+      <View className="flex-row items-center gap-2 mt-4 mb-6">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Review
+        </Text>
+      </View>
 
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1"
         keyboardShouldPersistTaps="handled"
       >
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">
-          Review
-        </Text>
 
         {/* Summary card */}
         <View className="bg-[#F6F5F8] rounded-[14px] px-4 mb-10">

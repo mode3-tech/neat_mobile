@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useQuery } from '@tanstack/react-query';
 
@@ -20,6 +20,7 @@ import { loanService } from '@/services/loan.service';
 import { formatDateLong } from '@/utils/format';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
+import { BackButton } from '@/components/ui/back-button';
 
 function formatCurrency(amount: number): string {
   return '₦' + new Intl.NumberFormat('en-NG', {
@@ -176,12 +177,15 @@ export default function RepaymentScheduleScreen() {
 
   return (
     <HeaderScreen>
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
+      <View className="flex-row items-center gap-2 mt-4 mb-5">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Repayment Schedule
+        </Text>
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -191,7 +195,6 @@ export default function RepaymentScheduleScreen() {
           <PrimaryRefreshControl refreshing={isRefetching} onRefresh={onRefresh} />
         }
       >
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">Repayment Schedule</Text>
 
         {isLoading && (
           <View className="py-20 items-center justify-center">

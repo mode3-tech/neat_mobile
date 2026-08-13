@@ -9,6 +9,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { useLoanStore } from '@/stores/loan.store';
+import { BackButton } from '@/components/ui/back-button';
 
 function formatCurrency(amount: number): string {
   return '₦' + new Intl.NumberFormat('en-NG', {
@@ -49,15 +50,17 @@ export default function ReviewSummaryScreen() {
 
   return (
     <HeaderScreen>
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
+      <View className="flex-row items-center gap-2 mt-4 mb-6">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Review Summary
+        </Text>
+      </View>
 
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Review Summary</Text>
 
         <View className="border border-[#E5E7EB] rounded-[14px] px-4 mb-5">
           {rows.map((row, i) => (

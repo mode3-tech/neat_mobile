@@ -16,6 +16,7 @@ import { QUERY_KEYS } from '@/constants';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import { formatNairaWhole, formatDateLong } from '@/utils/format';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
+import { BackButton } from '@/components/ui/back-button';
 
 type TabKey = 'all' | 'upcoming' | 'paid' | 'overdue';
 
@@ -102,14 +103,15 @@ export default function LoanHistoryScreen() {
 
   return (
     <HeaderScreen>
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
-
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">Loan History</Text>
+      <View className="flex-row items-center gap-2 mt-4 mb-5">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Loan History
+        </Text>
+      </View>
 
       <View className="flex-row gap-2 mb-5">
         {TABS.map((t) => {

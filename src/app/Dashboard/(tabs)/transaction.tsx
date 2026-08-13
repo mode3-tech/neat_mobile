@@ -15,6 +15,7 @@ import { useTransactions } from '@/hooks/use-transactions';
 import { openTransactionDetails } from '@/utils/transaction-nav';
 import { TransactionRow } from '@/components/features/transaction/TransactionRow';
 import type { TransactionFilter, Transaction } from '@/types/transaction.types';
+import { BackButton } from '@/components/ui/back-button';
 
 const FILTERS: { key: TransactionFilter; label: string }[] = [
   { key: 'all', label: 'All' },
@@ -120,26 +121,22 @@ export default function TransactionScreen() {
       <LinearGradient colors={['#0D0B2E', '#472FF8']}>
         <SafeAreaView edges={['top']}>
           <View className="px-6 pt-2 pb-6">
-            <View className="flex-row items-center justify-between mb-4">
-              {router.canGoBack() ? (
-                <TouchableOpacity
-                  className="border border-white/30 rounded-[20px] px-4 py-1.5"
-                  onPress={() => router.back()}
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center gap-2">
+                {router.canGoBack() && <BackButton onDark className="" />}
+                <Text
+                  className="text-xl font-bold text-white leading-[24px]"
+                  style={{ includeFontPadding: false }}
                 >
-                  <Text className="text-sm font-medium text-white">Back</Text>
-                </TouchableOpacity>
-              ) : (
-                <View />
-              )}
+                  Transaction History
+                </Text>
+              </View>
               <MaterialCommunityIcons
                 name="swap-vertical"
                 size={22}
                 color="white"
               />
             </View>
-            <Text className="text-xl font-bold text-white">
-              Transaction History
-            </Text>
           </View>
         </SafeAreaView>
       </LinearGradient>

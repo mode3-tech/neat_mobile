@@ -17,6 +17,7 @@ import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { loanService } from '@/services/loan.service';
 import { useLoanStore } from '@/stores/loan.store';
 import { getErrorMessage } from '@/utils/error';
+import { BackButton } from '@/components/ui/back-button';
 
 export default function LoanPinScreen() {
   const store = useLoanStore();
@@ -76,14 +77,15 @@ export default function LoanPinScreen() {
 
   return (
     <HeaderScreen>
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
-
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-1.5">Enter PIN</Text>
+      <View className="flex-row items-center gap-2 mt-4 mb-1.5">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Enter PIN
+        </Text>
+      </View>
       <Text className="text-[13px] text-[#6B7280] leading-5 mb-7">
         Enter your 4-digit PIN to confirm loan application
       </Text>

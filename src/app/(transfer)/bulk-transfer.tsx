@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
+import { BackButton } from '@/components/ui/back-button';
 
 interface ChoiceCardProps {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
@@ -44,16 +45,15 @@ export default function BulkTransferScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 px-6">
-        <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-8"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
-        </TouchableOpacity>
-
-        <Text className="text-[20px] font-medium text-[#1A1A1A] mb-6">
-          Bulk Payment
-        </Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-6">
+          <BackButton className="" />
+          <Text
+            className="text-[20px] font-medium text-[#1A1A1A] leading-[24px]"
+            style={{ includeFontPadding: false }}
+          >
+            Bulk Payment
+          </Text>
+        </View>
 
         <ChoiceCard
           icon="send"

@@ -10,6 +10,7 @@ import { authService } from '@/services/auth.service';
 import { accountService } from '@/services/account.service';
 import { useSecurityChangeStore } from '@/stores/security-change.store';
 import { maskPhone } from '@/utils/mask';
+import { BackButton } from '@/components/ui/back-button';
 
 const RESEND_SECONDS = 90;
 
@@ -90,14 +91,15 @@ export default function ChangePasswordOtpScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm text-gray-700 font-medium">Back</Text>
-      </TouchableOpacity>
-
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-2">Enter OTP Code</Text>
+      <View className="flex-row items-center gap-2 mt-4 mb-2">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Enter OTP Code
+        </Text>
+      </View>
       <Text className="text-[13px] text-gray-500 leading-5 mb-8">
         Please check the OTP that has been sent to your phone number{' '}
         <Text className="text-[#472FF8] font-semibold">{maskPhone(summary?.phone_number)}</Text>.

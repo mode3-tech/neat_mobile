@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { QUERY_KEYS } from '@/constants';
 import { accountService } from '@/services/account.service';
 import type { AccountSummary } from '@/types/account.types';
+import { BackButton } from '@/components/ui/back-button';
 
 const emailSchema = z.email();
 
@@ -99,13 +100,8 @@ export default function PersonalDataScreen() {
   if (!summary) {
     return (
       <SafeAreaView className="flex-1 bg-white">
-        <View className="px-6 pt-2">
-          <TouchableOpacity
-            className="self-start border border-gray-200 rounded-full px-4 py-1.5"
-            onPress={() => router.back()}
-          >
-            <Text className="text-sm text-gray-700 font-medium">Back</Text>
-          </TouchableOpacity>
+        <View className="px-6 pt-4">
+          <BackButton className="" />
         </View>
         <View className="flex-1 items-center justify-center px-6">
           {isError ? (
@@ -198,14 +194,15 @@ function PersonalDataForm({ summary }: { summary: AccountSummary }) {
         showsVerticalScrollIndicator={false}
         bottomOffset={20}
       >
-        <TouchableOpacity
-          className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm text-gray-700 font-medium">Back</Text>
-        </TouchableOpacity>
-
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Personal Data</Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-6">
+          <BackButton className="" />
+          <Text
+            className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+            style={{ includeFontPadding: false }}
+          >
+            Personal Data
+          </Text>
+        </View>
 
         <Field
           label="Full Name"
