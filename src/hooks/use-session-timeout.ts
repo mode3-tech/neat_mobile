@@ -7,6 +7,9 @@ import { useAuthStore } from '@/stores/auth.store';
 const SESSION_TIMEOUT_MS = 3 * 60 * 1000; // 3 minutes
 
 export function useSessionTimeout(router: Router) {
+  // DEV LOGIN BYPASS — uncomment to disable the 3-minute idle logout while
+  // doing UI work. Re-comment before pushing. Pairs with the block in
+  // src/app/index.tsx.
   //  return { onTouchActivity: () => false };
   const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const backgroundTimestampRef = useRef<number | null>(null);

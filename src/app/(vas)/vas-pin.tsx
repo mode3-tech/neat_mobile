@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
@@ -179,7 +179,7 @@ export default function VasPinScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
+    <HeaderScreen>
       <View className="flex-row items-center gap-2 mt-4 mb-1.5">
         <BackButton className="" />
         <Text
@@ -221,18 +221,18 @@ export default function VasPinScreen() {
       <View className="flex-row items-center gap-3 pb-4">
         <TouchableOpacity
           className={`flex-1 rounded-full py-4 items-center ${
-            canConfirm ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+            canConfirm ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
           }`}
           onPress={handleConfirm}
           disabled={!canConfirm || submitting}
           activeOpacity={0.85}
         >
           {submitting ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#032252" />
           ) : (
             <Text
               className={`text-base font-semibold ${
-                canConfirm ? 'text-white' : 'text-[#9CA3AF]'
+                canConfirm ? 'text-[#032252]' : 'text-[#9CA3AF]'
               }`}
             >
               Confirm
@@ -250,11 +250,11 @@ export default function VasPinScreen() {
             <MaterialCommunityIcons
               name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
               size={28}
-              color="#472FF8"
+              color="#032252"
             />
           </TouchableOpacity>
         )}
       </View>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

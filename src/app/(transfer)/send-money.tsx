@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 
@@ -348,7 +348,7 @@ export default function SendMoneyScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <HeaderScreen padded={false}>
       <View className="flex-1 px-6">
         {/* Back button */}
         <View className="flex-row items-center gap-2 mt-4 mb-8">
@@ -380,7 +380,7 @@ export default function SendMoneyScreen() {
             <TouchableOpacity
               key={tab.key}
               className={`flex-1 py-3 rounded-full items-center ${
-                activeTab === tab.key ? 'bg-[#472FF8]' : ''
+                activeTab === tab.key ? 'bg-[#032252]' : ''
               }`}
               onPress={() => {
                 setActiveTab(tab.key);
@@ -429,7 +429,7 @@ export default function SendMoneyScreen() {
                 </Text>
                 {/* Chevron promises a picker; a lock explains its absence. */}
                 {lockedRecipient && !selectedBank && banksLoading ? (
-                  <ActivityIndicator size="small" color="#472FF8" />
+                  <ActivityIndicator size="small" color="#032252" />
                 ) : (
                   <MaterialCommunityIcons
                     name={lockedRecipient ? 'lock-outline' : 'chevron-down'}
@@ -466,7 +466,7 @@ export default function SendMoneyScreen() {
                 keyboardType="number-pad"
                 maxLength={ACCOUNT_NUMBER_LENGTH}
               />
-              {validating && <ActivityIndicator size="small" color="#472FF8" />}
+              {validating && <ActivityIndicator size="small" color="#032252" />}
               {lockedRecipient && !validating && (
                 <MaterialCommunityIcons
                   name="lock-outline"
@@ -491,7 +491,7 @@ export default function SendMoneyScreen() {
             )}
             {lockedRecipient && validationError !== '' && (
               <TouchableOpacity className="mt-2" onPress={handleClearPrefill}>
-                <Text className="text-[13px] font-medium text-[#472FF8]">
+                <Text className="text-[13px] font-medium text-[#032252]">
                   Send to a different account
                 </Text>
               </TouchableOpacity>
@@ -508,9 +508,9 @@ export default function SendMoneyScreen() {
                 <MaterialCommunityIcons
                   name="account-circle-outline"
                   size={20}
-                  color="#472FF8"
+                  color="#032252"
                 />
-                <Text className="text-[13px] font-medium text-[#472FF8] ml-1.5">
+                <Text className="text-[13px] font-medium text-[#032252] ml-1.5">
                   Select from Beneficiary
                 </Text>
               </TouchableOpacity>
@@ -567,7 +567,7 @@ export default function SendMoneyScreen() {
         <View className="pb-4">
           <TouchableOpacity
             className={`rounded-full py-4 items-center ${
-              canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+              canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
             }`}
             onPress={handleProceed}
             disabled={!canProceed}
@@ -575,7 +575,7 @@ export default function SendMoneyScreen() {
           >
             <Text
               className={`text-base font-semibold ${
-                canProceed ? 'text-white' : 'text-[#9CA3AF]'
+                canProceed ? 'text-[#032252]' : 'text-[#9CA3AF]'
               }`}
             >
               Proceed
@@ -623,7 +623,7 @@ export default function SendMoneyScreen() {
             {banksLoading ? (
               <ActivityIndicator
                 size="large"
-                color="#472FF8"
+                color="#032252"
                 className="mt-8"
               />
             ) : (
@@ -634,7 +634,7 @@ export default function SendMoneyScreen() {
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     className={`px-6 py-4 border-b border-[#F3F4F6] ${
-                      selectedBank?.code === item.code ? 'bg-[#EEF0FF]' : ''
+                      selectedBank?.code === item.code ? 'bg-[#E8EEF7]' : ''
                     }`}
                     onPress={() => handleSelectBank(item)}
                   >
@@ -698,7 +698,7 @@ export default function SendMoneyScreen() {
             {beneficiariesLoading ? (
               <ActivityIndicator
                 size="large"
-                color="#472FF8"
+                color="#032252"
                 className="mt-8"
               />
             ) : (
@@ -731,6 +731,6 @@ export default function SendMoneyScreen() {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

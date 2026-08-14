@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
@@ -142,14 +142,14 @@ export default function TransferReviewScreen() {
     { label: 'Recipient Account', value: store.accountNumber },
     { label: 'Recipient Name', value: store.accountName },
     ...(store.transferType === 'other_bank'
-      ? [{ label: 'Bank Name', value: store.bankName, valueColor: '#472FF8' }]
+      ? [{ label: 'Bank Name', value: store.bankName, valueColor: '#032252' }]
       : []),
     { label: 'Commission', value: formatCurrency(TRANSFER_FEE) },
-    // { label: 'Total Debit', value: formatCurrency(parsedAmount), valueColor: '#472FF8' },
+    // { label: 'Total Debit', value: formatCurrency(parsedAmount), valueColor: '#032252' },
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
+    <HeaderScreen>
       <View className="flex-row items-center gap-2 mt-4 mb-6">
         <BackButton className="" />
         <Text
@@ -212,18 +212,18 @@ export default function TransferReviewScreen() {
         <View className="flex-row items-center gap-3 mb-8">
           <TouchableOpacity
             className={`flex-1 rounded-full py-4 items-center ${
-              canConfirm || submitting ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+              canConfirm || submitting ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
             }`}
             onPress={handleConfirm}
             disabled={!canConfirm || submitting}
             activeOpacity={0.85}
           >
             {submitting ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color="#032252" />
             ) : (
               <Text
                 className={`text-base font-semibold ${
-                  canConfirm ? 'text-white' : 'text-[#9CA3AF]'
+                  canConfirm ? 'text-[#032252]' : 'text-[#9CA3AF]'
                 }`}
               >
                 Confirm
@@ -241,7 +241,7 @@ export default function TransferReviewScreen() {
               <MaterialCommunityIcons
                 name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
                 size={28}
-                color="#472FF8"
+                color="#032252"
               />
             </TouchableOpacity>
           )}
@@ -249,13 +249,13 @@ export default function TransferReviewScreen() {
 
         {/* Cancel */}
         <TouchableOpacity
-          className="rounded-full py-4 items-center border-[1.5px] border-[#472FF8] mb-6"
+          className="rounded-full py-4 items-center border-[1.5px] border-[#032252] mb-6"
           onPress={handleCancel}
           activeOpacity={0.85}
         >
-          <Text className="text-base font-semibold text-[#472FF8]">Cancel</Text>
+          <Text className="text-base font-semibold text-[#032252]">Cancel</Text>
         </TouchableOpacity>
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

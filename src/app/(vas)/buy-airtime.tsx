@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -126,7 +126,7 @@ export default function BuyAirtimeScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <HeaderScreen padded={false}>
       <ScrollView
         className="flex-1 px-6"
         showsVerticalScrollIndicator={false}
@@ -150,7 +150,7 @@ export default function BuyAirtimeScreen() {
 
           {billersQuery.isLoading ? (
             <View className="h-[68px] items-center justify-center">
-              <ActivityIndicator color="#472FF8" />
+              <ActivityIndicator color="#032252" />
             </View>
           ) : billersQuery.isError ? (
             <View className="h-[68px] items-center justify-center">
@@ -168,7 +168,7 @@ export default function BuyAirtimeScreen() {
                     activeOpacity={0.8}
                     onPress={() => selectProvider(biller)}
                     className={`w-[68px] h-[68px] rounded-2xl bg-white items-center justify-center border-2 ${
-                      isSelected ? 'border-[#472FF8]' : 'border-transparent'
+                      isSelected ? 'border-[#032252]' : 'border-transparent'
                     }`}
                   >
                     <Image
@@ -234,13 +234,13 @@ export default function BuyAirtimeScreen() {
                 onPress={() => setAmount(String(value))}
                 className={`w-[31%] rounded-xl py-3 items-center mb-3 border ${
                   isActive
-                    ? 'bg-[#EEF0FF] border-[#472FF8]'
+                    ? 'bg-[#E8EEF7] border-[#032252]'
                     : 'bg-[#F5F5F5] border-[#F5F5F5]'
                 }`}
               >
                 <Text
                   className={`text-sm font-medium ${
-                    isActive ? 'text-[#472FF8]' : 'text-[#374151]'
+                    isActive ? 'text-[#032252]' : 'text-[#374151]'
                   }`}
                 >
                   {formatNaira(value)}
@@ -254,7 +254,7 @@ export default function BuyAirtimeScreen() {
       <View className="px-6 pb-4">
         <TouchableOpacity
           className={`rounded-full py-4 items-center ${
-            canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+            canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
           }`}
           onPress={handleProceed}
           disabled={!canProceed}
@@ -265,7 +265,7 @@ export default function BuyAirtimeScreen() {
           ) : (
             <Text
               className={`text-base font-semibold ${
-                canProceed ? 'text-white' : 'text-[#9CA3AF]'
+                canProceed ? 'text-[#032252]' : 'text-[#9CA3AF]'
               }`}
             >
               Proceed
@@ -283,6 +283,6 @@ export default function BuyAirtimeScreen() {
         amount={formatAmount(amountNum)}
         date={todayFormatted()}
       />
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

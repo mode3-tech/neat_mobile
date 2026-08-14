@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -104,7 +104,7 @@ export default function ForgotPinOtpScreen() {
   const timer = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <HeaderScreen padded={false}>
       <KeyboardAwareScrollView
         contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingBottom: 24 }}
         keyboardShouldPersistTaps="handled"
@@ -123,7 +123,7 @@ export default function ForgotPinOtpScreen() {
         <Text className="text-[13px] text-gray-500 leading-5 mb-8">
           To reset your transaction PIN, please enter the OTP that has been sent to your phone
           number{' '}
-          <Text className="text-[#472FF8] font-semibold">{maskPhone(summary?.phone_number)}</Text>.
+          <Text className="text-[#032252] font-semibold">{maskPhone(summary?.phone_number)}</Text>.
         </Text>
 
         <OtpInput value={otp} onChange={(v) => { setOtp(v); setError(''); }} length={OTP_LENGTH} />
@@ -138,15 +138,17 @@ export default function ForgotPinOtpScreen() {
 
         <View className="pb-4">
           <TouchableOpacity
-            className={`rounded-full py-4 items-center ${canVerify ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+            className={`rounded-full py-4 items-center ${canVerify ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'}`}
             onPress={handleVerify}
             disabled={!canVerify || loading}
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color="#032252" />
             ) : (
-              <Text className={`text-base font-semibold ${canVerify ? 'text-white' : 'text-gray-400'}`}>
+              <Text
+                className={`text-base font-semibold ${canVerify ? 'text-[#032252]' : 'text-gray-400'}`}
+              >
                 Confirm
               </Text>
             )}
@@ -156,14 +158,14 @@ export default function ForgotPinOtpScreen() {
             <Text className="text-[13px] text-gray-500">Didn&apos;t get a code? </Text>
             {canResend ? (
               <TouchableOpacity onPress={handleResend}>
-                <Text className="text-[13px] text-[#472FF8] font-semibold">Resend code</Text>
+                <Text className="text-[13px] text-[#032252] font-semibold">Resend code</Text>
               </TouchableOpacity>
             ) : (
-              <Text className="text-[13px] text-[#472FF8] font-semibold">{timer}</Text>
+              <Text className="text-[13px] text-[#032252] font-semibold">{timer}</Text>
             )}
           </View>
         </View>
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

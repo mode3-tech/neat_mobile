@@ -7,7 +7,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import ViewShot, { captureRef } from 'react-native-view-shot';
@@ -110,7 +110,7 @@ export default function TransferSuccessScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <HeaderScreen padded={false}>
       {/*
         Off-screen receipt — kept mounted purely as the capture source for
         Share Image / Download PDF. Rendered far off-screen with a fixed width
@@ -137,7 +137,7 @@ export default function TransferSuccessScreen() {
 
             <View className="border-b border-[#E5E7EB] my-4" />
 
-            <Text className="text-[26px] font-bold text-[#472FF8] text-center mt-2">
+            <Text className="text-[26px] font-bold text-[#032252] text-center mt-2">
               {formatNairaDecimal(result.amount)}
             </Text>
             <Text className="text-[13px] text-[#6B7280] text-center mt-1">
@@ -168,7 +168,7 @@ export default function TransferSuccessScreen() {
       {/* Done */}
       <View className="px-6 pt-2 flex-row justify-end">
         <TouchableOpacity onPress={handleBack} hitSlop={8} activeOpacity={0.7}>
-          <Text className="text-base font-semibold text-[#472FF8]">Done</Text>
+          <Text className="text-base font-semibold text-[#032252]">Done</Text>
         </TouchableOpacity>
       </View>
 
@@ -183,8 +183,8 @@ export default function TransferSuccessScreen() {
           {formatNairaWhole(result.amount)}
         </Text>
 
-        <View className="bg-[#EEF0FF] border border-[#472FF8]/30 rounded-[14px] px-4 py-4 mt-6 w-full">
-          <Text className="text-[13px] text-[#472FF8] text-center leading-5">
+        <View className="bg-[#E8EEF7] border border-[#032252]/30 rounded-[14px] px-4 py-4 mt-6 w-full">
+          <Text className="text-[13px] text-[#032252] text-center leading-5">
             The recipient account is expected to be credited within 5 minutes,
             subject to notification by the bank.
           </Text>
@@ -198,14 +198,14 @@ export default function TransferSuccessScreen() {
             onPress={handleAddBeneficiary}
             disabled={beneficiaryAdded}
           >
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+            <View className="w-14 h-14 rounded-2xl bg-[#E8EEF7] items-center justify-center mb-2">
               {addingBeneficiary ? (
-                <ActivityIndicator size="small" color="#472FF8" />
+                <ActivityIndicator size="small" color="#032252" />
               ) : (
                 <MaterialCommunityIcons
                   name={beneficiaryAdded ? 'check-circle' : 'account-plus-outline'}
                   size={22}
-                  color="#472FF8"
+                  color="#032252"
                 />
               )}
             </View>
@@ -219,11 +219,11 @@ export default function TransferSuccessScreen() {
             className="items-center w-20"
             onPress={handleShareAsImage}
           >
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+            <View className="w-14 h-14 rounded-2xl bg-[#E8EEF7] items-center justify-center mb-2">
               <MaterialCommunityIcons
                 name="image-outline"
                 size={22}
-                color="#472FF8"
+                color="#032252"
               />
             </View>
             <Text className="text-xs text-[#374151] text-center">
@@ -236,11 +236,11 @@ export default function TransferSuccessScreen() {
             className="items-center w-20"
             onPress={handleShareAsPdf}
           >
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+            <View className="w-14 h-14 rounded-2xl bg-[#E8EEF7] items-center justify-center mb-2">
               <MaterialCommunityIcons
                 name="file-pdf-box"
                 size={22}
-                color="#472FF8"
+                color="#032252"
               />
             </View>
             <Text className="text-xs text-[#374151] text-center">
@@ -249,6 +249,6 @@ export default function TransferSuccessScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }
