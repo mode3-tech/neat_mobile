@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+
+import { HeaderScreen } from '@/components/ui/header-screen';
 
 import { useTransactions } from '@/hooks/use-transactions';
 import { openTransactionDetails } from '@/utils/transaction-nav';
@@ -39,14 +39,14 @@ function FilterTabs({
             key={f.key}
             className={`px-5 py-2 rounded-full ${
               isActive
-                ? 'bg-[#472FF8]'
+                ? 'bg-[#032252]'
                 : 'border border-[#E5E7EB]'
             }`}
             onPress={() => onChange(f.key)}
           >
             <Text
               className={`text-[13px] font-semibold ${
-                isActive ? 'text-white' : 'text-[#374151]'
+                isActive ? 'text-[#F9B700]' : 'text-[#374151]'
               }`}
             >
               {f.label}
@@ -116,30 +116,27 @@ export default function TransactionScreen() {
     : '';
 
   return (
-    <View className="flex-1 bg-white">
-      {/* Gradient Header */}
-      <LinearGradient colors={['#0D0B2E', '#472FF8']}>
-        <SafeAreaView edges={['top']}>
-          <View className="px-6 pt-2 pb-6">
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center gap-2">
-                {router.canGoBack() && <BackButton onDark className="" />}
-                <Text
-                  className="text-xl font-bold text-white leading-[24px]"
-                  style={{ includeFontPadding: false }}
-                >
-                  Transaction History
-                </Text>
-              </View>
-              <MaterialCommunityIcons
-                name="swap-vertical"
-                size={22}
-                color="white"
-              />
-            </View>
+    <HeaderScreen padded={false} bottomInset={false}>
+      {/* Title row. The navy DashboardHeader above supplies the dark band the
+          old purple gradient used to provide, so this sits on plain white. */}
+      <View className="px-6 pt-4 pb-1">
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row items-center gap-2">
+            {router.canGoBack() && <BackButton className="" />}
+            <Text
+              className="text-xl font-bold text-[#1A1A1A] leading-[24px]"
+              style={{ includeFontPadding: false }}
+            >
+              Transaction History
+            </Text>
           </View>
-        </SafeAreaView>
-      </LinearGradient>
+          <MaterialCommunityIcons
+            name="swap-vertical"
+            size={22}
+            color="#032252"
+          />
+        </View>
+      </View>
 
       {/* Search Bar */}
       <View className="mx-6 mt-4 bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
@@ -159,7 +156,7 @@ export default function TransactionScreen() {
       {/* Transaction List */}
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#472FF8" />
+          <ActivityIndicator size="large" color="#032252" />
         </View>
       ) : isError && sections.length === 0 ? (
         <SectionList
@@ -197,12 +194,12 @@ export default function TransactionScreen() {
           ListFooterComponent={
             isFetchingNextPage ? (
               <View className="py-4 items-center">
-                <ActivityIndicator size="small" color="#472FF8" />
+                <ActivityIndicator size="small" color="#032252" />
               </View>
             ) : null
           }
         />
       )}
-    </View>
+    </HeaderScreen>
   );
 }

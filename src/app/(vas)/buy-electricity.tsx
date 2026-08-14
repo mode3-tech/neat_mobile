@@ -173,7 +173,7 @@ export default function BuyElectricityScreen() {
               >
                 <Text
                   className={`text-sm font-semibold ${
-                    isActive ? 'text-white' : 'text-[#9CA3AF]'
+                    isActive ? 'text-[#F9B700]' : 'text-[#9CA3AF]'
                   }`}
                 >
                   {type === 'prepaid' ? 'Prepaid' : 'Postpaid'}

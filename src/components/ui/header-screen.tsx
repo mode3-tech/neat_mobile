@@ -11,6 +11,11 @@ interface HeaderScreenProps {
    * is full-bleed or pads itself.
    */
   padded?: boolean;
+  /**
+   * Set false on screens inside (tabs) — the tab bar already adds insets.bottom
+   * to its own height, so claiming the edge here insets the same gap twice.
+   */
+  bottomInset?: boolean;
 }
 
 /**
@@ -28,9 +33,16 @@ interface HeaderScreenProps {
  * Both are encoded here once. To exclude the header from a screen, use a plain
  * SafeAreaView instead of this component.
  */
-export function HeaderScreen({ children, padded = true }: HeaderScreenProps) {
+export function HeaderScreen({
+  children,
+  padded = true,
+  bottomInset = true,
+}: HeaderScreenProps) {
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={['bottom']}>
+    <SafeAreaView
+      className="flex-1 bg-white"
+      edges={bottomInset ? ['bottom'] : []}
+    >
       <DashboardHeader />
       <View className={padded ? 'flex-1 px-6' : 'flex-1'}>{children}</View>
     </SafeAreaView>

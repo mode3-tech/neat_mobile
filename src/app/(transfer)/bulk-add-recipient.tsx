@@ -297,7 +297,7 @@ export default function BulkAddRecipientScreen() {
               <TouchableOpacity
                 key={tab.key}
                 className={`flex-1 py-2.5 rounded-full items-center ${
-                  activeTab === tab.key ? 'bg-[#472FF8]' : ''
+                  activeTab === tab.key ? 'bg-[#032252]' : ''
                 }`}
                 onPress={() => {
                   setActiveTab(tab.key);
@@ -307,7 +307,7 @@ export default function BulkAddRecipientScreen() {
               >
                 <Text
                   className={`text-[12px] font-semibold ${
-                    activeTab === tab.key ? 'text-white' : 'text-[#6B7280]'
+                    activeTab === tab.key ? 'text-[#F9B700]' : 'text-[#6B7280]'
                   }`}
                 >
                   {tab.label}

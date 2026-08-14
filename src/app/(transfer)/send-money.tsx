@@ -391,7 +391,7 @@ export default function SendMoneyScreen() {
             >
               <Text
                 className={`text-[13px] font-semibold ${
-                  activeTab === tab.key ? 'text-white' : 'text-[#6B7280]'
+                  activeTab === tab.key ? 'text-[#F9B700]' : 'text-[#6B7280]'
                 }`}
               >
                 {tab.label}
