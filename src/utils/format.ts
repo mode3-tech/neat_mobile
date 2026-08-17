@@ -37,6 +37,20 @@ export const formatNairaWhole = (amount: number): string => {
 };
 
 /**
+ * Format a whole-naira amount, dropping trailing ".00" (e.g. 1000 → "₦1,000").
+ * For dense lists like the VAS product pickers where the decimals are noise.
+ */
+export const formatNairaWholeShort = (amount: number): string => {
+  const hasFraction = amount % 1 !== 0;
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: hasFraction ? 2 : 0,
+    maximumFractionDigits: 2,
+  }).format(amount);
+};
+
+/**
  * Format a whole-naira amount as "NGN 60.00" for receipts — always 2 decimals
  * and a plain "NGN " prefix (not the ₦ glyph, which some captured-image/PDF
  * renderers drop).

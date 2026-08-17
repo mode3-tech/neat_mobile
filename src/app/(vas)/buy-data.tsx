@@ -20,7 +20,7 @@ import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
 import { useAccountSummary } from '@/hooks/use-account-summary';
 import type { VasBiller, VasProduct } from '@/types/vas.types';
-import { formatNairaWhole } from '@/utils/format';
+import { formatNairaWhole, formatNairaWholeShort } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
 
@@ -201,7 +201,7 @@ export default function BuyDataScreen() {
         {/* Data plan selector */}
         <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Data Plan</Text>
         <TouchableOpacity
-          className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-1.5 flex-row items-center"
+          className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-6 flex-row items-center"
           activeOpacity={0.8}
           disabled={!selectedBillerId}
           onPress={() => setPlanModalVisible(true)}
@@ -220,6 +220,18 @@ export default function BuyDataScreen() {
             <MaterialCommunityIcons name="chevron-down" size={22} color="#6B7280" />
           )}
         </TouchableOpacity>
+
+        {/* Amount (read-only, from the selected plan) */}
+        <Text className="text-sm font-medium text-[#1A1A1A] mb-2">Amount</Text>
+        <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-1.5">
+          <Text
+            className={`text-[15px] ${
+              selectedPlan ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'
+            }`}
+          >
+            {selectedPlan ? formatNairaWhole(selectedPlan.amount) : 'Amount'}
+          </Text>
+        </View>
         <InsufficientFundsHint show={exceedsBalance} spacing="mb-5" />
       </ScrollView>
 
@@ -323,7 +335,7 @@ export default function BuyDataScreen() {
                       return (
                         <TouchableOpacity
                           key={plan.unique_code}
-                          className={`px-6 py-4 border-b border-[#F3F4F6] flex-row items-center ${
+                          className={`px-6 py-3.5 border-b border-[#F3F4F6] flex-row items-center ${
                             isSelected ? 'bg-[#EEF0FF]' : ''
                           }`}
                           onPress={() => {
@@ -331,19 +343,29 @@ export default function BuyDataScreen() {
                             closePlanModal();
                           }}
                         >
+                          {/* Two lines, not one — GLO names run to ~50 chars and
+                              a single truncated line hides the plan's actual
+                              size/validity. */}
                           <Text
-                            className="text-[15px] text-[#1A1A1A] flex-1 mr-3"
-                            numberOfLines={1}
+                            className="text-[15px] leading-5 text-[#1A1A1A] flex-1 mr-5"
+                            numberOfLines={2}
                           >
                             {plan.name}
                           </Text>
-                          {isSelected && (
-                            <MaterialCommunityIcons
-                              name="check-circle"
-                              size={20}
-                              color="#472FF8"
-                            />
-                          )}
+                          {/* Fixed-width column, left-aligned: sizing to content
+                              lets flex push each figure against the right edge,
+                              so "₦500" and "₦75,000" start at different x. A
+                              fixed box puts the ₦ and the first digit of every
+                              row on the same vertical line. 68px fits ₦99,999 at
+                              this size — widen it if six-figure plans appear. */}
+                          <View className="w-[68px] shrink-0">
+                            <Text
+                              className="text-[15px] font-semibold text-[#1A1A1A]"
+                              numberOfLines={1}
+                            >
+                              {formatNairaWholeShort(plan.amount)}
+                            </Text>
+                          </View>
                         </TouchableOpacity>
                       );
                     })}

@@ -20,7 +20,7 @@ import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
 import { useAccountSummary } from '@/hooks/use-account-summary';
 import type { VasBiller, VasProduct } from '@/types/vas.types';
-import { formatNairaWhole } from '@/utils/format';
+import { formatNairaWhole, formatNairaWholeShort } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
 
@@ -384,7 +384,7 @@ export default function CableTvScreen() {
                       return (
                         <TouchableOpacity
                           key={pkg.unique_code}
-                          className={`px-6 py-4 border-b border-[#F3F4F6] flex-row items-center ${
+                          className={`px-6 py-3.5 border-b border-[#F3F4F6] flex-row items-center ${
                             isSelected ? 'bg-[#EEF0FF]' : ''
                           }`}
                           onPress={() => {
@@ -392,19 +392,30 @@ export default function CableTvScreen() {
                             closePackageModal();
                           }}
                         >
+                          {/* Two lines, not one — a single truncated line hides
+                              the tier the package actually belongs to. */}
                           <Text
-                            className="text-[15px] text-[#1A1A1A] flex-1 mr-3"
-                            numberOfLines={1}
+                            className="text-[15px] leading-5 text-[#1A1A1A] flex-1 mr-5"
+                            numberOfLines={2}
                           >
                             {pkg.name}
                           </Text>
-                          {isSelected && (
-                            <MaterialCommunityIcons
-                              name="check-circle"
-                              size={20}
-                              color="#472FF8"
-                            />
-                          )}
+                          {/* Fixed-width column, left-aligned: sizing to content
+                              lets flex push each figure against the right edge,
+                              so "₦2,700" and "₦44,500" start at different x. A
+                              fixed box puts the ₦ and the first digit of every
+                              row on the same vertical line. The "/month" label
+                              matters because the Amount field below shows the
+                              total (package × months), not this figure. */}
+                          <View className="w-[72px] shrink-0">
+                            <Text
+                              className="text-[15px] font-semibold text-[#1A1A1A]"
+                              numberOfLines={1}
+                            >
+                              {formatNairaWholeShort(pkg.amount)}
+                            </Text>
+                            <Text className="text-[11px] text-[#6B7280]">/month</Text>
+                          </View>
                         </TouchableOpacity>
                       );
                     })}
