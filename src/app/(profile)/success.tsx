@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
+
+import { HeaderScreen } from '@/components/ui/header-screen';
 
 export default function SuccessScreen() {
   const { title, message } = useLocalSearchParams<{ title?: string; message?: string }>();
@@ -26,7 +27,7 @@ export default function SuccessScreen() {
   }, [scale, opacity]);
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
+    <HeaderScreen>
       <View className="flex-1 items-center justify-center">
         <Animated.View
           style={{ transform: [{ scale }] }}
@@ -39,7 +40,7 @@ export default function SuccessScreen() {
 
         <Animated.Text
           style={{ opacity }}
-          className="text-[22px] font-bold text-[#1A1A1A] text-center mb-3"
+          className="text-[22px] font-bold text-[#032252] text-center mb-3"
         >
           {title ?? 'Success'}
         </Animated.Text>
@@ -53,13 +54,13 @@ export default function SuccessScreen() {
 
       <View className="pb-4">
         <TouchableOpacity
-          className="rounded-full py-4 items-center bg-[#472FF8]"
+          className="rounded-full py-4 items-center bg-[#F9B700]"
           onPress={() => router.replace('/Dashboard/profile' as any)}
           activeOpacity={0.85}
         >
-          <Text className="text-white text-base font-semibold">Done</Text>
+          <Text className="text-[#032252] text-base font-semibold">Done</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { router } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner-native';
@@ -99,37 +99,37 @@ export default function PersonalDataScreen() {
 
   if (!summary) {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <HeaderScreen padded={false}>
         <View className="px-6 pt-4">
           <BackButton className="" />
         </View>
         <View className="flex-1 items-center justify-center px-6">
           {isError ? (
             <>
-              <Text className="text-base font-semibold text-[#1A1A1A] mb-2">
+              <Text className="text-base font-semibold text-[#032252] mb-2">
                 Couldn&apos;t load your profile
               </Text>
               <Text className="text-sm text-gray-500 text-center mb-6">
                 Please check your connection and try again.
               </Text>
               <TouchableOpacity
-                className="rounded-full py-3 px-8 bg-[#472FF8]"
+                className="rounded-full py-3 px-8 bg-[#F9B700]"
                 onPress={() => refetch()}
                 disabled={isFetching}
                 activeOpacity={0.85}
               >
                 {isFetching ? (
-                  <ActivityIndicator color="#fff" />
+                  <ActivityIndicator color="#032252" />
                 ) : (
-                  <Text className="text-white text-base font-semibold">Retry</Text>
+                  <Text className="text-[#032252] text-base font-semibold">Retry</Text>
                 )}
               </TouchableOpacity>
             </>
           ) : (
-            <ActivityIndicator color="#472FF8" />
+            <ActivityIndicator color="#032252" />
           )}
         </View>
-      </SafeAreaView>
+      </HeaderScreen>
     );
   }
 
@@ -187,7 +187,7 @@ function PersonalDataForm({ summary }: { summary: AccountSummary }) {
   const saving = updateMutation.isPending;
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <HeaderScreen padded={false}>
       <KeyboardAwareScrollView
         contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingBottom: 24 }}
         keyboardShouldPersistTaps="handled"
@@ -197,7 +197,7 @@ function PersonalDataForm({ summary }: { summary: AccountSummary }) {
         <View className="flex-row items-center gap-2 mt-4 mb-6">
           <BackButton className="" />
           <Text
-            className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+            className="text-[22px] font-bold text-[#032252] leading-[26px]"
             style={{ includeFontPadding: false }}
           >
             Personal Data
@@ -245,18 +245,18 @@ function PersonalDataForm({ summary }: { summary: AccountSummary }) {
 
       <View className="px-6 pb-4">
         <TouchableOpacity
-          className="rounded-full py-4 items-center bg-[#472FF8]"
+          className="rounded-full py-4 items-center bg-[#F9B700]"
           onPress={handleSave}
           disabled={saving}
           activeOpacity={0.85}
         >
           {saving ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#032252" />
           ) : (
-            <Text className="text-white text-base font-semibold">Save Changes</Text>
+            <Text className="text-[#032252] text-base font-semibold">Save Changes</Text>
           )}
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

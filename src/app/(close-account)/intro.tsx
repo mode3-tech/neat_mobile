@@ -21,9 +21,9 @@ export default function CloseAccountIntroScreen() {
           className="border border-gray-200 rounded-full w-10 h-10 items-center justify-center"
           onPress={() => router.back()}
         >
-          <MaterialCommunityIcons name="chevron-left" size={24} color="#374151" />
+          <MaterialCommunityIcons name="chevron-left" size={24} color="#032252" />
         </TouchableOpacity>
-        <Text className="flex-1 text-center text-lg font-bold text-[#1A1A1A] mr-10">
+        <Text className="flex-1 text-center text-lg font-bold text-[#032252] mr-10">
           Close Account
         </Text>
       </View>
@@ -39,7 +39,7 @@ export default function CloseAccountIntroScreen() {
           </View>
         </View>
 
-        <Text className="text-center text-[17px] font-bold text-[#1A1A1A] mb-5">
+        <Text className="text-center text-[17px] font-bold text-[#032252] mb-5">
           After Successful Account Cancellation:
         </Text>
 
@@ -60,8 +60,11 @@ export default function CloseAccountIntroScreen() {
       <View className="px-6 pt-2 pb-4">
         <Text className="text-[13px] text-gray-400 leading-5 mb-4">
           For more details on Account Cancellation, please refer to{' '}
+          {/* Underlined, not just recolored: navy is also the heading colour on
+              this screen, so colour alone leaves no tappability cue on what is
+              a compliance disclosure. */}
           <Text
-            className="text-[#472FF8] font-medium"
+            className="text-[#032252] font-medium underline"
             onPress={() => router.push('/(close-account)/notice' as any)}
           >
             &lsquo;NEATPay Account Cancellation Notice&rsquo;
@@ -69,11 +72,11 @@ export default function CloseAccountIntroScreen() {
         </Text>
 
         <TouchableOpacity
-          className="rounded-full py-4 items-center bg-[#472FF8]"
+          className="rounded-full py-4 items-center bg-[#F9B700]"
           onPress={() => router.push('/(close-account)/reason' as any)}
           activeOpacity={0.85}
         >
-          <Text className="text-white text-base font-semibold">Confirm and Continue</Text>
+          <Text className="text-[#032252] text-base font-semibold">Confirm and Continue</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

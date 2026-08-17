@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 
 function SectionTitle({ children }: { children: string }) {
   return (
-    <Text className="text-[16px] font-bold text-[#1A1A1A] mt-6 mb-2">{children}</Text>
+    <Text className="text-[16px] font-bold text-[#032252] mt-6 mb-2">{children}</Text>
   );
 }
 
@@ -42,9 +42,9 @@ export default function CloseAccountNoticeScreen() {
           className="border border-gray-200 rounded-full w-10 h-10 items-center justify-center"
           onPress={() => router.back()}
         >
-          <MaterialCommunityIcons name="chevron-left" size={24} color="#374151" />
+          <MaterialCommunityIcons name="chevron-left" size={24} color="#032252" />
         </TouchableOpacity>
-        <Text className="flex-1 text-center text-lg font-bold text-[#1A1A1A] mr-10">
+        <Text className="flex-1 text-center text-lg font-bold text-[#032252] mr-10">
           Account Cancellation Notice
         </Text>
       </View>
@@ -53,7 +53,7 @@ export default function CloseAccountNoticeScreen() {
         contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        <Text className="text-[20px] font-bold text-[#1A1A1A] mt-2">
+        <Text className="text-[20px] font-bold text-[#032252] mt-2">
           NEATPay – Close Account
         </Text>
         <Text className="text-[13px] text-gray-400 mt-1 mb-3">Version 1.0</Text>

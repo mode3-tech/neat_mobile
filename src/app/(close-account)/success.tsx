@@ -63,7 +63,7 @@ export default function CloseAccountSuccessScreen() {
 
         <Animated.Text
           style={{ opacity }}
-          className="text-[22px] font-bold text-[#1A1A1A] text-center mb-3"
+          className="text-[22px] font-bold text-[#032252] text-center mb-3"
         >
           Account Closed
         </Animated.Text>
