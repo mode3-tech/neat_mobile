@@ -21,12 +21,20 @@ import {
   formatTransactionDateTime,
   titleCase,
 } from '@/utils/format';
+import { buildAmountRows } from '@/utils/receipt';
 import { useAccountSummary } from '@/hooks/use-account-summary';
 import { useAuthStore } from '@/stores/auth.store';
 import { transactionService } from '@/services/transaction.service';
 import { ACCOUNT_NUMBER_LENGTH, QUERY_KEYS } from '@/constants';
 import type { Transaction } from '@/types/transaction.types';
 import { BackButton } from '@/components/ui/back-button';
+
+// Tinted background behind the status pill, paired with STATUS_COLORS.
+const STATUS_PILL_BG: Record<string, string> = {
+  successful: '#E7F6ED',
+  pending: '#FEF3E2',
+  failed: '#FDECEC',
+};
 
 export default function TransactionDetailsScreen() {
   // Two ways in. List taps pass `tx` — the row already holds every field, so
@@ -71,7 +79,7 @@ export default function TransactionDetailsScreen() {
       <View className="flex-row items-center gap-2 mt-4">
         <BackButton className="" />
         <Text
-          className="text-[20px] font-medium text-[#1A1A1A] leading-[24px]"
+          className="text-xl font-bold text-[#032252] leading-[24px]"
           style={{ includeFontPadding: false }}
         >
           Transaction Details
@@ -94,7 +102,7 @@ export default function TransactionDetailsScreen() {
         {header}
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="small" color="#472FF8" />
+            <ActivityIndicator size="small" color="#032252" />
           </View>
         ) : (
           <View className="flex-1 items-center justify-center px-6">
@@ -102,7 +110,7 @@ export default function TransactionDetailsScreen() {
               We couldn&apos;t load this transaction.
             </Text>
             <TouchableOpacity
-              className="mt-4 bg-[#472FF8] rounded-[50px] px-6 py-3"
+              className="mt-4 bg-[#032252] rounded-[50px] px-6 py-3"
               onPress={() => refetch()}
               activeOpacity={0.85}
             >
@@ -153,6 +161,12 @@ export default function TransactionDetailsScreen() {
   }[] = [
     ...(recipientRow ? [recipientRow] : []),
     ...(senderRow ? [senderRow] : []),
+    ...buildAmountRows({
+      amount: transaction.amount,
+      charges: transaction.charges,
+      vat: transaction.vat,
+      isCredit,
+    }),
     { label: 'Transaction No.', value: txNo, copyValue: txNo },
     { label: 'Transaction Type', value: titleCase(transaction.type) },
     {
@@ -198,7 +212,6 @@ export default function TransactionDetailsScreen() {
       params: {
         prefillAccountNumber: cp.account_number,
         prefillBankCode: cp.bank,
-        prefillAccountName: cp.name,
         // Whole naira; the sign is presentational and rendered separately.
         prefillAmount: String(Math.trunc(Math.abs(transaction.amount))),
         prefillNarration: transaction.narration ?? '',
@@ -215,35 +228,43 @@ export default function TransactionDetailsScreen() {
         contentContainerStyle={{ paddingBottom: 24 }}
       >
         {/* Summary card */}
-        <View className="mx-6 mt-6 items-center rounded-[16px] border border-[#F3F4F6] bg-white px-5 py-6">
+        <View className="mx-6 mt-6 items-center rounded-[20px] border border-[#E3E7EF] bg-white px-5 py-7">
           <View
-            className="w-14 h-14 rounded-2xl items-center justify-center"
+            className="w-16 h-16 rounded-2xl items-center justify-center"
             style={{ backgroundColor: bgColor }}
           >
-            <MaterialCommunityIcons name={icon} size={28} color={iconColor} />
+            <MaterialCommunityIcons name={icon} size={30} color={iconColor} />
           </View>
-          <Text className="text-[15px] font-semibold text-[#1A1A1A] text-center mt-4">
+          <Text className="text-[15px] font-semibold text-[#032252] text-center mt-4">
             {transaction.description}
           </Text>
+          {/* Money in green, money out navy — same rule as the list rows. */}
           <Text
-            className={`text-[28px] font-bold mt-2 ${
-              isCredit ? 'text-[#472FF8]' : 'text-[#1A1A1A]'
+            className={`text-[30px] font-bold mt-2 ${
+              isCredit ? 'text-[#16A34A]' : 'text-[#032252]'
             }`}
           >
             {prefix}
             {formatNairaWhole(transaction.amount)}
           </Text>
-          <Text
-            className="text-sm font-medium mt-1"
-            style={{ color: statusColor }}
+          <View
+            className="mt-3 rounded-full px-3 py-1"
+            style={{
+              backgroundColor: STATUS_PILL_BG[transaction.status] ?? '#F1F3F8',
+            }}
           >
-            {statusLabel}
-          </Text>
+            <Text
+              className="text-xs font-semibold"
+              style={{ color: statusColor }}
+            >
+              {statusLabel}
+            </Text>
+          </View>
         </View>
 
         {/* Transaction Details section */}
-        <View className="mx-6 mt-4 rounded-[16px] border border-[#F3F4F6] bg-white px-5 py-2">
-          <Text className="text-base font-semibold text-[#1A1A1A] pt-3 pb-1">
+        <View className="mx-6 mt-4 rounded-[20px] border border-[#E3E7EF] bg-white px-5 py-2">
+          <Text className="text-base font-semibold text-[#032252] pt-3 pb-1">
             Transaction Details
           </Text>
           {detailRows.map((row, i) => (
@@ -260,8 +281,8 @@ export default function TransactionDetailsScreen() {
       </ScrollView>
 
       {/* More Actions */}
-      <View className="px-6 pt-4 pb-6 border-t border-[#F3F4F6]">
-        <Text className="text-base font-semibold text-[#1A1A1A] mb-4">
+      <View className="px-6 pt-4 pb-6 border-t border-[#EEF1F6]">
+        <Text className="text-base font-semibold text-[#032252] mb-4">
           More Actions
         </Text>
         <View className="flex-row">
@@ -271,14 +292,14 @@ export default function TransactionDetailsScreen() {
               onPress={handleTransferAgain}
               activeOpacity={0.85}
             >
-              <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+              <View className="w-14 h-14 rounded-2xl bg-[#F1F3F8] items-center justify-center mb-2">
                 <MaterialCommunityIcons
                   name={isCredit ? 'arrow-u-left-top' : 'repeat'}
                   size={22}
-                  color="#472FF8"
+                  color="#032252"
                 />
               </View>
-              <Text className="text-xs text-[#374151] text-center">
+              <Text className="text-xs font-medium text-[#032252] text-center">
                 {isCredit ? `Transfer${'\n'}Back` : `Transfer${'\n'}Again`}
               </Text>
             </TouchableOpacity>
@@ -289,14 +310,14 @@ export default function TransactionDetailsScreen() {
             onPress={handleShareReceipt}
             activeOpacity={0.85}
           >
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+            <View className="w-14 h-14 rounded-2xl bg-[#F1F3F8] items-center justify-center mb-2">
               <MaterialCommunityIcons
                 name="share-variant"
                 size={22}
-                color="#472FF8"
+                color="#032252"
               />
             </View>
-            <Text className="text-xs text-[#374151] text-center">
+            <Text className="text-xs font-medium text-[#032252] text-center">
               Share{'\n'}Receipt
             </Text>
           </TouchableOpacity>

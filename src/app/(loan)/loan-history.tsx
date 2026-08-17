@@ -124,12 +124,12 @@ export default function LoanHistoryScreen() {
               className={`flex-1 py-2 rounded-full border items-center ${
                 active
                   ? 'bg-[#032252] border-[#032252]'
-                  : 'bg-white border-[#032252]'
+                  : 'bg-white border-[#E3E7EF]'
               }`}
             >
               <Text
                 className={`text-xs font-semibold ${
-                  active ? 'text-white' : 'text-[#032252]'
+                  active ? 'text-[#F9B700]' : 'text-[#032252]'
                 }`}
               >
                 {t.label}

@@ -30,7 +30,7 @@ export function DetailRow({
   return (
     <View
       className={`flex-row justify-between items-start gap-4 py-[14px] ${
-        !isLast ? 'border-b border-[#F3F4F6]' : ''
+        !isLast ? 'border-b border-[#EEF1F6]' : ''
       }`}
     >
       <Text className="text-[13px] text-[#6B7280] shrink-0">{label}</Text>
@@ -38,7 +38,7 @@ export function DetailRow({
         <View className="flex-row items-center justify-end gap-2 flex-1">
           <Text
             className="text-sm font-semibold text-right shrink"
-            style={{ color: valueColor ?? '#1A1A1A' }}
+            style={{ color: valueColor ?? '#032252' }}
           >
             {value}
           </Text>
@@ -49,14 +49,14 @@ export function DetailRow({
             <MaterialCommunityIcons
               name="content-copy"
               size={16}
-              color="#9CA3AF"
+              color="#032252"
             />
           </TouchableOpacity>
         </View>
       ) : (
         <Text
           className="text-sm font-semibold flex-1 text-right"
-          style={{ color: valueColor ?? '#1A1A1A' }}
+          style={{ color: valueColor ?? '#032252' }}
         >
           {value}
         </Text>

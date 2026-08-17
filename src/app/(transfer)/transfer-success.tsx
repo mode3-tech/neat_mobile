@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Image,
   Text,
   TouchableOpacity,
   View,
@@ -16,8 +15,8 @@ import * as Print from 'expo-print';
 import { SuccessCelebration } from '@/components/ui/success-celebration';
 import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
-import { DetailRow } from '@/components/features/transaction/DetailRow';
-import { buildReceiptHtml, shareFile } from '@/utils/receipt';
+import { ReceiptCard } from '@/components/features/transaction/ReceiptCard';
+import { buildAmountRows, buildReceiptHtml, shareFile } from '@/utils/receipt';
 import {
   formatNairaDecimal,
   formatNairaWhole,
@@ -52,10 +51,24 @@ export default function TransferSuccessScreen() {
 
   if (!result) return null;
 
+  // The headline amount is what the recipient receives; the wallet is debited
+  // amount + charges + VAT. Without the breakdown the receipt doesn't reconcile
+  // with what the user sees leave their balance.
+  const amountRows = buildAmountRows({
+    amount: result.amount,
+    charges: result.charges,
+    vat: result.vat,
+    total: result.total,
+  });
+
   const detailRows: { label: string; value: string; valueColor?: string }[] = [
+    ...(store.senderName
+      ? [{ label: 'Sender', value: store.senderName }]
+      : []),
     { label: 'Name', value: store.accountName },
     { label: 'Account No.', value: store.accountNumber },
     { label: 'Bank Name', value: store.bankName },
+    ...amountRows,
     { label: 'Session ID', value: result.sessionId },
     { label: 'Transaction ID', value: result.transactionReference },
     { label: 'Transaction Status', value: 'Successful', valueColor: '#16A34A' },
@@ -123,45 +136,12 @@ export default function TransferSuccessScreen() {
         pointerEvents="none"
       >
         <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 1 }}>
-          <View className="bg-white px-5 py-6 border border-[#E5E7EB] rounded-[16px]">
-            <View className="flex-row items-center justify-between">
-              <Image
-                source={require('../../../assets/images/welcome/NeatLogo.png')}
-                className="w-16 h-12"
-                resizeMode="contain"
-              />
-              <Text className="text-[15px] font-medium text-[#1A1A1A]">
-                Transaction Receipt
-              </Text>
-            </View>
-
-            <View className="border-b border-[#E5E7EB] my-4" />
-
-            <Text className="text-[26px] font-bold text-[#032252] text-center mt-2">
-              {formatNairaDecimal(result.amount)}
-            </Text>
-            <Text className="text-[13px] text-[#6B7280] text-center mt-1">
-              Successful
-            </Text>
-            <Text className="text-[12px] text-[#9CA3AF] text-center mt-1">
-              {formatTransactionDateTime(receiptDate.toISOString())}
-            </Text>
-
-            <View className="border-b border-[#E5E7EB] my-4" />
-
-            {store.senderName ? (
-              <DetailRow label="Sender" value={store.senderName} />
-            ) : null}
-            {detailRows.map((row, i) => (
-              <DetailRow
-                key={row.label}
-                label={row.label}
-                value={row.value}
-                valueColor={row.valueColor}
-                isLast={i === detailRows.length - 1}
-              />
-            ))}
-          </View>
+          <ReceiptCard
+            amount={formatNairaDecimal(result.amount)}
+            statusLabel="Successful"
+            date={formatTransactionDateTime(receiptDate.toISOString())}
+            rows={detailRows}
+          />
         </ViewShot>
       </View>
 

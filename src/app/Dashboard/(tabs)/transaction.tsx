@@ -16,6 +16,7 @@ import { openTransactionDetails } from '@/utils/transaction-nav';
 import { TransactionRow } from '@/components/features/transaction/TransactionRow';
 import type { TransactionFilter, Transaction } from '@/types/transaction.types';
 import { BackButton } from '@/components/ui/back-button';
+import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 
 const FILTERS: { key: TransactionFilter; label: string }[] = [
   { key: 'all', label: 'All' },
@@ -40,13 +41,13 @@ function FilterTabs({
             className={`px-5 py-2 rounded-full ${
               isActive
                 ? 'bg-[#032252]'
-                : 'border border-[#E5E7EB]'
+                : 'border border-[#E3E7EF]'
             }`}
             onPress={() => onChange(f.key)}
           >
             <Text
               className={`text-[13px] font-semibold ${
-                isActive ? 'text-[#F9B700]' : 'text-[#374151]'
+                isActive ? 'text-[#F9B700]' : 'text-[#032252]'
               }`}
             >
               {f.label}
@@ -64,9 +65,9 @@ function EmptyState({ isFiltered }: { isFiltered: boolean }) {
       <MaterialCommunityIcons
         name={isFiltered ? 'magnify' : 'receipt'}
         size={64}
-        color="#E5E7EB"
+        color="#C7CEDB"
       />
-      <Text className="text-base font-semibold text-[#1A1A1A] mt-4">
+      <Text className="text-base font-semibold text-[#032252] mt-4">
         {isFiltered ? 'No matching transactions' : 'No transactions yet'}
       </Text>
       <Text className="text-[13px] text-[#6B7280] text-center mt-1">
@@ -78,11 +79,41 @@ function EmptyState({ isFiltered }: { isFiltered: boolean }) {
   );
 }
 
+// The escape hatch for a filtered view too short to scroll. The hook walks a
+// few pages on its own first; this appears only once that budget is spent and
+// the list still can't be dragged, so it's the difference between "there's more,
+// tap here" and a screen that silently pretends the history ends there.
+function LoadMoreFooter({
+  isFiltered,
+  onPress,
+}: {
+  isFiltered: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <View className="py-6 items-center px-6">
+      <TouchableOpacity
+        className="px-6 py-3 rounded-full border border-[#E3E7EF]"
+        onPress={onPress}
+      >
+        <Text className="text-[13px] font-semibold text-[#032252]">
+          Load more
+        </Text>
+      </TouchableOpacity>
+      {isFiltered && (
+        <Text className="text-xs text-[#6B7280] text-center mt-3">
+          Only transactions loaded so far are searched.
+        </Text>
+      )}
+    </View>
+  );
+}
+
 function ErrorState({ message }: { message: string }) {
   return (
     <View className="flex-1 items-center justify-center px-6">
-      <MaterialCommunityIcons name="wifi-off" size={64} color="#E5E7EB" />
-      <Text className="text-base font-semibold text-[#1A1A1A] mt-4">
+      <MaterialCommunityIcons name="wifi-off" size={64} color="#C7CEDB" />
+      <Text className="text-base font-semibold text-[#032252] mt-4">
         {message}
       </Text>
       <Text className="text-[13px] text-[#6B7280] text-center mt-1">
@@ -106,7 +137,12 @@ export default function TransactionScreen() {
     isFetchingNextPage,
     isRefetching,
     handleEndReached,
+    handleScrollBeginDrag,
     handleRefresh,
+    handleLayout,
+    handleContentSizeChange,
+    showLoadMore,
+    handleLoadMore,
   } = useTransactions();
 
   const errorMessage = isError
@@ -124,30 +160,33 @@ export default function TransactionScreen() {
           <View className="flex-row items-center gap-2">
             {router.canGoBack() && <BackButton className="" />}
             <Text
-              className="text-xl font-bold text-[#1A1A1A] leading-[24px]"
+              className="text-xl font-bold text-[#032252] leading-[24px]"
               style={{ includeFontPadding: false }}
             >
               Transaction History
             </Text>
           </View>
+          {/* Sort control — hidden until it actually sorts. It had no onPress,
+              so it read as a broken button. Restore when sorting is wired up.
           <MaterialCommunityIcons
             name="swap-vertical"
             size={22}
             color="#032252"
           />
+          */}
         </View>
       </View>
 
       {/* Search Bar */}
-      <View className="mx-6 mt-4 bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
+      <View className="mx-6 mt-4 bg-[#F1F3F8] rounded-xl px-4 py-3 flex-row items-center">
         <TextInput
-          className="flex-1 text-[15px] text-[#1A1A1A] p-0"
+          className="flex-1 text-[15px] text-[#032252] p-0"
           placeholder="Search"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="#8A93A6"
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-        <MaterialCommunityIcons name="magnify" size={20} color="#9CA3AF" />
+        <MaterialCommunityIcons name="magnify" size={20} color="#032252" />
       </View>
 
       {/* Filter Tabs */}
@@ -164,15 +203,19 @@ export default function TransactionScreen() {
           renderItem={() => null}
           ListEmptyComponent={<ErrorState message={errorMessage} />}
           contentContainerStyle={{ flex: 1 }}
-          refreshing={isRefetching}
-          onRefresh={handleRefresh}
+          refreshControl={
+            <PrimaryRefreshControl
+              refreshing={isRefetching}
+              onRefresh={handleRefresh}
+            />
+          }
         />
       ) : (
         <SectionList
           sections={sections}
           keyExtractor={(item: Transaction) => item.id}
           renderSectionHeader={({ section }) => (
-            <Text className="text-xs font-semibold text-gray-500 px-6 pt-5 pb-2">
+            <Text className="text-xs font-semibold text-[#6B7280] px-6 pt-5 pb-2">
               {section.title}
             </Text>
           )}
@@ -183,19 +226,32 @@ export default function TransactionScreen() {
             />
           )}
           ListEmptyComponent={<EmptyState isFiltered={isFiltered} />}
+          // flexGrow, not flex: the empty state should still fill the screen,
+          // but a "Load more" footer under it needs its own height — `flex: 1`
+          // caps the content box at the viewport and squeezes the footer out,
+          // which is precisely the case (nothing matched yet) where it matters.
           contentContainerStyle={
-            sections.length === 0 ? { flex: 1 } : { paddingBottom: 20 }
+            sections.length === 0 ? { flexGrow: 1 } : { paddingBottom: 20 }
           }
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.5}
-          refreshing={isRefetching && !isFetchingNextPage}
-          onRefresh={handleRefresh}
+          onScrollBeginDrag={handleScrollBeginDrag}
+          onLayout={handleLayout}
+          onContentSizeChange={handleContentSizeChange}
+          refreshControl={
+            <PrimaryRefreshControl
+              refreshing={isRefetching && !isFetchingNextPage}
+              onRefresh={handleRefresh}
+            />
+          }
           stickySectionHeadersEnabled={false}
           ListFooterComponent={
             isFetchingNextPage ? (
               <View className="py-4 items-center">
                 <ActivityIndicator size="small" color="#032252" />
               </View>
+            ) : showLoadMore ? (
+              <LoadMoreFooter isFiltered={isFiltered} onPress={handleLoadMore} />
             ) : null
           }
         />

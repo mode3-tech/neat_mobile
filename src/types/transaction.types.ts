@@ -12,6 +12,10 @@ export interface Transaction {
   date: string;
   status: string;
   amount: number;
+  /** Fee charged on top of `amount`. Debits only; absent on credits. */
+  charges?: number;
+  /** VAT on the fee. Debits only; absent on credits. */
+  vat?: number;
   narration?: string;
   counterparty?: TransactionCounterparty;
 }
