@@ -203,6 +203,22 @@ export default function ProfileScreen() {
           {/* <SettingsRow icon="card-account-details-outline" label="Account Details" disabled /> */}
         </View>
 
+        {/* REWARDS section — hidden until the backend issues a referral code */}
+        {summary?.referral_code ? (
+          <>
+            <Text className="px-6 text-xs font-semibold text-gray-500 tracking-wide mb-2 mt-4">
+              REWARDS
+            </Text>
+            <View className="px-6">
+              <SettingsRow
+                icon="gift-outline"
+                label="Refer & Earn"
+                onPress={() => router.push('/(profile)/refer-and-earn' as any)}
+              />
+            </View>
+          </>
+        ) : null}
+
         {/* SECURITY section */}
         <Text className="px-6 text-xs font-semibold text-gray-500 tracking-wide mb-2 mt-4">
           SECURITY & SETTINGS

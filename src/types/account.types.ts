@@ -15,13 +15,15 @@ export interface AccountSummary {
   bvn: string;
   email?: string;
   bank_name: string;
-  wallet_id: string;
+  // wallet_id: string; // not returned by /account/summary — re-enable if the backend adds it
   account_number: string;
   available_balance: number;
   loan_balance: number;
   active_loans: ActiveLoan[];
   is_notifications_enabled: boolean;
   profile_picture?: string;
+  /** The user's own referral code, shared with friends. Empty until the backend issues one. */
+  referral_code?: string;
 }
 
 export interface AccountLimits {
