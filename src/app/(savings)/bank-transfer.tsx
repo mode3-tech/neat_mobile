@@ -1,10 +1,10 @@
 import { Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import * as Clipboard from 'expo-clipboard';
 
 import { accountService } from '@/services/account.service';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { BackButton } from '@/components/ui/back-button';
 
 export default function BankTransferScreen() {
@@ -20,25 +20,25 @@ export default function BankTransferScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
+    <HeaderScreen>
       <BackButton className="mt-4 mb-6" />
 
-      <Text className="text-[22px] font-bold text-[#1A1A1A] text-center mb-1.5">
+      <Text className="text-[22px] font-bold text-[#032252] text-center mb-1.5">
         Transfer to Your Account
       </Text>
       <Text className="text-[13px] text-[#6B7280] text-center leading-5 mb-8">
         Use these details to complete your{'\n'}deposit
       </Text>
 
-      <View className="bg-[#F6F5F8] rounded-[14px] px-5 py-6 items-center">
+      <View className="bg-[#F5F5F5] rounded-[14px] px-5 py-6 items-center">
         <Text className="text-[13px] text-[#6B7280] mb-1">Bank</Text>
-        <Text className="text-[17px] font-bold text-[#1A1A1A] mb-5">
+        <Text className="text-[17px] font-bold text-[#032252] mb-5">
           {accountSummary?.bank_name ?? '---'}
         </Text>
 
         <Text className="text-[13px] text-[#6B7280] mb-1">Account Number</Text>
         <View className="flex-row items-center mb-5">
-          <Text className="text-[17px] font-bold text-[#472FF8] mr-2">
+          <Text className="text-[17px] font-bold text-[#032252] mr-2">
             {accountSummary?.account_number ?? '---'}
           </Text>
           <TouchableOpacity onPress={copyAccountNumber} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
@@ -51,7 +51,7 @@ export default function BankTransferScreen() {
         </View>
 
         <Text className="text-[13px] text-[#6B7280] mb-1">Account Name</Text>
-        <Text className="text-[17px] font-bold text-[#1A1A1A]">
+        <Text className="text-[17px] font-bold text-[#032252]">
           {accountSummary?.full_name ?? '---'}
         </Text>
       </View>
@@ -59,6 +59,6 @@ export default function BankTransferScreen() {
       <Text className="text-[13px] text-[#E59501] text-center mt-6">
         Transfers usually reflect within 5 minutes
       </Text>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

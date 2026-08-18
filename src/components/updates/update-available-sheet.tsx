@@ -51,16 +51,16 @@ export function UpdateAvailableSheet({
           style={{
             width: 64,
             height: 64,
-            backgroundColor: '#EEF0FF',
+            backgroundColor: '#E8EEF7',
             marginBottom: 16,
           }}
         >
-          <Ionicons name="arrow-up-circle-outline" size={32} color="#472FF8" />
+          <Ionicons name="arrow-up-circle-outline" size={32} color="#032252" />
         </View>
 
         <Text
           className="font-bold"
-          style={{ fontSize: 20, color: '#472FF8', marginBottom: 8 }}
+          style={{ fontSize: 20, color: '#032252', marginBottom: 8 }}
         >
           Update available
         </Text>
@@ -83,9 +83,9 @@ export function UpdateAvailableSheet({
           onPress={() => {
             void openStoreListing(storeUrl);
           }}
-          className="items-center rounded-full bg-[#472FF8] py-4 active:opacity-70"
+          className="items-center rounded-full bg-[#F9B700] py-4 active:opacity-70"
         >
-          <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '600' }}>
+          <Text style={{ color: '#032252', fontSize: 15, fontWeight: '600' }}>
             Update Now
           </Text>
         </Pressable>
@@ -97,7 +97,7 @@ export function UpdateAvailableSheet({
         >
           <Text
             style={{
-              color: '#000000',
+              color: '#032252',
               opacity: 0.6,
               fontSize: 15,
               fontWeight: '600',

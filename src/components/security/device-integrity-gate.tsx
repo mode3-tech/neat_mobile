@@ -12,7 +12,10 @@ import {
 
 import { DeviceBlockedScreen } from './device-blocked-screen';
 
-const WATCHER_EMAIL = 'security@neatpay.ng';
+// Must be a mailbox that actually exists — freeRASP posts threat reports here
+// and drops them silently if the address bounces.
+const WATCHER_EMAIL = 'security@neatmicrocredit.com.ng';
+// const WATCHER_EMAIL = 'security@neatpay.ng'; // old domain, retired
 
 const ANDROID_CERT_HASHES = (process.env.EXPO_PUBLIC_ANDROID_CERT_SHA256 ?? '')
   .split(',')
