@@ -20,7 +20,7 @@ import { useSignUpStore } from '@/stores/sign-up.store';
 import { OTP_LENGTH } from '@/constants';
 import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#FDC800';
+const PRIMARY = '#F9B700';
 const PRIMARY_TEXT = '#032252';
 const RESEND_SECONDS = 90;
 

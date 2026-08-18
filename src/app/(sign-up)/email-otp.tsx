@@ -19,7 +19,8 @@ import { OTP_LENGTH } from '@/constants';
 import { maskEmail } from '@/utils/mask';
 import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#F9B700';
+const PRIMARY_TEXT = '#032252';
 const RESEND_SECONDS = 90;
 
 export default function EmailOtpScreen() {
@@ -119,7 +120,7 @@ export default function EmailOtpScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={PRIMARY_TEXT} />
             ) : (
               <Text style={[styles.primaryBtnText, !canVerify && styles.disabledBtnText]}>
                 Verify & Continue
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
     lineHeight: 31,
     includeFontPadding: false,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: PRIMARY_TEXT,
   },
   subtitle: {
     fontSize: 13,
@@ -167,7 +168,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   emailHighlight: {
-    color: '#1A1A1A',
+    color: PRIMARY_TEXT,
     fontWeight: '500',
   },
   otpWrap: {
@@ -177,9 +178,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginBottom: 24,
   },
+  // Links stay navy — PRIMARY is a fill colour; yellow text on white is unreadable.
   changeEmailText: {
     fontSize: 13,
-    color: PRIMARY,
+    color: PRIMARY_TEXT,
     fontWeight: '600',
   },
   spacer: {
@@ -196,7 +198,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -217,12 +219,12 @@ const styles = StyleSheet.create({
   },
   resendLink: {
     fontSize: 13,
-    color: PRIMARY,
+    color: PRIMARY_TEXT,
     fontWeight: '600',
   },
   timerText: {
     fontSize: 13,
-    color: PRIMARY,
+    color: PRIMARY_TEXT,
     fontWeight: '600',
   },
 });

@@ -14,7 +14,8 @@ import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
 import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#F9B700';
+const PRIMARY_TEXT = '#032252';
 const ERROR_COLOR = '#EF4444';
 const SUCCESS_COLOR = '#16A34A';
 
@@ -189,7 +190,7 @@ export default function FaceLivenessScreen() {
             >
               {isLoading ? (
                 <View style={styles.loadingRow}>
-                  <ActivityIndicator color="#fff" />
+                  <ActivityIndicator color={PRIMARY_TEXT} />
                   <Text style={styles.loadingText}>
                     {isCapturing ? 'Opening camera...' : 'Verifying...'}
                   </Text>
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     includeFontPadding: false,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: PRIMARY_TEXT,
   },
   subtitle: {
     fontSize: 13,
@@ -230,16 +231,19 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 28,
   },
+  // Same surface as the BVN/NIN cards, so the whole ID leg reads as one flow.
   infoBox: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: '#FFFBEF',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#F9B700',
     padding: 16,
     gap: 8,
   },
   infoBoxTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: PRIMARY_TEXT,
     marginBottom: 4,
   },
   bulletRow: {
@@ -263,8 +267,10 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   successCard: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: '#FFFBEF',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#F9B700',
     padding: 16,
     gap: 8,
   },
@@ -310,7 +316,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -320,7 +326,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   loadingText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 14,
     fontWeight: '500',
   },

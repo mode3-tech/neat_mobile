@@ -17,7 +17,8 @@ import { NIN_LENGTH } from '@/constants';
 import type { NinData } from '@/types/sign-up.types';
 import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#F9B700';
+const PRIMARY_TEXT = '#032252';
 const ERROR_COLOR = '#EF4444';
 const SUCCESS_COLOR = '#16A34A';
 
@@ -146,7 +147,7 @@ export default function NinVerificationScreen() {
               activeOpacity={0.85}
             >
               {isLoading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={PRIMARY_TEXT} />
               ) : (
                 <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
                   Verify NIN
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     includeFontPadding: false,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: PRIMARY_TEXT,
   },
   subtitle: {
     fontSize: 13,
@@ -228,16 +229,20 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     marginTop: 6,
   },
+  // Same surface as the BVN screen's details card, so the two consecutive
+  // steps read as one flow.
   infoBox: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: '#FFFBEF',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#F9B700',
     padding: 16,
     gap: 8,
   },
   infoBoxTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: PRIMARY_TEXT,
     marginBottom: 4,
   },
   bulletRow: {
@@ -256,8 +261,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   successCard: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: '#FFFBEF',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#F9B700',
     padding: 16,
     gap: 8,
   },
@@ -313,7 +320,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },

@@ -21,7 +21,7 @@ import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { getErrorMessage } from '@/utils/error';
 
-const PRIMARY = '#FDC800';
+const PRIMARY = '#F9B700';
 
 export default function SignInScreen() {
   const insets = useSafeAreaInsets();
@@ -210,7 +210,7 @@ export default function SignInScreen() {
                   <MaterialCommunityIcons
                     name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
                     size={24}
-                    color={'#FDC800'}
+                    color={'#F9B700'}
                   />
                 )}
                 <Text style={styles.biometricText}>
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   primaryBtn: {
-    backgroundColor:'#FDC800',
+    backgroundColor:'#F9B700',
     borderRadius: 50,
     paddingVertical: 16,
     alignItems: 'center',
@@ -316,10 +316,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   disabledBtn: {
-    backgroundColor: '#FDC800',
+    backgroundColor: '#E5E7EB',
   },
   disabledBtnText: {
-    color: '#032252',
+    color: '#9CA3AF',
   },
   biometricBtn: {
     flexDirection: 'row',
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     borderWidth: 1.5,
-    borderColor: '#FDC800',
+    borderColor: '#F9B700',
     borderRadius: 50,
     paddingVertical: 14,
   },
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     textAlign: 'center' as const,
   },
   signUpLink: {
-    color: '#FDC800',
+    color: '#F9B700',
     fontWeight: '600' as const,
   },
 

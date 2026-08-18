@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-const PRIMARY = '#FDC800';
+const PRIMARY = '#F9B700';
 const PRIMARY_TEXT = '#032252';
 
 export default function DeviceVerifiedScreen() {

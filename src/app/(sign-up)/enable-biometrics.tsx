@@ -17,7 +17,8 @@ import { getRegisterErrorAction, type RegisterErrorAction } from '@/utils/regist
 import { buildRegisterPayload } from '@/utils/register-payload';
 import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#F9B700';
+const PRIMARY_TEXT = '#032252';
 
 export default function EnableBiometricsScreen() {
   const store = useSignUpStore();
@@ -75,7 +76,7 @@ export default function EnableBiometricsScreen() {
         <Switch
           value={enabled}
           onValueChange={handleToggle}
-          trackColor={{ false: '#E5E7EB', true: PRIMARY }}
+          trackColor={{ false: '#E5E7EB', true: PRIMARY_TEXT }}
           thumbColor="#fff"
         />
       </View>
@@ -108,7 +109,7 @@ export default function EnableBiometricsScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={PRIMARY_TEXT} />
             ) : (
               <Text style={styles.primaryBtnText}>Complete Setup</Text>
             )}
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     includeFontPadding: false,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: PRIMARY_TEXT,
   },
   subtitle: {
     fontSize: 13,
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
   },
   btnOuter: {
     borderWidth: 2,
-    borderColor: 'rgba(71, 47, 248, 0.3)',
+    borderColor: 'rgba(249, 183, 0, 0.3)',
     borderRadius: 50,
     padding: 3,
   },
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },

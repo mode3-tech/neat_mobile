@@ -14,7 +14,7 @@ import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
 import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#FDC800';
+const PRIMARY = '#F9B700';
 const PRIMARY_TEXT = '#032252';
 
 export default function PhoneValidationScreen() {
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 13,
-    color: '#272757',
+    color: '#032252',
     lineHeight: 20,
   },
   phoneHighlight: {
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   },
   hint: {
     fontSize: 14,
-    color: '#272757',
+    color: '#032252',
     textAlign: 'center',
     lineHeight: 22,
   },

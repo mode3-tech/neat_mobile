@@ -17,7 +17,7 @@ import { BVN_LENGTH } from '@/constants';
 import type { BvnData } from '@/types/sign-up.types';
 import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#FDC800';
+const PRIMARY = '#F9B700';
 const PRIMARY_TEXT = '#032252';
 const ERROR_COLOR = '#EF4444';
 
@@ -160,11 +160,11 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     includeFontPadding: false,
     fontWeight: '700',
-    color: '#272757',
+    color: '#032252',
   },
   subtitle: {
     fontSize: 13,
-    color: '#272757',
+    color: '#032252',
     lineHeight: 20,
     marginBottom: 28,
   },

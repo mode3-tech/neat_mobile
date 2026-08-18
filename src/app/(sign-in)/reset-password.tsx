@@ -14,7 +14,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { authService } from '@/services/auth.service';
 import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#FDC800';
+const PRIMARY = '#F9B700';
 const PRIMARY_TEXT = '#032252';
 const ERROR_COLOR = '#EF4444';
 
