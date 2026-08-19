@@ -98,7 +98,7 @@ export default function DashboardHeader() {
             <View className="flex-1">
               <Text className="text-[13px] text-white/70">Hello,</Text>
               <Text className="text-[15px] font-semibold text-white" numberOfLines={1}>
-                {firstName || 'there'}
+                {firstName || ''}
               </Text>
             </View>
           </View>
