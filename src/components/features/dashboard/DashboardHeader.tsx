@@ -3,8 +3,6 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { useIsFocused } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 
 import { QUERY_KEYS } from '@/constants';
@@ -30,7 +28,6 @@ const HEADER_BG = '#032252';
  */
 export default function DashboardHeader() {
   const insets = useSafeAreaInsets();
-  const isFocused = useIsFocused();
 
   const user = useAuthStore((s) => s.user);
   const photoUri = useProfileStore((s) => s.photoUri);
@@ -78,22 +75,9 @@ export default function DashboardHeader() {
 
   return (
     <>
-      {/* The header is dark, so the status bar icons need to be white while the
-          host screen is focused. Two constraints shape how that is done:
-
-           - It has to be the declarative <StatusBar>, not setStatusBarStyle()
-             in a focus effect. RN keeps a stack of status bar entries; the root
-             layout's <StatusBar style="dark" /> is the baseline. Coming from
-             sign-in (which is also light), sign-in's entry pops on unmount and
-             the baseline dark takes over *in that commit*, while a focus effect
-             only runs once navigation settles focus — the gap between the two
-             is a visible black flash. Mounting an entry here applies in the
-             same commit instead.
-           - It has to be gated on focus, because tab screens stay mounted; an
-             ungated entry would keep the icons white on tabs that exclude this
-             header and are therefore still white-backed. */}
-      {isFocused && <StatusBar style="light" />}
-
+      {/* No <StatusBar> here — a JS entry lands a beat late and loses to the
+          native option anyway. Routes reaching this header set
+          statusBarStyle: 'light' on their Stack.Screen instead. */}
       <View
         className="pl-5 pr-8 pb-4"
         style={{ backgroundColor: HEADER_BG, paddingTop: insets.top + 8 }}

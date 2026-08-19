@@ -74,10 +74,13 @@ const baseConfig = {
     [
       'expo-splash-screen',
       {
-        image: './assets/images/welcome/NeatLogo.png',
-        imageWidth: 200,
+        // Must stay in lockstep with components/ui/splash-screen.tsx — same
+        // asset, same rendered size, same background, or the native→JS
+        // hand-off blinks. 263 is the asset's 1x width (789 ÷ 3).
+        image: './assets/images/new/logo-neat.png',
+        imageWidth: 263,
         resizeMode: 'contain',
-        backgroundColor: '#472FF8',
+        backgroundColor: '#032252',
       },
     ],
     [
@@ -89,7 +92,7 @@ const baseConfig = {
         icon: './assets/images/notification-icon-color.png',
         // icon: './assets/images/welcome/NeatPayLogo.png', // wide — crops to "EAT"
         // icon: './assets/images/notification-icon.png',   // monochrome "N"
-        color: '#472FF8',
+        color: '#032252',
         defaultChannel: 'transactions',
       },
     ],

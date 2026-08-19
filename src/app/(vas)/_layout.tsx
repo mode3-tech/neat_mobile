@@ -6,6 +6,8 @@ export default function VasLayout() {
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
+        // Every screen here renders <HeaderScreen>.
+        statusBarStyle: 'light',
       }}
     />
   );

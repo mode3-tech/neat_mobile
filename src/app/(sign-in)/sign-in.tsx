@@ -11,11 +11,11 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { toast } from 'sonner-native';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import { NavBar } from '@/components/ui/nav-bar';
 import { useBiometricSignIn } from '@/hooks/use-biometric-sign-in';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
@@ -87,7 +87,7 @@ export default function SignInScreen() {
     // Bottom edge is left out on purpose: the navy needs to run under the system
     // nav bar rather than stopping above it. The footer pads itself with the inset.
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-        <StatusBar style="light" />
+        <NavBar style="light" />
         <KeyboardAwareScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"

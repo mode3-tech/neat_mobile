@@ -17,8 +17,9 @@ import { StatusBar } from 'expo-status-bar';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const SLIDE_DURATION = 3000;
-const PRIMARY_COLOR = '#472FF8';
-const BG_COLOR = '#d4d8FF';
+const PRIMARY_COLOR = '#F9B700';
+const PRIMARY_TEXT = '#032252';
+const BG_COLOR = '#FEF9EC';
 
 interface Slide {
   id: string;
@@ -30,28 +31,28 @@ interface Slide {
 const SLIDES: Slide[] = [
   {
     id: '1',
-    image: require('../../assets/images/welcome/frame1.png'),
+    image: require('../../assets/images/new/new1.png'),
     title: 'Instant Transfers',
     description:
       'Open your account in minutes, access instant loans, transfer money securely.',
   },
   {
     id: '2',
-    image: require('../../assets/images/welcome/frame2.png'),
+    image: require('../../assets/images/new/new2.png'),
     title: 'Secure & Protected',
     description:
       'Your data and money are protected with advanced security and real-time monitoring.',
   },
   {
     id: '3',
-    image: require('../../assets/images/welcome/frame3.png'),
+    image: require('../../assets/images/new/new3.png'),
     title: 'Get Quick Loans',
     description:
       'Apply in minutes, get fast approval, and receive funds directly to your wallet.',
   },
   {
     id: '4',
-    image: require('../../assets/images/welcome/frame.png'),
+    image: require('../../assets/images/new/new4.png'),
     title: 'Airtime & Data Topup',
     description:
       'Verify your identity, get your account instantly, and enjoy seamless transfers.',
@@ -198,19 +199,23 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     overflow: 'hidden',
   },
+  // `cover` at full screen width so the artwork runs edge to edge — `contain`
+  // would letterbox it and leave cream gutters down both sides. The overflow
+  // is vertical and lands in the illustrations' own transparent margin.
   slideImage: {
     width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT * 0.65,
+    height: SCREEN_HEIGHT * 0.55,
   },
   textContainer: {
     paddingHorizontal: 32,
     alignItems: 'center',
     marginTop: 20,
   },
+  // Navy, not PRIMARY — yellow is a fill colour; yellow text on cream is unreadable.
   title: {
     fontSize: 24,
     fontWeight: '700',
-    color: PRIMARY_COLOR,
+    color: PRIMARY_TEXT,
     textAlign: 'center',
     marginBottom: 10,
     letterSpacing: -0.3,
@@ -234,11 +239,11 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     width: 24,
-    backgroundColor: PRIMARY_COLOR,
+    backgroundColor: PRIMARY_TEXT,
   },
   inactiveDot: {
     width: 8,
-    backgroundColor: 'rgba(61, 59, 243, 0.3)',
+    backgroundColor: 'rgba(3, 34, 82, 0.25)',
   },
   spacer: {
     flex: 1,
@@ -256,18 +261,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryButtonText: {
-    color: '#FFFFFF',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },
   secondaryButton: {
     paddingVertical: 12,
     alignItems: 'center',
-    backgroundColor:"#FFFFFF",
-     borderRadius: 50,
+    backgroundColor: '#E7E5F4',
+    borderRadius: 50,
   },
   secondaryButtonText: {
-    color: "#472FF8",
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '500',
   },

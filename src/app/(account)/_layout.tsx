@@ -1,12 +1,12 @@
 import { Stack } from 'expo-router';
 
-export default function LoanLayout() {
+export default function AccountLayout() {
   return (
     <Stack
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
-        // Every screen here renders <HeaderScreen>.
+        // statement.tsx renders <HeaderScreen>.
         statusBarStyle: 'light',
       }}
     />

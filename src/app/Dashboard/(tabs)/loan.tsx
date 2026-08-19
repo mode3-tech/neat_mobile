@@ -1,6 +1,7 @@
 import { StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+// Never displayed — the tab's tabPress listener pushes /(loan)/loan-home.
 export default function LoanScreen() {
   return (
     <SafeAreaView style={styles.container}>
