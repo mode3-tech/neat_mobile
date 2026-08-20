@@ -1,25 +1,11 @@
-import { useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useEffect } from 'react';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { HeaderScreen } from '@/components/ui/header-screen';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { toast } from 'sonner-native';
-import { useQueryClient } from '@tanstack/react-query';
 
-import { ForgotPinLink } from '@/components/ui/forgot-pin-link';
-import { PIN_LENGTH, QUERY_KEYS, TRANSFER_FEE } from '@/constants';
-import { useBiometricAuth } from '@/hooks/use-biometric-auth';
+import { TRANSFER_FEE } from '@/constants';
 import { useNetworkStatus } from '@/hooks/use-network-status';
-import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
-import { getErrorMessage } from '@/utils/error';
 import { BackButton } from '@/components/ui/back-button';
 
 function formatCurrency(amount: number): string {
@@ -62,18 +48,7 @@ function SummaryRow({
 
 export default function TransferReviewScreen() {
   const store = useTransferStore();
-  const queryClient = useQueryClient();
-  const {
-    isBiometricReady,
-    biometryType,
-    authenticating,
-    authenticateWithBiometric,
-    onManualPinSuccess,
-  } = useBiometricAuth();
-
-  const [pin, setPin] = useState('');
-  const [showPin, setShowPin] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const { isOffline } = useNetworkStatus();
 
   // Guard: redirect back if store is empty (direct navigation)
   useEffect(() => {
@@ -83,53 +58,6 @@ export default function TransferReviewScreen() {
   }, []);
 
   const parsedAmount = parseInt(store.amount, 10) || 0;
-
-  const { isOffline } = useNetworkStatus();
-  const canConfirm = pin.length === PIN_LENGTH && !isOffline;
-
-  const submitTransfer = async (transactionPin: string) => {
-    setSubmitting(true);
-    try {
-      const transfer = await walletService.transfer({
-        amount: parsedAmount,
-        sort_code: store.bankCode,
-        account_number: store.accountNumber,
-        narration: store.narration,
-        account_name: store.accountName,
-        metadata: {},
-        transaction_pin: transactionPin,
-      });
-
-      await onManualPinSuccess(transactionPin);
-      // Outflow consumed — refresh balance and the activation-cap allowance
-      // so the next transfer screen pre-validates against fresh numbers.
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_LIMITS] });
-      store.setTransferResult(transfer);
-      router.push('/(transfer)/transfer-success');
-    } catch (err: unknown) {
-      toast.error('Transfer failed', { description: getErrorMessage(err) });
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleConfirm = () => {
-    if (!canConfirm || submitting) return;
-    submitTransfer(pin);
-  };
-
-  const handleBiometric = async () => {
-    if (authenticating || submitting) return;
-    const storedPin = await authenticateWithBiometric();
-    if (!storedPin) {
-      toast.error('Authentication failed', {
-        description: 'Biometric authentication failed. Please use your PIN.',
-      });
-      return;
-    }
-    submitTransfer(storedPin);
-  };
 
   const handleCancel = () => {
     store.reset();
@@ -160,12 +88,7 @@ export default function TransferReviewScreen() {
         </Text>
       </View>
 
-      <KeyboardAwareScrollView
-        showsVerticalScrollIndicator={false}
-        className="flex-1"
-        keyboardShouldPersistTaps="handled"
-      >
-
+      <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
         {/* Summary card */}
         <View className="bg-[#F6F5F8] rounded-[14px] px-4 mb-10">
           {summaryRows.map((row, i) => (
@@ -179,73 +102,24 @@ export default function TransferReviewScreen() {
           ))}
         </View>
 
-        {/* PIN section */}
-        <Text className="text-[13px] font-semibold text-[#374151] mb-3">
-          Enter Transaction PIN
-        </Text>
-        <View className="mb-6">
-          <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
-            <TextInput
-              className="flex-1 text-[15px] text-[#1A1A1A] p-0 text-center tracking-[8px]"
-              value={pin}
-              onChangeText={(t) =>
-                setPin(t.replace(/\D/g, '').slice(0, PIN_LENGTH))
-              }
-              placeholder="••••"
-              placeholderTextColor="#9CA3AF"
-              secureTextEntry={!showPin}
-              keyboardType="number-pad"
-              maxLength={PIN_LENGTH}
-            />
-            <TouchableOpacity onPress={() => setShowPin((v) => !v)}>
-              <MaterialCommunityIcons
-                name={showPin ? 'eye-off-outline' : 'eye-outline'}
-                size={20}
-                color="#9CA3AF"
-              />
-            </TouchableOpacity>
-          </View>
-          <ForgotPinLink />
-        </View>
-
-        {/* Confirm + Fingerprint */}
-        <View className="flex-row items-center gap-3 mb-8">
-          <TouchableOpacity
-            className={`flex-1 rounded-full py-4 items-center ${
-              canConfirm || submitting ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
+        {/* Proceed to the PIN keypad. Offline is stopped here rather than on
+            the keypad, which has no button to grey out. */}
+        <TouchableOpacity
+          className={`rounded-full py-4 items-center mb-4 ${
+            isOffline ? 'bg-[#E5E7EB]' : 'bg-[#F9B700]'
+          }`}
+          onPress={() => router.push('/(transfer)/transfer-pin')}
+          disabled={isOffline}
+          activeOpacity={0.85}
+        >
+          <Text
+            className={`text-base font-semibold ${
+              isOffline ? 'text-[#9CA3AF]' : 'text-[#032252]'
             }`}
-            onPress={handleConfirm}
-            disabled={!canConfirm || submitting}
-            activeOpacity={0.85}
           >
-            {submitting ? (
-              <ActivityIndicator color="#032252" />
-            ) : (
-              <Text
-                className={`text-base font-semibold ${
-                  canConfirm ? 'text-[#032252]' : 'text-[#9CA3AF]'
-                }`}
-              >
-                Confirm
-              </Text>
-            )}
-          </TouchableOpacity>
-
-          {isBiometricReady && (
-            <TouchableOpacity
-              className="w-14 h-14 rounded-full border border-[#E5E7EB] items-center justify-center"
-              activeOpacity={0.7}
-              onPress={handleBiometric}
-              disabled={authenticating || submitting}
-            >
-              <MaterialCommunityIcons
-                name={biometryType === 'FACE' ? 'face-recognition' : 'fingerprint'}
-                size={28}
-                color="#032252"
-              />
-            </TouchableOpacity>
-          )}
-        </View>
+            Proceed
+          </Text>
+        </TouchableOpacity>
 
         {/* Cancel */}
         <TouchableOpacity
@@ -255,7 +129,7 @@ export default function TransferReviewScreen() {
         >
           <Text className="text-base font-semibold text-[#032252]">Cancel</Text>
         </TouchableOpacity>
-      </KeyboardAwareScrollView>
+      </ScrollView>
     </HeaderScreen>
   );
 }

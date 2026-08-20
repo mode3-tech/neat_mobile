@@ -6,13 +6,15 @@ import { useQueryClient } from '@tanstack/react-query';
 import { PinKeypadScreen } from '@/components/ui/pin-keypad-screen';
 import { QUERY_KEYS } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
+import { useNetworkStatus } from '@/hooks/use-network-status';
 import { walletService } from '@/services/wallet.service';
-import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
+import { useTransferStore } from '@/stores/transfer.store';
 import { getErrorMessage } from '@/utils/error';
 
-export default function BulkTransferPinScreen() {
-  const { recipients, setResultMessage } = useBulkTransferStore();
+export default function TransferPinScreen() {
+  const store = useTransferStore();
   const queryClient = useQueryClient();
+  const { isOffline } = useNetworkStatus();
   const {
     isBiometricReady,
     biometryType,
@@ -24,22 +26,34 @@ export default function BulkTransferPinScreen() {
   const [pin, setPin] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // Guard: redirect back if the store is empty (direct navigation)
   useEffect(() => {
-    if (recipients.length === 0) router.back();
+    if (!store.accountNumber) {
+      router.back();
+    }
   }, []);
 
-  const submitBulk = async (transactionPin: string) => {
+  const parsedAmount = parseInt(store.amount, 10) || 0;
+
+  const submitTransfer = async (transactionPin: string) => {
+    // There is no button left to grey out, so the offline check lives here.
+    if (isOffline) {
+      toast.error('No internet connection', {
+        description: 'Reconnect and try again.',
+      });
+      setPin('');
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const response = await walletService.transferBulk({
-        recipient_info: recipients.map((r) => ({
-          amount: r.amount,
-          sort_code: r.sort_code,
-          narration: r.narration || 'Bulk payment',
-          account_number: r.account_number,
-          account_name: r.account_name,
-          metadata: {},
-        })),
+      const transfer = await walletService.transfer({
+        amount: parsedAmount,
+        sort_code: store.bankCode,
+        account_number: store.accountNumber,
+        narration: store.narration,
+        account_name: store.accountName,
+        metadata: {},
         transaction_pin: transactionPin,
       });
 
@@ -48,13 +62,12 @@ export default function BulkTransferPinScreen() {
       // so the next transfer screen pre-validates against fresh numbers.
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_LIMITS] });
-      setResultMessage(
-        response.message || 'Your bulk transfer has been processed successfully.',
-      );
+      store.setTransferResult(transfer);
       setPin('');
-      router.replace('/(transfer)/bulk-transfer-success');
+      // replace, not push — keeps a screen holding a live PIN out of the back stack.
+      router.replace('/(transfer)/transfer-success');
     } catch (err: unknown) {
-      toast.error('Bulk transfer failed', { description: getErrorMessage(err) });
+      toast.error('Transfer failed', { description: getErrorMessage(err) });
       // Clear so the user can retry; a full tray has no way to accept input.
       setPin('');
     } finally {
@@ -71,15 +84,14 @@ export default function BulkTransferPinScreen() {
       });
       return;
     }
-    submitBulk(storedPin);
+    submitTransfer(storedPin);
   };
 
   return (
     <PinKeypadScreen
-      subtitle="To complete this bulk transfer, enter your transaction PIN"
       value={pin}
       onChange={setPin}
-      onComplete={submitBulk}
+      onComplete={submitTransfer}
       submitting={submitting || authenticating}
       onBiometric={isBiometricReady ? handleBiometric : undefined}
       biometryType={biometryType}
