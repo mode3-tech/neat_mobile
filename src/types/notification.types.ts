@@ -2,6 +2,12 @@ export interface PushTokenPayload {
   expo_push_token: string;
   device_id: string;
   platform: 'ios' | 'android';
+  /**
+   * Build identity ('production' | 'preview' | 'development'). The backend
+   * dedupes pushes per (user_id, app_env) so multiple builds on one phone
+   * don't each get their own copy. See `@/constants/app-env`.
+   */
+  app_env: string;
 }
 
 export interface NotificationData {
