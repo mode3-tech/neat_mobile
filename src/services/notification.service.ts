@@ -6,6 +6,7 @@ import { Platform } from 'react-native';
 
 import { api, throwApiError } from './api';
 import { getOrCreateDeviceId } from './device.service';
+import { APP_ENV } from '@/constants/app-env';
 import type { ApiEnvelope } from '@/types/api.types';
 import type {
   AppNotification,
@@ -90,6 +91,7 @@ export async function sendTokenToBackend(token: string): Promise<void> {
       expo_push_token: token,
       device_id: deviceId,
       platform: Platform.OS as 'ios' | 'android',
+      app_env: APP_ENV,
     };
 
     await api.post<ApiEnvelope>('/notifications/token', payload);
