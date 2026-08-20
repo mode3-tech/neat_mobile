@@ -13,6 +13,7 @@
       },
       "env": {
         "APP_VARIANT": "development",
+        "EXPO_PUBLIC_APP_VARIANT": "development",
         "EXPO_PUBLIC_API_URL": "https://neat-mobile-backend-nhsk.onrender.com/api/v1"
       }
     },

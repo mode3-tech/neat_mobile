@@ -76,9 +76,26 @@ const baseConfig = {
       {
         // Must stay in lockstep with components/ui/splash-screen.tsx — same
         // asset, same rendered size, same background, or the native→JS
-        // hand-off blinks. 263 is the asset's 1x width (789 ÷ 3).
-        image: './assets/images/new/logo-neat.png',
-        imageWidth: 263,
+        // hand-off blinks.
+        //
+        // Deliberately NOT new/logo-neat.png: Android 12+ masks the splash icon
+        // to a circle, and that asset is a filled pill running to the canvas
+        // edge, so the mask visibly cut its rounded caps. This one is the bare
+        // wordmark centred on a 1024x1024 transparent canvas at 68% width, so
+        // the mask only ever clips empty pixels. Any replacement needs that
+        // same breathing room — a wide logo filling its canvas will be cut.
+        //
+        // imageWidth must stay well under the canvas: Android draws splash icons
+        // on a fixed 288dp canvas and masks to the inner 192dp circle (the outer
+        // third is always cut). The wordmark spans 68% of the asset width and
+        // 22% of its height, so its bounding box diagonal is 71.4% of whatever
+        // imageWidth is set to — that has to fit inside the 96dp mask radius:
+        //   0.357 x imageWidth <= 96  =>  imageWidth <= 269
+        // At the old 288 the corners reached ~103dp and the wordmark's ends were
+        // shaved. 240 puts them at ~86dp, leaving ~11% margin. If the asset ever
+        // changes, re-measure its opaque bbox and redo that arithmetic.
+        image: './assets/images/new/splash-logo.png',
+        imageWidth: 240,
         resizeMode: 'contain',
         backgroundColor: '#032252',
       },
