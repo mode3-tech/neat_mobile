@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -13,6 +14,7 @@ import { BackButton } from '@/components/ui/back-button';
 import { ForgotPinLink } from '@/components/ui/forgot-pin-link';
 import type { BiometryType } from '@/services/biometric.service';
 
+const NAVY = '#032252';
 const ACCENT = '#F9B700';
 
 interface PinKeypadScreenProps {
@@ -42,14 +44,49 @@ const KEYS: (string | null)[] = [
   null, '0', 'back',
 ];
 
+// Shadows live in a StyleSheet rather than className: NativeWind's shadow-*
+// utilities don't map cleanly to both iOS (shadow*) and Android (elevation),
+// and the one existing shadow in this codebase — enable-biometrics.tsx — does
+// it the same way.
+const styles = StyleSheet.create({
+  tray: {
+    shadowColor: NAVY,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  activeBox: {
+    shadowColor: ACCENT,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.45,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  key: {
+    shadowColor: NAVY,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  biometricKey: {
+    shadowColor: ACCENT,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+});
+
 /**
- * Full-screen navy PIN pad used for every transaction authorisation
- * (single transfer, bulk transfer, VAS).
+ * Full-screen PIN pad used for every transaction authorisation
+ * (single transfer, bulk transfer, VAS, loan, savings).
  *
  * It ships its own keypad rather than leaning on the OS keyboard so the whole
- * step fits one screen without scrolling, and its own header bar rather than
- * <HeaderScreen> — that component exists to mount DashboardHeader, which this
- * screen replaces.
+ * step fits one screen without scrolling, and its own navy header band rather
+ * than <HeaderScreen> — the dashboard greeting that component mounts reads
+ * oddly on an authorisation step and eats height the keypad needs.
  *
  * The PIN is masked with dots and there is no reveal toggle: a keypad layout
  * has nowhere sensible to put one.
@@ -91,33 +128,39 @@ export function PinKeypadScreen({
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#032252]" edges={['top', 'bottom']}>
-      {/* Header bar — back chevron pinned left, title optically centred */}
-      <View className="flex-row items-center px-6 pt-2 pb-6">
-        <BackButton className="" onDark onPress={onBack} />
-        <Text
-          className="flex-1 text-center text-[20px] font-bold text-white -ml-8"
-          style={{ includeFontPadding: false }}
-        >
-          {headerTitle}
-        </Text>
-      </View>
+    <SafeAreaView className="flex-1 bg-white" edges={['bottom']}>
+      {/* Navy band — mirrors the DashboardHeader anatomy every other screen
+          sits under, and claims the top inset itself so nothing double-insets. */}
+      <SafeAreaView className="bg-[#032252]" edges={['top']}>
+        <View className="flex-row items-center px-6 pt-2 pb-4">
+          <BackButton className="" onDark onPress={onBack} />
+          <Text
+            className="flex-1 text-center text-[20px] font-bold text-white -ml-8"
+            style={{ includeFontPadding: false }}
+          >
+            {headerTitle}
+          </Text>
+        </View>
+      </SafeAreaView>
 
-      <View className="px-6 items-center">
+      <View className={`px-6 items-center ${compact ? 'pt-6' : 'pt-10'}`}>
         <Text
-          className={`font-bold text-white text-center ${
+          className={`font-bold text-[#1A1A1A] text-center ${
             compact ? 'text-[24px]' : 'text-[28px]'
           }`}
         >
           {title}
         </Text>
-        <Text className="text-[15px] text-white/70 text-center mt-1.5 leading-[22px]">
+        <Text className="text-[15px] text-[#6B7280] text-center mt-1.5 leading-[22px]">
           {subtitle}
         </Text>
 
         {/* PIN tray. The spinner overlays the boxes rather than replacing them
             so the tray keeps its size without a hardcoded width. */}
-        <View className={`bg-white/5 rounded-2xl p-3 ${compact ? 'mt-5' : 'mt-8'}`}>
+        <View
+          className={`bg-white rounded-2xl p-3 ${compact ? 'mt-5' : 'mt-8'}`}
+          style={styles.tray}
+        >
           <View className="flex-row gap-2" style={{ opacity: submitting ? 0 : 1 }}>
             {Array.from({ length: PIN_LENGTH }).map((_, i) => {
               const filled = i < value.length;
@@ -127,13 +170,16 @@ export function PinKeypadScreen({
                   key={i}
                   className={`rounded-xl items-center justify-center ${
                     isActive
-                      ? 'border-[1.5px] border-[#F9B700]'
-                      : 'bg-white/15'
+                      ? 'bg-white border-[1.5px] border-[#F9B700]'
+                      : 'bg-[#F5F5F5]'
                   }`}
-                  style={{ width: boxWidth, height: boxHeight }}
+                  style={[
+                    { width: boxWidth, height: boxHeight },
+                    isActive && styles.activeBox,
+                  ]}
                 >
                   {filled && (
-                    <Text className="text-[28px] leading-[32px] text-white">
+                    <Text className="text-[28px] leading-[32px] text-[#032252]">
                       •
                     </Text>
                   )}
@@ -143,12 +189,12 @@ export function PinKeypadScreen({
           </View>
           {submitting && (
             <View className="absolute inset-0 items-center justify-center">
-              <ActivityIndicator size="large" color={ACCENT} />
+              <ActivityIndicator size="large" color={NAVY} />
             </View>
           )}
         </View>
 
-        <ForgotPinLink className="self-center mt-5" onDark />
+        <ForgotPinLink className="self-center mt-5" />
       </View>
 
       {/* Keypad. Cell height comes from the key itself rather than a percentage
@@ -174,8 +220,13 @@ export function PinKeypadScreen({
             return (
               <View key={key ?? 'biometric'} className="w-[31%] mb-3 items-center">
                 <TouchableOpacity
-                  className="rounded-full bg-white/10 items-center justify-center"
-                  style={{ width: keySize, height: keySize }}
+                  className={`rounded-full items-center justify-center ${
+                    isBiometric ? 'bg-[#F9B700]' : 'bg-white'
+                  }`}
+                  style={[
+                    { width: keySize, height: keySize },
+                    isBiometric ? styles.biometricKey : styles.key,
+                  ]}
                   onPress={() => {
                     if (isBiometric) return onBiometric?.();
                     if (isBack) return handleBackspace();
@@ -200,17 +251,17 @@ export function PinKeypadScreen({
                           : 'fingerprint'
                       }
                       size={compact ? 26 : 30}
-                      color={ACCENT}
+                      color={NAVY}
                     />
                   ) : isBack ? (
                     <MaterialCommunityIcons
                       name="backspace"
                       size={compact ? 22 : 26}
-                      color="#FFFFFF"
+                      color={NAVY}
                     />
                   ) : (
                     <Text
-                      className={`font-semibold text-white ${
+                      className={`font-semibold text-[#032252] ${
                         compact ? 'text-[24px]' : 'text-[28px]'
                       }`}
                       style={{ includeFontPadding: false }}
