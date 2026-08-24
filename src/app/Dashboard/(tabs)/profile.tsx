@@ -31,7 +31,7 @@ function SettingsRow({ icon, label, onPress, disabled }: RowProps) {
       disabled={disabled}
       activeOpacity={0.7}
     >
-      <View className="w-9 h-9 rounded-full bg-[#EEF0FF] items-center justify-center mr-3">
+      <View className="w-9 h-9 rounded-full bg-[#E8EEF7] items-center justify-center mr-3">
         <MaterialCommunityIcons name={icon} size={18} color="#21194D" />
       </View>
       <Text className={`flex-1 text-[15px] ${disabled ? 'text-gray-400' : 'text-[#1A1A1A]'}`}>

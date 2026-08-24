@@ -1,3 +1,10 @@
+// ⚠️ PRE-REDESIGN — still on the old purple palette (#472FF8 / #EEF0FF).
+// Skipped during the 2026-08 re-skin because nothing routes here: no screen
+// navigates to bulk-transfer or bulk-add-recipient, only `bulk-transfer-pin`
+// is registered in _layout.tsx. Re-skin this flow (bulk-transfer,
+// bulk-add-recipient, bulk-transfer-review, bulk-transfer-success — ~19 hex
+// literals) to the navy/yellow palette BEFORE wiring up an entry point, or a
+// user will drop into old-design screens mid-flow.
 import { useEffect } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
