@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
+import { BackButton } from '@/components/ui/back-button';
 
 export default function BulkTransferSuccessScreen() {
   const reset = useBulkTransferStore((s) => s.reset);
@@ -34,12 +35,7 @@ export default function BulkTransferSuccessScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1 px-6">
-        <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2"
-          onPress={handleBack}
-        >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
-        </TouchableOpacity>
+        <BackButton onPress={handleBack} className="mt-4" />
 
         <View className="flex-1 items-center justify-center">
           <View className="w-16 h-16 rounded-full bg-[#16A34A] items-center justify-center mb-5">

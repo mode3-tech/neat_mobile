@@ -89,12 +89,23 @@ export function useAppVersionGate() {
     refetchOnWindowFocus: false,
   });
 
+  // ← local testing: the backend still 404s on /app/version/<platform>, so the
+  //   gate fails open and neither sheet ever renders. Force a state here to see
+  //   them. Set to null (or delete) before pushing. Pairs with the `if (false)`
+  //   toggle in components/updates/app-version-gate.tsx.
+  // The `as` widens the literal — without it TS narrows the const to 'hard'
+  // and flags the downstream 'soft' comparison as unreachable.
+  // const FORCE_STATE = 'hard' as VersionGateState | null; // 'soft' | 'hard' | null
+
   return {
     state: resolveVersionState(
       data,
       Application.nativeBuildVersion,
       Platform.OS,
     ),
+    // state:
+    //   FORCE_STATE ??
+    //   resolveVersionState(data, Application.nativeBuildVersion, Platform.OS),
     storeUrl: selectPolicy(data, Platform.OS)?.store_url,
   };
 }

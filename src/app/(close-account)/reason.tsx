@@ -79,9 +79,9 @@ export default function CloseAccountReasonScreen() {
           className="border border-gray-200 rounded-full w-10 h-10 items-center justify-center"
           onPress={() => router.back()}
         >
-          <MaterialCommunityIcons name="chevron-left" size={24} color="#374151" />
+          <MaterialCommunityIcons name="chevron-left" size={24} color="#032252" />
         </TouchableOpacity>
-        <Text className="flex-1 text-center text-lg font-bold text-[#1A1A1A] mr-10">
+        <Text className="flex-1 text-center text-lg font-bold text-[#032252] mr-10">
           Close Account
         </Text>
       </View>
@@ -92,7 +92,7 @@ export default function CloseAccountReasonScreen() {
         showsVerticalScrollIndicator={false}
         bottomOffset={20}
       >
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mt-4 mb-6">
+        <Text className="text-[22px] font-bold text-[#032252] mt-4 mb-6">
           Why do you want to close your account?
         </Text>
 
@@ -105,11 +105,11 @@ export default function CloseAccountReasonScreen() {
                 onPress={() => setSelected(reason.value)}
                 activeOpacity={0.7}
               >
-                <Text className="flex-1 text-[15px] text-[#1A1A1A]">{reason.label}</Text>
+                <Text className="flex-1 text-[15px] text-[#032252]">{reason.label}</Text>
                 <MaterialCommunityIcons
                   name={isSelected ? 'radiobox-marked' : 'radiobox-blank'}
                   size={22}
-                  color={isSelected ? '#472FF8' : '#9CA3AF'}
+                  color={isSelected ? '#032252' : '#9CA3AF'}
                 />
               </TouchableOpacity>
 
@@ -121,7 +121,7 @@ export default function CloseAccountReasonScreen() {
                     </Text>
                   </View>
                   <TextInput
-                    className="text-[15px] text-[#1A1A1A]"
+                    className="text-[15px] text-[#032252]"
                     value={otherText}
                     onChangeText={setOtherText}
                     placeholder="Tell us more…"
@@ -141,18 +141,18 @@ export default function CloseAccountReasonScreen() {
 
         <TouchableOpacity
           className={`rounded-full py-4 items-center mt-6 ${
-            canSubmit ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+            canSubmit ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
           }`}
           onPress={handleSubmit}
           disabled={!canSubmit || closeMutation.isPending}
           activeOpacity={0.85}
         >
           {closeMutation.isPending ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#032252" />
           ) : (
             <Text
               className={`text-base font-semibold ${
-                canSubmit ? 'text-white' : 'text-gray-400'
+                canSubmit ? 'text-[#032252]' : 'text-gray-400'
               }`}
             >
               Submit

@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
  */
 
 const CONFETTI_COLORS = [
-  '#472FF8',
+  '#F9B700',
   '#16A34A',
   '#F59E0B',
   '#EF4444',

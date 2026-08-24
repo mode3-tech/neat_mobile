@@ -58,7 +58,7 @@ push testing — never commit either.
 | Variable | Where it's set | Notes |
 |---|---|---|
 | `EXPO_PUBLIC_API_URL` | `.env` locally, `env` block in [eas.json](eas.json) for builds | Backend base URL, includes `/api/v1`. **The host has changed before — trust `.env`/`eas.json` over docs.** |
-| `EXPO_PUBLIC_APP_VARIANT` | eas.json only | `preview` \| `production`. Gates production-only behaviour such as the force-update check. |
+| `EXPO_PUBLIC_APP_VARIANT` | eas.json only — **never in a local `.env`** | `development` \| `preview` \| `production`. Gates production-only behaviour such as the force-update check, and is the fallback source for `APP_ENV` ([src/constants/app-env.ts](src/constants/app-env.ts)) — sent as `app_env` on push-token registration so the backend dedupes pushes across builds installed on one phone. Leave it unset locally: `app-env.ts` falls back to `development` on its own, and because `EXPO_PUBLIC_*` is inlined at export time, a local value gets baked into any `eas update` run from that machine — `development` in a preview bundle stops [device-integrity-gate.tsx](src/components/security/device-integrity-gate.tsx) relaxing freeRASP's `unofficialStore` check, which hard-blocks every sideloaded QA install at launch. |
 | `EXPO_PUBLIC_ANDROID_CERT_SHA256` | eas.json only | Signing cert hash for RASP integrity checks. Differs per keystore — preview vs Play app-signing. |
 | `APP_VARIANT` | eas.json only | Drives app name + package suffix in [app.config.js](app.config.js) so dev/preview/prod installs coexist on one device. |
 

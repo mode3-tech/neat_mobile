@@ -16,8 +16,10 @@ import { toast } from 'sonner-native';
 
 import { authService } from '@/services/auth.service';
 import { getErrorMessage } from '@/utils/error';
+import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#F9B700';
+const PRIMARY_TEXT = '#032252';
 
 export default function ForgotPasswordScreen() {
   const [phone, setPhone] = useState('');
@@ -52,11 +54,10 @@ export default function ForgotPasswordScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-            <Text style={styles.backText}>Back</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.title}>Forgot Password</Text>
+          <View className="flex-row items-center gap-2 mt-4 mb-7">
+            <BackButton className="" />
+            <Text style={styles.title}>Forgot Password</Text>
+          </View>
 
           <View style={styles.field}>
             <Text style={styles.label}>Phone number</Text>
@@ -83,7 +84,7 @@ export default function ForgotPasswordScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={PRIMARY_TEXT} />
             ) : (
               <Text style={[styles.primaryBtnText, !canSubmit && styles.disabledBtnText]}>
                 Submit
@@ -109,26 +110,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 24,
   },
-  backBtn: {
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    marginTop: 8,
-    marginBottom: 24,
-  },
-  backText: {
-    fontSize: 14,
-    color: '#374151',
-    fontWeight: '500',
-  },
   title: {
     fontSize: 26,
+    lineHeight: 31,
+    includeFontPadding: false,
     fontWeight: '700',
     color: '#1A1A1A',
-    marginBottom: 28,
   },
   field: {
     marginBottom: 20,
@@ -166,7 +153,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },

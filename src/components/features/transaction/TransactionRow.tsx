@@ -9,25 +9,24 @@ type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 interface TransactionIconConfig {
   keywords: string[];
   icon: IconName;
-  bgColor: string;
-  iconColor: string;
 }
 
+// One neutral chip for every transaction type. The glyph carries the meaning,
+// the colour doesn't — same treatment as ServicesGrid. The old per-type rainbow
+// (purple/blue/green/orange) predates the navy palette and fought with it.
+const ICON_CHIP = { bgColor: '#F1F3F8', iconColor: '#032252' };
+
 const ICON_MAP: TransactionIconConfig[] = [
-  { keywords: ['airtime'], icon: 'phone', bgColor: '#F3F0FF', iconColor: '#472FF8' },
-  { keywords: ['transfer', 'send'], icon: 'bank-transfer', bgColor: '#EBF5FF', iconColor: '#3B82F6' },
-  { keywords: ['data'], icon: 'wifi', bgColor: '#ECFDF5', iconColor: '#10B981' },
-  { keywords: ['electricity'], icon: 'flash', bgColor: '#FFF7ED', iconColor: '#F59E0B' },
-  { keywords: ['cable', 'tv'], icon: 'television', bgColor: '#FFF1F2', iconColor: '#F97316' },
-  { keywords: ['betting'], icon: 'trophy', bgColor: '#FEF2F2', iconColor: '#EF4444' },
-  { keywords: ['bonus', 'cashback', 'reward'], icon: 'gift', bgColor: '#FDF2F8', iconColor: '#EC4899' },
+  { keywords: ['airtime'], icon: 'phone' },
+  { keywords: ['transfer', 'send'], icon: 'bank-transfer' },
+  { keywords: ['data'], icon: 'wifi' },
+  { keywords: ['electricity'], icon: 'flash' },
+  { keywords: ['cable', 'tv'], icon: 'television' },
+  { keywords: ['betting'], icon: 'trophy' },
+  { keywords: ['bonus', 'cashback', 'reward'], icon: 'gift' },
 ];
 
-const DEFAULT_ICON: Omit<TransactionIconConfig, 'keywords'> = {
-  icon: 'swap-horizontal',
-  bgColor: '#F3F4F6',
-  iconColor: '#6B7280',
-};
+const DEFAULT_ICON: IconName = 'swap-horizontal';
 
 export const STATUS_COLORS: Record<string, string> = {
   successful: '#16A34A',
@@ -40,7 +39,18 @@ export function getTransactionIcon(description: string) {
   const match = ICON_MAP.find((entry) =>
     entry.keywords.some((kw) => lower.includes(kw)),
   );
-  return match ?? DEFAULT_ICON;
+  return { icon: match?.icon ?? DEFAULT_ICON, ...ICON_CHIP };
+}
+
+/**
+ * Status colour for a *list row*, where nearly every entry is successful —
+ * colouring them all green competes with the credit amount for attention. Only
+ * pending and failed earn colour here. Detail screens keep the full
+ * STATUS_COLORS map, where a green "Successful" is the point.
+ */
+export function getRowStatusColor(status: string) {
+  if (status === 'successful') return '#6B7280';
+  return STATUS_COLORS[status] ?? '#6B7280';
 }
 
 export function TransactionRow({
@@ -54,7 +64,7 @@ export function TransactionRow({
   const isCredit = transaction.type === 'credit';
   const prefix = isCredit ? '+' : '-';
   const formattedAmount = formatNairaWhole(transaction.amount);
-  const statusColor = STATUS_COLORS[transaction.status] ?? '#6B7280';
+  const statusColor = getRowStatusColor(transaction.status);
 
   // Always a TouchableOpacity; `disabled` when there's no handler makes it inert
   // (no press feedback, no action) — equivalent to a static row, without `any`.
@@ -75,18 +85,20 @@ export function TransactionRow({
 
       {/* Description + Date */}
       <View className="flex-1 ml-3">
-        <Text className="text-sm font-semibold text-gray-900" numberOfLines={1}>
+        <Text className="text-sm font-semibold text-[#032252]" numberOfLines={1}>
           {transaction.description}
         </Text>
-        <Text className="text-xs text-gray-500 mt-0.5">
+        <Text className="text-xs text-[#6B7280] mt-0.5">
           {formatTransactionDateTime(transaction.date)}
         </Text>
       </View>
 
       {/* Amount + Status */}
       <View className="items-end ml-2">
+        {/* Money in is green, money out is navy. Both were dark before, which
+            made credit and debit read identically at a glance. */}
         <Text
-          className={`text-sm font-bold ${isCredit ? 'text-[#472FF8]' : 'text-gray-900'}`}
+          className={`text-sm font-bold ${isCredit ? 'text-[#16A34A]' : 'text-[#032252]'}`}
         >
           {prefix}{formattedAmount}
         </Text>

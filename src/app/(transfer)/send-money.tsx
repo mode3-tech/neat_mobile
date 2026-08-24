@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 
@@ -29,6 +29,7 @@ import { ActivationCapBanner } from '@/components/ActivationCapBanner';
 import { getErrorMessage } from '@/utils/error';
 import { formatNairaShort } from '@/utils/format';
 import type { Bank, Beneficiary, TransferType } from '@/types/transfer.types';
+import { BackButton } from '@/components/ui/back-button';
 
 const TABS: { key: TransferType; label: string }[] = [
   { key: 'neatpay', label: 'NEAT Microcredit' },
@@ -38,8 +39,47 @@ const TABS: { key: TransferType; label: string }[] = [
 // Single source of truth for code -> Bank. Falls back to showing the raw code as
 // the name so a failed/incomplete banks fetch degrades the *label* only — the
 // code itself stays correct, which is all account validation needs.
-const resolveBank = (bankCode: string, list: Bank[]): Bank =>
-  list.find((b) => b.code === bankCode) ?? { code: bankCode, name: bankCode };
+const normalizeBankName = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+// Transaction history sometimes carries a bank *name* where the code belongs
+// ("OPAY" instead of "100004"), which sent bank_code=OPAY to the name enquiry
+// and 500'd every Transfer Again on such a row. So: code first, then the bank
+// list by name.
+//
+// A partial match is only accepted when exactly one bank matches — "access"
+// hits several, and picking the first would point a transfer at the wrong bank.
+// An unresolved code still falls through to the placeholder: a failed enquiry
+// the user can see beats a silently wrong bank.
+//
+// Partial matching is anchored (startsWith, not includes) and needs 3+ chars:
+// "OPAY" should reach "OPay Digital Services Limited", but "access" must not
+// reach "First Access Bank" through the middle of the name, and a 1-2 char
+// fragment must not be enough to single out a bank on its own. Entries whose
+// name normalizes to '' are skipped outright — every target startsWith('') is
+// true, so one of them would match everything and look unambiguous doing it.
+const MIN_PARTIAL_MATCH_LENGTH = 3;
+
+const resolveBank = (bankCode: string, list: Bank[]): Bank => {
+  const byCode = list.find((b) => b.code === bankCode);
+  if (byCode) return byCode;
+
+  const target = normalizeBankName(bankCode);
+  if (target) {
+    const byName = list.find((b) => normalizeBankName(b.name) === target);
+    if (byName) return byName;
+
+    if (target.length >= MIN_PARTIAL_MATCH_LENGTH) {
+      const partial = list.filter((b) => {
+        const name = normalizeBankName(b.name);
+        if (name.length < MIN_PARTIAL_MATCH_LENGTH) return false;
+        return name.startsWith(target) || target.startsWith(name);
+      });
+      if (partial.length === 1) return partial[0];
+    }
+  }
+
+  return { code: bankCode, name: bankCode };
+};
 
 export default function SendMoneyScreen() {
   const store = useTransferStore();
@@ -54,13 +94,11 @@ export default function SendMoneyScreen() {
   const {
     prefillAccountNumber = '',
     prefillBankCode = '',
-    prefillAccountName = '',
     prefillAmount = '',
     prefillNarration = '',
   } = useLocalSearchParams<{
     prefillAccountNumber?: string;
     prefillBankCode?: string;
-    prefillAccountName?: string;
     prefillAmount?: string;
     prefillNarration?: string;
   }>();
@@ -90,7 +128,6 @@ export default function SendMoneyScreen() {
   const [beneficiariesLoading, setBeneficiariesLoading] = useState(false);
   const [beneficiaryModalVisible, setBeneficiaryModalVisible] = useState(false);
   const [beneficiarySearch, setBeneficiarySearch] = useState('');
-  const prefilled = useRef(false);
 
   // Amount & narration
   // Whitelist digits rather than stripping them — stripping would turn a stray
@@ -189,14 +226,6 @@ export default function SendMoneyScreen() {
     const bankCode =
       activeTab === 'neatpay' ? NEAT_BANK_CODE : selectedBank?.code;
 
-    // Skip validation if prefilled from beneficiary — the beneficiary already
-    // has a verified account name we want to keep displayed.
-    if (prefilled.current) {
-      prefilled.current = false;
-      setValidating(false);
-      return;
-    }
-
     // Clear stale results synchronously on every keystroke so the previous
     // validation's name can't sit alongside a newly-edited account number,
     // even briefly, while the next debounce/request is in flight.
@@ -250,12 +279,13 @@ export default function SendMoneyScreen() {
 
   const parsedAmount = parseInt(amount, 10) || 0;
 
-  // The validation effect clears `accountName` on its first run, so the name
-  // carried over from the transaction can't live in that state. Derive it for
-  // display instead: grey = last known, unconfirmed; green = confirmed just now.
-  // `canProceed` still keys off `accountName` alone, so a grey name can't be
-  // transferred to.
-  const displayName = accountName || (lockedRecipient ? prefillAccountName : '');
+  // Only show a name the bank has confirmed. Names carried in from elsewhere —
+  // a "transfer again" row, a saved beneficiary — used to render before any
+  // enquiry landed, but on a transfer screen an unverified name that looks
+  // confirmed is the wrong default, and grey-vs-green isn't a distinction users
+  // reliably read. `canProceed` already keyed off `accountName` alone, so what
+  // can actually be sent is unchanged.
+  const displayName = accountName;
 
   // CBN 24h activation cap: block outflow above what's left in the window.
   // Amount input is whole naira; the limit is kobo, so compare in kobo.
@@ -303,19 +333,21 @@ export default function SendMoneyScreen() {
     router.push('/(transfer)/transfer-review');
   };
 
+  // Only the account number and bank are taken from the beneficiary; the saved
+  // account_name is deliberately not shown. A stored name can be stale (accounts
+  // get closed and reissued, names get amended) and rendering it in confirmed-
+  // green makes it look bank-verified when nothing verified it this session. The
+  // effect below re-runs the name enquiry like any other entry, which is the
+  // same rule "transfer again" follows.
   const handleSelectBeneficiary = async (beneficiary: Beneficiary) => {
-    prefilled.current = true;
     setAccountNumber(beneficiary.account_number);
-    setAccountName(beneficiary.account_name);
     setBeneficiaryModalVisible(false);
     setBeneficiarySearch('');
 
     if (activeTab === 'other_bank') {
-      // Ternary, not an unconditional `await fetchBanks()`. When banks are
-      // already cached this must not yield: staying synchronous keeps all the
-      // setters in one batch, so the validation effect runs once and consumes
-      // `prefilled` — which is what preserves "trust the saved name". Awaiting
-      // here would split the batch and re-validate every beneficiary pick.
+      // Ternary, not an unconditional `await fetchBanks()`. With banks already
+      // cached this stays synchronous, so the number and bank land in one batch
+      // and the validation effect fires once instead of twice.
       const bankList = banks.length > 0 ? banks : await fetchBanks();
       setSelectedBank(resolveBank(beneficiary.bank_code, bankList));
     }
@@ -347,19 +379,18 @@ export default function SendMoneyScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <HeaderScreen padded={false}>
       <View className="flex-1 px-6">
         {/* Back button */}
-        <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-12"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
-        </TouchableOpacity>
-
-        <Text className="text-[20px] font-medium text-[#1A1A1A] mb-8">
-          Send Money
-        </Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-8">
+          <BackButton className="" />
+          <Text
+            className="text-[20px] font-medium text-[#1A1A1A] leading-[24px]"
+            style={{ includeFontPadding: false }}
+          >
+            Send Money
+          </Text>
+        </View>
 
         {/* CBN 24h activation cap disclosure (renders only when active) */}
         <ActivationCapBanner limits={limits} />
@@ -380,7 +411,7 @@ export default function SendMoneyScreen() {
             <TouchableOpacity
               key={tab.key}
               className={`flex-1 py-3 rounded-full items-center ${
-                activeTab === tab.key ? 'bg-[#472FF8]' : ''
+                activeTab === tab.key ? 'bg-[#032252]' : ''
               }`}
               onPress={() => {
                 setActiveTab(tab.key);
@@ -391,7 +422,7 @@ export default function SendMoneyScreen() {
             >
               <Text
                 className={`text-[13px] font-semibold ${
-                  activeTab === tab.key ? 'text-white' : 'text-[#6B7280]'
+                  activeTab === tab.key ? 'text-[#F9B700]' : 'text-[#6B7280]'
                 }`}
               >
                 {tab.label}
@@ -429,7 +460,7 @@ export default function SendMoneyScreen() {
                 </Text>
                 {/* Chevron promises a picker; a lock explains its absence. */}
                 {lockedRecipient && !selectedBank && banksLoading ? (
-                  <ActivityIndicator size="small" color="#472FF8" />
+                  <ActivityIndicator size="small" color="#032252" />
                 ) : (
                   <MaterialCommunityIcons
                     name={lockedRecipient ? 'lock-outline' : 'chevron-down'}
@@ -466,7 +497,7 @@ export default function SendMoneyScreen() {
                 keyboardType="number-pad"
                 maxLength={ACCOUNT_NUMBER_LENGTH}
               />
-              {validating && <ActivityIndicator size="small" color="#472FF8" />}
+              {validating && <ActivityIndicator size="small" color="#032252" />}
               {lockedRecipient && !validating && (
                 <MaterialCommunityIcons
                   name="lock-outline"
@@ -475,15 +506,15 @@ export default function SendMoneyScreen() {
                 />
               )}
             </View>
-            {displayName !== '' && (
-              <Text
-                className={`text-[13px] mt-1.5 font-medium ${
-                  accountName !== '' ? 'text-[#16A34A]' : 'text-[#6B7280]'
-                }`}
-              >
+            {validating ? (
+              <Text className="text-[13px] mt-1.5 font-medium text-[#6B7280]">
+                Verifying account…
+              </Text>
+            ) : displayName !== '' ? (
+              <Text className="text-[13px] mt-1.5 font-medium text-[#16A34A]">
                 {displayName}
               </Text>
-            )}
+            ) : null}
             {validationError !== '' && (
               <Text className="text-xs text-red-500 mt-1.5">
                 {validationError}
@@ -491,7 +522,7 @@ export default function SendMoneyScreen() {
             )}
             {lockedRecipient && validationError !== '' && (
               <TouchableOpacity className="mt-2" onPress={handleClearPrefill}>
-                <Text className="text-[13px] font-medium text-[#472FF8]">
+                <Text className="text-[13px] font-medium text-[#032252]">
                   Send to a different account
                 </Text>
               </TouchableOpacity>
@@ -508,9 +539,9 @@ export default function SendMoneyScreen() {
                 <MaterialCommunityIcons
                   name="account-circle-outline"
                   size={20}
-                  color="#472FF8"
+                  color="#032252"
                 />
-                <Text className="text-[13px] font-medium text-[#472FF8] ml-1.5">
+                <Text className="text-[13px] font-medium text-[#032252] ml-1.5">
                   Select from Beneficiary
                 </Text>
               </TouchableOpacity>
@@ -567,7 +598,7 @@ export default function SendMoneyScreen() {
         <View className="pb-4">
           <TouchableOpacity
             className={`rounded-full py-4 items-center ${
-              canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+              canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
             }`}
             onPress={handleProceed}
             disabled={!canProceed}
@@ -575,7 +606,7 @@ export default function SendMoneyScreen() {
           >
             <Text
               className={`text-base font-semibold ${
-                canProceed ? 'text-white' : 'text-[#9CA3AF]'
+                canProceed ? 'text-[#032252]' : 'text-[#9CA3AF]'
               }`}
             >
               Proceed
@@ -623,7 +654,7 @@ export default function SendMoneyScreen() {
             {banksLoading ? (
               <ActivityIndicator
                 size="large"
-                color="#472FF8"
+                color="#032252"
                 className="mt-8"
               />
             ) : (
@@ -634,7 +665,7 @@ export default function SendMoneyScreen() {
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     className={`px-6 py-4 border-b border-[#F3F4F6] ${
-                      selectedBank?.code === item.code ? 'bg-[#EEF0FF]' : ''
+                      selectedBank?.code === item.code ? 'bg-[#E8EEF7]' : ''
                     }`}
                     onPress={() => handleSelectBank(item)}
                   >
@@ -698,7 +729,7 @@ export default function SendMoneyScreen() {
             {beneficiariesLoading ? (
               <ActivityIndicator
                 size="large"
-                color="#472FF8"
+                color="#032252"
                 className="mt-8"
               />
             ) : (
@@ -731,6 +762,6 @@ export default function SendMoneyScreen() {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

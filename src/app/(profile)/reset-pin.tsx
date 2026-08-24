@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { router, useLocalSearchParams } from 'expo-router';
 import { toast } from 'sonner-native';
 
@@ -17,6 +17,7 @@ import { PIN_LENGTH } from '@/constants';
 import { authService } from '@/services/auth.service';
 import { clearStoredTransactionPin } from '@/services/biometric.service';
 import { getErrorMessage } from '@/utils/error';
+import { BackButton } from '@/components/ui/back-button';
 
 export default function ResetPinScreen() {
   const { verificationId } = useLocalSearchParams<{ verificationId: string }>();
@@ -61,19 +62,20 @@ export default function ResetPinScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <HeaderScreen padded={false}>
       <KeyboardAvoidingView
         className="flex-1 px-6"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <TouchableOpacity
-          className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm text-gray-700 font-medium">Back</Text>
-        </TouchableOpacity>
-
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Reset Transaction PIN</Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-6">
+          <BackButton className="" />
+          <Text
+            className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+            style={{ includeFontPadding: false }}
+          >
+            Reset Transaction PIN
+          </Text>
+        </View>
 
         <PinField
           label="New PIN"
@@ -100,21 +102,23 @@ export default function ResetPinScreen() {
 
         <View className="pb-4">
           <TouchableOpacity
-            className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+            className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'}`}
             onPress={handleResetPin}
             disabled={!canProceed || loading}
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color="#032252" />
             ) : (
-              <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-gray-400'}`}>
+              <Text
+                className={`text-base font-semibold ${canProceed ? 'text-[#032252]' : 'text-gray-400'}`}
+              >
                 Reset PIN
               </Text>
             )}
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

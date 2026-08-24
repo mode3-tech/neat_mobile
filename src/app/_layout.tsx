@@ -20,6 +20,7 @@ import { useProfileStore } from '@/stores/profile.store';
 import { DeviceIntegrityGate } from '@/components/security/device-integrity-gate';
 import { AppVersionGate } from '@/components/updates/app-version-gate';
 import { OfflineBanner } from '@/components/OfflineBanner';
+import { initNavBarStyle } from '@/components/ui/nav-bar';
 import { QUERY_KEYS } from '@/constants';
 import { resolveNotificationRoute } from '@/utils/notification-route';
 import {
@@ -57,6 +58,12 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Resting value for the Android nav bar buttons. Screens that need the other
+// colour mount <NavBar> and revert to this on blur. Applied at module scope,
+// not from an effect: React flushes child effects before the root layout's, so
+// the first screen's <NavBar> would otherwise be overwritten right after it ran.
+initNavBarStyle();
 
 export default function RootLayout(): React.JSX.Element {
   const router = useRouter();
@@ -222,26 +229,47 @@ export default function RootLayout(): React.JSX.Element {
             screenOptions={{
               headerShown: false,
               animation: 'slide_from_right',
+              // Baseline; navy routes override it below. Must be the native
+              // option — a <StatusBar> inside a screen applies a beat later
+              // and flashes dark first.
+              statusBarStyle: 'dark',
             }}
           >
-            <Stack.Screen name="index" options={{ animation: 'none' }} />
+            <Stack.Screen
+              name="index"
+              options={{ animation: 'none', statusBarStyle: 'light' }}
+            />
             <Stack.Screen
               name="welcome"
-              options={{ contentStyle: { backgroundColor: '#d4d8FF' } }}
+              options={{ contentStyle: { backgroundColor: '#FEF9EC' } }}
             />
             <Stack.Screen name="(sign-in)" />
+            {/* statusBarStyle: 'light' = every screen under this route renders
+                <HeaderScreen>. (transfer) is mixed and sets it per screen. */}
             <Stack.Screen
               name="Dashboard"
-              options={{ animation: 'none' }}
+              options={{ animation: 'none', statusBarStyle: 'light' }}
             />
-            <Stack.Screen name="(loan)" />
-            <Stack.Screen name="(vas)" />
+            <Stack.Screen name="(loan)" options={{ statusBarStyle: 'light' }} />
+            <Stack.Screen name="(vas)" options={{ statusBarStyle: 'light' }} />
             <Stack.Screen name="(transfer)" />
-            <Stack.Screen name="(savings)" />
+            <Stack.Screen
+              name="(savings)"
+              options={{ statusBarStyle: 'light' }}
+            />
             <Stack.Screen name="(transaction)" />
-            {/* <Stack.Screen name="(account)" /> */}
-            {/* <Stack.Screen name="(profile)" /> */}
-            <Stack.Screen name="notifications" />
+            <Stack.Screen
+              name="(account)"
+              options={{ statusBarStyle: 'light' }}
+            />
+            <Stack.Screen
+              name="(profile)"
+              options={{ statusBarStyle: 'light' }}
+            />
+            <Stack.Screen
+              name="notifications"
+              options={{ statusBarStyle: 'light' }}
+            />
             <Stack.Screen
               name="modal"
               options={{ presentation: 'modal' }}

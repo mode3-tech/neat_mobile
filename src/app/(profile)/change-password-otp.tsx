@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { useQuery } from '@tanstack/react-query';
 
 import { OTP_LENGTH, QUERY_KEYS } from '@/constants';
@@ -10,6 +10,7 @@ import { authService } from '@/services/auth.service';
 import { accountService } from '@/services/account.service';
 import { useSecurityChangeStore } from '@/stores/security-change.store';
 import { maskPhone } from '@/utils/mask';
+import { BackButton } from '@/components/ui/back-button';
 
 const RESEND_SECONDS = 90;
 
@@ -89,18 +90,19 @@ export default function ChangePasswordOtpScreen() {
   const timer = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-gray-200 rounded-full px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm text-gray-700 font-medium">Back</Text>
-      </TouchableOpacity>
-
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-2">Enter OTP Code</Text>
+    <HeaderScreen>
+      <View className="flex-row items-center gap-2 mt-4 mb-2">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#032252] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Enter OTP Code
+        </Text>
+      </View>
       <Text className="text-[13px] text-gray-500 leading-5 mb-8">
         Please check the OTP that has been sent to your phone number{' '}
-        <Text className="text-[#472FF8] font-semibold">{maskPhone(summary?.phone_number)}</Text>.
+        <Text className="text-[#032252] font-semibold">{maskPhone(summary?.phone_number)}</Text>.
       </Text>
 
       <OtpInput value={otp} onChange={(v) => { setOtp(v); setError(''); }} length={OTP_LENGTH} />
@@ -115,31 +117,33 @@ export default function ChangePasswordOtpScreen() {
 
       <View className="pb-4">
         <TouchableOpacity
-          className={`rounded-full py-4 items-center ${canVerify ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+          className={`rounded-full py-4 items-center ${canVerify ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'}`}
           onPress={handleVerify}
           disabled={!canVerify || loading}
           activeOpacity={0.85}
         >
           {loading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color="#032252" />
           ) : (
-            <Text className={`text-base font-semibold ${canVerify ? 'text-white' : 'text-gray-400'}`}>
+            <Text
+              className={`text-base font-semibold ${canVerify ? 'text-[#032252]' : 'text-gray-400'}`}
+            >
               Confirm
             </Text>
           )}
         </TouchableOpacity>
 
         <View className="flex-row justify-center items-center mt-4">
-          <Text className="text-[13px] text-gray-500">Didn't get a code? </Text>
+          <Text className="text-[13px] text-gray-500">Didn&apos;t get a code? </Text>
           {canResend ? (
             <TouchableOpacity onPress={handleResend}>
-              <Text className="text-[13px] text-[#472FF8] font-semibold">Resend code</Text>
+              <Text className="text-[13px] text-[#032252] font-semibold">Resend code</Text>
             </TouchableOpacity>
           ) : (
-            <Text className="text-[13px] text-[#472FF8] font-semibold">{timer}</Text>
+            <Text className="text-[13px] text-[#032252] font-semibold">{timer}</Text>
           )}
         </View>
       </View>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

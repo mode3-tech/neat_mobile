@@ -12,8 +12,10 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
+import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#F9B700';
+const PRIMARY_TEXT = '#032252';
 const ERROR_COLOR = '#EF4444';
 const SUCCESS_COLOR = '#16A34A';
 
@@ -130,11 +132,10 @@ export default function FaceLivenessScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-          <Text style={styles.backText}>Back</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.title}>Verify your identity</Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-1.5">
+          <BackButton className="" />
+          <Text style={styles.title}>Verify your identity</Text>
+        </View>
         <Text style={styles.subtitle}>
           We'll take a quick selfie to confirm your face matches your BVN and NIN records.
         </Text>
@@ -189,7 +190,7 @@ export default function FaceLivenessScreen() {
             >
               {isLoading ? (
                 <View style={styles.loadingRow}>
-                  <ActivityIndicator color="#fff" />
+                  <ActivityIndicator color={PRIMARY_TEXT} />
                   <Text style={styles.loadingText}>
                     {isCapturing ? 'Opening camera...' : 'Verifying...'}
                   </Text>
@@ -217,26 +218,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 24,
   },
-  backBtn: {
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    marginTop: 8,
-    marginBottom: 24,
-  },
-  backText: {
-    fontSize: 14,
-    color: '#374151',
-    fontWeight: '500',
-  },
   title: {
     fontSize: 22,
+    lineHeight: 26,
+    includeFontPadding: false,
     fontWeight: '700',
-    color: '#1A1A1A',
-    marginBottom: 6,
+    color: PRIMARY_TEXT,
   },
   subtitle: {
     fontSize: 13,
@@ -244,16 +231,19 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 28,
   },
+  // Same surface as the BVN/NIN cards, so the whole ID leg reads as one flow.
   infoBox: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: '#FFFBEF',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#F9B700',
     padding: 16,
     gap: 8,
   },
   infoBoxTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: PRIMARY_TEXT,
     marginBottom: 4,
   },
   bulletRow: {
@@ -277,8 +267,10 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   successCard: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: '#FFFBEF',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#F9B700',
     padding: 16,
     gap: 8,
   },
@@ -324,7 +316,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -334,7 +326,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   loadingText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 14,
     fontWeight: '500',
   },

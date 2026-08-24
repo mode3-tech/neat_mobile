@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -16,6 +16,7 @@ import { QUERY_KEYS } from '@/constants';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import { formatNairaWhole, formatDateLong } from '@/utils/format';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
+import { BackButton } from '@/components/ui/back-button';
 
 type TabKey = 'all' | 'upcoming' | 'paid' | 'overdue';
 
@@ -75,8 +76,8 @@ function HistoryRow({ item }: { item: LoanHistoryItem }) {
             {statusLabel(item.status)}
           </Text>
         </View>
-        <View className="w-7 h-7 rounded-md bg-[#EEF0FF] items-center justify-center">
-          <MaterialCommunityIcons name="chevron-right" size={18} color="#472FF8" />
+        <View className="w-7 h-7 rounded-md bg-[#E8EEF7] items-center justify-center">
+          <MaterialCommunityIcons name="chevron-right" size={18} color="#032252" />
         </View>
       </View>
     </TouchableOpacity>
@@ -101,15 +102,16 @@ export default function LoanHistoryScreen() {
     tab === 'all' ? history ?? [] : (history ?? []).filter((h) => h.status === tab);
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
-
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">Loan History</Text>
+    <HeaderScreen>
+      <View className="flex-row items-center gap-2 mt-4 mb-5">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Loan History
+        </Text>
+      </View>
 
       <View className="flex-row gap-2 mb-5">
         {TABS.map((t) => {
@@ -121,13 +123,13 @@ export default function LoanHistoryScreen() {
               activeOpacity={0.85}
               className={`flex-1 py-2 rounded-full border items-center ${
                 active
-                  ? 'bg-[#472FF8] border-[#472FF8]'
-                  : 'bg-white border-[#472FF8]'
+                  ? 'bg-[#032252] border-[#032252]'
+                  : 'bg-white border-[#E3E7EF]'
               }`}
             >
               <Text
                 className={`text-xs font-semibold ${
-                  active ? 'text-white' : 'text-[#472FF8]'
+                  active ? 'text-[#F9B700]' : 'text-[#032252]'
                 }`}
               >
                 {t.label}
@@ -139,7 +141,7 @@ export default function LoanHistoryScreen() {
 
       {isLoading ? (
         <View className="h-[180px] items-center justify-center">
-          <ActivityIndicator size="small" color="#472FF8" />
+          <ActivityIndicator size="small" color="#032252" />
         </View>
       ) : (
         <ScrollView
@@ -179,6 +181,6 @@ export default function LoanHistoryScreen() {
           )}
         </ScrollView>
       )}
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

@@ -56,19 +56,19 @@ export default function TransactionSummaryModal({
           </View>
 
           <TouchableOpacity
-            className="bg-[#472FF8] rounded-full py-4 items-center mb-3"
+            className="bg-[#F9B700] rounded-full py-4 items-center mb-3"
             onPress={onSave}
             activeOpacity={0.85}
           >
-            <Text className="text-white text-base font-semibold">Save</Text>
+            <Text className="text-[#032252] text-base font-semibold">Save</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="border-[1.5px] border-[#472FF8] rounded-full py-4 items-center"
+            className="border-[1.5px] border-[#032252] rounded-full py-4 items-center"
             onPress={onClose}
             activeOpacity={0.85}
           >
-            <Text className="text-[#472FF8] text-base font-semibold">Cancel</Text>
+            <Text className="text-[#032252] text-base font-semibold">Cancel</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -9,9 +9,9 @@ import {
   View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import DateTimePicker, {
   type DateTimePickerEvent,
@@ -24,6 +24,7 @@ import type { StatementFormat } from '@/types/account.types';
 import { downloadToAndroidDownloads } from '@/utils/download';
 import { formatDateShort } from '@/utils/format';
 import { shareFile } from '@/utils/receipt';
+import { BackButton } from '@/components/ui/back-button';
 
 interface FileTypeOption {
   label: string;
@@ -35,6 +36,18 @@ const FILE_TYPE_OPTIONS: FileTypeOption[] = [
   { label: 'Excel', value: 'xlsx', icon: 'file-excel-box' },
   { label: 'PDF', value: 'pdf', icon: 'file-pdf-box' },
 ];
+
+/**
+ * Snapshot of what a job was actually requested with. The form stays editable
+ * after a job completes, so the result card and the download read from here —
+ * not from live state — or they describe a file the server never built. Dates
+ * are null on deep-link entry, where only the job id and format are known.
+ */
+interface StatementJobMeta {
+  format: StatementFormat | null;
+  startDate: Date | null;
+  endDate: Date | null;
+}
 
 function startOfDay(date: Date): Date {
   return new Date(
@@ -70,6 +83,11 @@ export default function StatementScreen() {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [format, setFormat] = useState<StatementFormat | null>(initialFormat);
   const [jobId, setJobId] = useState<string | null>(initialJobId);
+  const [jobMeta, setJobMeta] = useState<StatementJobMeta | null>(
+    initialJobId
+      ? { format: initialFormat, startDate: null, endDate: null }
+      : null,
+  );
 
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
@@ -106,6 +124,9 @@ export default function StatementScreen() {
     (jobStatus === 'pending' || jobStatus === 'processing' || !jobStatus);
 
   const selectedFileType = FILE_TYPE_OPTIONS.find((o) => o.value === format);
+  const jobFileType = FILE_TYPE_OPTIONS.find(
+    (o) => o.value === jobMeta?.format,
+  );
   const rangeInvalid =
     !!startDate && !!endDate && startDate.getTime() > endDate.getTime();
   const canGenerate =
@@ -142,6 +163,7 @@ export default function StatementScreen() {
   const handleGenerate = () => {
     if (!canGenerate) return;
     setJobId(null);
+    setJobMeta({ format, startDate, endDate });
     generateMutation.reset();
     generateMutation.mutate();
   };
@@ -150,11 +172,14 @@ export default function StatementScreen() {
     if (!downloadUrl || downloading) return;
     setDownloading(true);
     try {
-      // On deep-link entry, `format` is unknown — fall back to xlsx so the file
-      // still has a reasonable extension (it opens regardless of ext).
-      const extension = format === 'pdf' ? 'pdf' : 'xlsx';
+      // Must be the format the job was built with, not the live picker — the
+      // user can change the picker after a job completes, and mislabelling the
+      // bytes produces a file the OS refuses to open. On deep-link entry the
+      // format is unknown, so fall back to xlsx (it opens regardless of ext).
+      const jobFormat = jobMeta?.format;
+      const extension = jobFormat === 'pdf' ? 'pdf' : 'xlsx';
       const mime =
-        format === 'pdf'
+        jobFormat === 'pdf'
           ? 'application/pdf'
           : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
       const filename = `neat-statement-${Date.now()}.${extension}`;
@@ -182,18 +207,17 @@ export default function StatementScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <HeaderScreen padded={false}>
       <View className="flex-1 px-6">
-        <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-6 py-1.5 mt-2 mb-12"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
-        </TouchableOpacity>
-
-        <Text className="text-[20px] font-medium text-[#1A1A1A] mb-8">
-          Account Statement
-        </Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-8">
+          <BackButton className="" />
+          <Text
+            className="text-[20px] font-medium text-[#1A1A1A] leading-[24px]"
+            style={{ includeFontPadding: false }}
+          >
+            Account Statement
+          </Text>
+        </View>
 
         <KeyboardAwareScrollView
           className="flex-1"
@@ -285,8 +309,8 @@ export default function StatementScreen() {
           {jobId && (
             <View className="mt-6">
               {isProcessing && (
-                <View className="bg-[#EEF0FF] rounded-xl px-5 py-5 flex-row items-center">
-                  <ActivityIndicator size="small" color="#472FF8" />
+                <View className="bg-[#E8EEF7] rounded-xl px-5 py-5 flex-row items-center">
+                  <ActivityIndicator size="small" color="#032252" />
                   <View className="ml-3 flex-1">
                     <Text className="text-sm font-semibold text-[#1A1A1A]">
                       Generating your statement...
@@ -299,45 +323,46 @@ export default function StatementScreen() {
               )}
 
               {jobStatus === 'ready' && downloadUrl && (
-                <View className="bg-[#EEF0FF] rounded-xl px-5 py-5">
+                <View className="bg-[#E8EEF7] rounded-xl px-5 py-5">
                   <View className="flex-row items-center mb-4">
                     <View className="w-11 h-11 rounded-full bg-white items-center justify-center">
                       <MaterialCommunityIcons
                         name={
-                          (selectedFileType?.icon ?? 'file-document-outline') as any
+                          (jobFileType?.icon ?? 'file-document-outline') as any
                         }
                         size={24}
-                        color="#472FF8"
+                        color="#032252"
                       />
                     </View>
                     <View className="ml-3 flex-1">
                       <Text className="text-sm font-semibold text-[#1A1A1A]">
                         Statement Ready
                       </Text>
-                      {startDate && endDate && (
+                      {jobMeta?.startDate && jobMeta.endDate && (
                         <Text className="text-xs text-[#6B7280] mt-0.5">
-                          {formatDateShort(startDate)} – {formatDateShort(endDate)}
-                          {selectedFileType ? ` • ${selectedFileType.label}` : ''}
+                          {formatDateShort(jobMeta.startDate)} –{' '}
+                          {formatDateShort(jobMeta.endDate)}
+                          {jobFileType ? ` • ${jobFileType.label}` : ''}
                         </Text>
                       )}
                     </View>
                   </View>
                   <TouchableOpacity
-                    className="bg-[#472FF8] rounded-full py-3 items-center flex-row justify-center"
+                    className="bg-[#F9B700] rounded-full py-3 items-center flex-row justify-center"
                     onPress={handleDownload}
                     disabled={downloading}
                     activeOpacity={0.85}
                   >
                     {downloading ? (
-                      <ActivityIndicator size="small" color="#fff" />
+                      <ActivityIndicator size="small" color="#032252" />
                     ) : (
                       <>
                         <MaterialCommunityIcons
                           name="download"
                           size={18}
-                          color="#fff"
+                          color="#032252"
                         />
-                        <Text className="text-white text-sm font-semibold ml-2">
+                        <Text className="text-[#032252] text-sm font-semibold ml-2">
                           Download
                         </Text>
                       </>
@@ -364,11 +389,11 @@ export default function StatementScreen() {
                     </View>
                   </View>
                   <TouchableOpacity
-                    className="bg-[#472FF8] rounded-full py-3 items-center"
+                    className="bg-[#F9B700] rounded-full py-3 items-center"
                     onPress={handleGenerate}
                     activeOpacity={0.85}
                   >
-                    <Text className="text-white text-sm font-semibold">
+                    <Text className="text-[#032252] text-sm font-semibold">
                       Try Again
                     </Text>
                   </TouchableOpacity>
@@ -388,7 +413,7 @@ export default function StatementScreen() {
           <TouchableOpacity
             className={`rounded-full py-4 items-center ${
               canGenerate || generateMutation.isPending
-                ? 'bg-[#472FF8]'
+                ? 'bg-[#F9B700]'
                 : 'bg-[#E5E7EB]'
             }`}
             onPress={handleGenerate}
@@ -396,11 +421,11 @@ export default function StatementScreen() {
             activeOpacity={0.85}
           >
             {generateMutation.isPending ? (
-              <ActivityIndicator size="small" color="#fff" />
+              <ActivityIndicator size="small" color="#032252" />
             ) : (
               <Text
                 className={`text-base font-semibold ${
-                  canGenerate ? 'text-white' : 'text-[#9CA3AF]'
+                  canGenerate ? 'text-[#032252]' : 'text-[#9CA3AF]'
                 }`}
               >
                 Generate Statement
@@ -440,7 +465,7 @@ export default function StatementScreen() {
             setShowEndPicker(false);
           }}
         >
-          <View className="flex-1 bg-black/50 justify-end">
+          <View className="flex-1 bg-black/40 justify-end">
             <View className="bg-white rounded-t-3xl pb-16">
               <View className="flex-row justify-end px-5 py-3 border-b border-[#F3F4F6]">
                 <TouchableOpacity
@@ -449,7 +474,7 @@ export default function StatementScreen() {
                     setShowEndPicker(false);
                   }}
                 >
-                  <Text className="text-base font-semibold text-[#472FF8]">
+                  <Text className="text-base font-semibold text-[#032252]">
                     Done
                   </Text>
                 </TouchableOpacity>
@@ -480,14 +505,14 @@ export default function StatementScreen() {
 
       {/* File type modal */}
       <Modal visible={fileTypeModal} animationType="slide" transparent>
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className="bg-white rounded-t-3xl pt-4 pb-16">
-            <View className="flex-row items-center justify-between px-6 mb-4">
+        <View className="flex-1 bg-black/40 justify-end">
+          <View className="bg-white rounded-t-3xl px-6 pt-5 pb-16">
+            <View className="flex-row items-center justify-between mb-5">
               <Text className="text-lg font-bold text-[#1A1A1A]">
                 Select File Type
               </Text>
               <TouchableOpacity onPress={() => setFileTypeModal(false)}>
-                <MaterialCommunityIcons name="close" size={24} color="#374151" />
+                <MaterialCommunityIcons name="close" size={22} color="#6B7280" />
               </TouchableOpacity>
             </View>
 
@@ -496,29 +521,42 @@ export default function StatementScreen() {
               return (
                 <TouchableOpacity
                   key={option.value}
-                  className={`px-6 py-4 border-b border-[#F3F4F6] flex-row items-center ${
-                    isSelected ? 'bg-[#EEF0FF]' : ''
+                  className={`flex-row items-center rounded-xl border-[1.5px] px-4 py-3.5 mb-3 ${
+                    isSelected
+                      ? 'border-[#032252] bg-[#E8EEF7]'
+                      : 'border-[#E5E7EB] bg-white'
                   }`}
                   onPress={() => {
                     setFormat(option.value);
                     setFileTypeModal(false);
                   }}
+                  activeOpacity={0.85}
                 >
-                  <View className="w-10 h-10 rounded-full bg-[#F5F5F5] items-center justify-center">
+                  <View
+                    className={`w-10 h-10 rounded-full items-center justify-center ${
+                      isSelected ? 'bg-white' : 'bg-[#F5F5F5]'
+                    }`}
+                  >
                     <MaterialCommunityIcons
                       name={option.icon}
                       size={22}
-                      color="#472FF8"
+                      color="#032252"
                     />
                   </View>
-                  <Text className="text-[15px] text-[#1A1A1A] ml-3 flex-1">
+                  <Text
+                    className={`text-[15px] ml-3 flex-1 ${
+                      isSelected
+                        ? 'font-semibold text-[#032252]'
+                        : 'text-[#374151]'
+                    }`}
+                  >
                     {option.label}
                   </Text>
                   {isSelected && (
                     <MaterialCommunityIcons
                       name="check-circle"
                       size={20}
-                      color="#472FF8"
+                      color="#032252"
                     />
                   )}
                 </TouchableOpacity>
@@ -527,6 +565,6 @@ export default function StatementScreen() {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

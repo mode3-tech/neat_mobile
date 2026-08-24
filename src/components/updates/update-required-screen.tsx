@@ -61,16 +61,16 @@ export function UpdateRequiredScreen({ storeUrl }: Props): React.JSX.Element {
           style={{
             width: 80,
             height: 80,
-            backgroundColor: '#EEF0FF',
+            backgroundColor: '#E8EEF7',
             marginBottom: 20,
           }}
         >
-          <Ionicons name="arrow-up-circle-outline" size={40} color="#472FF8" />
+          <Ionicons name="arrow-up-circle-outline" size={40} color="#032252" />
         </View>
 
         <Text
           className="text-center font-bold"
-          style={{ fontSize: 22, color: '#472FF8', marginBottom: 12 }}
+          style={{ fontSize: 22, color: '#032252', marginBottom: 12 }}
         >
           Update required
         </Text>
@@ -94,9 +94,9 @@ export function UpdateRequiredScreen({ storeUrl }: Props): React.JSX.Element {
           onPress={() => {
             void openStoreListing(storeUrl);
           }}
-          className="items-center rounded-full bg-[#472FF8] py-4 active:opacity-70"
+          className="items-center rounded-full bg-[#F9B700] py-4 active:opacity-70"
         >
-          <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '600' }}>
+          <Text style={{ color: '#032252', fontSize: 15, fontWeight: '600' }}>
             Update Now
           </Text>
         </Pressable>

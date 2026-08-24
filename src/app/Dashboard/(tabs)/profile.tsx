@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -13,6 +12,7 @@ import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { useProfileStore } from '@/stores/profile.store';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { PhotoPickerSheet } from '@/components/ui/PhotoPickerSheet';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 
@@ -31,8 +31,8 @@ function SettingsRow({ icon, label, onPress, disabled }: RowProps) {
       disabled={disabled}
       activeOpacity={0.7}
     >
-      <View className="w-9 h-9 rounded-full bg-[#EEF0FF] items-center justify-center mr-3">
-        <MaterialCommunityIcons name={icon} size={18} color="#472FF8" />
+      <View className="w-9 h-9 rounded-full bg-[#E8EEF7] items-center justify-center mr-3">
+        <MaterialCommunityIcons name={icon} size={18} color="#21194D" />
       </View>
       <Text className={`flex-1 text-[15px] ${disabled ? 'text-gray-400' : 'text-[#1A1A1A]'}`}>
         {label}
@@ -135,8 +135,9 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F3F4F6]" edges={['top']}>
+    <HeaderScreen padded={false} bottomInset={false}>
       <ScrollView
+        className="flex-1 bg-[#F3F4F6]"
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -159,7 +160,7 @@ export default function ProfileScreen() {
         {/* Avatar */}
         <View className="items-center mb-4">
           <View className="relative">
-            <View className="w-24 h-24 rounded-full bg-[#472FF8] items-center justify-center overflow-hidden">
+            <View className="w-24 h-24 rounded-full bg-[#032252] items-center justify-center overflow-hidden">
               {avatarUri && !imageLoadFailed ? (
                 <Image
                   source={{ uri: avatarUri }}
@@ -176,12 +177,12 @@ export default function ProfileScreen() {
               )}
             </View>
             <TouchableOpacity
-              className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#472FF8] items-center justify-center border-2 border-white"
+              className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#F9B700] items-center justify-center border-2 border-white"
               onPress={() => setPhotoSheetVisible(true)}
               activeOpacity={0.85}
               disabled={uploadPhotoMutation.isPending}
             >
-              <MaterialCommunityIcons name="camera" size={16} color="#fff" />
+              <MaterialCommunityIcons name="camera" size={16} color="#21194D" />
             </TouchableOpacity>
           </View>
           <Text className="mt-3 text-base font-semibold text-[#1A1A1A]">
@@ -278,6 +279,6 @@ export default function ProfileScreen() {
         onClose={() => setPhotoSheetVisible(false)}
         onSelect={(uri) => uploadPhotoMutation.mutate(uri)}
       />
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

@@ -6,9 +6,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+
+import { HeaderScreen } from '@/components/ui/header-screen';
+import { BackButton } from '@/components/ui/back-button';
 
 interface FundingOption {
   image: ImageSourcePropType;
@@ -41,22 +43,21 @@ const FUNDING_OPTIONS: FundingOption[] = [
 
 export default function AddMoneyScreen() {
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
-
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-1">
-        Add Money to Savings
-      </Text>
+    <HeaderScreen>
+      <View className="flex-row items-center gap-2 mt-4 mb-1">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#032252] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Add Money to Savings
+        </Text>
+      </View>
       <Text className="text-[13px] text-[#6B7280] mb-7">
         Choose funding method
       </Text>
 
-      <View className="bg-[#EEF0FF] rounded-2xl p-4 gap-3">
+      <View className="bg-[#E8EEF7] rounded-2xl p-4 gap-3">
         {FUNDING_OPTIONS.map((option) => (
           <TouchableOpacity
             key={option.label}
@@ -87,6 +88,6 @@ export default function AddMoneyScreen() {
           </TouchableOpacity>
         ))}
       </View>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

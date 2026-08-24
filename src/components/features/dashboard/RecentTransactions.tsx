@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 import { transactionService } from '@/services/transaction.service';
 import { formatNairaWhole, formatTransactionDate } from '@/utils/format';
 import { openTransactionDetails } from '@/utils/transaction-nav';
-import { getTransactionIcon, STATUS_COLORS } from '@/components/features/transaction/TransactionRow';
+import { getTransactionIcon, getRowStatusColor } from '@/components/features/transaction/TransactionRow';
 import { QUERY_KEYS } from '@/constants';
 import type { Transaction } from '@/types/transaction.types';
 
@@ -15,7 +15,7 @@ function RecentTransactionRow({ transaction }: { transaction: Transaction }) {
   const isCredit = transaction.type === 'credit';
   const prefix = isCredit ? '+' : '-';
   const formattedAmount = formatNairaWhole(transaction.amount);
-  const statusColor = STATUS_COLORS[transaction.status] ?? '#6B7280';
+  const statusColor = getRowStatusColor(transaction.status);
 
   return (
     <TouchableOpacity
@@ -30,16 +30,16 @@ function RecentTransactionRow({ transaction }: { transaction: Transaction }) {
         <MaterialCommunityIcons name={icon} size={20} color={iconColor} />
       </View>
       <View className="flex-1 ml-3">
-        <Text className="text-sm font-semibold text-gray-900" numberOfLines={1}>
+        <Text className="text-sm font-semibold text-[#032252]" numberOfLines={1}>
           {transaction.description}
         </Text>
-        <Text className="text-xs text-gray-600 mt-0.5">
+        <Text className="text-xs text-[#6B7280] mt-0.5">
           {formatTransactionDate(transaction.date)}
         </Text>
       </View>
       <View className="items-end ml-2">
         <Text
-          className={`text-sm font-bold ${isCredit ? 'text-[#472FF8]' : 'text-gray-900'}`}
+          className={`text-sm font-bold ${isCredit ? 'text-[#16A34A]' : 'text-[#032252]'}`}
         >
           {prefix}{formattedAmount}
         </Text>
@@ -62,15 +62,15 @@ export default function RecentTransactions() {
   return (
     <View className="mt-2 px-6">
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-base font-semibold text-gray-900">Recent Transactions</Text>
+        <Text className="text-base font-semibold text-[#032252]">Recent Transactions</Text>
         <TouchableOpacity onPress={() => router.navigate('/Dashboard/(tabs)/transaction' as any)}>
-          <Text className="text-[13px] font-semibold text-[#472FF8]">View All</Text>
+          <Text className="text-[13px] font-semibold text-[#032252]">View All</Text>
         </TouchableOpacity>
       </View>
 
       {isLoading && (
         <View className="items-center py-8">
-          <ActivityIndicator size="small" color="#472FF8" />
+          <ActivityIndicator size="small" color="#032252" />
         </View>
       )}
 

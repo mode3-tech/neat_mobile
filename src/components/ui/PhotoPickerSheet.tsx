@@ -99,20 +99,31 @@ export function PhotoPickerSheet({
             </View>
           </View>
 
+          {/* One primary only: the yellow pill is the likely action, the camera
+              is the neutral alternative — same two-tier vocabulary as
+              ConfirmModal, which is the sheet this one sits next to. */}
           <TouchableOpacity
-            className="rounded-full py-4 items-center border-2 border-[#472FF8] mb-3"
+            className="rounded-full py-4 items-center bg-[#F9B700] mb-3"
             onPress={pickFromAlbum}
             activeOpacity={0.85}
           >
-            <Text className="text-[#472FF8] text-base font-semibold">Select from album</Text>
+            <Text className="text-[#032252] text-base font-semibold">Select from album</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="rounded-full py-4 items-center border-2 border-[#472FF8]"
+            className="rounded-full py-4 items-center bg-[#F3F4F6] mb-3"
             onPress={takePhoto}
             activeOpacity={0.85}
           >
-            <Text className="text-[#472FF8] text-base font-semibold">Take a Photo</Text>
+            <Text className="text-[#032252] text-base font-semibold">Take a Photo</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="py-3 items-center"
+            onPress={onClose}
+            activeOpacity={0.7}
+          >
+            <Text className="text-gray-500 text-base font-medium">Cancel</Text>
           </TouchableOpacity>
         </Pressable>
       </Pressable>

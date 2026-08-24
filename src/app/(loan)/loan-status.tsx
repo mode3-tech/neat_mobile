@@ -1,14 +1,6 @@
-import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
 import { loanService } from '@/services/loan.service';
@@ -16,6 +8,7 @@ import { QUERY_KEYS } from '@/constants';
 import { formatNairaWhole, titleCase } from '@/utils/format';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import type { LoanStatusItem } from '@/types/loan.types';
+import { BackButton } from '@/components/ui/back-button';
 
 function StatTile({
   icon,
@@ -28,7 +21,7 @@ function StatTile({
   // footer: string;
 }) {
   return (
-    <View className="flex-1 bg-[#472FF8] rounded-2xl p-5">
+    <View className="flex-1 bg-[#032252] rounded-2xl p-5">
       <View className="w-10 h-10 rounded-full bg-white/20 items-center justify-center mb-6">
         <MaterialCommunityIcons name={icon} size={20} color="#FFFFFF" />
       </View>
@@ -51,7 +44,7 @@ function DetailRow({
   return (
     <View
       className={`flex-row justify-between py-4 ${
-        isLast ? '' : 'border-b border-[#D9DCF4]'
+        isLast ? '' : 'border-b border-[#C8D5E6]'
       }`}
     >
       <Text className="text-sm text-[#6B7280]">{label}</Text>
@@ -80,7 +73,7 @@ function getStatusDisplay(status: string): {
     case 'paid':
     case 'completed':
     case 'closed':
-      return { label: titleCase(status), bg: '#EEF0FF', text: '#472FF8' };
+      return { label: titleCase(status), bg: '#E8EEF7', text: '#032252' };
     default:
       return { label: titleCase(status), bg: '#F3F4F6', text: '#6B7280' };
   }
@@ -126,7 +119,7 @@ function LoanStatusCard({ loan }: { loan: LoanStatusItem }) {
         />
       </View>
 
-      <View className="bg-[#EEF0FF] rounded-2xl px-5 py-2 mt-5">
+      <View className="bg-[#E8EEF7] rounded-2xl px-5 py-2 mt-5">
         <DetailRow
           label="Periodic Payment"
           value={formatNairaWhole(loan.periodic_payment)}
@@ -151,21 +144,20 @@ export default function LoanStatusScreen() {
   const isEmpty = !isLoading && !isError && (!loans || loans.length === 0);
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
-
-      <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">
-        Loan Status
-      </Text>
+    <HeaderScreen>
+      <View className="flex-row items-center gap-2 mt-4 mb-5">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Loan Status
+        </Text>
+      </View>
 
       {isLoading ? (
         <View className="h-[180px] items-center justify-center">
-          <ActivityIndicator size="small" color="#472FF8" />
+          <ActivityIndicator size="small" color="#032252" />
         </View>
       ) : (
         <ScrollView
@@ -202,6 +194,6 @@ export default function LoanStatusScreen() {
           )}
         </ScrollView>
       )}
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

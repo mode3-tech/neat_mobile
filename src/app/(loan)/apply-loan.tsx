@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -16,8 +16,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { loanService } from '@/services/loan.service';
 import { useLoanStore } from '@/stores/loan.store';
 import type { LoanProduct } from '@/types/loan.types';
+import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#032252';
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -136,16 +137,18 @@ export default function ApplyLoanScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
+    <HeaderScreen>
+      <View className="flex-row items-center gap-2 mt-4 mb-6">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Apply for Loan
+        </Text>
+      </View>
 
       <KeyboardAwareScrollView showsVerticalScrollIndicator={false} className="flex-1">
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Apply for Loan</Text>
 
        
         <View className="mb-5">
@@ -279,7 +282,7 @@ export default function ApplyLoanScreen() {
               keyboardType="numeric"
             />
           </View>
-          <Text className="text-xs text-[#472FF8] mt-1.5">
+          <Text className="text-xs text-[#032252] mt-1.5">
             Min - Max amount: (₦ {formatCurrency(minAmount)} - ₦ {formatCurrency(maxAmount)})
           </Text>
           {exceedsBizValueHalf && (
@@ -304,12 +307,12 @@ export default function ApplyLoanScreen() {
 
       <View className="pb-4">
         <TouchableOpacity
-          className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'}`}
+          className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'}`}
           onPress={handleProceed}
           disabled={!canProceed}
           activeOpacity={0.85}
         >
-          <Text className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-[#9CA3AF]'}`}>
+          <Text className={`text-base font-semibold ${canProceed ? 'text-[#032252]' : 'text-[#9CA3AF]'}`}>
             Proceed
           </Text>
         </TouchableOpacity>
@@ -334,11 +337,11 @@ export default function ApplyLoanScreen() {
                   showsVerticalScrollIndicator={false}
                   renderItem={({ item, index }) => (
                     <TouchableOpacity
-                      className={`px-4 py-3 ${selectedMonth === index ? 'bg-[#EEF0FF]' : ''}`}
+                      className={`px-4 py-3 ${selectedMonth === index ? 'bg-[#E8EEF7]' : ''}`}
                       onPress={() => setSelectedMonth(index)}
                     >
                       <Text
-                        className={`text-sm ${selectedMonth === index ? 'font-semibold text-[#472FF8]' : 'text-[#374151]'}`}
+                        className={`text-sm ${selectedMonth === index ? 'font-semibold text-[#032252]' : 'text-[#374151]'}`}
                       >
                         {item}
                       </Text>
@@ -355,11 +358,11 @@ export default function ApplyLoanScreen() {
                   showsVerticalScrollIndicator={false}
                   renderItem={({ item }) => (
                     <TouchableOpacity
-                      className={`px-4 py-3 ${selectedYear === item ? 'bg-[#EEF0FF]' : ''}`}
+                      className={`px-4 py-3 ${selectedYear === item ? 'bg-[#E8EEF7]' : ''}`}
                       onPress={() => setSelectedYear(item)}
                     >
                       <Text
-                        className={`text-sm ${selectedYear === item ? 'font-semibold text-[#472FF8]' : 'text-[#374151]'}`}
+                        className={`text-sm ${selectedYear === item ? 'font-semibold text-[#032252]' : 'text-[#374151]'}`}
                       >
                         {item}
                       </Text>
@@ -370,7 +373,7 @@ export default function ApplyLoanScreen() {
             </View>
 
             <TouchableOpacity
-              className="bg-[#472FF8] rounded-full py-4 items-center"
+              className="bg-[#F9B700] rounded-full py-4 items-center"
               onPress={() => {
                 const mm = String(selectedMonth + 1).padStart(2, '0');
                 store.setFormField('businessAge', `${mm}/${selectedYear}`);
@@ -378,11 +381,11 @@ export default function ApplyLoanScreen() {
               }}
               activeOpacity={0.85}
             >
-              <Text className="text-base font-semibold text-white">Confirm</Text>
+              <Text className="text-base font-semibold text-[#032252]">Confirm</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

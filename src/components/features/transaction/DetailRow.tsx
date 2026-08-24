@@ -1,7 +1,7 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import * as Clipboard from 'expo-clipboard';
-import { toast } from 'sonner-native';
+
+import { CopyButton } from '@/components/ui/copy-button';
 
 /**
  * A label/value row used by the transaction details, transaction receipt, and
@@ -22,15 +22,10 @@ export function DetailRow({
   isLast?: boolean;
   copyValue?: string;
 }): React.JSX.Element {
-  const handleCopy = () => {
-    Clipboard.setStringAsync(copyValue!);
-    toast.success('Copied');
-  };
-
   return (
     <View
       className={`flex-row justify-between items-start gap-4 py-[14px] ${
-        !isLast ? 'border-b border-[#F3F4F6]' : ''
+        !isLast ? 'border-b border-[#EEF1F6]' : ''
       }`}
     >
       <Text className="text-[13px] text-[#6B7280] shrink-0">{label}</Text>
@@ -38,25 +33,25 @@ export function DetailRow({
         <View className="flex-row items-center justify-end gap-2 flex-1">
           <Text
             className="text-sm font-semibold text-right shrink"
-            style={{ color: valueColor ?? '#1A1A1A' }}
+            style={{ color: valueColor ?? '#032252' }}
           >
             {value}
           </Text>
-          <TouchableOpacity
-            onPress={handleCopy}
+          <CopyButton
+            value={copyValue}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <MaterialCommunityIcons
               name="content-copy"
               size={16}
-              color="#9CA3AF"
+              color="#032252"
             />
-          </TouchableOpacity>
+          </CopyButton>
         </View>
       ) : (
         <Text
           className="text-sm font-semibold flex-1 text-right"
-          style={{ color: valueColor ?? '#1A1A1A' }}
+          style={{ color: valueColor ?? '#032252' }}
         >
           {value}
         </Text>

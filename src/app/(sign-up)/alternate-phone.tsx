@@ -13,8 +13,10 @@ import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
+import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#F9B700';
+const PRIMARY_TEXT = '#032252';
 const PHONE_REGEX = /^\+?\d{10,14}$/;
 
 export default function AlternatePhoneScreen() {
@@ -60,11 +62,10 @@ export default function AlternatePhoneScreen() {
         showsVerticalScrollIndicator={false}
         bottomOffset={20}
       >
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-          <Text style={styles.backText}>Back</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.title}>Add a phone number</Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-1.5">
+          <BackButton className="" />
+          <Text style={styles.title}>Add a phone number</Text>
+        </View>
         <Text style={styles.subtitle}>
           Since you can't access the number on your BVN, enter a phone number
           you can receive a code on right now.
@@ -110,7 +111,7 @@ export default function AlternatePhoneScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={PRIMARY_TEXT} />
             ) : (
               <Text style={[styles.primaryBtnText, !isValid && styles.disabledBtnText]}>
                 Send Code
@@ -133,26 +134,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 24,
   },
-  backBtn: {
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    marginTop: 8,
-    marginBottom: 24,
-  },
-  backText: {
-    fontSize: 14,
-    color: '#374151',
-    fontWeight: '500',
-  },
   title: {
     fontSize: 22,
+    lineHeight: 26,
+    includeFontPadding: false,
     fontWeight: '700',
-    color: '#1A1A1A',
-    marginBottom: 6,
+    color: PRIMARY_TEXT,
   },
   subtitle: {
     fontSize: 13,
@@ -184,8 +171,10 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   infoCard: {
-    backgroundColor: '#EEF0FF',
+    backgroundColor: '#FFFBEF',
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#F9B700',
     padding: 16,
     marginTop: 20,
     gap: 4,
@@ -194,7 +183,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#1A1A1A',
+    color: PRIMARY_TEXT,
   },
   infoBody: {
     fontSize: 13,
@@ -214,7 +203,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },

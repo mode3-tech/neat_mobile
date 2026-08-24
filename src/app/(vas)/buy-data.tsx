@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { KeyboardProvider, KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -23,6 +23,7 @@ import type { VasBiller, VasProduct } from '@/types/vas.types';
 import { formatNairaWhole, formatNairaWholeShort } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
+import { BackButton } from '@/components/ui/back-button';
 
 const PHONE_LENGTH = 11;
 
@@ -116,20 +117,21 @@ export default function BuyDataScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <HeaderScreen padded={false}>
       <ScrollView
         className="flex-1 px-6"
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
-        </TouchableOpacity>
-
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Data Bundles</Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-6">
+          <BackButton className="" />
+          <Text
+            className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+            style={{ includeFontPadding: false }}
+          >
+            Data Bundles
+          </Text>
+        </View>
 
         {/* Provider selector */}
         <View className="bg-[#F9FAFB] rounded-2xl p-4 mb-6">
@@ -139,7 +141,7 @@ export default function BuyDataScreen() {
 
           {billersQuery.isLoading ? (
             <View className="h-[68px] items-center justify-center">
-              <ActivityIndicator color="#472FF8" />
+              <ActivityIndicator color="#032252" />
             </View>
           ) : billersQuery.isError ? (
             <View className="h-[68px] items-center justify-center">
@@ -157,7 +159,7 @@ export default function BuyDataScreen() {
                     activeOpacity={0.8}
                     onPress={() => selectProvider(biller)}
                     className={`w-[23%] aspect-square rounded-2xl bg-white items-center justify-center border-2 ${
-                      isSelected ? 'border-[#472FF8]' : 'border-transparent'
+                      isSelected ? 'border-[#032252]' : 'border-transparent'
                     }`}
                   >
                     <Image
@@ -215,7 +217,7 @@ export default function BuyDataScreen() {
             {selectedPlan ? selectedPlan.name : 'Select Plan'}
           </Text>
           {plansQuery.isLoading && !!selectedBillerId ? (
-            <ActivityIndicator size="small" color="#472FF8" />
+            <ActivityIndicator size="small" color="#032252" />
           ) : (
             <MaterialCommunityIcons name="chevron-down" size={22} color="#6B7280" />
           )}
@@ -238,7 +240,7 @@ export default function BuyDataScreen() {
       <View className="px-6 pb-4">
         <TouchableOpacity
           className={`rounded-full py-4 items-center ${
-            canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+            canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
           }`}
           onPress={handleProceed}
           disabled={!canProceed}
@@ -246,7 +248,7 @@ export default function BuyDataScreen() {
         >
           <Text
             className={`text-base font-semibold ${
-              canProceed ? 'text-white' : 'text-[#9CA3AF]'
+              canProceed ? 'text-[#032252]' : 'text-[#9CA3AF]'
             }`}
           >
             Proceed
@@ -274,7 +276,7 @@ export default function BuyDataScreen() {
 
             {plansQuery.isLoading ? (
               <View className="h-24 items-center justify-center">
-                <ActivityIndicator color="#472FF8" />
+                <ActivityIndicator color="#032252" />
               </View>
             ) : plansQuery.isError ? (
               <View className="h-24 items-center justify-center px-6">
@@ -282,10 +284,10 @@ export default function BuyDataScreen() {
                   Couldn't load data plans.
                 </Text>
                 <TouchableOpacity
-                  className="border-[1.5px] border-[#472FF8] rounded-full px-6 py-2"
+                  className="border-[1.5px] border-[#032252] rounded-full px-6 py-2"
                   onPress={() => plansQuery.refetch()}
                 >
-                  <Text className="text-[#472FF8] text-sm font-semibold">Retry</Text>
+                  <Text className="text-[#032252] text-sm font-semibold">Retry</Text>
                 </TouchableOpacity>
               </View>
             ) : !plansQuery.data?.length ? (
@@ -336,7 +338,7 @@ export default function BuyDataScreen() {
                         <TouchableOpacity
                           key={plan.unique_code}
                           className={`px-6 py-3.5 border-b border-[#F3F4F6] flex-row items-center ${
-                            isSelected ? 'bg-[#EEF0FF]' : ''
+                            isSelected ? 'bg-[#E8EEF7]' : ''
                           }`}
                           onPress={() => {
                             setSelectedPlan(plan);
@@ -389,6 +391,6 @@ export default function BuyDataScreen() {
         amount={selectedPlan ? formatNairaWhole(selectedPlan.amount) : ''}
         date={todayFormatted()}
       />
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

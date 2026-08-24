@@ -10,12 +10,13 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import { router } from 'expo-router';
 
-const CARD_MARGIN = 24;
+import { CopyButton } from '@/components/ui/copy-button';
+
+const CARD_MARGIN = 14;
 const AUTO_ROTATE_INTERVAL = 4000;
 
 interface BalanceCardCarouselProps {
@@ -37,8 +38,8 @@ interface CardData {
   amount: string;
   // buttons: { label: string; variant: 'dark' | 'light' }[];
   buttons: { label: string; icon?: keyof typeof Feather.glyphMap; disabled?: boolean }[];
-  image: ImageSourcePropType;
-  imageSize?: { width: number; height: number };
+  // image: ImageSourcePropType;
+  // imageSize?: { width: number; height: number };
 }
 
 function buildCards(
@@ -55,14 +56,14 @@ function buildCards(
   return [
     {
       id: 'available',
-      bgColor: '#472FF8',
-      label: 'Neatpay Account',
+      bgColor: '#E8AA00',
+      label: 'NEATPay Account',
       accountNumber,
       title: 'Available Balance',
       amount: fmtBalance(availableBalance),
       buttons: [{ label: 'Send Money', icon: 'send' }, { label: 'Deposit', icon: 'plus' }],
-      image: require('../../../../assets/images/dashboard/ball.png'),
-      imageSize: { width: 70, height: 70 },
+      // image: require('../../../../assets/images/dashboard/ball.png'),
+      // imageSize: { width: 70, height: 70 },
     },
     // {
     //   id: 'savings',
@@ -77,14 +78,14 @@ function buildCards(
     // },
     {
       id: 'loan',
-      bgColor: '#472FF8',
-      label: 'Neatpay Account',
+      bgColor: '#E8AA00',
+      label: 'NEATPay Account',
       accountNumber,
       title: 'Loan Balance',
       amount: fmtBalance(loanBalance),
       buttons: [{ label: 'Make Repayment', disabled: !hasActiveLoan }],
-      image: require('../../../../assets/images/dashboard/barg.png'),
-      imageSize: { width: 80, height: 70 },
+      // image: require('../../../../assets/images/dashboard/barg.png'),
+      // imageSize: { width: 80, height: 70 },
     },
   ];
 }
@@ -181,87 +182,80 @@ export default function BalanceCardCarousel({
   };
 
   const renderCard = (card: CardData, index: number) => (
+
     <View
       key={`${card.id}-${index}`}
-      className="rounded-2xl py-5 px-3 overflow-hidden justify-between"
-      style={{ backgroundColor: card.bgColor, width: cardWidth, marginHorizontal: CARD_MARGIN, minHeight: 190 }}
+      style={{ width: cardWidth, marginHorizontal: CARD_MARGIN }}
     >
-     
-
-      {/* Header pill with border */}
-      
-      <View className="flex-row justify-between items-center  px-4 py-2">
-        <Text className="text-white/90 text-[13px] font-medium">{card.label}</Text>
+      {/* Header — sits above the card, on the screen background. z-10 so the
+          copy pill, which hangs down over the card, isn't painted behind it. */}
+      <View className="flex-row justify-between items-center px-1 pb-3 z-10">
+        <Text className="text-[#032252] text-[16px] font-medium">{card.label}</Text>
         <View className="flex-row items-center gap-2">
-          <Text className="text-white/70 text-xs">{card.accountNumber}</Text>
-          <TouchableOpacity
+          <Text className="text-[#032252] text-[16px]">{card.accountNumber}</Text>
+          <CopyButton
+            value={card.accountNumber}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            onPress={() => Clipboard.setStringAsync(card.accountNumber)}
           >
-            <Feather name="copy" size={14} color="rgba(255,255,255,0.7)" />
-          </TouchableOpacity>
+            <Feather name="copy" size={15} color="#032252" />
+          </CopyButton>
         </View>
       </View>
 
-   
+      <View
+        className="rounded-2xl py-5 px-3 overflow-hidden justify-between"
+        style={{ backgroundColor: card.bgColor, minHeight: 190 }}
+      >
 
-      {/* Balance section */}
-      <View className="mt-4 flex-row border border-white/30 rounded-3xl px-4 py-4">
-        <View className=''>
-          <View className="flex-row items-center gap-2">
-            <Text className="text-white/75 text-xs">{card.title}</Text>
-            <TouchableOpacity onPress={onToggleVisibility} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Ionicons
-                name={balanceVisible ? 'eye-outline' : 'eye-off-outline'}
-                size={16}
-                color="rgba(255,255,255,0.75)"
-              />
-            </TouchableOpacity>
-          </View>
-          <Text className="text-white text-[24px] font-bold mt-1">
-            {balanceVisible ? `₦${card.amount}` : '₦ ****'}
-          </Text>
-        </View>
-           <Image
-        source={card.image}
-        className="absolute opacity-80"
-        style={{ right: 10, top: 7, width: card.imageSize?.width ?? 70, height: card.imageSize?.height ?? 70 }}
-        resizeMode="contain"
-      />
-
-       
-      </View>
-
-      {/* Action buttons */}
-      <View className="flex-row  gap-2.5 mt-4">
-        {/* variant removed — defaulting to dark style */}
-        {card.buttons.map((btn) => (
-          <TouchableOpacity
-            key={btn.label}
-            disabled={btn.disabled}
-            style={{ opacity: btn.disabled ? 0.5 : 1 }}
-            className="rounded-full py-4 flex-row justify-center items-center flex-1 bg-white"
-            activeOpacity={0.85}
-            onPress={() => {
-              if (btn.label === 'Send Money') {
-                router.push('/(transfer)/send-money');
-              }
-              if (btn.label === 'Deposit') {
-                router.push('/(savings)/add-money');
-              }
-              if (btn.label === 'Make Repayment') {
-                onMakeRepayment();
-              }
-            }}
-          >
-            {btn.icon && (
-              <Feather name={btn.icon} size={16} color="#472FF8" style={{ marginRight: 8 }} />
-            )}
-            <Text className="text-sm font-semibold text-[#472FF8]">
-              {btn.label}
+        {/* Balance section */}
+        <View className="flex-row border border-white/30 rounded-3xl px-4 py-4">
+          <View>
+            <View className="flex-row items-center gap-2">
+              <Text className="text-[#032252] text-xs">{card.title}</Text>
+              <TouchableOpacity onPress={onToggleVisibility} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                <Ionicons
+                  name={balanceVisible ? 'eye-outline' : 'eye-off-outline'}
+                  size={16}
+                  color="#032252"
+                />
+              </TouchableOpacity>
+            </View>
+            <Text className="text-[#032252] text-[24px] font-bold mt-1">
+              {balanceVisible ? `₦${card.amount}` : '₦ ****'}
             </Text>
-          </TouchableOpacity>
-        ))}
+          </View>
+        </View>
+
+        {/* Action buttons */}
+        <View className="flex-row gap-2.5 mt-4">
+          {card.buttons.map((btn) => (
+            <TouchableOpacity
+              key={btn.label}
+              disabled={btn.disabled}
+              style={{ opacity: btn.disabled ? 0.5 : 1 }}
+              className="rounded-full py-4 flex-row justify-center items-center flex-1 bg-white"
+              activeOpacity={0.85}
+              onPress={() => {
+                if (btn.label === 'Send Money') {
+                  router.push('/(transfer)/send-money');
+                }
+                if (btn.label === 'Deposit') {
+                  router.push('/(savings)/add-money');
+                }
+                if (btn.label === 'Make Repayment') {
+                  onMakeRepayment();
+                }
+              }}
+            >
+              {btn.icon && (
+                <Feather name={btn.icon} size={16} color="#032252" style={{ marginRight: 8 }} />
+              )}
+              <Text className="text-sm font-semibold text-[#032252]">
+                {btn.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -287,7 +281,7 @@ export default function BalanceCardCarousel({
           <View
             key={card.id}
             className={`rounded-full ${
-              i === activeIndex % CARDS.length ? 'w-2 h-2 bg-[#472FF8]' : 'w-1.5 h-1.5 bg-gray-300'
+              i === activeIndex % CARDS.length ? 'w-2 h-2 bg-[#032252]' : 'w-1.5 h-1.5 bg-gray-300'
             }`}
           />
         ))}

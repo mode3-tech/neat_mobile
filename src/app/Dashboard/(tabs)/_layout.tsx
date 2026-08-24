@@ -2,7 +2,7 @@ import { Tabs, router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#032252';
 const INACTIVE = '#9CA3AF';
 
 export default function TabsLayout() {

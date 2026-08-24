@@ -19,8 +19,10 @@ import { authService } from '@/services/auth.service';
 import { useSignUpStore } from '@/stores/sign-up.store';
 import { OTP_LENGTH } from '@/constants';
 import { maskPhone } from '@/utils/mask';
+import { BackButton } from '@/components/ui/back-button';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#F9B700';
+const PRIMARY_TEXT = '#032252';
 const RESEND_SECONDS = 90;
 
 export default function AlternatePhoneOtpScreen() {
@@ -118,11 +120,10 @@ export default function AlternatePhoneOtpScreen() {
         showsVerticalScrollIndicator={false}
         bottomOffset={20}
       >
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-          <Text style={styles.backText}>Back</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.title}>Enter OTP Code</Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-1.5">
+          <BackButton className="" />
+          <Text style={styles.title}>Enter OTP Code</Text>
+        </View>
         <Text style={styles.subtitle}>
           Enter the 6-digit code sent to{' '}
           <Text style={styles.phoneHighlight}>{maskPhone(submittedPhone)}</Text>
@@ -146,7 +147,7 @@ export default function AlternatePhoneOtpScreen() {
             activeOpacity={0.85}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={PRIMARY_TEXT} />
             ) : (
               <Text style={[styles.primaryBtnText, !canVerify && styles.disabledBtnText]}>
                 Verify & Continue
@@ -180,26 +181,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 24,
   },
-  backBtn: {
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    marginTop: 8,
-    marginBottom: 24,
-  },
-  backText: {
-    fontSize: 14,
-    color: '#374151',
-    fontWeight: '500',
-  },
   title: {
     fontSize: 26,
+    lineHeight: 31,
+    includeFontPadding: false,
     fontWeight: '700',
-    color: '#1A1A1A',
-    marginBottom: 6,
+    color: PRIMARY_TEXT,
   },
   subtitle: {
     fontSize: 13,
@@ -208,7 +195,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   phoneHighlight: {
-    color: '#1A1A1A',
+    color: PRIMARY_TEXT,
     fontWeight: '500',
   },
   otpWrap: {
@@ -218,9 +205,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginBottom: 24,
   },
+  // Links stay navy — PRIMARY is a fill colour; yellow text on white is unreadable.
   changeNumberText: {
     fontSize: 13,
-    color: PRIMARY,
+    color: PRIMARY_TEXT,
     fontWeight: '600',
   },
   spacer: {
@@ -237,7 +225,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -258,12 +246,12 @@ const styles = StyleSheet.create({
   },
   resendLink: {
     fontSize: 13,
-    color: PRIMARY,
+    color: PRIMARY_TEXT,
     fontWeight: '600',
   },
   timerText: {
     fontSize: 13,
-    color: PRIMARY,
+    color: PRIMARY_TEXT,
     fontWeight: '600',
   },
 });

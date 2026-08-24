@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
+  Animated,
   FlatList,
   SectionList,
   Text,
@@ -10,7 +11,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -20,12 +20,21 @@ import {
 } from '@/services/notification.service';
 import { useNotificationStore } from '@/stores/notification.store';
 import type { AppNotification, NotificationType } from '@/types/notification.types';
+import { BackButton } from '@/components/ui/back-button';
 
-const TYPE_ICONS: Record<NotificationType, { name: string; color: string; bg: string }> = {
-  loan: { name: 'wallet-outline', color: '#472FF8', bg: '#EEF0FF' },
-  transaction: { name: 'swap-horizontal', color: '#16A34A', bg: '#F0FDF4' },
-  security: { name: 'shield-lock-outline', color: '#EF4444', bg: '#FEF2F2' },
-  promo: { name: 'bullhorn-outline', color: '#F59E0B', bg: '#FFFBEB' },
+// Solid tiles, one fill per category. `transaction` takes the brand yellow —
+// it is both what the design draws and what frees green to mean "unread" on
+// the dot, instead of green meaning two different things in the same row. For
+// the same reason no tile reuses the dot's green: `promo` gets violet, which
+// collides with none of the status colours (red error / green success).
+const TYPE_ICONS: Record<
+  NotificationType,
+  { name: string; fg: string; bg: string }
+> = {
+  transaction: { name: 'swap-horizontal', fg: '#032252', bg: '#F9B700' },
+  security: { name: 'shield-lock-outline', fg: '#FFFFFF', bg: '#EF4444' },
+  loan: { name: 'wallet-outline', fg: '#FFFFFF', bg: '#032252' },
+  promo: { name: 'bullhorn-outline', fg: '#FFFFFF', bg: '#7C3AED' },
 };
 
 function formatRelativeTime(dateStr: string): string {
@@ -82,44 +91,77 @@ function groupByDate(
 
 function NotificationItem({ item }: { item: AppNotification }) {
   const icon = TYPE_ICONS[item.type] ?? TYPE_ICONS.promo;
+  const unread = !item.is_read;
 
   return (
     <View
-      className="flex-row items-start gap-3 mx-6 mb-3 p-4 rounded-2xl bg-[#F9FAFB] border border-[#F3F4F6]"
+    
+      className={`flex-row items-start gap-3 mx-6 mb-3 p-4 rounded-2xl ${
+        unread ? 'bg-[#FFFBEF]' : 'bg-[#F9FAFB]'
+      }`}
+      style={unread ? { borderLeftWidth: 3, borderLeftColor: '#F9B700' } : undefined}
     >
       <View
-        className="w-11 h-11 rounded-full items-center justify-center"
-        style={{
-          backgroundColor: icon.bg,
-          borderWidth: 1,
-          borderColor: icon.color + '20',
-        }}
+        className="w-11 h-11 rounded-xl items-center justify-center"
+        style={{ backgroundColor: icon.bg }}
       >
         <MaterialCommunityIcons
           name={icon.name as any}
           size={22}
-          color={icon.color}
+          color={icon.fg}
         />
       </View>
       <View className="flex-1">
         <View className="flex-row items-center justify-between mb-1">
-          <Text className="text-[11px] text-[#29292a]">
+          <Text className="text-[11px] text-[#6B7280]">
             {formatRelativeTime(item.created_at)}
           </Text>
-          {!item.is_read && (
-            <View className="w-2 h-2 rounded-full bg-[#472FF8]" />
-          )}
+          {unread && <View className="w-2 h-2 rounded-full bg-[#16A34A]" />}
         </View>
         <Text
-          className={`text-[14px] ${!item.is_read ? 'font-bold' : 'font-semibold'} text-[#272626] mb-1`}
+          className={`text-[14px] ${unread ? 'font-bold' : 'font-semibold'} text-[#032252] mb-1`}
         >
           {item.title}
         </Text>
-        <Text className="text-[13px] text-[#161617] leading-[18px]">
+        <Text className="text-[13px] text-[#374151] leading-[18px]">
           {item.body}
         </Text>
       </View>
     </View>
+  );
+}
+
+/**
+ * Loading placeholder shaped like a real row, so the list keeps its geometry
+ * while the first page lands instead of flashing an empty screen.
+ */
+function SkeletonRow() {
+  const pulse = useRef(new Animated.Value(0.5)).current;
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 1, duration: 700, useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 0.5, duration: 700, useNativeDriver: true }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse]);
+
+  return (
+    <Animated.View
+      style={{ opacity: pulse }}
+      className="flex-row items-start gap-3 mx-6 mb-3 p-4 rounded-2xl bg-[#F9FAFB]"
+    >
+      <View className="w-11 h-11 rounded-xl bg-[#E5E7EB]" />
+      <View className="flex-1 gap-2">
+        <View className="h-2.5 w-16 rounded-full bg-[#E5E7EB]" />
+        <View className="h-3 w-2/5 rounded-full bg-[#E5E7EB]" />
+        <View className="h-2.5 w-full rounded-full bg-[#E5E7EB]" />
+        <View className="h-2.5 w-3/4 rounded-full bg-[#E5E7EB]" />
+      </View>
+    </Animated.View>
   );
 }
 
@@ -272,36 +314,39 @@ export default function NotificationsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-6 pt-2 pb-4">
-        <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
-        </TouchableOpacity>
+      {/* Own back-button header — this screen deliberately skips HeaderScreen:
+          DashboardHeader's bell pushes /notifications, which would stack a
+          duplicate copy of this very screen on every tap. */}
+      <View className="flex-row items-center justify-between px-6 pt-4 pb-2">
+        <View className="flex-1 flex-row items-center gap-2">
+          <BackButton className="" />
+          <Text
+            numberOfLines={1}
+            className="text-[22px] font-bold text-[#032252] leading-[26px]"
+            style={{ includeFontPadding: false }}
+          >
+            Notifications
+          </Text>
+        </View>
 
         {hasUnread && (
           <TouchableOpacity
+            className="shrink-0 pl-3"
             onPress={() => markAllReadMutation.mutate()}
             disabled={markAllReadMutation.isPending}
           >
-            <Text className="text-sm font-medium text-[#472FF8]">
+            <Text className="text-sm font-medium text-[#032252]">
               Mark all as read
             </Text>
           </TouchableOpacity>
         )}
       </View>
 
-      <View className="px-6 mb-4">
-        <Text className="text-[22px] font-bold text-[#1A1A1A]">
-          Notifications
-        </Text>
-      </View>
-
       {isLoading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#472FF8" />
+        <View className="pt-3">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <SkeletonRow key={i} />
+          ))}
         </View>
       ) : isError && notifications.length === 0 ? (
         <FlatList
@@ -319,7 +364,7 @@ export default function NotificationsScreen() {
           renderItem={({ item }) => <NotificationItem item={item} />}
           renderSectionHeader={({ section: { title } }) => (
             <View className="bg-white px-6 pt-5 pb-3">
-              <Text className="text-[11px] font-semibold text-[#2c2d2d] uppercase tracking-[1.5px]">
+              <Text className="text-[11px] font-semibold text-[#1A1A1A] uppercase tracking-[1.5px]">
                 {title}
               </Text>
             </View>
@@ -338,7 +383,7 @@ export default function NotificationsScreen() {
           ListFooterComponent={
             isFetchingNextPage ? (
               <View className="py-4 items-center">
-                <ActivityIndicator size="small" color="#472FF8" />
+                <ActivityIndicator size="small" color="#032252" />
               </View>
             ) : null
           }

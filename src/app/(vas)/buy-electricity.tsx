@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { KeyboardProvider, KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -23,6 +23,7 @@ import type { VasBiller } from '@/types/vas.types';
 import { formatNairaWhole } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
+import { BackButton } from '@/components/ui/back-button';
 
 const QUICK_AMOUNTS = [500, 1000, 2000, 5000, 10000, 20000];
 
@@ -141,20 +142,21 @@ export default function BuyElectricityScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <HeaderScreen padded={false}>
       <ScrollView
         className="flex-1 px-6"
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <TouchableOpacity
-          className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-          onPress={() => router.back()}
-        >
-          <Text className="text-sm font-medium text-[#374151]">Back</Text>
-        </TouchableOpacity>
-
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Electricity</Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-6">
+          <BackButton className="" />
+          <Text
+            className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+            style={{ includeFontPadding: false }}
+          >
+            Electricity
+          </Text>
+        </View>
 
         {/* Prepaid / Postpaid toggle — selects which product applies */}
         <View className="bg-[#F5F5F5] rounded-full p-1 flex-row mb-6">
@@ -164,14 +166,14 @@ export default function BuyElectricityScreen() {
               <TouchableOpacity
                 key={type}
                 className={`flex-1 py-3 rounded-full items-center ${
-                  isActive ? 'bg-white' : ''
+                  isActive ? 'bg-[#032252]' : ''
                 }`}
                 activeOpacity={0.8}
                 onPress={() => setMeterType(type)}
               >
                 <Text
                   className={`text-sm font-semibold ${
-                    isActive ? 'text-[#1A1A1A]' : 'text-[#9CA3AF]'
+                    isActive ? 'text-[#F9B700]' : 'text-[#9CA3AF]'
                   }`}
                 >
                   {type === 'prepaid' ? 'Prepaid' : 'Postpaid'}
@@ -204,7 +206,7 @@ export default function BuyElectricityScreen() {
             {selectedBiller ? selectedBiller.name : 'Select Provider'}
           </Text>
           {billersQuery.isLoading ? (
-            <ActivityIndicator size="small" color="#472FF8" />
+            <ActivityIndicator size="small" color="#032252" />
           ) : (
             <MaterialCommunityIcons name="chevron-down" size={22} color="#6B7280" />
           )}
@@ -260,13 +262,13 @@ export default function BuyElectricityScreen() {
                 onPress={() => setAmount(String(value))}
                 className={`w-[31%] rounded-xl py-3 items-center mb-3 border ${
                   isActive
-                    ? 'bg-[#EEF0FF] border-[#472FF8]'
+                    ? 'bg-[#E8EEF7] border-[#032252]'
                     : 'bg-[#F5F5F5] border-[#F5F5F5]'
                 }`}
               >
                 <Text
                   className={`text-sm font-medium ${
-                    isActive ? 'text-[#472FF8]' : 'text-[#374151]'
+                    isActive ? 'text-[#032252]' : 'text-[#374151]'
                   }`}
                 >
                   {formatNairaWhole(value)}
@@ -280,7 +282,7 @@ export default function BuyElectricityScreen() {
       <View className="px-6 pb-4">
         <TouchableOpacity
           className={`rounded-full py-4 items-center ${
-            canProceed ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+            canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
           }`}
           onPress={handleProceed}
           disabled={!canProceed}
@@ -288,7 +290,7 @@ export default function BuyElectricityScreen() {
         >
           <Text
             className={`text-base font-semibold ${
-              canProceed ? 'text-white' : 'text-[#9CA3AF]'
+              canProceed ? 'text-[#032252]' : 'text-[#9CA3AF]'
             }`}
           >
             Proceed
@@ -318,7 +320,7 @@ export default function BuyElectricityScreen() {
 
                 {billersQuery.isLoading ? (
                   <View className="h-24 items-center justify-center">
-                    <ActivityIndicator color="#472FF8" />
+                    <ActivityIndicator color="#032252" />
                   </View>
                 ) : billersQuery.isError ? (
                   <View className="h-24 items-center justify-center px-6">
@@ -326,10 +328,10 @@ export default function BuyElectricityScreen() {
                       Couldn't load providers.
                     </Text>
                     <TouchableOpacity
-                      className="border-[1.5px] border-[#472FF8] rounded-full px-6 py-2"
+                      className="border-[1.5px] border-[#032252] rounded-full px-6 py-2"
                       onPress={() => billersQuery.refetch()}
                     >
-                      <Text className="text-[#472FF8] text-sm font-semibold">Retry</Text>
+                      <Text className="text-[#032252] text-sm font-semibold">Retry</Text>
                     </TouchableOpacity>
                   </View>
                 ) : !billersQuery.data?.length ? (
@@ -379,7 +381,7 @@ export default function BuyElectricityScreen() {
                             <TouchableOpacity
                               key={biller.id}
                               className={`px-6 py-4 border-b border-[#F3F4F6] flex-row items-center ${
-                                isSelected ? 'bg-[#EEF0FF]' : ''
+                                isSelected ? 'bg-[#E8EEF7]' : ''
                               }`}
                               onPress={() => selectProvider(biller)}
                             >
@@ -398,7 +400,7 @@ export default function BuyElectricityScreen() {
                                 <MaterialCommunityIcons
                                   name="check-circle"
                                   size={20}
-                                  color="#472FF8"
+                                  color="#032252"
                                 />
                               )}
                             </TouchableOpacity>
@@ -424,6 +426,6 @@ export default function BuyElectricityScreen() {
         amount={formatNairaWhole(amountNum)}
         date={todayFormatted()}
       />
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

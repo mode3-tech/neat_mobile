@@ -4,11 +4,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
 import { useLoanStore } from '@/stores/loan.store';
+import { BackButton } from '@/components/ui/back-button';
 
 function formatCurrency(amount: number): string {
   return '₦' + new Intl.NumberFormat('en-NG', {
@@ -48,16 +49,18 @@ export default function ReviewSummaryScreen() {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
+    <HeaderScreen>
+      <View className="flex-row items-center gap-2 mt-4 mb-6">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Review Summary
+        </Text>
+      </View>
 
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-6">Review Summary</Text>
 
         <View className="border border-[#E5E7EB] rounded-[14px] px-4 mb-5">
           {rows.map((row, i) => (
@@ -71,8 +74,8 @@ export default function ReviewSummaryScreen() {
         </View>
 
         <View className="flex-row items-center bg-[#F9FAFB] rounded-[14px] p-4 gap-[14px] mb-6">
-          <View className="w-11 h-11 rounded-full bg-[#EEF0FF] items-center justify-center">
-            <MaterialCommunityIcons name="home" size={22} color="#472FF8" />
+          <View className="w-11 h-11 rounded-full bg-[#E8EEF7] items-center justify-center">
+            <MaterialCommunityIcons name="home" size={22} color="#032252" />
           </View>
           <View className="flex-1">
             <Text className="text-[13px] font-semibold text-[#374151] mb-1">Business Address</Text>
@@ -83,20 +86,20 @@ export default function ReviewSummaryScreen() {
 
       <View className="pb-4 gap-3">
         <TouchableOpacity
-          className="bg-[#472FF8] rounded-full py-4 items-center"
+          className="bg-[#F9B700] rounded-full py-4 items-center"
           onPress={() => router.push('/(loan)/loan-pin')}
           activeOpacity={0.85}
         >
-          <Text className="text-white text-base font-semibold">Accept & continue</Text>
+          <Text className="text-[#032252] text-base font-semibold">Accept & continue</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="border-[1.5px] border-[#472FF8] rounded-full py-4 items-center"
+          className="border-[1.5px] border-[#032252] rounded-full py-4 items-center"
           onPress={() => router.back()}
           activeOpacity={0.85}
         >
-          <Text className="text-[#472FF8] text-base font-semibold">Cancel</Text>
+          <Text className="text-[#032252] text-base font-semibold">Cancel</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Image,
   Text,
   TouchableOpacity,
   View,
   useWindowDimensions,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import ViewShot, { captureRef } from 'react-native-view-shot';
@@ -16,8 +15,8 @@ import * as Print from 'expo-print';
 import { SuccessCelebration } from '@/components/ui/success-celebration';
 import { walletService } from '@/services/wallet.service';
 import { useTransferStore } from '@/stores/transfer.store';
-import { DetailRow } from '@/components/features/transaction/DetailRow';
-import { buildReceiptHtml, shareFile } from '@/utils/receipt';
+import { ReceiptCard } from '@/components/features/transaction/ReceiptCard';
+import { buildAmountRows, buildReceiptHtml, shareFile } from '@/utils/receipt';
 import {
   formatNairaDecimal,
   formatNairaWhole,
@@ -52,10 +51,24 @@ export default function TransferSuccessScreen() {
 
   if (!result) return null;
 
+  // The headline amount is what the recipient receives; the wallet is debited
+  // amount + charges + VAT. Without the breakdown the receipt doesn't reconcile
+  // with what the user sees leave their balance.
+  const amountRows = buildAmountRows({
+    amount: result.amount,
+    charges: result.charges,
+    vat: result.vat,
+    total: result.total,
+  });
+
   const detailRows: { label: string; value: string; valueColor?: string }[] = [
+    ...(store.senderName
+      ? [{ label: 'Sender', value: store.senderName }]
+      : []),
     { label: 'Name', value: store.accountName },
     { label: 'Account No.', value: store.accountNumber },
     { label: 'Bank Name', value: store.bankName },
+    ...amountRows,
     { label: 'Session ID', value: result.sessionId },
     { label: 'Transaction ID', value: result.transactionReference },
     { label: 'Transaction Status', value: 'Successful', valueColor: '#16A34A' },
@@ -110,7 +123,7 @@ export default function TransferSuccessScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <HeaderScreen padded={false}>
       {/*
         Off-screen receipt — kept mounted purely as the capture source for
         Share Image / Download PDF. Rendered far off-screen with a fixed width
@@ -123,52 +136,19 @@ export default function TransferSuccessScreen() {
         pointerEvents="none"
       >
         <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 1 }}>
-          <View className="bg-white px-5 py-6 border border-[#E5E7EB] rounded-[16px]">
-            <View className="flex-row items-center justify-between">
-              <Image
-                source={require('../../../assets/images/welcome/NeatLogo.png')}
-                className="w-16 h-12"
-                resizeMode="contain"
-              />
-              <Text className="text-[15px] font-medium text-[#1A1A1A]">
-                Transaction Receipt
-              </Text>
-            </View>
-
-            <View className="border-b border-[#E5E7EB] my-4" />
-
-            <Text className="text-[26px] font-bold text-[#472FF8] text-center mt-2">
-              {formatNairaDecimal(result.amount)}
-            </Text>
-            <Text className="text-[13px] text-[#6B7280] text-center mt-1">
-              Successful
-            </Text>
-            <Text className="text-[12px] text-[#9CA3AF] text-center mt-1">
-              {formatTransactionDateTime(receiptDate.toISOString())}
-            </Text>
-
-            <View className="border-b border-[#E5E7EB] my-4" />
-
-            {store.senderName ? (
-              <DetailRow label="Sender" value={store.senderName} />
-            ) : null}
-            {detailRows.map((row, i) => (
-              <DetailRow
-                key={row.label}
-                label={row.label}
-                value={row.value}
-                valueColor={row.valueColor}
-                isLast={i === detailRows.length - 1}
-              />
-            ))}
-          </View>
+          <ReceiptCard
+            amount={formatNairaDecimal(result.amount)}
+            statusLabel="Successful"
+            date={formatTransactionDateTime(receiptDate.toISOString())}
+            rows={detailRows}
+          />
         </ViewShot>
       </View>
 
       {/* Done */}
       <View className="px-6 pt-2 flex-row justify-end">
         <TouchableOpacity onPress={handleBack} hitSlop={8} activeOpacity={0.7}>
-          <Text className="text-base font-semibold text-[#472FF8]">Done</Text>
+          <Text className="text-base font-semibold text-[#032252]">Done</Text>
         </TouchableOpacity>
       </View>
 
@@ -183,8 +163,8 @@ export default function TransferSuccessScreen() {
           {formatNairaWhole(result.amount)}
         </Text>
 
-        <View className="bg-[#EEF0FF] border border-[#472FF8]/30 rounded-[14px] px-4 py-4 mt-6 w-full">
-          <Text className="text-[13px] text-[#472FF8] text-center leading-5">
+        <View className="bg-[#E8EEF7] border border-[#032252]/30 rounded-[14px] px-4 py-4 mt-6 w-full">
+          <Text className="text-[13px] text-[#032252] text-center leading-5">
             The recipient account is expected to be credited within 5 minutes,
             subject to notification by the bank.
           </Text>
@@ -198,14 +178,14 @@ export default function TransferSuccessScreen() {
             onPress={handleAddBeneficiary}
             disabled={beneficiaryAdded}
           >
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+            <View className="w-14 h-14 rounded-2xl bg-[#E8EEF7] items-center justify-center mb-2">
               {addingBeneficiary ? (
-                <ActivityIndicator size="small" color="#472FF8" />
+                <ActivityIndicator size="small" color="#032252" />
               ) : (
                 <MaterialCommunityIcons
                   name={beneficiaryAdded ? 'check-circle' : 'account-plus-outline'}
                   size={22}
-                  color="#472FF8"
+                  color="#032252"
                 />
               )}
             </View>
@@ -219,11 +199,11 @@ export default function TransferSuccessScreen() {
             className="items-center w-20"
             onPress={handleShareAsImage}
           >
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+            <View className="w-14 h-14 rounded-2xl bg-[#E8EEF7] items-center justify-center mb-2">
               <MaterialCommunityIcons
                 name="image-outline"
                 size={22}
-                color="#472FF8"
+                color="#032252"
               />
             </View>
             <Text className="text-xs text-[#374151] text-center">
@@ -236,11 +216,11 @@ export default function TransferSuccessScreen() {
             className="items-center w-20"
             onPress={handleShareAsPdf}
           >
-            <View className="w-14 h-14 rounded-2xl bg-[#EEF0FF] items-center justify-center mb-2">
+            <View className="w-14 h-14 rounded-2xl bg-[#E8EEF7] items-center justify-center mb-2">
               <MaterialCommunityIcons
                 name="file-pdf-box"
                 size={22}
-                color="#472FF8"
+                color="#032252"
               />
             </View>
             <Text className="text-xs text-[#374151] text-center">
@@ -249,6 +229,6 @@ export default function TransferSuccessScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

@@ -44,7 +44,7 @@ export default function CloseAccountResultScreen() {
 
         <Text
           className={`text-[22px] font-bold text-center mb-3 ${
-            isBlocked ? 'text-[#1A1A1A]' : 'text-[#EF4444]'
+            isBlocked ? 'text-[#032252]' : 'text-[#EF4444]'
           }`}
         >
           {title}
@@ -56,11 +56,11 @@ export default function CloseAccountResultScreen() {
 
       <View className="pb-4">
         <TouchableOpacity
-          className="rounded-full py-4 items-center bg-[#472FF8]"
+          className="rounded-full py-4 items-center bg-[#F9B700]"
           onPress={handlePress}
           activeOpacity={0.85}
         >
-          <Text className="text-white text-base font-semibold">{buttonLabel}</Text>
+          <Text className="text-[#032252] text-base font-semibold">{buttonLabel}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

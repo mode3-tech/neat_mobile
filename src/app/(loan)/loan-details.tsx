@@ -1,14 +1,7 @@
-import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
+import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
 import { loanService } from '@/services/loan.service';
@@ -16,6 +9,7 @@ import { QUERY_KEYS } from '@/constants';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import { formatNairaWhole, formatDateLong } from '@/utils/format';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
+import { BackButton } from '@/components/ui/back-button';
 
 function statusLabel(status: LoanHistoryStatus): string {
   switch (status) {
@@ -56,8 +50,8 @@ function ScheduleRow({ item }: { item: LoanHistoryItem }) {
         isUpcoming ? 'bg-[#FEF3E2]' : 'bg-[#F9FAFB]'
       }`}
     >
-      <View className="w-9 h-9 rounded-lg bg-[#EEF0FF] items-center justify-center mr-3">
-        <MaterialCommunityIcons name="package-variant" size={18} color="#472FF8" />
+      <View className="w-9 h-9 rounded-lg bg-[#E8EEF7] items-center justify-center mr-3">
+        <MaterialCommunityIcons name="package-variant" size={18} color="#032252" />
       </View>
       <View className="flex-1">
         <Text className="text-xs text-[#6B7280] mb-1">Loan Amount</Text>
@@ -114,13 +108,16 @@ export default function LoanDetailsScreen() {
   const isRefreshing = isRefetchingDetails || isRefetchingSchedule;
 
   return (
-    <SafeAreaView className="flex-1 bg-white px-6">
-      <TouchableOpacity
-        className="self-start border border-[#E5E7EB] rounded-[20px] px-4 py-1.5 mt-2 mb-6"
-        onPress={() => router.back()}
-      >
-        <Text className="text-sm font-medium text-[#374151]">Back</Text>
-      </TouchableOpacity>
+    <HeaderScreen>
+      <View className="flex-row items-center gap-2 mt-4 mb-5">
+        <BackButton className="" />
+        <Text
+          className="text-[22px] font-bold text-[#1A1A1A] leading-[26px]"
+          style={{ includeFontPadding: false }}
+        >
+          Loan Details
+        </Text>
+      </View>
 
       <ScrollView
         className="flex-1"
@@ -130,11 +127,10 @@ export default function LoanDetailsScreen() {
           <PrimaryRefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
       >
-        <Text className="text-[22px] font-bold text-[#1A1A1A] mb-5">Loan Details</Text>
 
         {isLoading && (
           <View className="py-20 items-center justify-center">
-            <ActivityIndicator size="small" color="#472FF8" />
+            <ActivityIndicator size="small" color="#032252" />
           </View>
         )}
 
@@ -158,7 +154,7 @@ export default function LoanDetailsScreen() {
 
         {!isLoading && details && (
           <>
-            <View className="bg-[#472FF8] rounded-2xl p-5 mb-6 overflow-hidden">
+            <View className="bg-[#032252] rounded-2xl p-5 mb-6 overflow-hidden">
               <View className="flex-row items-start">
                 <View className="flex-1">
                   <SummaryRow
@@ -205,6 +201,6 @@ export default function LoanDetailsScreen() {
           </>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </HeaderScreen>
   );
 }

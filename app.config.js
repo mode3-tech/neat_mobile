@@ -22,6 +22,15 @@ const baseConfig = {
   scheme: 'neatmobile',
   userInterfaceStyle: 'light',
   newArchEnabled: true,
+  // The ash bar under the nav buttons is Android's contrast scrim, drawn because
+  // edge-to-edge is on and `enforceNavigationBarContrast` defaults to true. Turning
+  // it off lets the screen's own background run to the bottom edge; `light-content`
+  // keeps the buttons white against it. Both are applied at prebuild — no extra
+  // package needed, but a new native build is required to pick them up.
+  androidNavigationBar: {
+    enforceContrast: false,
+    barStyle: 'light-content',
+  },
   updates: {
     url: 'https://u.expo.dev/13db6f2a-3ded-4ad6-a2fe-9bf7904bc5e8',
     // url: 'https://u.expo.dev/a2f6a1a2-cb4a-4172-a7a8-eefc69413ec7',
@@ -34,8 +43,7 @@ const baseConfig = {
     infoPlist: {
       NSCameraUsageDescription:
         'NeatPay needs your camera to verify your identity with a quick selfie.',
-      // Liveness is selfie-only for now — no audio captured. Re-enable when
-      // active/video liveness ships (keeps Data Safety form clean).
+
       // NSMicrophoneUsageDescription:
       //   'NeatPay uses your microphone during identity verification.',
     },
@@ -51,8 +59,7 @@ const baseConfig = {
     softwareKeyboardLayoutMode: 'resize',
     predictiveBackGestureEnabled: false,
     package: 'com.mode3.neatmobile',
-    // RECORD_AUDIO removed for now — liveness is selfie-only (no audio capture).
-    // Re-add 'android.permission.RECORD_AUDIO' when active/video liveness ships.
+
     permissions: ['android.permission.CAMERA'],
   },
   web: {
@@ -65,22 +72,20 @@ const baseConfig = {
     [
       'expo-splash-screen',
       {
-        image: './assets/images/welcome/NeatLogo.png',
-        imageWidth: 200,
+     
+        image: './assets/images/new/splash-logo.png',
+        imageWidth: 240,
         resizeMode: 'contain',
-        backgroundColor: '#472FF8',
+        backgroundColor: '#032252',
       },
     ],
     [
       'expo-notifications',
       {
-        // Square (192x192) canvas with the wordmark centred and transparent
-        // padding — the small-icon slot is square, so a 3:1 banner gets
-        // centre-cropped to "EAT". Generated from welcome/NeatPayLogo.png.
+
         icon: './assets/images/notification-icon-color.png',
-        // icon: './assets/images/welcome/NeatPayLogo.png', // wide — crops to "EAT"
-        // icon: './assets/images/notification-icon.png',   // monochrome "N"
-        color: '#472FF8',
+
+        color: '#032252',
         defaultChannel: 'transactions',
       },
     ],
@@ -90,9 +95,7 @@ const baseConfig = {
     [
       'expo-build-properties',
       {
-        // Security review (CyberPlural): raise Android floor from API 24 (Android 7.0,
-        // unpatched) to API 29 (Android 10) so the app only runs on devices still getting
-        // OS security updates. Drops Android 7–9 support.
+
         android: { minSdkVersion: 29 },
       },
     ],

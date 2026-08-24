@@ -18,7 +18,8 @@ import { getErrorMessage } from '@/utils/error';
 import { getRegisterErrorAction, type RegisterErrorAction } from '@/utils/register-errors';
 import { buildRegisterPayload } from '@/utils/register-payload';
 
-const PRIMARY = '#472FF8';
+const PRIMARY = '#F9B700';
+const PRIMARY_TEXT = '#032252';
 const POLL_INTERVAL_MS = 3000;
 const SLOW_NETWORK_THRESHOLD_MS = 30000;
 
@@ -218,7 +219,8 @@ export default function RegistrationProcessingScreen() {
           </>
         ) : (
           <>
-            <ActivityIndicator size="large" color={PRIMARY} />
+            {/* Navy, not PRIMARY — a yellow spinner on white barely reads. */}
+            <ActivityIndicator size="large" color={PRIMARY_TEXT} />
             <Text style={[styles.title, styles.titleSpaced]}>
               {statusMessage}
             </Text>
@@ -240,7 +242,7 @@ export default function RegistrationProcessingScreen() {
             activeOpacity={0.85}
           >
             {retrying ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={PRIMARY_TEXT} />
             ) : (
               <Text style={styles.primaryBtnText}>
                 {errorAction ? errorAction.ctaLabel : 'Retry'}
@@ -274,7 +276,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1A1A1A',
+    color: PRIMARY_TEXT,
     textAlign: 'center',
     marginBottom: 8,
   },
@@ -313,7 +315,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryBtnText: {
-    color: '#fff',
+    color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -322,7 +324,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   secondaryBtnText: {
-    color: PRIMARY,
+    color: PRIMARY_TEXT,
     fontSize: 15,
     fontWeight: '500',
   },

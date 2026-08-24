@@ -67,8 +67,6 @@ export default function RepaymentBottomSheet({
   });
 
   const parsedAmount = parseFloat(amount.replace(/,/g, '')) || 0;
-  // Fail open while the balance is still unknown (summary loading/errored);
-  // the backend rejects a genuine over-balance repayment anyway.
   const exceedsBalance =
     availableBalance != null && parsedAmount > availableBalance;
   const hasValidInput =
@@ -131,7 +129,7 @@ export default function RepaymentBottomSheet({
               ) : (
                 <Text className="text-xs mb-5">
                   <Text className="text-[#6B7280]">Balance: </Text>
-                  <Text className="text-[#472FF8] font-medium">
+                  <Text className="text-[#032252] font-medium">
                     {availableBalance != null
                       ? formatCurrency(availableBalance)
                       : '—'}
@@ -173,18 +171,18 @@ export default function RepaymentBottomSheet({
               {/* Confirm */}
               <TouchableOpacity
                 className={`rounded-full py-4 items-center mb-3 ${
-                  hasValidInput ? 'bg-[#472FF8]' : 'bg-[#E5E7EB]'
+                  hasValidInput ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
                 }`}
                 onPress={onConfirm}
                 disabled={!canConfirm}
                 activeOpacity={0.85}
               >
                 {isPending ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color="#032252" />
                 ) : (
                   <Text
                     className={`text-base font-semibold ${
-                      hasValidInput ? 'text-white' : 'text-[#9CA3AF]'
+                      hasValidInput ? 'text-[#032252]' : 'text-[#9CA3AF]'
                     }`}
                   >
                     Confirm
@@ -194,12 +192,12 @@ export default function RepaymentBottomSheet({
 
               {/* Cancel */}
               <TouchableOpacity
-                className="border-[1.5px] border-[#472FF8] rounded-full py-4 items-center"
+                className="border-[1.5px] border-[#032252] rounded-full py-4 items-center"
                 onPress={onClose}
                 activeOpacity={0.85}
                 disabled={isPending}
               >
-                <Text className="text-[#472FF8] text-base font-semibold">Cancel</Text>
+                <Text className="text-[#032252] text-base font-semibold">Cancel</Text>
               </TouchableOpacity>
             </View>
           </KeyboardAwareScrollView>
@@ -228,11 +226,11 @@ export default function RepaymentBottomSheet({
             </Text>
 
             <TouchableOpacity
-              className="bg-[#472FF8] rounded-full py-4 items-center w-full"
+              className="bg-[#F9B700] rounded-full py-4 items-center w-full"
               onPress={() => setSuccessVisible(false)}
               activeOpacity={0.85}
             >
-              <Text className="text-white text-base font-semibold">Confirm</Text>
+              <Text className="text-[#032252] text-base font-semibold">Confirm</Text>
             </TouchableOpacity>
           </View>
         </View>
