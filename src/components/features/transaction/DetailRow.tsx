@@ -1,7 +1,7 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import * as Clipboard from 'expo-clipboard';
-import { toast } from 'sonner-native';
+
+import { CopyButton } from '@/components/ui/copy-button';
 
 /**
  * A label/value row used by the transaction details, transaction receipt, and
@@ -22,11 +22,6 @@ export function DetailRow({
   isLast?: boolean;
   copyValue?: string;
 }): React.JSX.Element {
-  const handleCopy = () => {
-    Clipboard.setStringAsync(copyValue!);
-    toast.success('Copied');
-  };
-
   return (
     <View
       className={`flex-row justify-between items-start gap-4 py-[14px] ${
@@ -42,8 +37,8 @@ export function DetailRow({
           >
             {value}
           </Text>
-          <TouchableOpacity
-            onPress={handleCopy}
+          <CopyButton
+            value={copyValue}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <MaterialCommunityIcons
@@ -51,7 +46,7 @@ export function DetailRow({
               size={16}
               color="#032252"
             />
-          </TouchableOpacity>
+          </CopyButton>
         </View>
       ) : (
         <Text

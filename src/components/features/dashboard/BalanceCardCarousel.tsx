@@ -10,10 +10,11 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import { router } from 'expo-router';
+
+import { CopyButton } from '@/components/ui/copy-button';
 
 const CARD_MARGIN = 14;
 const AUTO_ROTATE_INTERVAL = 4000;
@@ -181,22 +182,23 @@ export default function BalanceCardCarousel({
   };
 
   const renderCard = (card: CardData, index: number) => (
-    
+
     <View
       key={`${card.id}-${index}`}
       style={{ width: cardWidth, marginHorizontal: CARD_MARGIN }}
     >
-      {/* Header — sits above the card, on the screen background */}
-      <View className="flex-row justify-between items-center px-1 pb-3">
+      {/* Header — sits above the card, on the screen background. z-10 so the
+          copy pill, which hangs down over the card, isn't painted behind it. */}
+      <View className="flex-row justify-between items-center px-1 pb-3 z-10">
         <Text className="text-[#032252] text-[16px] font-medium">{card.label}</Text>
         <View className="flex-row items-center gap-2">
           <Text className="text-[#032252] text-[16px]">{card.accountNumber}</Text>
-          <TouchableOpacity
+          <CopyButton
+            value={card.accountNumber}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            onPress={() => Clipboard.setStringAsync(card.accountNumber)}
           >
             <Feather name="copy" size={15} color="#032252" />
-          </TouchableOpacity>
+          </CopyButton>
         </View>
       </View>
 

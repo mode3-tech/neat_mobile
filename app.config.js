@@ -43,8 +43,7 @@ const baseConfig = {
     infoPlist: {
       NSCameraUsageDescription:
         'NeatPay needs your camera to verify your identity with a quick selfie.',
-      // Liveness is selfie-only for now — no audio captured. Re-enable when
-      // active/video liveness ships (keeps Data Safety form clean).
+
       // NSMicrophoneUsageDescription:
       //   'NeatPay uses your microphone during identity verification.',
     },
@@ -60,8 +59,7 @@ const baseConfig = {
     softwareKeyboardLayoutMode: 'resize',
     predictiveBackGestureEnabled: false,
     package: 'com.mode3.neatmobile',
-    // RECORD_AUDIO removed for now — liveness is selfie-only (no audio capture).
-    // Re-add 'android.permission.RECORD_AUDIO' when active/video liveness ships.
+
     permissions: ['android.permission.CAMERA'],
   },
   web: {
@@ -74,26 +72,7 @@ const baseConfig = {
     [
       'expo-splash-screen',
       {
-        // Must stay in lockstep with components/ui/splash-screen.tsx — same
-        // asset, same rendered size, same background, or the native→JS
-        // hand-off blinks.
-        //
-        // Deliberately NOT new/logo-neat.png: Android 12+ masks the splash icon
-        // to a circle, and that asset is a filled pill running to the canvas
-        // edge, so the mask visibly cut its rounded caps. This one is the bare
-        // wordmark centred on a 1024x1024 transparent canvas at 68% width, so
-        // the mask only ever clips empty pixels. Any replacement needs that
-        // same breathing room — a wide logo filling its canvas will be cut.
-        //
-        // imageWidth must stay well under the canvas: Android draws splash icons
-        // on a fixed 288dp canvas and masks to the inner 192dp circle (the outer
-        // third is always cut). The wordmark spans 68% of the asset width and
-        // 22% of its height, so its bounding box diagonal is 71.4% of whatever
-        // imageWidth is set to — that has to fit inside the 96dp mask radius:
-        //   0.357 x imageWidth <= 96  =>  imageWidth <= 269
-        // At the old 288 the corners reached ~103dp and the wordmark's ends were
-        // shaved. 240 puts them at ~86dp, leaving ~11% margin. If the asset ever
-        // changes, re-measure its opaque bbox and redo that arithmetic.
+     
         image: './assets/images/new/splash-logo.png',
         imageWidth: 240,
         resizeMode: 'contain',
@@ -103,12 +82,9 @@ const baseConfig = {
     [
       'expo-notifications',
       {
-        // Square (192x192) canvas with the wordmark centred and transparent
-        // padding — the small-icon slot is square, so a 3:1 banner gets
-        // centre-cropped to "EAT". Generated from welcome/NeatPayLogo.png.
+
         icon: './assets/images/notification-icon-color.png',
-        // icon: './assets/images/welcome/NeatPayLogo.png', // wide — crops to "EAT"
-        // icon: './assets/images/notification-icon.png',   // monochrome "N"
+
         color: '#032252',
         defaultChannel: 'transactions',
       },
@@ -119,9 +95,7 @@ const baseConfig = {
     [
       'expo-build-properties',
       {
-        // Security review (CyberPlural): raise Android floor from API 24 (Android 7.0,
-        // unpatched) to API 29 (Android 10) so the app only runs on devices still getting
-        // OS security updates. Drops Android 7–9 support.
+
         android: { minSdkVersion: 29 },
       },
     ],

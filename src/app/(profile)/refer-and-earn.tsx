@@ -1,25 +1,18 @@
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Redirect } from 'expo-router';
-import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
-import { toast } from 'sonner-native';
 
 import { useAccountSummary } from '@/hooks/use-account-summary';
 import { BackButton } from '@/components/ui/back-button';
 import { HeaderScreen } from '@/components/ui/header-screen';
+import { CopyButton } from '@/components/ui/copy-button';
 
 export default function ReferAndEarnScreen() {
   // Same query key as the Profile tab, so the code is already cached when
   // arriving from there and renders without a loading flash.
   const { data: summary, isLoading } = useAccountSummary();
   const code = summary?.referral_code ?? '';
-
-  const handleCopy = async () => {
-    await Clipboard.setStringAsync(code);
-    toast.success('Referral code copied');
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-  };
 
   if (isLoading) {
     return (
@@ -61,14 +54,17 @@ export default function ReferAndEarnScreen() {
         >
           {code}
         </Text>
-        <TouchableOpacity
+        <CopyButton
+          value={code}
           className="w-10 h-10 rounded-full bg-[#F9B700] items-center justify-center ml-3"
-          onPress={handleCopy}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           activeOpacity={0.7}
+          onCopied={() =>
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {})
+          }
         >
           <MaterialCommunityIcons name="content-copy" size={18} color="#032252" />
-        </TouchableOpacity>
+        </CopyButton>
       </View>
 
       <View className="bg-[#E8EEF7] border border-[#032252]/30 rounded-2xl px-4 py-4 mt-6">

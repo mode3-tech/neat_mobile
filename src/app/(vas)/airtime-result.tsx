@@ -7,11 +7,10 @@ import {
 import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import * as Clipboard from 'expo-clipboard';
-import { toast } from 'sonner-native';
 
 import { useVasStore } from '@/stores/vas.store';
 import TransactionSummaryCard from '@/components/features/vas/TransactionSummaryCard';
+import { CopyButton } from '@/components/ui/copy-button';
 
 export default function AirtimeResultScreen() {
   const params = useLocalSearchParams<{
@@ -33,12 +32,6 @@ export default function AirtimeResultScreen() {
 
   const reset = useVasStore((s) => s.reset);
   const isSuccess = params.status === 'success';
-
-  const copyToken = async () => {
-    if (!params.token) return;
-    await Clipboard.setStringAsync(params.token);
-    toast.success('Token copied');
-  };
 
   const handleBackToDashboard = () => {
     reset();
@@ -82,10 +75,13 @@ export default function AirtimeResultScreen() {
               <Text className="text-lg font-bold text-[#1A1A1A] flex-1 mr-3">
                 {params.token}
               </Text>
-              <TouchableOpacity
+              <CopyButton
+                value={params.token}
                 className="flex-row items-center gap-1"
                 activeOpacity={0.7}
-                onPress={copyToken}
+                // Below the trigger is the "Units" line, a later sibling the
+                // pill can't paint over.
+                pillPlacement="above"
               >
                 <MaterialCommunityIcons
                   name="content-copy"
@@ -93,7 +89,7 @@ export default function AirtimeResultScreen() {
                   color="#032252"
                 />
                 <Text className="text-[13px] font-semibold text-[#032252]">Copy</Text>
-              </TouchableOpacity>
+              </CopyButton>
             </View>
             {params.units ? (
               <Text className="text-[13px] text-[#374151] mt-2">

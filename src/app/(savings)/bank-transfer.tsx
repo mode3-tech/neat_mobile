@@ -1,23 +1,17 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
-import * as Clipboard from 'expo-clipboard';
 
 import { accountService } from '@/services/account.service';
 import { HeaderScreen } from '@/components/ui/header-screen';
 import { BackButton } from '@/components/ui/back-button';
+import { CopyButton } from '@/components/ui/copy-button';
 
 export default function BankTransferScreen() {
   const { data: accountSummary } = useQuery({
     queryKey: ['account-summary'],
     queryFn: accountService.getSummary,
   });
-
-  const copyAccountNumber = () => {
-    if (accountSummary?.account_number) {
-      Clipboard.setStringAsync(accountSummary.account_number);
-    }
-  };
 
   return (
     <HeaderScreen>
@@ -41,13 +35,16 @@ export default function BankTransferScreen() {
           <Text className="text-[17px] font-bold text-[#032252] mr-2">
             {accountSummary?.account_number ?? '---'}
           </Text>
-          <TouchableOpacity onPress={copyAccountNumber} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+          <CopyButton
+            value={accountSummary?.account_number}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
             <MaterialCommunityIcons
               name="content-copy"
               size={18}
               color="#9CA3AF"
             />
-          </TouchableOpacity>
+          </CopyButton>
         </View>
 
         <Text className="text-[13px] text-[#6B7280] mb-1">Account Name</Text>
