@@ -5,6 +5,15 @@ import type { AppVersionResponse } from '@/types/app-version.types';
 
 import { api, throwApiError } from './api';
 
+// The version endpoint sits at the server ROOT, not under /api/v1 like every
+// other route — so the shared `api` instance's baseURL would 404 here. Derive
+// the origin from the same env var rather than hardcoding the host, which has
+// changed before. Trailing slash and a missing /api/v1 suffix both tolerated.
+const API_ROOT = (process.env.EXPO_PUBLIC_API_URL ?? '').replace(
+  /\/api\/v1\/?$/,
+  '',
+);
+
 export const versionService = {
   /**
    * Public endpoint — no auth. The shared `api` instance only attaches an
@@ -22,7 +31,7 @@ export const versionService = {
   getAppVersion: async (): Promise<AppVersionResponse> => {
     try {
       const response = await api.get<ApiEnvelope<AppVersionResponse>>(
-        `/app/version/${Platform.OS}`,
+        `${API_ROOT}/app/version/${Platform.OS}`,
         { timeout: 10_000 },
       );
       return response.data.data;

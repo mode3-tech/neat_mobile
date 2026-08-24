@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import { openStoreListing } from '@/utils/store-link';
+import { useOverlayNavBarStyle } from '@/components/ui/nav-bar';
 
 type Props = {
   /** Optional `store_url` from GET /app/version. */
@@ -22,6 +23,11 @@ export function UpdateAvailableSheet({
   onDismiss,
 }: Props): React.JSX.Element {
   const insets = useSafeAreaInsets();
+
+  // The sheet paints the bottom of the screen white, so the nav bar needs dark
+  // buttons — otherwise light buttons set by the screen behind (e.g. the navy
+  // sign-in) go invisible against it. Restored on dismiss.
+  useOverlayNavBarStyle('dark');
 
   return (
     <View
@@ -46,8 +52,12 @@ export function UpdateAvailableSheet({
           paddingBottom: insets.bottom + 24,
         }}
       >
+        {/* Centred, matching UpdateRequiredScreen: this is a short one-purpose
+            announcement, not a form, and the two update surfaces should not
+            differ in alignment. `self-center` is needed because the circle is a
+            fixed-size box — items-center only centres its contents. */}
         <View
-          className="items-center justify-center rounded-full"
+          className="self-center items-center justify-center rounded-full"
           style={{
             width: 64,
             height: 64,
@@ -55,27 +65,32 @@ export function UpdateAvailableSheet({
             marginBottom: 16,
           }}
         >
-          <Ionicons name="arrow-up-circle-outline" size={32} color="#032252" />
+          {/* Down arrow, not up: an up arrow reads as upload/send. This prompt
+              is about pulling a new version down from the store. */}
+          <Ionicons name="arrow-down-circle-outline" size={32} color="#032252" />
         </View>
 
         <Text
-          className="font-bold"
+          className="text-center font-bold"
           style={{ fontSize: 20, color: '#032252', marginBottom: 8 }}
         >
           Update available
         </Text>
 
+        {/* Deliberately does NOT say "to continue" — this prompt is dismissible
+            (Later, and tapping the backdrop), so blocking language would be a
+            lie. That phrasing belongs on UpdateRequiredScreen. */}
         <Text
+          className="text-center"
           style={{
             fontSize: 15,
-            color: '#000000',
+            color: '#1A1A1A',
             opacity: 0.75,
             lineHeight: 22,
             marginBottom: 24,
           }}
         >
-          A new version of the app is available. Download the latest version to
-          continue.
+          A new version of NEATPay is available with improvements and fixes.
         </Text>
 
         <Pressable

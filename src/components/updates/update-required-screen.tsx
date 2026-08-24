@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import { openStoreListing } from '@/utils/store-link';
+import { useOverlayNavBarStyle } from '@/components/ui/nav-bar';
 
 type Props = {
   /** Optional `store_url` from GET /app/version. */
@@ -24,6 +25,10 @@ type Props = {
  */
 export function UpdateRequiredScreen({ storeUrl }: Props): React.JSX.Element {
   const insets = useSafeAreaInsets();
+
+  // White sheet over the bottom of the screen — same reason as the soft sheet:
+  // light nav-bar buttons from the screen behind would vanish against it.
+  useOverlayNavBarStyle('dark');
 
   // Returning true marks the press handled, so neither the navigator nor the
   // OS acts on it — without this, back would pop the stack underneath a block
@@ -65,7 +70,9 @@ export function UpdateRequiredScreen({ storeUrl }: Props): React.JSX.Element {
             marginBottom: 20,
           }}
         >
-          <Ionicons name="arrow-up-circle-outline" size={40} color="#032252" />
+          {/* Down arrow, not up — matches UpdateAvailableSheet; an up arrow
+              reads as upload/send rather than "get the new version". */}
+          <Ionicons name="arrow-down-circle-outline" size={40} color="#032252" />
         </View>
 
         <Text
@@ -79,14 +86,16 @@ export function UpdateRequiredScreen({ storeUrl }: Props): React.JSX.Element {
           className="text-center"
           style={{
             fontSize: 15,
-            color: '#000000',
+            color: '#1A1A1A',
             opacity: 0.75,
             lineHeight: 22,
             marginBottom: 24,
           }}
         >
-          A new version of the app is available. Download the latest version to
-          continue.
+          {/* "to continue" is accurate HERE — this screen is a total block with
+              no dismiss. The soft sheet deliberately avoids that phrasing. */}
+          A new version of NEATPay is required to continue. Please update to the
+          latest version.
         </Text>
 
         <Pressable

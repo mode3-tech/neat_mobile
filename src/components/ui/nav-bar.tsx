@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Platform } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import * as NavigationBar from 'expo-navigation-bar';
@@ -19,7 +19,13 @@ type NavBarContentStyle = 'light' | 'dark';
 // Most screens are white, so dark buttons are the resting state.
 const DEFAULT_NAV_BAR_STYLE: NavBarContentStyle = 'dark';
 
+// What's currently applied, so an overlay can restore it on unmount rather than
+// guessing the default — the screen behind never re-fires its focus effect,
+// since it never lost focus.
+let currentStyle: NavBarContentStyle = DEFAULT_NAV_BAR_STYLE;
+
 function apply(style: NavBarContentStyle): void {
+  currentStyle = style;
   if (Platform.OS !== 'android') return;
   // Flip: expo-navigation-bar's "style" names the surface, ours names the ink.
   NavigationBar.setStyle(style === 'light' ? 'dark' : 'light');
@@ -33,6 +39,23 @@ function apply(style: NavBarContentStyle): void {
  */
 export function initNavBarStyle(): void {
   apply(DEFAULT_NAV_BAR_STYLE);
+}
+
+/**
+ * For overlays that cover the bottom of the screen with a different surface —
+ * bottom sheets, full-screen blocking states — rendered ABOVE the navigator
+ * rather than as a screen, so `useFocusEffect` never fires for them.
+ *
+ * Restores whatever was applied before, not DEFAULT_NAV_BAR_STYLE: the screen
+ * underneath keeps focus the whole time, so its own effect won't re-assert its
+ * style on dismiss. A white sheet over a navy screen must hand "light" back.
+ */
+export function useOverlayNavBarStyle(style: NavBarContentStyle): void {
+  useEffect(() => {
+    const previous = currentStyle;
+    apply(style);
+    return () => apply(previous);
+  }, [style]);
 }
 
 export function NavBar({ style }: { style: NavBarContentStyle }): null {
