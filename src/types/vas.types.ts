@@ -30,6 +30,8 @@ export interface BuyAirtimePayload {
   unique_code: string;
   phone_number: string;
   amount: number;
+  /** Settle part of `amount` from the cashback balance. `amount` stays the full price. */
+  use_cashback?: boolean;
 }
 
 export type BuyDataPayload = BuyAirtimePayload;
@@ -44,6 +46,8 @@ export interface BuyCablePayload {
   no_of_month: number;
   /** Total charged = package amount × no_of_month. */
   amount: number;
+  /** Settle part of `amount` from the cashback balance. `amount` stays the full price. */
+  use_cashback?: boolean;
 }
 
 export interface BuyElectricityPayload {
@@ -54,6 +58,8 @@ export interface BuyElectricityPayload {
   /** Meter type — "prepaid" or "postpaid" (selects the matching product). */
   account_type: string;
   amount: number;
+  /** Settle part of `amount` from the cashback balance. `amount` stays the full price. */
+  use_cashback?: boolean;
 }
 
 /**

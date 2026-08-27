@@ -1,14 +1,17 @@
 import * as SplashScreen from 'expo-splash-screen';
 import { router } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useAuthStore } from '@/stores/auth.store';
 import { SplashScreenComponent } from '@/components/ui/splash-screen';
+import { applyPendingUpdate } from '@/utils/ota-update';
 
 // preventAutoHideAsync()/setOptions() live in _layout.tsx so they run at the
 // earliest possible point and win the native auto-hide race.
 
 export default function Index(): React.JSX.Element {
+  const [updating, setUpdating] = useState(false);
+
   useEffect(() => {
     async function prepare(): Promise<void> {
 
@@ -16,8 +19,14 @@ export default function Index(): React.JSX.Element {
 
       const store = useAuthStore.getState();
       // allSettled so a hydration error can't skip the wait (the hydrate fns
-      // already swallow their own errors anyway).
-      await Promise.allSettled([store.hydrateTokens(), store.hydrateBiometrics()]);
+      // already swallow their own errors anyway). The update check runs
+      // alongside it so a no-update launch costs only the slower of the two.
+      const [reloading] = await Promise.all([
+        applyPendingUpdate(() => setUpdating(true)),
+        Promise.allSettled([store.hydrateTokens(), store.hydrateBiometrics()]),
+      ]);
+      if (reloading) return;
+      setUpdating(false);
 
       // DEV LOGIN BYPASS — uncomment this block to land straight on the
       // Dashboard on every reload instead of the sign-in screen, reusing the
@@ -51,5 +60,5 @@ export default function Index(): React.JSX.Element {
     prepare();
   }, []);
 
-  return <SplashScreenComponent />;
+  return <SplashScreenComponent status={updating ? 'Updating…' : undefined} />;
 }

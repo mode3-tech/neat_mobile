@@ -35,6 +35,7 @@ export default function VasPinScreen() {
   const noOfMonth = useVasStore((s) => s.noOfMonth);
   const meterNumber = useVasStore((s) => s.meterNumber);
   const accountType = useVasStore((s) => s.accountType);
+  const useCashback = useVasStore((s) => s.useCashback);
 
   const isData = categoryName === 'DATA';
   const isCable = categoryName === 'CABLE TV';
@@ -110,6 +111,7 @@ export default function VasPinScreen() {
           account_type: biller!.biller_code,
           no_of_month: noOfMonth,
           amount: Number(amount),
+          use_cashback: useCashback,
         }));
       } else if (isElectricity) {
         const res = await vasService.buyElectricity({
@@ -118,6 +120,7 @@ export default function VasPinScreen() {
           account_number: meterNumber,
           account_type: accountType,
           amount: Number(amount),
+          use_cashback: useCashback,
         });
         message = res.message;
         token = res.token;
@@ -127,7 +130,10 @@ export default function VasPinScreen() {
           pin: transactionPin,
           unique_code: product.unique_code,
           phone_number: phoneNumber,
+          // Always the full price — `use_cashback` tells the backend to settle
+          // part of it from the cashback balance.
           amount: Number(amount),
+          use_cashback: useCashback,
         };
         ({ message } = isData
           ? await vasService.buyData(payload)

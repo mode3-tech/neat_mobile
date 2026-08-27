@@ -19,6 +19,7 @@ import { QUERY_KEYS } from '@/constants';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
 import { useAccountSummary } from '@/hooks/use-account-summary';
+import { useVasCashback } from '@/hooks/use-vas-cashback';
 import type { VasBiller, VasProduct } from '@/types/vas.types';
 import { formatNairaWhole, formatNairaWholeShort } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
@@ -40,6 +41,7 @@ export default function BuyDataScreen() {
   const setProduct = useVasStore((s) => s.setProduct);
   const setStorePhone = useVasStore((s) => s.setPhoneNumber);
   const setStoreAmount = useVasStore((s) => s.setAmount);
+  const setStoreUseCashback = useVasStore((s) => s.setUseCashback);
 
   const [selectedBillerId, setSelectedBillerId] = useState<number | null>(null);
   const [phone, setPhone] = useState('');
@@ -82,10 +84,16 @@ export default function BuyDataScreen() {
 
   const { data: accountSummary } = useAccountSummary();
 
+  // No cashback row until a plan is picked — the amount is 0 until then.
+  const cashback = useVasCashback(selectedPlan?.amount ?? 0);
+
+  // Measured against the payable with cashback fully applied, so a balance that
+  // only covers the discounted price still opens the summary sheet; the sheet
+  // re-checks against whatever the toggle actually leaves payable.
   const exceedsBalance =
     !!selectedPlan &&
     accountSummary?.available_balance != null &&
-    selectedPlan.amount > accountSummary.available_balance;
+    selectedPlan.amount - cashback.applied > accountSummary.available_balance;
 
   const canProceed =
     !!selectedBiller &&
@@ -103,6 +111,7 @@ export default function BuyDataScreen() {
     setProduct(selectedPlan);
     setStorePhone(phone);
     setStoreAmount(String(selectedPlan.amount));
+    setStoreUseCashback(cashback.useCashback);
     setSummaryVisible(false);
     router.push({
       pathname: '/(vas)/vas-pin',
@@ -388,8 +397,22 @@ export default function BuyDataScreen() {
         provider={selectedBiller?.name ?? ''}
         phone={phone}
         plan={selectedPlan?.name ?? ''}
+        // The Amount row keeps showing the full price — cashback is a discount
+        // on what's payable, not a change to what's being bought.
         amount={selectedPlan ? formatNairaWhole(selectedPlan.amount) : ''}
         date={todayFormatted()}
+        payableLabel={formatNairaWhole(cashback.payable)}
+        strikeLabel={
+          cashback.useCashback && selectedPlan
+            ? formatNairaWhole(selectedPlan.amount)
+            : undefined
+        }
+        insufficient={cashback.payableExceedsBalance}
+        cashbackLabel={
+          cashback.available ? formatNairaWhole(cashback.applied) : undefined
+        }
+        cashbackOn={cashback.useCashback}
+        onToggleCashback={cashback.available ? cashback.setUseCashback : undefined}
       />
     </HeaderScreen>
   );

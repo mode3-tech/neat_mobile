@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { Switch, Text, View } from 'react-native';
 
 export interface TransactionSummary {
   provider: string;
@@ -18,6 +18,14 @@ export interface TransactionSummary {
   meterType?: string;
   amount: string;
   date: string;
+  /**
+   * Formatted cashback that would be applied, e.g. "₦4.00". The row is omitted
+   * unless this and `onToggleCashback` are both supplied — read-only callers
+   * (the result screen) pass neither.
+   */
+  cashbackLabel?: string;
+  cashbackOn?: boolean;
+  onToggleCashback?: (on: boolean) => void;
 }
 
 function SummaryRow({
@@ -52,7 +60,12 @@ export default function TransactionSummaryCard({
   meterType,
   amount,
   date,
+  cashbackLabel,
+  cashbackOn,
+  onToggleCashback,
 }: TransactionSummary) {
+  const showCashback = !!cashbackLabel && !!onToggleCashback;
+
   const rows = [
     { label: 'Service Provider', value: provider },
     ...(meter ? [{ label: 'Meter Number', value: meter }] : []),
@@ -73,9 +86,36 @@ export default function TransactionSummaryCard({
           key={row.label}
           label={row.label}
           value={row.value}
-          isLast={i === rows.length - 1}
+          isLast={!showCashback && i === rows.length - 1}
         />
       ))}
+
+      {/* Its own node rather than a `rows` entry — SummaryRow renders text only. */}
+      {showCashback ? (
+        <View className="flex-row justify-between items-center py-[14px]">
+          <Text className="text-[13px] text-[#6B7280]">
+            Use Cashback ({cashbackLabel})
+          </Text>
+          <View className="flex-row items-center gap-2">
+            <Text
+              className={`text-sm ${
+                cashbackOn
+                  ? 'text-[#16A34A] font-semibold'
+                  : 'text-[#9CA3AF] line-through'
+              }`}
+            >
+              -{cashbackLabel}
+            </Text>
+            <Switch
+              value={!!cashbackOn}
+              onValueChange={onToggleCashback}
+              trackColor={{ false: '#E5E7EB', true: '#032252' }}
+              thumbColor="#fff"
+              ios_backgroundColor="#E5E7EB"
+            />
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 }

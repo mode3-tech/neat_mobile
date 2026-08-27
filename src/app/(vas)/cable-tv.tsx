@@ -19,6 +19,7 @@ import { QUERY_KEYS } from '@/constants';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
 import { useAccountSummary } from '@/hooks/use-account-summary';
+import { useVasCashback } from '@/hooks/use-vas-cashback';
 import type { VasBiller, VasProduct } from '@/types/vas.types';
 import { formatNairaWhole, formatNairaWholeShort } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
@@ -45,6 +46,7 @@ export default function CableTvScreen() {
   const setStoreSmartcard = useVasStore((s) => s.setSmartcardNumber);
   const setStoreMonths = useVasStore((s) => s.setNoOfMonth);
   const setStoreAmount = useVasStore((s) => s.setAmount);
+  const setStoreUseCashback = useVasStore((s) => s.setUseCashback);
 
   const [selectedBillerId, setSelectedBillerId] = useState<number | null>(null);
   const [smartcard, setSmartcard] = useState('');
@@ -90,10 +92,17 @@ export default function CableTvScreen() {
   const { data: accountSummary } = useAccountSummary();
 
   const totalAmount = selectedPackage ? selectedPackage.amount * months : 0;
+  // Capped against the full package × months total, matching the Amount row
+  // and the payload — so changing the month count recomputes the cap too.
+  const cashback = useVasCashback(totalAmount);
+
+  // Measured against the payable with cashback fully applied, so a balance that
+  // only covers the discounted price still opens the summary sheet; the sheet
+  // re-checks against whatever the toggle actually leaves payable.
   const exceedsBalance =
     accountSummary?.available_balance != null &&
     totalAmount > 0 &&
-    totalAmount > accountSummary.available_balance;
+    totalAmount - cashback.applied > accountSummary.available_balance;
 
   const canProceed =
     !!selectedBiller &&
@@ -112,6 +121,7 @@ export default function CableTvScreen() {
     setStoreSmartcard(smartcard);
     setStoreMonths(months);
     setStoreAmount(String(totalAmount));
+    setStoreUseCashback(cashback.useCashback);
     setSummaryVisible(false);
     router.push({
       pathname: '/(vas)/vas-pin',
@@ -437,8 +447,20 @@ export default function CableTvScreen() {
         smartcard={smartcard}
         packageName={selectedPackage?.name ?? ''}
         months={String(months)}
+        // The Amount row keeps showing the full price — cashback is a discount
+        // on what's payable, not a change to what's being bought.
         amount={selectedPackage ? formatNairaWhole(totalAmount) : ''}
         date={todayFormatted()}
+        payableLabel={formatNairaWhole(cashback.payable)}
+        strikeLabel={
+          cashback.useCashback ? formatNairaWhole(totalAmount) : undefined
+        }
+        insufficient={cashback.payableExceedsBalance}
+        cashbackLabel={
+          cashback.available ? formatNairaWhole(cashback.applied) : undefined
+        }
+        cashbackOn={cashback.useCashback}
+        onToggleCashback={cashback.available ? cashback.setUseCashback : undefined}
       />
     </HeaderScreen>
   );

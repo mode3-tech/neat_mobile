@@ -19,6 +19,7 @@ import { QUERY_KEYS } from '@/constants';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
 import { useAccountSummary } from '@/hooks/use-account-summary';
+import { useVasCashback } from '@/hooks/use-vas-cashback';
 import type { VasBiller } from '@/types/vas.types';
 import { formatNairaWhole } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
@@ -43,6 +44,7 @@ export default function BuyElectricityScreen() {
   const setStoreMeter = useVasStore((s) => s.setMeterNumber);
   const setStoreAccountType = useVasStore((s) => s.setAccountType);
   const setStoreAmount = useVasStore((s) => s.setAmount);
+  const setStoreUseCashback = useVasStore((s) => s.setUseCashback);
 
   const [meterType, setMeterType] = useState<MeterType>('prepaid');
   const [selectedBillerId, setSelectedBillerId] = useState<number | null>(null);
@@ -105,10 +107,17 @@ export default function BuyElectricityScreen() {
     amountNum <= selectedProduct.max_amount;
   const amountOutOfRange =
     !!selectedProduct && amount.length > 0 && !withinRange;
+  // The min/max range check above stays on the full amount — cashback discounts
+  // what's payable, not what's being bought.
+  const cashback = useVasCashback(amountNum);
+
+  // Measured against the payable with cashback fully applied, so a balance that
+  // only covers the discounted price still opens the summary sheet; the sheet
+  // re-checks against whatever the toggle actually leaves payable.
   const exceedsBalance =
     accountSummary?.available_balance != null &&
     amountNum > 0 &&
-    amountNum > accountSummary.available_balance;
+    amountNum - cashback.applied > accountSummary.available_balance;
 
   // Meter-number length varies by disco (dynamic), so just require a non-empty
   // meter and let the backend validate it.
@@ -128,6 +137,7 @@ export default function BuyElectricityScreen() {
     setStoreMeter(meter);
     setStoreAccountType(meterType);
     setStoreAmount(amount);
+    setStoreUseCashback(cashback.useCashback);
     setSummaryVisible(false);
     router.push({
       pathname: '/(vas)/vas-pin',
@@ -423,8 +433,20 @@ export default function BuyElectricityScreen() {
         provider={selectedBiller?.name ?? ''}
         meter={meter}
         meterType={meterTypeLabel}
+        // The Amount row keeps showing the full price — cashback is a discount
+        // on what's payable, not a change to what's being bought.
         amount={formatNairaWhole(amountNum)}
         date={todayFormatted()}
+        payableLabel={formatNairaWhole(cashback.payable)}
+        strikeLabel={
+          cashback.useCashback ? formatNairaWhole(amountNum) : undefined
+        }
+        insufficient={cashback.payableExceedsBalance}
+        cashbackLabel={
+          cashback.available ? formatNairaWhole(cashback.applied) : undefined
+        }
+        cashbackOn={cashback.useCashback}
+        onToggleCashback={cashback.available ? cashback.setUseCashback : undefined}
       />
     </HeaderScreen>
   );

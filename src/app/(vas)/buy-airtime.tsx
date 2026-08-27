@@ -17,6 +17,7 @@ import { QUERY_KEYS } from '@/constants';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
 import { useAccountSummary } from '@/hooks/use-account-summary';
+import { useVasCashback } from '@/hooks/use-vas-cashback';
 import type { VasBiller } from '@/types/vas.types';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
@@ -52,6 +53,7 @@ export default function BuyAirtimeScreen() {
   const setProduct = useVasStore((s) => s.setProduct);
   const setStorePhone = useVasStore((s) => s.setPhoneNumber);
   const setStoreAmount = useVasStore((s) => s.setAmount);
+  const setStoreUseCashback = useVasStore((s) => s.setUseCashback);
 
   const [selectedBillerId, setSelectedBillerId] = useState<number | null>(null);
   const [phone, setPhone] = useState('');
@@ -93,10 +95,15 @@ export default function BuyAirtimeScreen() {
     amountNum >= product.min_amount &&
     amountNum <= product.max_amount;
   const amountOutOfRange = !!product && amount.length > 0 && !withinRange;
+  const cashback = useVasCashback(amountNum);
+
+  // Measured against the payable with cashback fully applied, so a balance that
+  // only covers the discounted price still opens the summary sheet; the sheet
+  // re-checks against whatever the toggle actually leaves payable.
   const exceedsBalance =
     accountSummary?.available_balance != null &&
     amountNum > 0 &&
-    amountNum > accountSummary.available_balance;
+    amountNum - cashback.applied > accountSummary.available_balance;
 
   const canProceed =
     !!product &&
@@ -113,6 +120,7 @@ export default function BuyAirtimeScreen() {
     if (!product || !selectedBiller) return;
     setStorePhone(phone);
     setStoreAmount(amount);
+    setStoreUseCashback(cashback.useCashback);
     setSummaryVisible(false);
     router.push({
       pathname: '/(vas)/vas-pin',
@@ -280,8 +288,18 @@ export default function BuyAirtimeScreen() {
         onSave={handleSave}
         provider={selectedBiller?.name ?? ''}
         phone={phone}
+        // The Amount row keeps showing the full price — cashback is a discount
+        // on what's payable, not a change to what's being bought.
         amount={formatAmount(amountNum)}
         date={todayFormatted()}
+        payableLabel={formatAmount(cashback.payable)}
+        strikeLabel={cashback.useCashback ? formatAmount(amountNum) : undefined}
+        insufficient={cashback.payableExceedsBalance}
+        cashbackLabel={
+          cashback.available ? formatAmount(cashback.applied) : undefined
+        }
+        cashbackOn={cashback.useCashback}
+        onToggleCashback={cashback.available ? cashback.setUseCashback : undefined}
       />
     </HeaderScreen>
   );

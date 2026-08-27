@@ -24,6 +24,8 @@ export interface AccountSummary {
   profile_picture?: string;
   /** The user's own referral code, shared with friends. Empty until the backend issues one. */
   referral_code?: string;
+  /** Accrued cashback the user can spend on VAS purchases. Absent/0 until they earn some. */
+  cashback_balance?: number;
 }
 
 export interface AccountLimits {

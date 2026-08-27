@@ -1,4 +1,4 @@
-import { Image, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
 import { NavBar } from './nav-bar';
 
@@ -10,7 +10,11 @@ import { NavBar } from './nav-bar';
 // without the other reintroduces the blink; see app.config.js for why 240 and
 // not the full 288dp canvas (Android 12+ masks the native splash icon to the
 // inner 192dp circle, and at 288 the wordmark's ends fell outside it).
-export function SplashScreenComponent(): React.JSX.Element {
+export function SplashScreenComponent({
+  status,
+}: {
+  status?: string;
+}): React.JSX.Element {
   return (
     <View className="flex-1 bg-[#032252] items-center justify-center">
       {/* Light status bar icons for this navy screen come from the index
@@ -22,6 +26,13 @@ export function SplashScreenComponent(): React.JSX.Element {
         className="w-[240px] h-[240px]"
         resizeMode="contain"
       />
+      {/* Absolute so appearing mid-launch can't nudge the logo off the position
+          the native splash left it in. */}
+      {status ? (
+        <Text className="absolute bottom-24 text-sm text-white/70">
+          {status}
+        </Text>
+      ) : null}
     </View>
   );
 }

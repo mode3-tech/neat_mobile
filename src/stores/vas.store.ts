@@ -16,6 +16,8 @@ interface VasState {
   meterNumber: string;
   /** Meter type ("prepaid"/"postpaid") — electricity only. */
   accountType: string;
+  /** Spend the cashback balance on this purchase — airtime only for now. */
+  useCashback: boolean;
 
   setCategory: (id: number, name: string) => void;
   setBiller: (biller: VasBiller) => void;
@@ -26,6 +28,7 @@ interface VasState {
   setNoOfMonth: (noOfMonth: number) => void;
   setMeterNumber: (meterNumber: string) => void;
   setAccountType: (accountType: string) => void;
+  setUseCashback: (useCashback: boolean) => void;
   reset: () => void;
 }
 
@@ -40,12 +43,17 @@ const initialState = {
   noOfMonth: 1,
   meterNumber: '',
   accountType: '',
+  useCashback: false,
 };
 
 export const useVasStore = create<VasState>((set) => ({
   ...initialState,
 
-  setCategory: (id, name) => set({ categoryId: id, categoryName: name }),
+  // Entering any VAS flow clears the cashback choice. `reset()` only runs when
+  // the user taps "Back to Dashboard" on the result screen, so without this a
+  // `true` left over from an airtime purchase could leak into the next flow.
+  setCategory: (id, name) =>
+    set({ categoryId: id, categoryName: name, useCashback: false }),
 
   setBiller: (biller) => set({ biller }),
 
@@ -62,6 +70,8 @@ export const useVasStore = create<VasState>((set) => ({
   setMeterNumber: (meterNumber) => set({ meterNumber }),
 
   setAccountType: (accountType) => set({ accountType }),
+
+  setUseCashback: (useCashback) => set({ useCashback }),
 
   reset: () => set(initialState),
 }));
