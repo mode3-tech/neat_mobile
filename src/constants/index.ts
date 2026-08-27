@@ -23,6 +23,7 @@ export const TOKEN_KEYS = {
 
 export const QUERY_KEYS = {
   APP_VERSION: 'app-version',
+  SIGNUP_FLOW_VERSION: 'signup-flow-version',
   USER: 'user',
   LOAN: 'loan',
   LOANS: 'loans',

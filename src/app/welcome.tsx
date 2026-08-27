@@ -14,6 +14,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 
+import { useSignupFlowVersion } from '@/hooks/use-signup-flow-version';
+import { signupEntryRoute } from '@/utils/signup-entry';
+
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const SLIDE_DURATION = 3000;
@@ -66,6 +69,7 @@ export default function WelcomeScreen(): React.JSX.Element {
   const activeIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const textOpacity = useRef(new Animated.Value(1)).current;
+  const signupFlowVersion = useSignupFlowVersion();
 
   const goToSlide = useCallback(
     (nextIndex: number) => {
@@ -108,9 +112,12 @@ export default function WelcomeScreen(): React.JSX.Element {
     return () => clearInterval(timer);
   }, [goToSlide]);
 
+  // The backend decides which sign-up flow runs; this resolves to v1 until it
+  // says otherwise. Whichever version is picked here holds for the whole run —
+  // a flag flip mid-flow does not move someone between the two.
   const handleCreateAccount = useCallback(() => {
-    router.push('/(sign-up)/bvn-verification');
-  }, []);
+    router.push(signupEntryRoute(signupFlowVersion) as never);
+  }, [signupFlowVersion]);
 
   const handleSignIn = useCallback(() => {
     router.push('/(sign-in)/sign-in');

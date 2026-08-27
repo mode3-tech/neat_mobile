@@ -35,7 +35,10 @@ import type {
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 
-async function storeTokens(tokens: AuthTokens): Promise<void> {
+// Exported for auth-v2.service.ts: v2's register returns tokens directly
+// instead of going through claimRegistrationSession, and it must persist them
+// exactly the same way or device binding and the 401 refresh interceptor break.
+export async function storeTokens(tokens: AuthTokens): Promise<void> {
   await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, tokens.access_token);
   await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, tokens.refresh_token);
   setAccessToken(tokens.access_token);

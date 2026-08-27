@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 
-import { useSignUpStore } from '@/stores/sign-up.store';
+import { useSignUpV2Store } from '@/stores/sign-up-v2.store';
 import { BackButton } from '@/components/ui/back-button';
 
 const PRIMARY = '#F9B700';
@@ -25,8 +25,8 @@ const REQUIREMENTS = [
 ];
 
 export default function CreatePasswordScreen() {
-  const storedPassword = useSignUpStore((s) => s.password);
-  const storePassword = useSignUpStore((s) => s.setPassword);
+  const storedPassword = useSignUpV2Store((s) => s.password);
+  const storePassword = useSignUpV2Store((s) => s.setPassword);
 
   const [editing, setEditing] = useState(!storedPassword);
   const [password, setPassword] = useState('');
@@ -35,7 +35,7 @@ export default function CreatePasswordScreen() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [hasError, setHasError] = useState(false);
 
-  // All four required — kept in step with the v2 flow's create-password.
+  // All four required — kept in step with the v1 flow's create-password.
   const isValidPassword =
     password.length >= 8 && REQUIREMENTS.every((r) => r.test(password));
   const isMatch = password === confirmPassword && confirmPassword.length > 0;
@@ -52,7 +52,7 @@ export default function CreatePasswordScreen() {
 
   const handleProceed = () => {
     if (!editing) {
-      router.push('/(sign-up)/transaction-pin');
+      router.push('/(sign-up-v2)/transaction-pin');
       return;
     }
     if (!isValidPassword || !isMatch) {
@@ -60,7 +60,7 @@ export default function CreatePasswordScreen() {
       return;
     }
     storePassword(password);
-    router.push('/(sign-up)/transaction-pin');
+    router.push('/(sign-up-v2)/transaction-pin');
   };
 
   return (
@@ -71,99 +71,110 @@ export default function CreatePasswordScreen() {
         showsVerticalScrollIndicator={false}
         bottomOffset={20}
       >
-          <View className="flex-row items-center gap-2 mt-4 mb-1.5">
-            <BackButton className="" />
-            <Text style={styles.title}>Create Secure Password</Text>
-          </View>
-          <Text style={styles.subtitle}>Protect your account with a password and PIN</Text>
+        <View className="flex-row items-center gap-2 mt-4 mb-1.5">
+          <BackButton className="" />
+          <Text style={styles.title}>Create Secure Password</Text>
+        </View>
+        <Text style={styles.subtitle}>Protect your account with a password and PIN</Text>
 
-          {!editing && (
-            <View style={styles.setCard}>
-              <View style={styles.setHeader}>
-                <View style={styles.checkCircle}>
-                  <Text style={styles.checkMark}>✓</Text>
-                </View>
-                <Text style={styles.setTitle}>Password set</Text>
+        {!editing && (
+          <View style={styles.setCard}>
+            <View style={styles.setHeader}>
+              <View style={styles.checkCircle}>
+                <Text style={styles.checkMark}>✓</Text>
               </View>
-              <Text style={styles.setBody}>
-                Your password is saved. Tap proceed to continue, or change it below.
-              </Text>
-              <TouchableOpacity onPress={handleStartEditing} activeOpacity={0.7}>
-                <Text style={styles.changeLink}>Change password</Text>
-              </TouchableOpacity>
+              <Text style={styles.setTitle}>Password set</Text>
             </View>
-          )}
+            <Text style={styles.setBody}>
+              Your password is saved. Tap proceed to continue, or change it below.
+            </Text>
+            <TouchableOpacity onPress={handleStartEditing} activeOpacity={0.7}>
+              <Text style={styles.changeLink}>Change password</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
-          {editing && (
+        {editing && (
           <>
-          {/* Password field */}
-          <View style={styles.field}>
-            <Text style={styles.label}>New Password</Text>
-            <View style={[styles.inputWrap, hasError && !isValidPassword && styles.inputWrapError]}>
-              <TextInput
-                style={styles.input}
-                value={password}
-                onChangeText={(t) => {
-                  setPassword(t);
-                  setHasError(false);
-                }}
-                placeholder="Enter password"
-                placeholderTextColor="#9CA3AF"
-                secureTextEntry={!showPassword}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-              <TouchableOpacity onPress={() => setShowPassword((v) => !v)}>
-                <Text style={styles.eyeIcon}>{showPassword ? '👁' : '👁‍🗨'}</Text>
-              </TouchableOpacity>
+            <View style={styles.field}>
+              <Text style={styles.label}>New Password</Text>
+              <View
+                style={[
+                  styles.inputWrap,
+                  hasError && !isValidPassword && styles.inputWrapError,
+                ]}
+              >
+                <TextInput
+                  style={styles.input}
+                  value={password}
+                  onChangeText={(t) => {
+                    setPassword(t);
+                    setHasError(false);
+                  }}
+                  placeholder="Enter password"
+                  placeholderTextColor="#9CA3AF"
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <TouchableOpacity onPress={() => setShowPassword((v) => !v)}>
+                  <Text style={styles.eyeIcon}>{showPassword ? '👁' : '👁‍🗨'}</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.requirements}>
+                <Text
+                  style={[styles.reqIntro, hasError && !isValidPassword && styles.reqError]}
+                >
+                  Make sure your password is 8 or more characters and includes all of the
+                  following:
+                </Text>
+                {REQUIREMENTS.map((r) => (
+                  <View key={r.label} style={styles.bulletRow}>
+                    <Text
+                      style={[styles.bullet, hasError && !isValidPassword && styles.reqError]}
+                    >
+                      {'•'}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.bulletText,
+                        hasError && !isValidPassword && styles.reqError,
+                      ]}
+                    >
+                      {r.label}
+                    </Text>
+                  </View>
+                ))}
+              </View>
             </View>
 
-            {/* Requirements */}
-            <View style={styles.requirements}>
-              <Text style={[styles.reqIntro, hasError && !isValidPassword && styles.reqError]}>
-                Make sure your password is 8 or more characters and includes all of the following:
-              </Text>
-              {REQUIREMENTS.map((r) => (
-                <View key={r.label} style={styles.bulletRow}>
-                  <Text style={[styles.bullet, hasError && !isValidPassword && styles.reqError]}>
-                    {'•'}
-                  </Text>
-                  <Text style={[styles.bulletText, hasError && !isValidPassword && styles.reqError]}>
-                    {r.label}
-                  </Text>
-                </View>
-              ))}
+            <View style={styles.field}>
+              <Text style={styles.label}>Confirm new password</Text>
+              <View style={[styles.inputWrap, hasError && !isMatch && styles.inputWrapError]}>
+                <TextInput
+                  style={styles.input}
+                  value={confirmPassword}
+                  onChangeText={(t) => {
+                    setConfirmPassword(t);
+                    setHasError(false);
+                  }}
+                  placeholder="Please enter password again"
+                  placeholderTextColor="#9CA3AF"
+                  secureTextEntry={!showConfirm}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <TouchableOpacity onPress={() => setShowConfirm((v) => !v)}>
+                  <Text style={styles.eyeIcon}>{showConfirm ? '👁' : '👁‍🗨'}</Text>
+                </TouchableOpacity>
+              </View>
+              {hasError && !isMatch && confirmPassword.length > 0 && (
+                <Text style={styles.errorText}>Passwords do not match</Text>
+              )}
             </View>
-          </View>
-
-          {/* Confirm password field */}
-          <View style={styles.field}>
-            <Text style={styles.label}>Confirm new password</Text>
-            <View style={[styles.inputWrap, hasError && !isMatch && styles.inputWrapError]}>
-              <TextInput
-                style={styles.input}
-                value={confirmPassword}
-                onChangeText={(t) => {
-                  setConfirmPassword(t);
-                  setHasError(false);
-                }}
-                placeholder="Please enter password again"
-                placeholderTextColor="#9CA3AF"
-                secureTextEntry={!showConfirm}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-              <TouchableOpacity onPress={() => setShowConfirm((v) => !v)}>
-                <Text style={styles.eyeIcon}>{showConfirm ? '👁' : '👁‍🗨'}</Text>
-              </TouchableOpacity>
-            </View>
-            {hasError && !isMatch && confirmPassword.length > 0 && (
-              <Text style={styles.errorText}>Passwords do not match</Text>
-            )}
-          </View>
           </>
-          )}
-
+        )}
 
         <View style={styles.spacer} />
 

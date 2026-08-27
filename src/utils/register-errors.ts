@@ -15,6 +15,11 @@ export interface RegisterErrorAction {
  * before navigating — resubmitting the same dead verification ids would
  * just fail again. Returns null for unrecognized errors so callers keep
  * their generic fallback.
+ *
+ * v1 ONLY. Every route and store field below belongs to (sign-up)/ and
+ * useSignUpStore; v2 has different error codes, a different store, and shows
+ * the backend's message as-is with no recovery mapping. Do not generalize this
+ * across both flows — see src/app/(sign-up-v2)/.
  */
 export function getRegisterErrorAction(err: unknown): RegisterErrorAction | null {
   if (!(err instanceof ApiError)) return null;

@@ -17,9 +17,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { NavBar } from '@/components/ui/nav-bar';
 import { useBiometricSignIn } from '@/hooks/use-biometric-sign-in';
+import { useSignupFlowVersion } from '@/hooks/use-signup-flow-version';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { getErrorMessage } from '@/utils/error';
+import { signupEntryRoute } from '@/utils/signup-entry';
 
 const PRIMARY = '#F9B700';
 
@@ -29,6 +31,7 @@ export default function SignInScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const signupFlowVersion = useSignupFlowVersion();
 
   const {
     isBiometricSignInReady,
@@ -170,7 +173,7 @@ export default function SignInScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => router.push('/(sign-up)/bvn-verification')}
+              onPress={() => router.push(signupEntryRoute(signupFlowVersion) as never)}
               activeOpacity={0.7}
             >
               <Text style={styles.signUpText}>

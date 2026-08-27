@@ -78,8 +78,10 @@ export default function ChangePasswordScreen() {
     }
   }, []);
 
-  const passedCount = REQUIREMENTS.filter((r) => r.test(newPassword)).length;
-  const isValidNew = newPassword.length >= 8 && passedCount >= 3;
+  // All four required — kept in step with create-password and reset-password so
+  // the same password is acceptable everywhere it can be set.
+  const isValidNew =
+    newPassword.length >= 8 && REQUIREMENTS.every((r) => r.test(newPassword));
   const isMatch = newPassword === confirmNewPassword && confirmNewPassword.length > 0;
   const canProceed =
     currentPassword.length > 0 && newPassword.length > 0 && confirmNewPassword.length > 0;
@@ -165,7 +167,7 @@ export default function ChangePasswordScreen() {
 
           <View className="mb-5 -mt-2">
             <Text className={`text-xs leading-[18px] mb-1 ${hasError && !isValidNew ? 'text-[#EF4444]' : 'text-gray-500'}`}>
-              Make sure your password is 8 or more characters and has at least 3 of the following:
+              Make sure your password is 8 or more characters and includes all of the following:
             </Text>
             {REQUIREMENTS.map((r) => (
               <View key={r.label} className="flex-row gap-1.5">

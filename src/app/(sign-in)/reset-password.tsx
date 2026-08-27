@@ -38,8 +38,11 @@ export default function ResetPasswordScreen() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const passedCount = REQUIREMENTS.filter((r) => r.test(password)).length;
-  const isValidPassword = password.length >= 8 && passedCount >= 3;
+  // All four required — kept in step with create-password, which is where the
+  // same password is first set. Accepting 3 of 4 here would let a reset land on
+  // a password the sign-up screen would have rejected.
+  const isValidPassword =
+    password.length >= 8 && REQUIREMENTS.every((r) => r.test(password));
   const isMatch = password === confirmPassword && confirmPassword.length > 0;
   const canProceed = password.length > 0 && confirmPassword.length > 0;
 
@@ -106,7 +109,7 @@ export default function ResetPasswordScreen() {
           {/* Requirements */}
           <View style={styles.requirements}>
             <Text style={[styles.reqIntro, hasError && !isValidPassword && styles.reqError]}>
-              Make sure your password is 8 or more characters and has at least 3 of the following:
+              Make sure your password is 8 or more characters and includes all of the following:
             </Text>
             {REQUIREMENTS.map((r) => (
               <View key={r.label} style={styles.bulletRow}>
