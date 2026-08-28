@@ -70,7 +70,9 @@ export default function TransferPinScreen() {
       toast.error('Transfer failed', { description: getErrorMessage(err) });
       // Clear so the user can retry; a full tray has no way to accept input.
       setPin('');
-    } finally {
+      // Only cleared on the failure path. On success the screen is already
+      // being replaced, and dropping `submitting` there would re-render the
+      // tray during teardown — and keep the spinner up through the transition.
       setSubmitting(false);
     }
   };

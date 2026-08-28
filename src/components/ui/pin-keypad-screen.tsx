@@ -161,7 +161,17 @@ export function PinKeypadScreen({
           className={`bg-white rounded-2xl p-3 ${compact ? 'mt-5' : 'mt-8'}`}
           style={styles.tray}
         >
-          <View className="flex-row gap-2" style={{ opacity: submitting ? 0 : 1 }}>
+          {/* collapsable={false} is load-bearing. With opacity 1 this View has
+              nothing to distinguish it, so Fabric flattens it away and hoists
+              the boxes into the tray; toggling to opacity 0 forces an unflatten
+              that re-parents them mid-transaction. When the caller navigates
+              away in the same tick that crashes the mount pass with
+              "addViewAt: ... View already has a parent". */}
+          <View
+            className="flex-row gap-2"
+            collapsable={false}
+            style={{ opacity: submitting ? 0 : 1 }}
+          >
             {Array.from({ length: PIN_LENGTH }).map((_, i) => {
               const filled = i < value.length;
               const isActive = i === value.length;
