@@ -4,7 +4,7 @@ import { toast } from 'sonner-native';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { PinKeypadScreen } from '@/components/ui/pin-keypad-screen';
-import { QUERY_KEYS } from '@/constants';
+import { refreshAfterMoneyMovement } from '@/utils/money-movement-refresh';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { useNetworkStatus } from '@/hooks/use-network-status';
 import { walletService } from '@/services/wallet.service';
@@ -58,10 +58,9 @@ export default function TransferPinScreen() {
       });
 
       await onManualPinSuccess(transactionPin);
-      // Outflow consumed — refresh balance and the activation-cap allowance
-      // so the next transfer screen pre-validates against fresh numbers.
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_LIMITS] });
+      // Drops the activation-cap allowance too, so the next transfer screen
+      // pre-validates against fresh numbers.
+      refreshAfterMoneyMovement(queryClient);
       store.setTransferResult(transfer);
       setPin('');
       // replace, not push — keeps a screen holding a live PIN out of the back stack.

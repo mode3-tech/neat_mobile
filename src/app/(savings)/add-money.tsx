@@ -1,11 +1,4 @@
-import {
-  Alert,
-  Image,
-  ImageSourcePropType,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
@@ -13,7 +6,7 @@ import { HeaderScreen } from '@/components/ui/header-screen';
 import { BackButton } from '@/components/ui/back-button';
 
 interface FundingOption {
-  image: ImageSourcePropType;
+  icon: keyof typeof MaterialCommunityIcons.glyphMap;
   label: string;
   description: string;
   onPress: () => void;
@@ -21,20 +14,20 @@ interface FundingOption {
 
 const FUNDING_OPTIONS: FundingOption[] = [
   {
-    image: require('../../../assets/images/deposit/Barnk.png'),
+    icon: 'bank-outline',
     label: 'Bank Transfer',
     description: 'Pay fast and securely.',
     onPress: () => router.push('/(savings)/bank-transfer'),
   },
   {
-    image: require('../../../assets/images/deposit/Card.png'),
+    icon: 'credit-card-outline',
     label: 'Debit Card',
     description: 'Instant transfer',
     onPress: () =>
       Alert.alert('Coming Soon', 'Debit card deposits will be available soon.'),
   },
   {
-    image: require('../../../assets/images/deposit/Cards.png'),
+    icon: 'wallet-outline',
     label: 'From Main Balance',
     description: 'Transfer from wallet',
     onPress: () => router.push('/(savings)/enter-amount'),
@@ -65,11 +58,13 @@ export default function AddMoneyScreen() {
             activeOpacity={0.7}
             onPress={option.onPress}
           >
-            <Image
-              source={option.image}
-              className="w-10 h-10 mr-3"
-              resizeMode="contain"
-            />
+            <View className="w-10 h-10 rounded-full bg-[#FDF1CC] items-center justify-center mr-3">
+              <MaterialCommunityIcons
+                name={option.icon}
+                size={20}
+                color="#032252"
+              />
+            </View>
 
             <View className="flex-1">
               <Text className="text-[15px] font-semibold text-[#1A1A1A]">

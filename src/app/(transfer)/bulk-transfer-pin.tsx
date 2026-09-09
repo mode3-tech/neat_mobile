@@ -4,7 +4,7 @@ import { toast } from 'sonner-native';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { PinKeypadScreen } from '@/components/ui/pin-keypad-screen';
-import { QUERY_KEYS } from '@/constants';
+import { refreshAfterMoneyMovement } from '@/utils/money-movement-refresh';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { walletService } from '@/services/wallet.service';
 import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
@@ -44,10 +44,9 @@ export default function BulkTransferPinScreen() {
       });
 
       await onManualPinSuccess(transactionPin);
-      // Outflow consumed — refresh balance and the activation-cap allowance
-      // so the next transfer screen pre-validates against fresh numbers.
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_LIMITS] });
+      // Drops the activation-cap allowance too, so the next transfer screen
+      // pre-validates against fresh numbers.
+      refreshAfterMoneyMovement(queryClient);
       setResultMessage(
         response.message || 'Your bulk transfer has been processed successfully.',
       );

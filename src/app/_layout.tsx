@@ -4,7 +4,11 @@ import 'expo-dev-client';
 import { useCallback, useEffect, useRef } from 'react';
 import { AppState, View } from 'react-native';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  focusManager,
+} from '@tanstack/react-query';
 import { Stack, useRouter } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
@@ -22,7 +26,10 @@ import { AppVersionGate } from '@/components/updates/app-version-gate';
 import { OfflineBanner } from '@/components/OfflineBanner';
 import { initNavBarStyle } from '@/components/ui/nav-bar';
 import { QUERY_KEYS } from '@/constants';
-import { resolveNotificationRoute } from '@/utils/notification-route';
+import {
+  isBalanceAffectingPush,
+  resolveNotificationRoute,
+} from '@/utils/notification-route';
 import {
   markNotificationHandled,
   parkDeepLink,
@@ -57,6 +64,21 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5, // 5 minutes
     },
   },
+});
+
+// refetchOnWindowFocus defaults to true but is inert in React Native — there is
+// no window to focus. Without this bridge every query in the app stays on
+// whatever it cached until something invalidates it by hand.
+focusManager.setEventListener((handleFocus) => {
+  const subscription = AppState.addEventListener('change', (state) => {
+    // 'inactive' is not a blur: iOS emits it for a Face ID prompt, the share
+    // sheet, control centre and an incoming-call banner. Treating those as
+    // unfocused makes every dismissal a refocus, and a refocus refetches every
+    // stale query in the app. Only a real background counts.
+    if (state === 'inactive') return;
+    handleFocus(state === 'active');
+  });
+  return () => subscription.remove();
 });
 
 // Resting value for the Android nav bar buttons. Screens that need the other
@@ -194,10 +216,45 @@ export default function RootLayout(): React.JSX.Element {
 
         const isAuthenticated = useAuthStore.getState().isAuthenticated;
         if (!isAuthenticated) return;
+
+        // Belt and braces over the focusManager bridge above: that one honours
+        // staleTime, so money arriving while the app was backgrounded for less
+        // than the 5-minute window would resume onto a stale balance. These two
+        // are the numbers a user checks the app to see — always refetch them.
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.RECENT_TRANSACTIONS],
+        });
+
         const { registerForPushNotifications, sendTokenToBackend } =
           await import('@/services/notification.service');
         const token = await registerForPushNotifications();
         if (token) await sendTokenToBackend(token);
+      },
+    );
+    return () => subscription.remove();
+  }, []);
+
+  // Money landing while the user is already looking at the dashboard. The
+  // foreground refetch above can't catch this one — the app never left.
+  useEffect(() => {
+    const subscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        const data = notification.request.content.data as
+          | PushNotificationData
+          | undefined;
+
+        queryClient.invalidateQueries({ queryKey: ['unread-count'] });
+
+        if (!isBalanceAffectingPush(data)) return;
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.RECENT_TRANSACTIONS],
+        });
       },
     );
     return () => subscription.remove();

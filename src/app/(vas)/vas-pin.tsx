@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner-native';
 
 import { PinKeypadScreen } from '@/components/ui/pin-keypad-screen';
-import { QUERY_KEYS } from '@/constants';
+import { refreshAfterMoneyMovement } from '@/utils/money-movement-refresh';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
@@ -140,9 +140,7 @@ export default function VasPinScreen() {
           : await vasService.buyAirtime(payload));
       }
       await onManualPinSuccess(transactionPin);
-      // Refresh the cached balance so the next VAS/transfer screen gates on the
-      // post-debit balance instead of a stale one.
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
+      refreshAfterMoneyMovement(queryClient);
       // Clear the PIN so backing out of the result screen can't re-confirm
       // the purchase with a still-armed PIN.
       setPin('');

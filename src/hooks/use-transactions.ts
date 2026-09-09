@@ -97,6 +97,18 @@ export function useTransactions() {
   pagesLoadedRef.current = pagesLoaded;
   const autoPagesUsed = Math.max(0, pagesLoaded - autoPageBase);
 
+  // A reset from outside the hook — refreshAfterMoneyMovement, after any debit
+  // or credit — drops the feed back to page 1 without going through
+  // handleRefresh, leaving autoPageBase pointing at a page count that no longer
+  // exists. That re-grants an already-spent budget, so a transfer completed
+  // while the list is mounted buys a second MAX_AUTO_PAGES walk. Re-sync on the
+  // way back down instead.
+  useEffect(() => {
+    if (pagesLoaded > 1) return;
+    setHasScrolled(false);
+    setAutoPageBase(1);
+  }, [pagesLoaded]);
+
   // Flatten all pages, deduplicate by id (cursor shifts can cause overlaps)
   const allTransactions = useMemo(() => {
     if (!data?.pages) return [];

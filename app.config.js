@@ -22,11 +22,7 @@ const baseConfig = {
   scheme: 'neatmobile',
   userInterfaceStyle: 'light',
   newArchEnabled: true,
-  // The ash bar under the nav buttons is Android's contrast scrim, drawn because
-  // edge-to-edge is on and `enforceNavigationBarContrast` defaults to true. Turning
-  // it off lets the screen's own background run to the bottom edge; `light-content`
-  // keeps the buttons white against it. Both are applied at prebuild — no extra
-  // package needed, but a new native build is required to pick them up.
+
   androidNavigationBar: {
     enforceContrast: false,
     barStyle: 'light-content',

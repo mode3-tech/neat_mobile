@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { toast } from 'sonner-native';
 
 import { PinKeypadScreen } from '@/components/ui/pin-keypad-screen';
-import { QUERY_KEYS } from '@/constants';
+import { refreshAfterMoneyMovement } from '@/utils/money-movement-refresh';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { savingsService } from '@/services/savings.service';
 import { useSavingsStore } from '@/stores/savings.store';
@@ -33,7 +33,7 @@ export default function SavingsPinScreen() {
       });
 
       await onManualPinSuccess(transactionPin);
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
+      refreshAfterMoneyMovement(queryClient);
       setPin('');
       store.reset();
       router.replace('/Dashboard');

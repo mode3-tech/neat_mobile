@@ -34,6 +34,20 @@ const RESOLVERS: Record<string, RouteResolver> = {
 
 export const NOTIFICATIONS_FALLBACK: Href = '/notifications';
 
+/**
+ * Whether a push means the user's money moved, so the cached balance and
+ * transaction feed are now wrong. Mirrors the same tolerant discriminator
+ * resolveNotificationRoute uses below, so an `event` rename can't leave the
+ * deep link working while the refresh silently stops.
+ */
+export function isBalanceAffectingPush(
+  data: PushNotificationData | undefined,
+): boolean {
+  if (!data || typeof data !== 'object') return false;
+  const bag = data as Record<string, unknown>;
+  return bag.event === 'credit-alert' || isNonEmptyString(bag.transaction_id);
+}
+
 export function resolveNotificationRoute(
   data: PushNotificationData | undefined,
 ): Href {

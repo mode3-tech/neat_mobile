@@ -61,7 +61,7 @@ function buildCards(
       accountNumber,
       title: 'Available Balance',
       amount: fmtBalance(availableBalance),
-      buttons: [{ label: 'Send Money', icon: 'send' }, { label: 'Deposit', icon: 'plus' }],
+      buttons: [{ label: 'Send Money', icon: 'send' }, { label: 'Add Money', icon: 'plus' }],
       // image: require('../../../../assets/images/dashboard/ball.png'),
       // imageSize: { width: 70, height: 70 },
     },
@@ -239,7 +239,7 @@ export default function BalanceCardCarousel({
                 if (btn.label === 'Send Money') {
                   router.push('/(transfer)/send-money');
                 }
-                if (btn.label === 'Deposit') {
+                if (btn.label === 'Add Money') {
                   router.push('/(savings)/add-money');
                 }
                 if (btn.label === 'Make Repayment') {

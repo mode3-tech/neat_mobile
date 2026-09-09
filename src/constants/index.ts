@@ -45,3 +45,9 @@ export const QUERY_KEYS = {
 } as const;
 
 export const SESSION_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
+
+// Served from web/invite/ — routes by device, so shared links keep working
+// when iOS ships without a new app release.
+export const INVITE_URL = 'https://get.neatpays.com';
+// export const INVITE_URL =
+//   'https://play.google.com/store/apps/details?id=com.mode3.neatmobile';

@@ -14,6 +14,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { loanService } from '@/services/loan.service';
 import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
 import { getErrorMessage } from '@/utils/error';
+import { refreshAfterMoneyMovement } from '@/utils/money-movement-refresh';
 
 interface RepaymentBottomSheetProps {
   visible: boolean;
@@ -57,7 +58,7 @@ export default function RepaymentBottomSheet({
     mutationFn: loanService.submitRepayment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.LOANS] });
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ACCOUNT_SUMMARY] });
+      refreshAfterMoneyMovement(queryClient);
       onClose();
       setSuccessVisible(true);
     },

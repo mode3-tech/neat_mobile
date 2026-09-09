@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Join me on NEATPay</title>
+<meta name="description" content="Access funds fast, send money, and pay bills. Get the app and sign up with my referral code.">
+
+<!-- Absolute URLs are required: link-preview crawlers do not run JavaScript, so
+     these cannot be derived at runtime. They must match the deployed host. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NEATPay">
+<meta property="og:title" content="Join me on NEATPay">
+<meta property="og:description" content="Access funds fast, send money, and pay bills. Get the app and sign up with my referral code.">
+<meta property="og:url" content="https://get.neatpays.com/">
+<meta property="og:image" content="https://get.neatpays.com/icon.png">
+<meta name="twitter:card" content="summary">
+
+<meta name="theme-color" content="#032252">
+<link rel="icon" href="icon.png">
+
+<script>
+// Runs before paint. A bare link with no ?ref= has nothing to show an Android
+// visitor, so send them straight to Play rather than making them tap through an
+// interstitial. With a code, the interstitial IS the point — see renderPlatform.
+(function () {
+  var PLAY_URL = 'https://play.google.com/store/apps/details?id=com.mode3.neatmobile';
+  var q = new URLSearchParams(location.search);
+  if (q.get('platform')) return;
+  if (q.get('ref')) return;
+  if (/android/i.test(navigator.userAgent)) location.replace(PLAY_URL);
+})();
+</script>
+
+<style>
+  :root {
+    --navy: #032252;
+    --yellow: #F9B700;
+    --ink: #374151;
+    --muted: #6B7280;
+    --field: #F5F5F5;
+    --info: #E8EEF7;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #fff;
+    color: var(--navy);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 420px;
+    padding: 40px 24px calc(40px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 36px; }
+  .brand img { width: 36px; height: 36px; border-radius: 9px; }
+  .brand span { font-size: 18px; font-weight: 700; letter-spacing: -0.2px; }
+
+  h1 { font-size: 26px; line-height: 1.25; font-weight: 700; margin: 0 0 10px; }
+  .sub { font-size: 14px; line-height: 1.55; color: var(--muted); margin: 0 0 28px; }
+
+  .code-label { font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 8px; }
+  .code-card {
+    background: var(--field);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .code-value {
+    flex: 1;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    word-break: break-all;
+  }
+  .copy {
+    flex: none;
+    border: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: var(--yellow);
+    color: var(--navy);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font: inherit;
+  }
+  .copy svg { width: 18px; height: 18px; }
+  .copy.done { background: var(--navy); color: #fff; }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 16px;
+    border-radius: 50px;
+    background: var(--yellow);
+    color: var(--navy);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn.secondary {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    color: var(--navy);
+    margin-top: 12px;
+    font-weight: 500;
+  }
+
+  .note {
+    background: var(--info);
+    border: 1px solid rgba(3, 34, 82, 0.3);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .note h2 { font-size: 14px; font-weight: 600; margin: 0 0 6px; }
+  .note p { font-size: 13px; line-height: 1.55; color: var(--ink); margin: 0; }
+
+  .steps { font-size: 13px; line-height: 1.9; color: var(--ink); margin: 28px 0 0; padding-left: 18px; }
+
+  .pane { display: none; }
+  .pane.on { display: block; }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="brand">
+    <img src="icon.png" alt="">
+    <span>NEATPay</span>
+  </div>
+
+  <h1 id="headline">Join me on NEATPay</h1>
+  <p class="sub" id="sub">Access funds fast, send and receive money, buy airtime and data, and pay bills — all in one app.</p>
+
+  <div id="code-block" class="pane">
+    <div class="code-label">Your referral code</div>
+    <div class="code-card">
+      <div class="code-value" id="code"></div>
+      <button class="copy" id="copy" type="button" aria-label="Copy referral code">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="pane-android" class="pane">
+    <a class="btn" id="play-primary" href="#">Get NEATPay on Google Play</a>
+  </div>
+
+  <div id="pane-ios" class="pane">
+    <div class="note">
+      <h2>Coming soon to iPhone</h2>
+      <p>The NEATPay iPhone app is on the way. Your referral code will still work when it launches — save it somewhere safe.</p>
+    </div>
+    <a class="btn secondary" id="play-ios" href="#">On Android instead? Open Google Play</a>
+  </div>
+
+  <div id="pane-desktop" class="pane">
+    <div class="note">
+      <h2>Open this on your phone</h2>
+      <p>NEATPay is a mobile app. Open this link on your phone to install it, or continue to the Google Play listing below.</p>
+    </div>
+    <a class="btn" id="play-desktop" href="#">View on Google Play</a>
+  </div>
+
+  <ol class="steps" id="steps">
+    <li>Download the NEATPay app.</li>
+    <li>Create your account.</li>
+    <li>Enter the referral code above when asked.</li>
+  </ol>
+</div>
+
+<script>
+(function () {
+  var PLAY_URL = 'https://play.google.com/store/apps/details?id=com.mode3.neatmobile';
+
+  // Paste the numeric App Store id here after the iPhone app is submitted
+  // (e.g. '6449123456'). While it is empty, iOS visitors get the coming-soon
+  // pane. Filling it in is the only change needed at launch — no app release.
+  var APPLE_APP_ID = '';
+
+  var q = new URLSearchParams(location.search);
+  // Shown verbatim — the app shares the code exactly as the backend issued it
+  // and the register payload sends it back unchanged, so case-folding here
+  // would display and copy a code that no longer redeems.
+  var ref = (q.get('ref') || '').trim().slice(0, 32);
+
+  function detect() {
+    // ?platform=android|ios|desktop forces a pane, so the whole page can be
+    // checked from one desktop browser without three devices.
+    var forced = q.get('platform');
+    if (forced === 'android' || forced === 'ios' || forced === 'desktop') return forced;
+
+    var ua = navigator.userAgent;
+    if (/android/i.test(ua)) return 'android';
+    // iPadOS 13+ reports itself as desktop Safari; touch points give it away.
+    if (/iphone|ipad|ipod/i.test(ua)) return 'ios';
+    if (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return 'ios';
+    return 'desktop';
+  }
+
+  function show(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.add('on');
+  }
+
+  if (ref) {
+    document.getElementById('code').textContent = ref;
+    document.getElementById('headline').textContent = 'You have been invited to NEATPay';
+    document.getElementById('sub').textContent =
+      'Access funds fast, send money, buy airtime and data, and pay bills — all in one app. Enter the code below when you create your account.';
+    show('code-block');
+  } else {
+    document.getElementById('steps').removeChild(document.getElementById('steps').lastElementChild);
+  }
+
+  var platform = detect();
+
+  if (platform === 'ios' && APPLE_APP_ID) {
+    location.replace('https://apps.apple.com/app/id' + APPLE_APP_ID);
+    return;
+  }
+
+  show('pane-' + platform);
+  ['play-primary', 'play-ios', 'play-desktop'].forEach(function (id) {
+    document.getElementById(id).href = PLAY_URL;
+  });
+
+  var btn = document.getElementById('copy');
+  btn.addEventListener('click', function () {
+    // navigator.clipboard needs a secure context — absent on plain http, which
+    // is how this gets opened during local testing.
+    var done = function () {
+      btn.classList.add('done');
+      setTimeout(function () { btn.classList.remove('done'); }, 2000);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(ref).then(done, function () {});
+      return;
+    }
+    var t = document.createElement('textarea');
+    t.value = ref;
+    t.style.position = 'fixed';
+    t.style.opacity = '0';
+    document.body.appendChild(t);
+    t.select();
+    try { document.execCommand('copy'); done(); } catch (e) {}
+    document.body.removeChild(t);
+  });
+})();
+</script>
+</body>
+</html>
