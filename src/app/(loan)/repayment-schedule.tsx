@@ -17,7 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
 import { useBiometricAuth } from '@/hooks/use-biometric-auth';
 import { loanService } from '@/services/loan.service';
-import { formatDateLong } from '@/utils/format';
+import { formatAmountInput, formatDateLong, sanitizeAmountInput } from '@/utils/format';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
 import type { LoanHistoryItem, LoanHistoryStatus } from '@/types/loan.types';
 import { BackButton } from '@/components/ui/back-button';
@@ -339,8 +339,8 @@ export default function RepaymentScheduleScreen() {
               <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-1.5">
                 <TextInput
                   className="text-[15px] text-[#1A1A1A] p-0"
-                  value={amount}
-                  onChangeText={setAmount}
+                  value={formatAmountInput(amount)}
+                  onChangeText={(t) => setAmount(sanitizeAmountInput(t))}
                   keyboardType="decimal-pad"
                   placeholder="0.00"
                   placeholderTextColor="#9CA3AF"

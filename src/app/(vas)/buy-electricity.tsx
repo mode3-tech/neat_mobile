@@ -21,7 +21,7 @@ import { useVasStore } from '@/stores/vas.store';
 import { useAccountSummary } from '@/hooks/use-account-summary';
 import { useVasCashback } from '@/hooks/use-vas-cashback';
 import type { VasBiller } from '@/types/vas.types';
-import { formatNairaWhole } from '@/utils/format';
+import { formatAmountInput, formatNairaWhole } from '@/utils/format';
 import TransactionSummaryModal from '@/components/features/vas/TransactionSummaryModal';
 import { InsufficientFundsHint } from '@/components/ui/insufficient-funds-hint';
 import { BackButton } from '@/components/ui/back-button';
@@ -241,7 +241,7 @@ export default function BuyElectricityScreen() {
         <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-1.5">
           <TextInput
             className="text-[15px] text-[#1A1A1A] p-0"
-            value={amount}
+            value={formatAmountInput(amount)}
             onChangeText={(t) => setAmount(t.replace(/\D/g, ''))}
             placeholder="Amount"
             placeholderTextColor="#9CA3AF"

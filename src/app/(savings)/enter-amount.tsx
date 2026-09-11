@@ -13,6 +13,7 @@ import { accountService } from '@/services/account.service';
 import { useSavingsStore } from '@/stores/savings.store';
 import { HeaderScreen } from '@/components/ui/header-screen';
 import { BackButton } from '@/components/ui/back-button';
+import { formatAmountInput } from '@/utils/format';
 
 const formatCurrency = (val: number | undefined) =>
   val !== undefined
@@ -85,7 +86,7 @@ export default function EnterAmountScreen() {
           <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent">
             <TextInput
               className="text-[15px] text-[#1A1A1A] p-0"
-              value={store.amount}
+              value={formatAmountInput(store.amount)}
               onChangeText={(t) => store.setAmount(t.replace(/\D/g, ''))}
               placeholder="Enter amount"
               placeholderTextColor="#9CA3AF"

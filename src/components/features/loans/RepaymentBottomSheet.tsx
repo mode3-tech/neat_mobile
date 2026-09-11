@@ -14,6 +14,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { loanService } from '@/services/loan.service';
 import { PIN_LENGTH, QUERY_KEYS } from '@/constants';
 import { getErrorMessage } from '@/utils/error';
+import { formatAmountInput, sanitizeAmountInput } from '@/utils/format';
 import { refreshAfterMoneyMovement } from '@/utils/money-movement-refresh';
 
 interface RepaymentBottomSheetProps {
@@ -113,9 +114,9 @@ export default function RepaymentBottomSheet({
               <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-1.5">
                 <TextInput
                   className="text-[15px] text-[#1A1A1A] p-0"
-                  value={amount}
+                  value={formatAmountInput(amount)}
                   onChangeText={(t) => {
-                    setAmount(t);
+                    setAmount(sanitizeAmountInput(t));
                     setErrorMessage('');
                   }}
                   keyboardType="decimal-pad"

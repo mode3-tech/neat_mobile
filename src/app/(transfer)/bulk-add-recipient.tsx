@@ -24,6 +24,7 @@ import { useBulkTransferStore } from '@/stores/bulk-transfer.store';
 import type { Bank, BulkRecipient, TransferType } from '@/types/transfer.types';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { BackButton } from '@/components/ui/back-button';
+import { formatAmountInput } from '@/utils/format';
 
 const TABS: { key: TransferType; label: string }[] = [
   { key: 'neatpay', label: 'NEAT Microcredit' },
@@ -390,7 +391,7 @@ export default function BulkAddRecipientScreen() {
               <Text className="text-[15px] text-[#9CA3AF] mr-1">₦</Text>
               <TextInput
                 className="flex-1 text-[15px] text-[#1A1A1A] p-0"
-                value={amount}
+                value={formatAmountInput(amount)}
                 onChangeText={formatAmount}
                 placeholder="0"
                 placeholderTextColor="#9CA3AF"

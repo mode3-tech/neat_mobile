@@ -63,6 +63,37 @@ export const formatNairaDecimal = (amount: number): string =>
   }).format(amount);
 
 /**
+ * Group the integer part of a raw amount string with commas for a TextInput
+ * (e.g. "1500000" → "1,500,000", "1500.5" → "1,500.5"). Keep the raw value
+ * in state; only pass the result to `value`.
+ */
+const DECIMAL_SEPARATOR = new Intl.NumberFormat().format(1.1).charAt(1) === ',' ? ',' : '.';
+const GROUP_SEPARATOR = DECIMAL_SEPARATOR === ',' ? '.' : ',';
+
+export const formatAmountInput = (raw: string): string => {
+  const [whole, fraction] = raw.split('.');
+  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, GROUP_SEPARATOR);
+  return fraction === undefined ? grouped : `${grouped}${DECIMAL_SEPARATOR}${fraction}`;
+};
+
+/**
+ * Inverse of `formatAmountInput` for `onChangeText`: drops grouping
+ * separators, maps the locale decimal separator (a comma on comma-decimal
+ * iOS decimal-pads) to ".", and collapses extra dots so state always matches
+ * what `formatAmountInput` renders.
+ */
+export const sanitizeAmountInput = (text: string): string => {
+  const [whole, ...fractions] = text
+    .split(GROUP_SEPARATOR)
+    .join('')
+    .split(DECIMAL_SEPARATOR)
+    .join('.')
+    .replace(/[^0-9.]/g, '')
+    .split('.');
+  return fractions.length ? `${whole}.${fractions.join('')}` : whole;
+};
+
+/**
  * Capitalize the first character of a string (e.g. "active" → "Active").
  */
 export const titleCase = (value: string): string =>

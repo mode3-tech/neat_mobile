@@ -231,6 +231,11 @@ export default function ProfileScreen() {
             onPress={() => router.push('/(profile)/change-pin-otp' as any)}
           />
           <SettingsRow
+            icon="lock-reset"
+            label="Forgot Transaction PIN"
+            onPress={() => router.push('/(profile)/forgot-pin-otp' as any)}
+          />
+          <SettingsRow
             icon="lock-outline"
             label="Change Password"
             onPress={() => router.push('/(profile)/change-password-otp' as any)}

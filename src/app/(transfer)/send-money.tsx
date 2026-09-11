@@ -27,7 +27,7 @@ import { useAccountSummary } from '@/hooks/use-account-summary';
 import { useNetworkStatus } from '@/hooks/use-network-status';
 import { ActivationCapBanner } from '@/components/ActivationCapBanner';
 import { getErrorMessage } from '@/utils/error';
-import { formatNairaShort } from '@/utils/format';
+import { formatAmountInput, formatNairaShort } from '@/utils/format';
 import type { Bank, Beneficiary, TransferType } from '@/types/transfer.types';
 import { BackButton } from '@/components/ui/back-button';
 
@@ -557,7 +557,7 @@ export default function SendMoneyScreen() {
               <Text className="text-[15px] text-[#9CA3AF] mr-1">₦</Text>
               <TextInput
                 className="flex-1 text-[15px] text-[#1A1A1A] p-0"
-                value={amount}
+                value={formatAmountInput(amount)}
                 onChangeText={formatAmount}
                 placeholder="0"
                 placeholderTextColor="#9CA3AF"

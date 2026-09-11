@@ -30,7 +30,8 @@ const FUNDING_OPTIONS: FundingOption[] = [
     icon: 'wallet-outline',
     label: 'From Main Balance',
     description: 'Transfer from wallet',
-    onPress: () => router.push('/(savings)/enter-amount'),
+    onPress: () =>
+      Alert.alert('Coming Soon', 'Deposits from your main balance will be available soon.'),
   },
 ];
 

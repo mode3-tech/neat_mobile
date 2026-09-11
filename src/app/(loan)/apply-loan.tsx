@@ -17,6 +17,7 @@ import { loanService } from '@/services/loan.service';
 import { useLoanStore } from '@/stores/loan.store';
 import type { LoanProduct } from '@/types/loan.types';
 import { BackButton } from '@/components/ui/back-button';
+import { formatAmountInput, sanitizeAmountInput } from '@/utils/format';
 
 const PRIMARY = '#032252';
 
@@ -156,7 +157,7 @@ export default function ApplyLoanScreen() {
           <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
             <TextInput
               className="flex-1 text-[15px] text-[#1A1A1A] p-0"
-              value={store.businessValue}
+              value={formatAmountInput(store.businessValue)}
               onChangeText={(t) => {
                 const cleaned = t.replace(/[^0-9]/g, '');
                 store.setFormField('businessValue', cleaned);
@@ -268,15 +269,8 @@ export default function ApplyLoanScreen() {
           <View className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] border-[1.5px] border-transparent flex-row items-center">
             <TextInput
               className="flex-1 text-[15px] text-[#1A1A1A] p-0"
-              value={store.loanAmount}
-              onChangeText={(t) => {
-                const cleaned = t.replace(/[^0-9.]/g, '');
-                const parts = cleaned.split('.');
-                const sanitized = parts.length > 2
-                  ? parts[0] + '.' + parts.slice(1).join('')
-                  : cleaned;
-                store.setFormField('loanAmount', sanitized);
-              }}
+              value={formatAmountInput(store.loanAmount)}
+              onChangeText={(t) => store.setFormField('loanAmount', sanitizeAmountInput(t))}
               placeholder="NGN 0.00"
               placeholderTextColor="#9CA3AF"
               keyboardType="numeric"
