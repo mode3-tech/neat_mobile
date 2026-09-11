@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { router } from 'expo-router';
 import {
+  ActivityIndicator,
   Animated,
   Dimensions,
   FlatList,
@@ -69,7 +70,8 @@ export default function WelcomeScreen(): React.JSX.Element {
   const activeIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const textOpacity = useRef(new Animated.Value(1)).current;
-  const signupFlowVersion = useSignupFlowVersion();
+  const { version: signupFlowVersion, isPending: signupVersionPending } =
+    useSignupFlowVersion();
 
   const goToSlide = useCallback(
     (nextIndex: number) => {
@@ -112,9 +114,9 @@ export default function WelcomeScreen(): React.JSX.Element {
     return () => clearInterval(timer);
   }, [goToSlide]);
 
-  // The backend decides which sign-up flow runs; this resolves to v1 until it
-  // says otherwise. Whichever version is picked here holds for the whole run —
-  // a flag flip mid-flow does not move someone between the two.
+  // The backend decides which sign-up flow runs. Whichever version is picked
+  // here holds for the whole run — a flag flip mid-flow does not move someone
+  // between the two.
   const handleCreateAccount = useCallback(() => {
     router.push(signupEntryRoute(signupFlowVersion) as never);
   }, [signupFlowVersion]);
@@ -170,11 +172,16 @@ export default function WelcomeScreen(): React.JSX.Element {
 
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
-          style={styles.primaryButton}
+          style={[styles.primaryButton, signupVersionPending && styles.disabledButton]}
           onPress={handleCreateAccount}
+          disabled={signupVersionPending}
           activeOpacity={0.8}
         >
-          <Text style={styles.primaryButtonText}>Create account</Text>
+          {signupVersionPending ? (
+            <ActivityIndicator color="#9CA3AF" />
+          ) : (
+            <Text style={styles.primaryButtonText}>Create account</Text>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -271,6 +278,9 @@ const styles = StyleSheet.create({
     color: PRIMARY_TEXT,
     fontSize: 16,
     fontWeight: '600',
+  },
+  disabledButton: {
+    backgroundColor: '#E5E7EB',
   },
   secondaryButton: {
     paddingVertical: 12,

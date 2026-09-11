@@ -23,7 +23,11 @@ export default function Index(): React.JSX.Element {
       // alongside it so a no-update launch costs only the slower of the two.
       const [reloading] = await Promise.all([
         applyPendingUpdate(() => setUpdating(true)),
-        Promise.allSettled([store.hydrateTokens(), store.hydrateBiometrics()]),
+        Promise.allSettled([
+          store.hydrateTokens(),
+          store.hydrateBiometrics(),
+          store.hydrateRememberedAccount(),
+        ]),
       ]);
       if (reloading) return;
       setUpdating(false);
@@ -48,9 +52,11 @@ export default function Index(): React.JSX.Element {
       //   }
       // }
 
-      const { isAuthenticated, hasStoredTokens } = useAuthStore.getState();
+      const { isAuthenticated, hasStoredTokens, rememberedAccount } = useAuthStore.getState();
       if (isAuthenticated) {
         router.replace('/Dashboard');
+      } else if (rememberedAccount) {
+        router.replace('/(sign-in)/welcome-back' as any);
       } else if (hasStoredTokens) {
         router.replace('/(sign-in)/sign-in');
       } else {

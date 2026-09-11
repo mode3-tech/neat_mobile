@@ -73,6 +73,19 @@ export default function DashboardHeader() {
     setImageLoadFailed(false);
   }, [avatarUri, summaryUpdatedAt]);
 
+  // Every login path ends here, so this is where the remembered account picks
+  // up its display name — and, for paths that never typed a phone (registration,
+  // new-device, biometrics), its phone. rememberAccount() keeps the typed
+  // formatting when the summary's number is the same account and replaces the
+  // record when it isn't.
+  useEffect(() => {
+    if (!accountSummary) return;
+    useAuthStore.getState().rememberAccount({
+      phone: accountSummary.phone_number,
+      firstName,
+    });
+  }, [accountSummary, firstName]);
+
   return (
     <>
       {/* No <StatusBar> here — a JS entry lands a beat late and loses to the

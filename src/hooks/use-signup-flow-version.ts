@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { signupConfigService } from '@/services/signup-config.service';
@@ -13,50 +14,75 @@ import type { SignupVersionResponse } from '@/types/signup-config.types';
 // for a restart.
 const STALE_TIME_MS = 1000 * 60 * 10; // 10 minutes
 
+// Upper bound on how long "Create account" stays disabled. The request has an
+// 8s timeout and one retry, so without this a cold backend could leave the
+// button dead for 16s. After the cap we proceed on the default and let the
+// request finish in the background — a later tap still picks up the answer.
+export const MAX_WAIT_MS = 3000;
+
 /**
  * Narrow the backend's answer to a version we actually have screens for.
  *
  * Pure and exported so the fallback contract can be unit-tested without a
  * device — see __tests__/use-signup-flow-version.test.ts.
  *
- * EVERY uncertain path returns the default. Undefined covers the pending first
- * render, a network failure, a 404 and a 5xx; an unrecognized string covers a
- * future 'v3' that this build has no screens for. Routing someone into a route
- * group that does not exist would dead-end them at a blank screen, so the only
- * thing that moves us off v1 is an exact, known version string.
+ * Undefined here means the request FAILED, not that it is pending — the hook
+ * reports pending separately so callers wait rather than guess. An
+ * unrecognized string covers a future 'v3' this build has no screens for;
+ * routing there would dead-end at a blank screen.
  */
 export function resolveSignupFlowVersion(
   data: SignupVersionResponse | undefined,
 ): SignupFlowVersion {
-  if (!data) return DEFAULT_SIGNUP_FLOW_VERSION;
-  if (data.version === 'v1' || data.version === 'v2') return data.version;
+  if (data?.version === 'v1' || data?.version === 'v2') return data.version;
   return DEFAULT_SIGNUP_FLOW_VERSION;
+}
+
+export interface SignupFlowVersionState {
+  version: SignupFlowVersion;
+  /** True only while we have no answer yet and the wait cap hasn't elapsed. */
+  isPending: boolean;
 }
 
 /**
  * Which sign-up flow to enter. Safe to call before sign-in.
  *
- * Note this decides the flow at the moment "Create account" is tapped. Someone
- * already partway through v1 stays in v1 even if the flag flips behind them —
- * their half-filled store and verification ids belong to that flow.
+ * Callers must gate the entry button on `isPending`. The bug this replaces
+ * treated the pending first render as "no answer, use the default" and sent
+ * anyone who tapped inside the round-trip into the wrong flow.
+ *
+ * Someone already partway through a flow stays in it even if the flag flips
+ * behind them — their half-filled store and verification ids belong to it.
  */
-export function useSignupFlowVersion(): SignupFlowVersion {
-  const { data } = useQuery({
+export function useSignupFlowVersion(): SignupFlowVersionState {
+  const { data, isPending: queryPending } = useQuery({
     queryKey: [QUERY_KEYS.SIGNUP_FLOW_VERSION],
     queryFn: signupConfigService.getSignupVersion,
     staleTime: STALE_TIME_MS,
-    // The root QueryClient defaults to retry: 2. Falling back to v1 quickly is
-    // better than making someone wait through retries to find out.
-    retry: false,
+    // One retry over the root client's two: the button is gated on this, so
+    // a transient blip is worth a second attempt, but the wait cap below is
+    // what actually bounds the user's wait — not the retry count.
+    retry: 1,
     refetchOnWindowFocus: false,
   });
+
+  const [capElapsed, setCapElapsed] = useState(false);
+
+  useEffect(() => {
+    if (!queryPending) return;
+    const timer = setTimeout(() => setCapElapsed(true), MAX_WAIT_MS);
+    return () => clearTimeout(timer);
+  }, [queryPending]);
 
   // ← local testing: force a flow without touching the backend. Set back to
   //   null (or leave commented) before pushing.
   //   The `as` widens the literal — without it TS narrows the const and flags
   //   the other branch as unreachable.
   // const FORCE_VERSION = 'v2' as SignupFlowVersion | null; // 'v1' | 'v2' | null
-  // return FORCE_VERSION ?? resolveSignupFlowVersion(data);
+  // if (FORCE_VERSION) return { version: FORCE_VERSION, isPending: false };
 
-  return resolveSignupFlowVersion(data);
+  return {
+    version: resolveSignupFlowVersion(data),
+    isPending: queryPending && !capElapsed,
+  };
 }

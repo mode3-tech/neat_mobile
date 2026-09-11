@@ -31,7 +31,8 @@ export default function SignInScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const signupFlowVersion = useSignupFlowVersion();
+  const { version: signupFlowVersion, isPending: signupVersionPending } =
+    useSignupFlowVersion();
 
   const {
     isBiometricSignInReady,
@@ -49,8 +50,10 @@ export default function SignInScreen() {
       const response = await authService.loginUser(phone.trim(), password);
 
       if (response.status === 'success' && response.access_token && response.refresh_token) {
-        const { setTokens, setUser, setBiometricsEnabled } = useAuthStore.getState();
+        const { setTokens, setUser, setBiometricsEnabled, rememberAccount } =
+          useAuthStore.getState();
         setTokens(response.access_token, response.refresh_token);
+        rememberAccount({ phone: phone.trim(), firstName: response.user?.firstName });
         if (response.user) setUser(response.user);
 
         // Sync biometrics preference from backend (source of truth)
@@ -174,11 +177,14 @@ export default function SignInScreen() {
 
             <TouchableOpacity
               onPress={() => router.push(signupEntryRoute(signupFlowVersion) as never)}
+              disabled={signupVersionPending}
               activeOpacity={0.7}
             >
               <Text style={styles.signUpText}>
                 Don't have an account?{' '}
-                <Text style={styles.signUpLink}>Sign up</Text>
+                <Text style={[styles.signUpLink, signupVersionPending && styles.signUpLinkDisabled]}>
+                  Sign up
+                </Text>
               </Text>
             </TouchableOpacity>
 
@@ -347,6 +353,9 @@ const styles = StyleSheet.create({
   signUpLink: {
     color: '#F9B700',
     fontWeight: '600' as const,
+  },
+  signUpLinkDisabled: {
+    color: '#9CA3AF',
   },
 
 

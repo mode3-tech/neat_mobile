@@ -181,7 +181,11 @@ export default function RootLayout(): React.JSX.Element {
           useAuthStore.setState({ skipLogoutRedirect: false });
           return;
         }
-        router.replace('/(sign-in)/sign-in' as any);
+        router.replace(
+          (state.rememberedAccount
+            ? '/(sign-in)/welcome-back'
+            : '/(sign-in)/sign-in') as any,
+        );
       }
     });
     return unsubscribe;

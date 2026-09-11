@@ -22,9 +22,9 @@ export const signupConfigService = {
    * welcome screen before anyone has signed in.
    *
    * The 8s timeout is deliberately tighter than the instance-wide 30s. The
-   * caller falls back to v1 while this is pending, so a hung request costs
-   * nothing but a slower switch to v2 — and must never make "Create account"
-   * feel unresponsive.
+   * caller holds "Create account" while this is pending and only falls back to
+   * the default version once it fails, so a hung request would otherwise keep
+   * the button blocked for the full 30s.
    */
   getSignupVersion: async (): Promise<SignupVersionResponse> => {
     try {

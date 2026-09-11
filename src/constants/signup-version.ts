@@ -13,12 +13,19 @@
 export type SignupFlowVersion = 'v1' | 'v2';
 
 /**
- * What we fall back to whenever the backend hasn't given us a clear answer:
- * request in flight, network down, 404, 5xx, or a payload we can't parse.
- * v1 is the flow that has been live in production, so an uncertain app is
- * safer pointed at it.
+ * What we fall back to when the backend genuinely can't tell us: network down,
+ * timeout, 404, 5xx, or a version string this build has no screens for.
+ *
+ * This is the newest flow the binary ships, NOT the oldest. A release is built
+ * with one flow in mind, and a dead config endpoint must not silently route
+ * people to the other one — that is exactly what happened when this was 'v1'.
+ * Keeping it pointed at the newest flow also means the next migration doesn't
+ * depend on someone remembering to flip it.
+ *
+ * Pending is deliberately NOT a fallback case — useSignupFlowVersion exposes
+ * isPending so the entry button waits instead of guessing.
  */
-export const DEFAULT_SIGNUP_FLOW_VERSION: SignupFlowVersion = 'v1';
+export const DEFAULT_SIGNUP_FLOW_VERSION: SignupFlowVersion = 'v2';
 
 /**
  * Root for the v2 sign-up endpoints (`{host}/api/v2/auth/...`).

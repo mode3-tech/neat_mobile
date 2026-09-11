@@ -5,12 +5,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
 
 export default function CloseAccountSuccessScreen() {
   const queryClient = useQueryClient();
   const clearAuth = useAuthStore((s) => s.clearAuth);
+  const switchAccount = useAuthStore((s) => s.switchAccount);
   const setSkipLogoutRedirect = useAuthStore((s) => s.setSkipLogoutRedirect);
   const scale = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
@@ -34,20 +34,21 @@ export default function CloseAccountSuccessScreen() {
   useEffect(() => {
     // The account is closed and its sessions revoked server-side. Wipe all
     // local state (query cache, in-memory auth, cached photo/PIN) and delete the
-    // stored tokens so the app opens on /welcome next launch, not sign-in.
-    // Opt out of the global sign-in redirect first — clearAuth() flips
+    // stored tokens AND the remembered account so the app opens on /welcome
+    // next launch, not sign-in or welcome-back for an account that no longer
+    // exists. Opt out of the global sign-in redirect first — clearAuth() flips
     // isAuthenticated, which would otherwise bounce us to /(sign-in) and skip
     // this screen; we navigate to /welcome ourselves below.
     setSkipLogoutRedirect(true);
     queryClient.clear();
     clearAuth();
-    authService.clearLocalSession();
+    switchAccount();
 
     const timer = setTimeout(() => {
       router.replace('/welcome');
     }, 3000);
     return () => clearTimeout(timer);
-  }, [queryClient, clearAuth, setSkipLogoutRedirect]);
+  }, [queryClient, clearAuth, switchAccount, setSkipLogoutRedirect]);
 
   return (
     <SafeAreaView className="flex-1 bg-white px-6">
