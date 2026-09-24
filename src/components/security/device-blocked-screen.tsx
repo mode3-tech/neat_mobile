@@ -18,7 +18,9 @@ export function DeviceBlockedScreen(): React.JSX.Element {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <StatusBar style="dark" />
+      {/* iOS already defaults to dark icons here, and RN's StatusBar module
+          errors there once UIViewControllerBasedStatusBarAppearance is on. */}
+      {Platform.OS === 'android' && <StatusBar style="dark" />}
       {/* Scrolls rather than centering in a fixed box: the contact block below
           is the last item, so on a short screen — or at a large font scale — an
           unscrollable container would clip exactly the details the user needs. */}
@@ -60,7 +62,7 @@ export function DeviceBlockedScreen(): React.JSX.Element {
             marginBottom: 24,
           }}
         >
-          For your protection, NeatPay can't run on devices that have been
+          For your protection, NEATPay can't run on devices that have been
           rooted, jailbroken, or modified. This helps keep your account and
           funds safe.
         </Text>
@@ -75,7 +77,7 @@ export function DeviceBlockedScreen(): React.JSX.Element {
             marginBottom: 32,
           }}
         >
-          {`If you believe this is an error, please reinstall NeatPay from the ${storeName} on a standard, unmodified device.`}
+          {`If you believe this is an error, please reinstall NEATPay from the ${storeName} on a standard, unmodified device.`}
         </Text>
 
         {/* Call first: tel: resolves on any phone, while mailto: rejects when

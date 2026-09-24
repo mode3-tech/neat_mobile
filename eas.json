@@ -29,9 +29,10 @@
         "APP_VARIANT": "preview",
         "EXPO_PUBLIC_APP_VARIANT": "preview",
         "EXPO_PUBLIC_API_URL": "https://neat-mobile-backend-nhsk.onrender.com/api/v1",
-        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "9siJv+kxI1/Sd5rlv8OBFEpKkIq1AHC9bPyqLgoDNWc=" // @micropayafrica keystore — active for go-live
+        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "9siJv+kxI1/Sd5rlv8OBFEpKkIq1AHC9bPyqLgoDNWc=", // @micropayafrica keystore — active for go-live
         // "EXPO_PUBLIC_ANDROID_CERT_SHA256": "BPnSD/56TppW01ddhy7XR2yptHVMqoVTVgu+MkEb784=" // @morojuoluwa (dev) keystore
-        // "EXPO_PUBLIC_IOS_TEAM_ID": ""
+        "EXPO_PUBLIC_IOS_TEAM_ID": "6P5AQRDGLF",
+        "GOOGLE_SERVICES_FILE": "handled-by-eas-file-env" // silences eas-cli's gitignore warning; real file comes from the GOOGLE_SERVICES_JSON EAS file variable
       }
     },
     "apk": {
@@ -45,8 +46,9 @@
         "APP_VARIANT": "preview",
         "EXPO_PUBLIC_APP_VARIANT": "preview",
         "EXPO_PUBLIC_API_URL": "https://neat-mobile-backend-nhsk.onrender.com/api/v1",
-        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "9siJv+kxI1/Sd5rlv8OBFEpKkIq1AHC9bPyqLgoDNWc=" // @micropayafrica keystore — active for go-live
+        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "9siJv+kxI1/Sd5rlv8OBFEpKkIq1AHC9bPyqLgoDNWc=", // @micropayafrica keystore — active for go-live
         // "EXPO_PUBLIC_ANDROID_CERT_SHA256": "BPnSD/56TppW01ddhy7XR2yptHVMqoVTVgu+MkEb784=" // @morojuoluwa (dev) keystore
+        "GOOGLE_SERVICES_FILE": "handled-by-eas-file-env"
       }
     },
     "production": {
@@ -59,12 +61,17 @@
       "env": {
         "EXPO_PUBLIC_APP_VARIANT": "production",
         "EXPO_PUBLIC_API_URL": "https://neat-mobile-backend-nhsk.onrender.com/api/v1",
-        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "XN/W36qSIDyB0jTdERO2PMv5Npa4xZyLFnjf/S/sYsk=" // @micropayafrica Play app-signing key
-        // "EXPO_PUBLIC_IOS_TEAM_ID": ""
+        "EXPO_PUBLIC_ANDROID_CERT_SHA256": "XN/W36qSIDyB0jTdERO2PMv5Npa4xZyLFnjf/S/sYsk=", // @micropayafrica Play app-signing key
+        "EXPO_PUBLIC_IOS_TEAM_ID": "6P5AQRDGLF",
+        "GOOGLE_SERVICES_FILE": "handled-by-eas-file-env"
       }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "ascAppId": "6815645214"
+      }
+    }
   }
 }

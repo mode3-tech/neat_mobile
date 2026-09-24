@@ -2,7 +2,7 @@ import '../global.css';
 import 'expo-dev-client';
 
 import { useCallback, useEffect, useRef } from 'react';
-import { AppState, View } from 'react-native';
+import { AppState, Platform, View } from 'react-native';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import {
   QueryClient,
@@ -341,7 +341,10 @@ export default function RootLayout(): React.JSX.Element {
           </View>
           <OfflineBanner />
           <Toaster position="top-center" richColors />
-          <StatusBar style="dark" />
+          {/* Android only: with UIViewControllerBasedStatusBarAppearance on,
+              RN's StatusBar module errors on iOS, where the screen options
+              above already own the style. */}
+          {Platform.OS === 'android' && <StatusBar style="dark" />}
         </ThemeProvider>
       </KeyboardProvider>
     </QueryClientProvider>

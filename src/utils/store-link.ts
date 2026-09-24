@@ -3,6 +3,8 @@ import * as Application from 'expo-application';
 
 // Matches the fallback already used in device-integrity-gate.tsx.
 const FALLBACK_APP_ID = 'com.mode3.neatmobile';
+// App Store Connect → App Information → Apple ID. Not derivable from the bundle id.
+const APPLE_APP_ID = '6815645214';
 
 /**
  * Open this app's store listing.
@@ -16,25 +18,23 @@ const FALLBACK_APP_ID = 'com.mode3.neatmobile';
  * touching app.config.js — so probing would send every user down the web path.
  *
  * `storeUrl` is the optional `store_url` from GET /app/version. It is only a
- * fallback: if it is missing we build the canonical Play URL from the app id.
+ * fallback: if it is missing we build the canonical store URL.
  */
 export async function openStoreListing(storeUrl?: string): Promise<void> {
   const appId = Application.applicationId ?? FALLBACK_APP_ID;
+  const isIOS = Platform.OS === 'ios';
 
-  // iOS is not shipped yet, and the gate returns 'ok' when the payload has no
-  // `ios` key, so this path is currently unreachable. When iOS ships:
-  //   native = `itms-apps://itunes.apple.com/app/id<APPLE_APP_ID>`
-  //   web    = storeUrl ?? `https://apps.apple.com/app/id<APPLE_APP_ID>`
-  // The Apple app id is not derivable from applicationId, so it will need to
-  // come from the backend's `ios.store_url` or a constant.
-  const native =
-    Platform.OS === 'ios'
-      ? undefined
-      : `market://details?id=${encodeURIComponent(appId)}`;
+  // apps.apple.com is a universal link that opens the App Store app directly,
+  // so iOS needs no native scheme.
+  const native = isIOS
+    ? undefined
+    : `market://details?id=${encodeURIComponent(appId)}`;
 
   const web =
     storeUrl ??
-    `https://play.google.com/store/apps/details?id=${encodeURIComponent(appId)}`;
+    (isIOS
+      ? `https://apps.apple.com/app/id${APPLE_APP_ID}`
+      : `https://play.google.com/store/apps/details?id=${encodeURIComponent(appId)}`);
 
   if (native) {
     try {

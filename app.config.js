@@ -35,13 +35,33 @@ const baseConfig = {
     policy: 'appVersion',
   },
   ios: {
-    supportsTablet: true,
+    supportsTablet: false,
+    bundleIdentifier: 'com.mode3.neatmobile',
+    icon: './assets/images/ios-icon.png',
+    config: {
+      // Only valid while France is excluded in App Store Connect → Pricing and
+      // Availability: freeRASP bundles its own OpenSSL, and that standard,
+      // non-Apple encryption needs a French encryption declaration there.
+      usesNonExemptEncryption: false,
+    },
     infoPlist: {
+      // react-native-screens applies each route's statusBarStyle only when this
+      // is on; Expo's template defaults it to false, which leaves navy screens
+      // with invisible dark icons on iOS.
+      UIViewControllerBasedStatusBarAppearance: true,
+      // Launch storyboard only; once the app is up, each route's statusBarStyle wins.
+      UIStatusBarStyle: 'UIStatusBarStyleLightContent',
       NSCameraUsageDescription:
-        'NeatPay needs your camera to verify your identity with a quick selfie.',
+        'NEATPay uses your camera to verify your identity with a quick selfie and to take your profile photo.',
+      NSFaceIDUsageDescription:
+        'NEATPay uses Face ID to sign you in and confirm transactions.',
+      NSPhotoLibraryUsageDescription:
+        'NEATPay needs access to your photos so you can choose a profile picture.',
+      NSPhotoLibraryAddUsageDescription:
+        'NEATPay saves receipts and QR codes to your photos when you choose to.',
 
       // NSMicrophoneUsageDescription:
-      //   'NeatPay uses your microphone during identity verification.',
+      //   'NEATPay uses your microphone during identity verification.',
     },
   },
   android: {
@@ -87,6 +107,7 @@ const baseConfig = {
     ],
     '@react-native-community/datetimepicker',
     'expo-web-browser',
+    ['expo-image-picker', { microphonePermission: false }],
     ['freerasp-react-native', {}],
     [
       'expo-build-properties',

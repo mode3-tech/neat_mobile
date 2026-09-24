@@ -7,6 +7,7 @@ import {
   FlatList,
   Image,
   ImageSourcePropType,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -127,7 +128,7 @@ export default function WelcomeScreen(): React.JSX.Element {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+      {Platform.OS === 'android' && <StatusBar style="dark" />}
 
       <FlatList
         ref={flatListRef}

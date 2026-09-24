@@ -1,4 +1,4 @@
-import { Linking } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import * as Application from 'expo-application';
 
 import { openStoreListing } from '../store-link';
@@ -15,6 +15,7 @@ const PLAY_WEB =
 
 beforeEach(() => {
   jest.clearAllMocks();
+  (Platform as { OS: string }).OS = 'android';
   (Application as { applicationId: string | null }).applicationId =
     'com.mode3.neatmobile';
 });
@@ -70,6 +71,18 @@ describe('openStoreListing', () => {
 
     expect(openURL).toHaveBeenCalledWith(
       'market://details?id=com.mode3.neatmobile',
+    );
+  });
+
+  it('opens the App Store listing on iOS', async () => {
+    (Platform as { OS: string }).OS = 'ios';
+    openURL.mockResolvedValue(true);
+
+    await openStoreListing(undefined);
+
+    expect(openURL).toHaveBeenCalledTimes(1);
+    expect(openURL).toHaveBeenCalledWith(
+      'https://apps.apple.com/app/id6815645214',
     );
   });
 
