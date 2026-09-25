@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
-  ScrollView,
+  Keyboard,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { HeaderScreen } from '@/components/ui/header-screen';
+import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -60,6 +62,8 @@ export default function BuyAirtimeScreen() {
   const [phone, setPhone] = useState('');
   const [amount, setAmount] = useState('');
   const [summaryVisible, setSummaryVisible] = useState(false);
+  const [footerHeight, setFooterHeight] = useState(0);
+  const insets = useSafeAreaInsets();
 
   const billersQuery = useQuery({
     queryKey: [QUERY_KEYS.VAS_BILLERS, categoryId],
@@ -114,6 +118,7 @@ export default function BuyAirtimeScreen() {
 
   const handleProceed = () => {
     if (!canProceed) return;
+    Keyboard.dismiss();
     setSummaryVisible(true);
   };
 
@@ -136,10 +141,12 @@ export default function BuyAirtimeScreen() {
 
   return (
     <HeaderScreen padded={false}>
-      <ScrollView
-        className="flex-1 px-6"
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerClassName="px-6"
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        bottomOffset={footerHeight + 20}
       >
         <View className="flex-row items-center gap-2 mt-4 mb-6">
           <BackButton className="" />
@@ -258,30 +265,36 @@ export default function BuyAirtimeScreen() {
             );
           })}
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
-      <View className="px-6 pb-4">
-        <TouchableOpacity
-          className={`rounded-full py-4 items-center ${
-            canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
-          }`}
-          onPress={handleProceed}
-          disabled={!canProceed}
-          activeOpacity={0.85}
-        >
-          {productsQuery.isLoading && !!selectedBillerId ? (
-            <ActivityIndicator color="#9CA3AF" />
-          ) : (
-            <Text
-              className={`text-base font-semibold ${
-                canProceed ? 'text-[#032252]' : 'text-[#9CA3AF]'
-              }`}
-            >
-              Proceed
-            </Text>
-          )}
-        </TouchableOpacity>
-      </View>
+      {/* Keyboard height includes the bottom inset HeaderScreen already pads, so lift by the difference. */}
+      <KeyboardStickyView
+        offset={{ opened: insets.bottom }}
+        onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+      >
+        <View className="px-6 pb-4 bg-white">
+          <TouchableOpacity
+            className={`rounded-full h-14 items-center justify-center ${
+              canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
+            }`}
+            onPress={handleProceed}
+            disabled={!canProceed}
+            activeOpacity={0.85}
+          >
+            {productsQuery.isLoading && !!selectedBillerId ? (
+              <ActivityIndicator color="#9CA3AF" />
+            ) : (
+              <Text
+                className={`text-base font-semibold ${
+                  canProceed ? 'text-[#032252]' : 'text-[#9CA3AF]'
+                }`}
+              >
+                Proceed
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </KeyboardStickyView>
 
       <TransactionSummaryModal
         visible={summaryVisible}

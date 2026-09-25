@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router } from 'expo-router';
 
 import { authService } from '@/services/auth.service';
@@ -28,6 +29,7 @@ export default function EnableBiometricsScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [errorAction, setErrorAction] = useState<RegisterErrorAction | null>(null);
+  const insets = useSafeAreaInsets();
 
   const handleToggle = (next: boolean) => {
     setEnabled(next);
@@ -65,67 +67,75 @@ export default function EnableBiometricsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View className="flex-row items-center gap-2 mt-4 mb-1.5">
-        <BackButton className="" />
-        <Text style={styles.title}>Enable Biometrics</Text>
-      </View>
-      <Text style={styles.subtitle}>Use fingerprint or Face ID</Text>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={20}
+        extraKeyboardSpace={-insets.bottom}
+      >
+        <View className="flex-row items-center gap-2 mt-4 mb-1.5">
+          <BackButton className="" />
+          <Text style={styles.title}>Enable Biometrics</Text>
+        </View>
+        <Text style={styles.subtitle}>Use fingerprint or Face ID</Text>
 
-      <View style={styles.toggleRow}>
-        <Text style={styles.toggleLabel}>Enable</Text>
-        <Switch
-          value={enabled}
-          onValueChange={handleToggle}
-          trackColor={{ false: '#E5E7EB', true: PRIMARY_TEXT }}
-          thumbColor="#fff"
-        />
-      </View>
-
-      <View style={styles.redeemBlock}>
-        <Text style={styles.redeemLabel}>Redeem code (optional)</Text>
-        <TextInput
-          style={styles.redeemInput}
-          value={redeemCode}
-          onChangeText={setRedeemCode}
-          placeholder="Enter referral or promo code"
-          placeholderTextColor="#9CA3AF"
-          autoCapitalize="characters"
-          autoCorrect={false}
-          returnKeyType="done"
-          editable={!loading}
-        />
-      </View>
-
-      <View style={styles.spacer} />
-
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-      <View style={styles.footer}>
-        <View style={styles.btnOuter}>
-          <TouchableOpacity
-            style={styles.primaryBtn}
-            onPress={handleComplete}
-            disabled={loading}
-            activeOpacity={0.85}
-          >
-            {loading ? (
-              <ActivityIndicator color={PRIMARY_TEXT} />
-            ) : (
-              <Text style={styles.primaryBtnText}>Complete Setup</Text>
-            )}
-          </TouchableOpacity>
+        <View style={styles.toggleRow}>
+          <Text style={styles.toggleLabel}>Enable</Text>
+          <Switch
+            value={enabled}
+            onValueChange={handleToggle}
+            trackColor={{ false: '#E5E7EB', true: PRIMARY_TEXT }}
+            thumbColor="#fff"
+          />
         </View>
 
-        {errorAction && !loading ? (
-          <TouchableOpacity
-            style={styles.recoveryBtn}
-            onPress={errorAction.recover}
-            activeOpacity={0.85}
-          >
-            <Text style={styles.recoveryBtnText}>{errorAction.ctaLabel}</Text>
-          </TouchableOpacity>
-        ) : null}
-      </View>
+        <View style={styles.redeemBlock}>
+          <Text style={styles.redeemLabel}>Redeem code (optional)</Text>
+          <TextInput
+            style={styles.redeemInput}
+            value={redeemCode}
+            onChangeText={setRedeemCode}
+            placeholder="Enter referral or promo code"
+            placeholderTextColor="#9CA3AF"
+            autoCapitalize="characters"
+            autoCorrect={false}
+            returnKeyType="done"
+            editable={!loading}
+          />
+        </View>
+
+        <View style={styles.spacer} />
+
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+        <View style={styles.footer}>
+          <View style={styles.btnOuter}>
+            <TouchableOpacity
+              style={styles.primaryBtn}
+              onPress={handleComplete}
+              disabled={loading}
+              activeOpacity={0.85}
+            >
+              {loading ? (
+                <ActivityIndicator color={PRIMARY_TEXT} />
+              ) : (
+                <Text style={styles.primaryBtnText}>Complete Setup</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {errorAction && !loading ? (
+            <TouchableOpacity
+              style={styles.recoveryBtn}
+              onPress={errorAction.recover}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.recoveryBtnText}>{errorAction.ctaLabel}</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -134,6 +144,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 24,
   },
   title: {

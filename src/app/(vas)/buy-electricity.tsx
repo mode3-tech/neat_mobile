@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   ActivityIndicator,
   Image,
+  Keyboard,
   Modal,
   ScrollView,
   Text,
@@ -10,7 +11,13 @@ import {
   View,
 } from 'react-native';
 import { HeaderScreen } from '@/components/ui/header-screen';
-import { KeyboardProvider, KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import {
+  KeyboardProvider,
+  KeyboardAvoidingView,
+  KeyboardAwareScrollView,
+  KeyboardStickyView,
+} from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -53,6 +60,8 @@ export default function BuyElectricityScreen() {
   const [providerModalVisible, setProviderModalVisible] = useState(false);
   const [providerSearch, setProviderSearch] = useState('');
   const [summaryVisible, setSummaryVisible] = useState(false);
+  const [footerHeight, setFooterHeight] = useState(0);
+  const insets = useSafeAreaInsets();
 
   const billersQuery = useQuery({
     queryKey: [QUERY_KEYS.VAS_BILLERS, categoryId],
@@ -128,6 +137,7 @@ export default function BuyElectricityScreen() {
 
   const handleProceed = () => {
     if (!canProceed) return;
+    Keyboard.dismiss();
     setSummaryVisible(true);
   };
 
@@ -153,10 +163,12 @@ export default function BuyElectricityScreen() {
 
   return (
     <HeaderScreen padded={false}>
-      <ScrollView
-        className="flex-1 px-6"
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerClassName="px-6"
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        bottomOffset={footerHeight + 20}
       >
         <View className="flex-row items-center gap-2 mt-4 mb-6">
           <BackButton className="" />
@@ -198,7 +210,10 @@ export default function BuyElectricityScreen() {
         <TouchableOpacity
           className="bg-[#F5F5F5] rounded-xl px-4 py-[15px] mb-6 flex-row items-center"
           activeOpacity={0.8}
-          onPress={() => setProviderModalVisible(true)}
+          onPress={() => {
+            Keyboard.dismiss();
+            setProviderModalVisible(true);
+          }}
         >
           {selectedBiller && (
             <Image
@@ -287,26 +302,32 @@ export default function BuyElectricityScreen() {
             );
           })}
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
-      <View className="px-6 pb-4">
-        <TouchableOpacity
-          className={`rounded-full py-4 items-center ${
-            canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
-          }`}
-          onPress={handleProceed}
-          disabled={!canProceed}
-          activeOpacity={0.85}
-        >
-          <Text
-            className={`text-base font-semibold ${
-              canProceed ? 'text-[#032252]' : 'text-[#9CA3AF]'
+      {/* Keyboard height includes the bottom inset HeaderScreen already pads, so lift by the difference. */}
+      <KeyboardStickyView
+        offset={{ opened: insets.bottom }}
+        onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+      >
+        <View className="px-6 pb-4 bg-white">
+          <TouchableOpacity
+            className={`rounded-full py-4 items-center ${
+              canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'
             }`}
+            onPress={handleProceed}
+            disabled={!canProceed}
+            activeOpacity={0.85}
           >
-            Proceed
-          </Text>
-        </TouchableOpacity>
-      </View>
+            <Text
+              className={`text-base font-semibold ${
+                canProceed ? 'text-[#032252]' : 'text-[#9CA3AF]'
+              }`}
+            >
+              Proceed
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardStickyView>
 
       {/* Provider picker bottom sheet */}
       <Modal

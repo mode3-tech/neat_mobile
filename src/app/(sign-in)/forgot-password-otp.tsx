@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { router, useLocalSearchParams } from 'expo-router';
 
 import { OtpInput } from '@/components/ui/otp-input';
@@ -27,6 +28,7 @@ export default function ForgotPasswordOtpScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
+  const insets = useSafeAreaInsets();
 
   const canVerify = otp.length === OTP_LENGTH;
   const canResend = seconds === 0;
@@ -73,54 +75,62 @@ export default function ForgotPasswordOtpScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View className="flex-row items-center gap-2 mt-4 mb-1.5">
-        <BackButton className="" />
-        <Text style={styles.title}>Enter OTP Code</Text>
-      </View>
-      <Text style={styles.subtitle}>
-        Enter the 6-digit code sent to{' '}
-        <Text style={styles.phoneHighlight}>{phone}</Text>
-      </Text>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bottomOffset={20}
+        extraKeyboardSpace={-insets.bottom}
+      >
+        <View className="flex-row items-center gap-2 mt-4 mb-1.5">
+          <BackButton className="" />
+          <Text style={styles.title}>Enter OTP Code</Text>
+        </View>
+        <Text style={styles.subtitle}>
+          Enter the 6-digit code sent to{' '}
+          <Text style={styles.phoneHighlight}>{phone}</Text>
+        </Text>
 
-      <View style={styles.otpWrap}>
-        <OtpInput value={otp} onChange={(val) => { setOtp(val); setError(''); }} length={OTP_LENGTH} />
-      </View>
+        <View style={styles.otpWrap}>
+          <OtpInput value={otp} onChange={(val) => { setOtp(val); setError(''); }} length={OTP_LENGTH} />
+        </View>
 
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      <TouchableOpacity style={styles.changePhoneBtn} onPress={() => router.back()}>
-        <Text style={styles.changePhoneText}>Change phone number</Text>
-      </TouchableOpacity>
-
-      <View style={styles.spacer} />
-
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.primaryBtn, !canVerify && styles.disabledBtn]}
-          onPress={handleVerify}
-          disabled={!canVerify || loading}
-          activeOpacity={0.85}
-        >
-          {loading ? (
-            <ActivityIndicator color={PRIMARY_TEXT} />
-          ) : (
-            <Text style={[styles.primaryBtnText, !canVerify && styles.disabledBtnText]}>
-              Verify & Continue
-            </Text>
-          )}
+        <TouchableOpacity style={styles.changePhoneBtn} onPress={() => router.back()}>
+          <Text style={styles.changePhoneText}>Change phone number</Text>
         </TouchableOpacity>
 
-        <View style={styles.resendRow}>
-          <Text style={styles.resendLabel}>Didn't get a code? </Text>
-          {canResend ? (
-            <TouchableOpacity onPress={handleResend}>
-              <Text style={styles.resendLink}>Resend code</Text>
-            </TouchableOpacity>
-          ) : (
-            <Text style={styles.timerText}>{timer}</Text>
-          )}
+        <View style={styles.spacer} />
+
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={[styles.primaryBtn, !canVerify && styles.disabledBtn]}
+            onPress={handleVerify}
+            disabled={!canVerify || loading}
+            activeOpacity={0.85}
+          >
+            {loading ? (
+              <ActivityIndicator color={PRIMARY_TEXT} />
+            ) : (
+              <Text style={[styles.primaryBtnText, !canVerify && styles.disabledBtnText]}>
+                Verify & Continue
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.resendRow}>
+            <Text style={styles.resendLabel}>Didn't get a code? </Text>
+            {canResend ? (
+              <TouchableOpacity onPress={handleResend}>
+                <Text style={styles.resendLink}>Resend code</Text>
+              </TouchableOpacity>
+            ) : (
+              <Text style={styles.timerText}>{timer}</Text>
+            )}
+          </View>
         </View>
-      </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -129,6 +139,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 24,
   },
   title: {
