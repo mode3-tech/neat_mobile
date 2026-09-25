@@ -40,14 +40,16 @@ export default function ForgotPasswordOtpScreen() {
   }, [seconds]);
 
   const handleResend = async () => {
-    if (!canResend) return;
+    if (!canResend || !phone) return;
     setSeconds(RESEND_SECONDS);
     setOtp('');
+    setError('');
     try {
       const { otp_id } = await authService.resendForgotPasswordOtp(phone);
       setOtpId(otp_id);
-    } catch {
-      // silently fail resend
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to resend code');
+      setSeconds(0);
     }
   };
 

@@ -53,6 +53,7 @@ export default function NewDeviceOtpScreen() {
       await authService.resendNewDeviceOtp(session_token);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to resend code');
+      setSeconds(0);
     }
   };
 
@@ -63,15 +64,18 @@ export default function NewDeviceOtpScreen() {
     try {
       const response = await authService.verifyNewDevice(otp, session_token);
 
-      if (response.access_token && response.refresh_token) {
-        const { setTokens, setUser, setBiometricsEnabled } = useAuthStore.getState();
-        setTokens(response.access_token, response.refresh_token);
-        if (response.user) setUser(response.user);
+      if (!response.access_token || !response.refresh_token) {
+        setError('Device verification failed. Please try again.');
+        return;
+      }
 
-        // Sync biometrics preference from backend (source of truth)
-        if (typeof response.is_biometrics_enabled === 'boolean') {
-          setBiometricsEnabled(response.is_biometrics_enabled);
-        }
+      const { setTokens, setUser, setBiometricsEnabled } = useAuthStore.getState();
+      setTokens(response.access_token, response.refresh_token);
+      if (response.user) setUser(response.user);
+
+      // Sync biometrics preference from backend (source of truth)
+      if (typeof response.is_biometrics_enabled === 'boolean') {
+        setBiometricsEnabled(response.is_biometrics_enabled);
       }
 
       router.replace('/(sign-in)/device-verified');

@@ -67,8 +67,9 @@ export default function ChangePasswordOtpScreen() {
         : authService.requestPasswordChange();
       const { otp_id } = await request;
       setOtpId(otp_id);
-    } catch {
-      // silent fail, same as prior behavior
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send OTP');
+      setSeconds(0);
     }
   };
 
