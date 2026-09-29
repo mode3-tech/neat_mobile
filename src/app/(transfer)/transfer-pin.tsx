@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
 import { useQueryClient } from '@tanstack/react-query';
@@ -25,6 +25,8 @@ export default function TransferPinScreen() {
 
   const [pin, setPin] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  // Synchronous re-entry guard; `submitting` only updates on the next render.
+  const inFlight = useRef(false);
 
   // Guard: redirect back if the store is empty (direct navigation)
   useEffect(() => {
@@ -36,6 +38,7 @@ export default function TransferPinScreen() {
   const parsedAmount = parseInt(store.amount, 10) || 0;
 
   const submitTransfer = async (transactionPin: string) => {
+    if (inFlight.current) return;
     // There is no button left to grey out, so the offline check lives here.
     if (isOffline) {
       toast.error('No internet connection', {
@@ -45,6 +48,7 @@ export default function TransferPinScreen() {
       return;
     }
 
+    inFlight.current = true;
     setSubmitting(true);
     try {
       const transfer = await walletService.transfer({
@@ -72,6 +76,7 @@ export default function TransferPinScreen() {
       // Only cleared on the failure path. On success the screen is already
       // being replaced, and dropping `submitting` there would re-render the
       // tray during teardown — and keep the spinner up through the transition.
+      inFlight.current = false;
       setSubmitting(false);
     }
   };
@@ -93,7 +98,8 @@ export default function TransferPinScreen() {
       value={pin}
       onChange={setPin}
       onComplete={submitTransfer}
-      submitting={submitting || authenticating}
+      submitting={submitting}
+      disabled={authenticating}
       onBiometric={isBiometricReady ? handleBiometric : undefined}
       biometryType={biometryType}
     />

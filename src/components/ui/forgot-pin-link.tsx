@@ -6,15 +6,19 @@ interface ForgotPinLinkProps {
   className?: string;
   /** Use on the navy PIN keypad — the default navy text is invisible there. */
   onDark?: boolean;
+  disabled?: boolean;
 }
 
 export function ForgotPinLink({
   className = 'self-end mt-2',
   onDark = false,
+  disabled = false,
 }: ForgotPinLinkProps) {
   return (
     <TouchableOpacity
-      className={className}
+      className={`${className} ${disabled ? 'opacity-40' : ''}`}
+      disabled={disabled}
+      accessibilityState={{ disabled }}
       onPress={() => router.push('/(profile)/forgot-pin-otp' as any)}
       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
     >

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
@@ -23,8 +23,12 @@ export default function SavingsPinScreen() {
 
   const [pin, setPin] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  // Synchronous re-entry guard; `submitting` only updates on the next render.
+  const inFlight = useRef(false);
 
   const submitDeposit = async (transactionPin: string) => {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setSubmitting(true);
     try {
       await savingsService.deposit({
@@ -42,7 +46,9 @@ export default function SavingsPinScreen() {
       // Clear so the user can retry — the pad auto-submits on the 4th digit,
       // so a tray left full has no way to accept input.
       setPin('');
-    } finally {
+      // Failure path only: on success the screen is already being replaced,
+      // and re-rendering the tray during teardown can crash Fabric.
+      inFlight.current = false;
       setSubmitting(false);
     }
   };
@@ -66,7 +72,8 @@ export default function SavingsPinScreen() {
       value={pin}
       onChange={setPin}
       onComplete={submitDeposit}
-      submitting={submitting || authenticating}
+      submitting={submitting}
+      disabled={authenticating}
       onBiometric={isBiometricReady ? handleBiometric : undefined}
       biometryType={biometryType}
     />

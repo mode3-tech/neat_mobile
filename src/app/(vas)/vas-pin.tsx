@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner-native';
@@ -51,6 +51,8 @@ export default function VasPinScreen() {
 
   const [pin, setPin] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  // Synchronous re-entry guard; `submitting` only updates on the next render.
+  const inFlight = useRef(false);
 
   const goToResult = (
     status: 'success' | 'failed',
@@ -97,7 +99,15 @@ export default function VasPinScreen() {
   };
 
   const purchase = async (transactionPin: string) => {
-    if (!product || (isCable && !biller)) return;
+    if (inFlight.current) return;
+    if (!product || (isCable && !biller)) {
+      setPin('');
+      toast.error('Purchase details missing', {
+        description: 'Go back and start this purchase again.',
+      });
+      return;
+    }
+    inFlight.current = true;
     setSubmitting(true);
     try {
       let message: string;
@@ -148,6 +158,9 @@ export default function VasPinScreen() {
     } catch (err: unknown) {
       handleFailure(getErrorMessage(err));
     } finally {
+      // Unlike the transfer and savings screens this one pushes, so it stays
+      // mounted underneath — the result screen's Retry comes back to it.
+      inFlight.current = false;
       setSubmitting(false);
     }
   };
@@ -173,7 +186,8 @@ export default function VasPinScreen() {
       value={pin}
       onChange={setPin}
       onComplete={purchase}
-      submitting={submitting || authenticating}
+      submitting={submitting}
+      disabled={authenticating}
       onBiometric={isBiometricReady ? handleBiometric : undefined}
       biometryType={biometryType}
     />

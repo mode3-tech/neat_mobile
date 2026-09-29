@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
 import { useQueryClient } from '@tanstack/react-query';
@@ -23,12 +23,16 @@ export default function BulkTransferPinScreen() {
 
   const [pin, setPin] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  // Synchronous re-entry guard; `submitting` only updates on the next render.
+  const inFlight = useRef(false);
 
   useEffect(() => {
     if (recipients.length === 0) router.back();
   }, []);
 
   const submitBulk = async (transactionPin: string) => {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setSubmitting(true);
     try {
       const response = await walletService.transferBulk({
@@ -56,7 +60,9 @@ export default function BulkTransferPinScreen() {
       toast.error('Bulk transfer failed', { description: getErrorMessage(err) });
       // Clear so the user can retry; a full tray has no way to accept input.
       setPin('');
-    } finally {
+      // Failure path only: on success the screen is already being replaced,
+      // and re-rendering the tray during teardown can crash Fabric.
+      inFlight.current = false;
       setSubmitting(false);
     }
   };
@@ -79,7 +85,8 @@ export default function BulkTransferPinScreen() {
       value={pin}
       onChange={setPin}
       onComplete={submitBulk}
-      submitting={submitting || authenticating}
+      submitting={submitting}
+      disabled={authenticating}
       onBiometric={isBiometricReady ? handleBiometric : undefined}
       biometryType={biometryType}
     />

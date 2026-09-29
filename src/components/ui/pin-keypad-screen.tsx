@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import {
   ActivityIndicator,
+  BackHandler,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -7,6 +9,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { PIN_LENGTH } from '@/constants';
@@ -27,8 +30,10 @@ interface PinKeypadScreenProps {
   onChange: (pin: string) => void;
   /** Fired once the PIN_LENGTH-th digit lands. */
   onComplete: (pin: string) => void;
-  /** Parent-owned. Disables the keypad and swaps the boxes for a spinner. */
+  /** Parent-owned. Disables the keypad, swaps the boxes for a spinner and blocks leaving the screen. */
   submitting?: boolean;
+  /** Disables the keypad but keeps the boxes visible, e.g. while the OS biometric prompt is open. */
+  disabled: boolean;
   /** Omit to hide the biometric key entirely. */
   onBiometric?: () => void;
   biometryType?: BiometryType;
@@ -90,6 +95,18 @@ const styles = StyleSheet.create({
  *
  * The PIN is masked with dots and there is no reveal toggle: a keypad layout
  * has nowhere sensible to put one.
+ *
+ * Every caller has to wire the same pieces; copy an existing screen rather
+ * than starting fresh:
+ * - `disabled={authenticating}` from useBiometricAuth, so digits can't land
+ *   while the OS prompt is open.
+ * - A `useRef` re-entry guard at the top of the submit function. `submitting`
+ *   is state and lags a render, so it can't stop a same-frame double submit.
+ * - If the screen leaves with `router.replace`, reset `submitting` on the
+ *   failure path only; re-rendering during teardown can crash Fabric. If it
+ *   uses `router.push`, reset it in `finally`: the screen stays mounted
+ *   underneath and must work again when the user comes back.
+ * Adding a sixth caller is the point to fold this into a shared helper instead.
  */
 export function PinKeypadScreen({
   headerTitle = 'Authorize Payment',
@@ -99,6 +116,7 @@ export function PinKeypadScreen({
   onChange,
   onComplete,
   submitting = false,
+  disabled,
   onBiometric,
   biometryType,
   onBack,
@@ -112,18 +130,33 @@ export function PinKeypadScreen({
   const keySize = compact ? 64 : 84;
   const boxWidth = compact ? 52 : 62;
   const boxHeight = compact ? 60 : 74;
+  const locked = submitting || disabled;
+  const navigation = useNavigation();
+
+  // A sent request can't be cancelled, so leaving mid-submit only hides it:
+  // the debit still lands, and the parent's success/failure navigation then
+  // fires over whatever screen the user moved on to.
+  useEffect(() => {
+    navigation.setOptions({ gestureEnabled: !submitting });
+    if (!submitting) return;
+    const subscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => true,
+    );
+    return () => subscription.remove();
+  }, [navigation, submitting]);
 
   // onComplete fires from here rather than a useEffect on `value`: an effect
   // would re-run on remount and could submit the same transaction twice.
   const handleDigit = (digit: string) => {
-    if (submitting || value.length >= PIN_LENGTH) return;
+    if (locked || value.length >= PIN_LENGTH) return;
     const next = value + digit;
     onChange(next);
     if (next.length === PIN_LENGTH) onComplete(next);
   };
 
   const handleBackspace = () => {
-    if (submitting || value.length === 0) return;
+    if (locked || value.length === 0) return;
     onChange(value.slice(0, -1));
   };
 
@@ -133,7 +166,12 @@ export function PinKeypadScreen({
           sits under, and claims the top inset itself so nothing double-insets. */}
       <SafeAreaView className="bg-[#032252]" edges={['top']}>
         <View className="flex-row items-center px-6 pt-2 pb-4">
-          <BackButton className="" onDark onPress={onBack} />
+          <BackButton
+            className=""
+            onDark
+            onPress={onBack}
+            disabled={submitting}
+          />
           <Text
             className="flex-1 text-center text-[20px] font-bold text-white -ml-8"
             style={{ includeFontPadding: false }}
@@ -174,7 +212,7 @@ export function PinKeypadScreen({
           >
             {Array.from({ length: PIN_LENGTH }).map((_, i) => {
               const filled = i < value.length;
-              const isActive = i === value.length;
+              const isActive = !locked && i === value.length;
               return (
                 <View
                   key={i}
@@ -204,7 +242,7 @@ export function PinKeypadScreen({
           )}
         </View>
 
-        <ForgotPinLink className="self-center mt-5" />
+        <ForgotPinLink className="self-center mt-5" disabled={submitting} />
       </View>
 
       {/* Keypad. Cell height comes from the key itself rather than a percentage
@@ -229,10 +267,12 @@ export function PinKeypadScreen({
 
             return (
               <View key={key ?? 'biometric'} className="w-[31%] mb-3 items-center">
+                {/* TouchableOpacity animates to its style opacity whenever that
+                    changes, so opacity-40 fades the pad in and out on its own. */}
                 <TouchableOpacity
                   className={`rounded-full items-center justify-center ${
                     isBiometric ? 'bg-[#F9B700]' : 'bg-white'
-                  }`}
+                  } ${locked ? 'opacity-40' : ''}`}
                   style={[
                     { width: keySize, height: keySize },
                     isBiometric ? styles.biometricKey : styles.key,
@@ -242,7 +282,7 @@ export function PinKeypadScreen({
                     if (isBack) return handleBackspace();
                     return handleDigit(key as string);
                   }}
-                  disabled={submitting}
+                  disabled={locked}
                   activeOpacity={0.6}
                   accessibilityRole="button"
                   accessibilityLabel={

@@ -9,6 +9,8 @@ interface BackButtonProps {
   className?: string;
   /** Use on dark/gradient headers. */
   onDark?: boolean;
+  /** Dims the chevron and ignores presses. */
+  disabled?: boolean;
 }
 
 /**
@@ -22,18 +24,27 @@ interface BackButtonProps {
  * The title needs `includeFontPadding: false` and an explicit line height —
  * Android otherwise pads the Text box, which throws the chevron off centre.
  */
-export function BackButton({ onPress, className = 'mt-4 mb-5', onDark = false }: BackButtonProps) {
+export function BackButton({
+  onPress,
+  className = 'mt-4 mb-5',
+  onDark = false,
+  disabled = false,
+}: BackButtonProps) {
   const router = useRouter();
 
   return (
     <TouchableOpacity
       accessibilityRole="button"
       accessibilityLabel="Go back"
+      accessibilityState={{ disabled }}
       hitSlop={12}
       activeOpacity={0.7}
+      disabled={disabled}
       onPress={onPress ?? (() => router.back())}
       // -ml-1.5 pulls the glyph out to the screen's left margin
-      className={`h-8 w-8 -ml-1.5 items-center justify-center self-start ${className}`}
+      className={`h-8 w-8 -ml-1.5 items-center justify-center self-start ${
+        disabled ? 'opacity-40' : ''
+      } ${className}`}
     >
       <Feather name="chevron-left" size={22} color={onDark ? '#FFFFFF' : '#1A1A1A'} />
     </TouchableOpacity>

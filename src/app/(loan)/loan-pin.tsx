@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { router } from 'expo-router';
 import { toast } from 'sonner-native';
 
@@ -20,8 +20,12 @@ export default function LoanPinScreen() {
 
   const [pin, setPin] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  // Synchronous re-entry guard; `submitting` only updates on the next render.
+  const inFlight = useRef(false);
 
   const submitApplication = async (transactionPin: string) => {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setSubmitting(true);
     try {
       const response = await loanService.submitApplication({
@@ -46,6 +50,9 @@ export default function LoanPinScreen() {
       // so a tray left full has no way to accept input.
       setPin('');
     } finally {
+      // Unlike the transfer and savings screens this one pushes, so it stays
+      // mounted underneath and must be usable again if the user comes back.
+      inFlight.current = false;
       setSubmitting(false);
     }
   };
@@ -69,7 +76,8 @@ export default function LoanPinScreen() {
       value={pin}
       onChange={setPin}
       onComplete={submitApplication}
-      submitting={submitting || authenticating}
+      submitting={submitting}
+      disabled={authenticating}
       onBiometric={isBiometricReady ? handleBiometric : undefined}
       biometryType={biometryType}
     />
