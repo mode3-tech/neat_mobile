@@ -1,11 +1,7 @@
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { useState } from 'react';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 
@@ -22,6 +18,8 @@ const formatCurrency = (val: number | undefined) =>
 
 export default function EnterAmountScreen() {
   const store = useSavingsStore();
+  const [footerHeight, setFooterHeight] = useState(0);
+  const insets = useSafeAreaInsets();
 
   const { data: accountSummary } = useQuery({
     queryKey: ['account-summary'],
@@ -41,9 +39,12 @@ export default function EnterAmountScreen() {
 
   return (
     <HeaderScreen padded={false}>
-      <KeyboardAvoidingView
-        className="flex-1 px-6"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingHorizontal: 24 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        bottomOffset={footerHeight + 20}
       >
         <View className="flex-row items-center gap-2 mt-4 mb-1">
           <BackButton className="" />
@@ -94,11 +95,14 @@ export default function EnterAmountScreen() {
             />
           </View>
         </View>
+      </KeyboardAwareScrollView>
 
-        <View className="flex-1" />
-
-        {/* Proceed button */}
-        <View className="pb-4">
+      {/* Keyboard height includes the bottom inset HeaderScreen already pads, so lift by the difference. */}
+      <KeyboardStickyView
+        offset={{ opened: insets.bottom }}
+        onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+      >
+        <View className="px-6 pb-4 bg-white">
           <TouchableOpacity
             className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'}`}
             onPress={handleProceed}
@@ -112,7 +116,7 @@ export default function EnterAmountScreen() {
             </Text>
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardStickyView>
     </HeaderScreen>
   );
 }

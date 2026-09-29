@@ -1,12 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { HeaderScreen } from '@/components/ui/header-screen';
 import { toast } from 'sonner-native';
@@ -27,6 +22,8 @@ export default function ChangePinScreen() {
   const [loading, setLoading] = useState(false);
   const [errorField, setErrorField] = useState<'current' | 'new' | 'confirm' | null>(null);
   const [sessionExpired, setSessionExpired] = useState(false);
+  const [footerHeight, setFooterHeight] = useState(0);
+  const insets = useSafeAreaInsets();
 
   const pinChange = useSecurityChangeStore((s) => s.pinChange);
   const clearPinChange = useSecurityChangeStore((s) => s.clearPinChange);
@@ -88,9 +85,12 @@ export default function ChangePinScreen() {
 
   return (
     <HeaderScreen padded={false}>
-      <KeyboardAvoidingView
-        className="flex-1 px-6"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingHorizontal: 24 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        bottomOffset={footerHeight + 20}
       >
         <View className="flex-row items-center gap-2 mt-4 mb-6">
           <BackButton className="" />
@@ -132,10 +132,14 @@ export default function ChangePinScreen() {
         {errorField === 'confirm' && (
           <Text className="text-xs text-[#EF4444] -mt-3 mb-2">PINs do not match</Text>
         )}
+      </KeyboardAwareScrollView>
 
-        <View className="flex-1" />
-
-        <View className="pb-4">
+      {/* Keyboard height includes the bottom inset HeaderScreen already pads, so lift by the difference. */}
+      <KeyboardStickyView
+        offset={{ opened: insets.bottom }}
+        onLayout={(e) => setFooterHeight(e.nativeEvent.layout.height)}
+      >
+        <View className="px-6 pb-4 bg-white">
           <TouchableOpacity
             className={`rounded-full py-4 items-center ${canProceed ? 'bg-[#F9B700]' : 'bg-[#E5E7EB]'}`}
             onPress={handleChangePin}
@@ -153,7 +157,7 @@ export default function ChangePinScreen() {
             )}
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardStickyView>
     </HeaderScreen>
   );
 }
