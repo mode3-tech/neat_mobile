@@ -10,8 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
-const SUPPORT_PHONE = '+2347070192526';
-const SUPPORT_EMAIL = 'customerservice@neatmicrocredit.com.ng';
+import { SUPPORT_EMAIL, SUPPORT_PHONE } from '@/constants';
 
 export function DeviceBlockedScreen(): React.JSX.Element {
   const storeName = Platform.OS === 'ios' ? 'App Store' : 'Google Play Store';

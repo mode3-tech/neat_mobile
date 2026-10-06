@@ -1,6 +1,7 @@
 import { Image, Text, View } from 'react-native';
 
 import { DetailRow } from '@/components/features/transaction/DetailRow';
+import { SUPPORT_EMAIL, SUPPORT_PHONE } from '@/constants';
 
 export interface ReceiptRow {
   label: string;
@@ -75,11 +76,9 @@ export function ReceiptCard({
           <Text className="text-[11px] leading-[17px] text-[#6B7280] text-center">
             Thank you for choosing NEATPay. If you experience any issues with
             your transaction, please contact our support team via{' '}
-            <Text className="font-semibold text-[#032252]">
-              customerservice@neatmicrocredit.com.ng
-            </Text>{' '}
+            <Text className="font-semibold text-[#032252]">{SUPPORT_EMAIL}</Text>{' '}
             or call{' '}
-            <Text className="font-semibold text-[#032252]">+2347070192526</Text>.
+            <Text className="font-semibold text-[#032252]">{SUPPORT_PHONE}</Text>.
           </Text>
         </View>
       </View>

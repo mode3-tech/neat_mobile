@@ -251,6 +251,11 @@ export default function ProfileScreen() {
             onPress={() => router.push('/(profile)/biometrics' as any)}
           />
           <SettingsRow
+            icon="headset"
+            label="Help & Support"
+            onPress={() => router.push('/(profile)/help-support' as any)}
+          />
+          <SettingsRow
             icon="power"
             label="Close Account"
             onPress={() => router.push('/(close-account)/intro' as any)}

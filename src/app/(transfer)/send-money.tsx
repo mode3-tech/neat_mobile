@@ -8,7 +8,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import {
+  KeyboardAvoidingView,
+  KeyboardAwareScrollView,
+  KeyboardProvider,
+} from 'react-native-keyboard-controller';
 import { HeaderScreen } from '@/components/ui/header-screen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -617,150 +621,158 @@ export default function SendMoneyScreen() {
 
       {/* Bank selection modal */}
       <Modal visible={bankModalVisible} animationType="slide" transparent>
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className="bg-white rounded-t-3xl flex-1 mt-[60%] pt-4 pb-8">
-            <View className="flex-row items-center justify-between px-6 mb-4">
-              <Text className="text-lg font-bold text-[#1A1A1A]">
-                Select Bank
-              </Text>
-              <TouchableOpacity onPress={() => setBankModalVisible(false)}>
-                <MaterialCommunityIcons
-                  name="close"
-                  size={24}
-                  color="#374151"
-                />
-              </TouchableOpacity>
-            </View>
+        <KeyboardProvider>
+          <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+            <View className="flex-1 bg-black/50 justify-end">
+              <View className="bg-white rounded-t-3xl flex-1 mt-[60%] pt-4 pb-8">
+                <View className="flex-row items-center justify-between px-6 mb-4">
+                  <Text className="text-lg font-bold text-[#1A1A1A]">
+                    Select Bank
+                  </Text>
+                  <TouchableOpacity onPress={() => setBankModalVisible(false)}>
+                    <MaterialCommunityIcons
+                      name="close"
+                      size={24}
+                      color="#374151"
+                    />
+                  </TouchableOpacity>
+                </View>
 
-            {/* Search */}
-            <View className="px-6 mb-3">
-              <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
-                <MaterialCommunityIcons
-                  name="magnify"
-                  size={20}
-                  color="#9CA3AF"
-                />
-                <TextInput
-                  className="flex-1 text-[15px] text-[#1A1A1A] ml-2 p-0"
-                  value={bankSearch}
-                  onChangeText={setBankSearch}
-                  placeholder="Search bank"
-                  placeholderTextColor="#9CA3AF"
-                  autoFocus
-                />
+                {/* Search */}
+                <View className="px-6 mb-3">
+                  <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
+                    <MaterialCommunityIcons
+                      name="magnify"
+                      size={20}
+                      color="#9CA3AF"
+                    />
+                    <TextInput
+                      className="flex-1 text-[15px] text-[#1A1A1A] ml-2 p-0"
+                      value={bankSearch}
+                      onChangeText={setBankSearch}
+                      placeholder="Search bank"
+                      placeholderTextColor="#9CA3AF"
+                      autoFocus
+                    />
+                  </View>
+                </View>
+
+                {banksLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color="#032252"
+                    className="mt-8"
+                  />
+                ) : (
+                  <FlatList
+                    data={filteredBanks}
+                    keyExtractor={(item) => item.code}
+                    keyboardShouldPersistTaps="handled"
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        className={`px-6 py-4 border-b border-[#F3F4F6] ${
+                          selectedBank?.code === item.code ? 'bg-[#E8EEF7]' : ''
+                        }`}
+                        onPress={() => handleSelectBank(item)}
+                      >
+                        <Text className="text-[15px] text-[#1A1A1A]">
+                          {item.name}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                    ListEmptyComponent={
+                      <Text className="text-center text-[#9CA3AF] mt-8">
+                        No banks found
+                      </Text>
+                    }
+                  />
+                )}
               </View>
             </View>
-
-            {banksLoading ? (
-              <ActivityIndicator
-                size="large"
-                color="#032252"
-                className="mt-8"
-              />
-            ) : (
-              <FlatList
-                data={filteredBanks}
-                keyExtractor={(item) => item.code}
-                keyboardShouldPersistTaps="handled"
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    className={`px-6 py-4 border-b border-[#F3F4F6] ${
-                      selectedBank?.code === item.code ? 'bg-[#E8EEF7]' : ''
-                    }`}
-                    onPress={() => handleSelectBank(item)}
-                  >
-                    <Text className="text-[15px] text-[#1A1A1A]">
-                      {item.name}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                ListEmptyComponent={
-                  <Text className="text-center text-[#9CA3AF] mt-8">
-                    No banks found
-                  </Text>
-                }
-              />
-            )}
-          </View>
-        </View>
+          </KeyboardAvoidingView>
+        </KeyboardProvider>
       </Modal>
 
       {/* Beneficiary selection modal */}
       <Modal visible={beneficiaryModalVisible} animationType="slide" transparent>
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className="bg-white rounded-t-3xl flex-1 mt-[30%] pt-4 pb-8">
-            <View className="flex-row items-center justify-between px-6 mb-4">
-              <Text className="text-lg font-bold text-[#1A1A1A]">
-                Select Beneficiary
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  setBeneficiaryModalVisible(false);
-                  setBeneficiarySearch('');
-                }}
-              >
-                <MaterialCommunityIcons
-                  name="close"
-                  size={24}
-                  color="#374151"
-                />
-              </TouchableOpacity>
-            </View>
+        <KeyboardProvider>
+          <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+            <View className="flex-1 bg-black/50 justify-end">
+              <View className="bg-white rounded-t-3xl flex-1 mt-[30%] pt-4 pb-8">
+                <View className="flex-row items-center justify-between px-6 mb-4">
+                  <Text className="text-lg font-bold text-[#1A1A1A]">
+                    Select Beneficiary
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setBeneficiaryModalVisible(false);
+                      setBeneficiarySearch('');
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name="close"
+                      size={24}
+                      color="#374151"
+                    />
+                  </TouchableOpacity>
+                </View>
 
-            {/* Search */}
-            <View className="px-6 mb-3">
-              <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
-                <MaterialCommunityIcons
-                  name="magnify"
-                  size={20}
-                  color="#9CA3AF"
-                />
-                <TextInput
-                  className="flex-1 text-[15px] text-[#1A1A1A] ml-2 p-0"
-                  value={beneficiarySearch}
-                  onChangeText={setBeneficiarySearch}
-                  placeholder="Search beneficiary"
-                  placeholderTextColor="#9CA3AF"
-                  autoFocus
-                />
+                {/* Search */}
+                <View className="px-6 mb-3">
+                  <View className="bg-[#F5F5F5] rounded-xl px-4 py-3 flex-row items-center">
+                    <MaterialCommunityIcons
+                      name="magnify"
+                      size={20}
+                      color="#9CA3AF"
+                    />
+                    <TextInput
+                      className="flex-1 text-[15px] text-[#1A1A1A] ml-2 p-0"
+                      value={beneficiarySearch}
+                      onChangeText={setBeneficiarySearch}
+                      placeholder="Search beneficiary"
+                      placeholderTextColor="#9CA3AF"
+                      autoFocus
+                    />
+                  </View>
+                </View>
+
+                {beneficiariesLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color="#032252"
+                    className="mt-8"
+                  />
+                ) : (
+                  <FlatList
+                    data={filteredBeneficiaries}
+                    keyExtractor={(item) =>
+                      `${item.bank_code}-${item.account_number}`
+                    }
+                    keyboardShouldPersistTaps="handled"
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        className="px-6 py-4 bg-gray-100 border-b border-[#F3F4F6]"
+                        onPress={() => handleSelectBeneficiary(item)}
+                      >
+                        <Text className="text-[20px] font-bold text-[#1A1A1A]">
+                          {item.account_name}
+                        </Text>
+                        <Text className="text-[13px] text-[#6B7280] mt-0.5">
+                          {getBankName(item.bank_code)}  •  {item.account_number}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                    ListEmptyComponent={
+                      <Text className="text-center text-[#9CA3AF] mt-8">
+                        No beneficiaries found
+                      </Text>
+                    }
+                  />
+                )}
               </View>
             </View>
-
-            {beneficiariesLoading ? (
-              <ActivityIndicator
-                size="large"
-                color="#032252"
-                className="mt-8"
-              />
-            ) : (
-              <FlatList
-                data={filteredBeneficiaries}
-                keyExtractor={(item) =>
-                  `${item.bank_code}-${item.account_number}`
-                }
-                keyboardShouldPersistTaps="handled"
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    className="px-6 py-4 bg-gray-100 border-b border-[#F3F4F6]"
-                    onPress={() => handleSelectBeneficiary(item)}
-                  >
-                    <Text className="text-[20px] font-bold text-[#1A1A1A]">
-                      {item.account_name}
-                    </Text>
-                    <Text className="text-[13px] text-[#6B7280] mt-0.5">
-                      {getBankName(item.bank_code)}  •  {item.account_number}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                ListEmptyComponent={
-                  <Text className="text-center text-[#9CA3AF] mt-8">
-                    No beneficiaries found
-                  </Text>
-                }
-              />
-            )}
-          </View>
-        </View>
+          </KeyboardAvoidingView>
+        </KeyboardProvider>
       </Modal>
     </HeaderScreen>
   );
