@@ -16,6 +16,7 @@ import { useSignUpStore } from '@/stores/sign-up.store';
 import { BVN_LENGTH } from '@/constants';
 import type { BvnData } from '@/types/sign-up.types';
 import { BackButton } from '@/components/ui/back-button';
+import { SignupConsent } from '@/components/ui/signup-consent';
 
 const PRIMARY = '#F9B700';
 const PRIMARY_TEXT = '#032252';
@@ -130,6 +131,8 @@ export default function BvnVerificationScreen() {
               )}
             </TouchableOpacity>
           )}
+
+          <SignupConsent className="mt-3" />
         </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>

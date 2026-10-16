@@ -20,6 +20,7 @@ import {
   validatePhone,
 } from '@/utils/signup-v2-validation';
 import { BackButton } from '@/components/ui/back-button';
+import { SignupConsent } from '@/components/ui/signup-consent';
 
 const PRIMARY = '#F9B700';
 const PRIMARY_TEXT = '#032252';
@@ -154,6 +155,8 @@ export default function PhoneValidationScreen() {
               We already sent a code to this number.
             </Text>
           ) : null}
+
+          <SignupConsent />
         </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>

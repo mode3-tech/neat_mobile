@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import { File } from 'expo-file-system';
 
-import { QUERY_KEYS } from '@/constants';
+import { PRIVACY_POLICY_URL, QUERY_KEYS, TERMS_URL } from '@/constants';
 import { accountService } from '@/services/account.service';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/stores/auth.store';
@@ -15,6 +15,7 @@ import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { HeaderScreen } from '@/components/ui/header-screen';
 import { PhotoPickerSheet } from '@/components/ui/PhotoPickerSheet';
 import { PrimaryRefreshControl } from '@/components/ui/refresh-control';
+import { openInAppBrowser } from '@/utils/open-in-app-browser';
 
 interface RowProps {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
@@ -254,6 +255,16 @@ export default function ProfileScreen() {
             icon="headset"
             label="Help & Support"
             onPress={() => router.push('/(profile)/help-support' as any)}
+          />
+          <SettingsRow
+            icon="shield-lock-outline"
+            label="Privacy Policy"
+            onPress={() => openInAppBrowser(PRIVACY_POLICY_URL)}
+          />
+          <SettingsRow
+            icon="file-document-outline"
+            label="Terms & Conditions"
+            onPress={() => openInAppBrowser(TERMS_URL)}
           />
           <SettingsRow
             icon="power"

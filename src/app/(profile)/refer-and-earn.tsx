@@ -57,8 +57,8 @@ export default function ReferAndEarnScreen() {
           </Text>
         </View>
         <Text className="text-[13px] text-gray-500 leading-5 mb-6">
-          Share your invite link with friends and earn cash rewards when they join
-          NEATPay.
+          Share your invite link with friends and earn rewards for every friend who
+          joins NEATPay.
         </Text>
 
         <Text className="text-[13px] font-medium text-gray-500 mb-2">Your referral code</Text>

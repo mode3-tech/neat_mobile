@@ -49,6 +49,9 @@ export const SESSION_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
 export const SUPPORT_EMAIL = 'customerservice@neatmicrocredit.com.ng';
 export const SUPPORT_PHONE = '+2347070192526';
 
+export const PRIVACY_POLICY_URL = 'https://neatmicrocredit.com.ng/neatpay-privacy-policy.php';
+export const TERMS_URL = 'https://neatmicrocredit.com.ng/neatpay-terms.php';
+
 // Served from web/invite/ — routes by device, so shared links keep working
 // when iOS ships without a new app release.
 export const INVITE_URL = 'https://get.neatpays.com';
