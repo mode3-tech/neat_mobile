@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import type { ActiveLoan } from '@/types/account.types';
@@ -38,14 +38,6 @@ export default function ActiveLoanCard({ loans }: ActiveLoanCardProps) {
             </View>
           ))}
         </View>
-
-        {/* View Settlement button */}
-        <TouchableOpacity
-          className="bg-[#F5C554] rounded-full py-3 px-6 self-start mt-5"
-          activeOpacity={0.85}
-        >
-          <Text className="text-[#032252] text-sm font-semibold">View Settlement</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );

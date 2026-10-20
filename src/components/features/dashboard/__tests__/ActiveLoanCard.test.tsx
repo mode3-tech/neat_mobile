@@ -42,11 +42,6 @@ describe('ActiveLoanCard', () => {
     expect(screen.getByText('₦19,166.67')).toBeTruthy();
   });
 
-  it('renders the View Settlement button', () => {
-    render(<ActiveLoanCard loans={[mockLoan]} />);
-    expect(screen.getByText('View Settlement')).toBeTruthy();
-  });
-
   it('only renders the first loan when multiple are provided', () => {
     const secondLoan: ActiveLoan = {
       ...mockLoan,

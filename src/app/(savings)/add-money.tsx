@@ -1,4 +1,4 @@
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
@@ -19,20 +19,6 @@ const FUNDING_OPTIONS: FundingOption[] = [
     description: 'Pay fast and securely.',
     onPress: () => router.push('/(savings)/bank-transfer'),
   },
-  {
-    icon: 'credit-card-outline',
-    label: 'Debit Card',
-    description: 'Instant transfer',
-    onPress: () =>
-      Alert.alert('Coming Soon', 'Debit card deposits will be available soon.'),
-  },
-  {
-    icon: 'wallet-outline',
-    label: 'From Main Balance',
-    description: 'Transfer from wallet',
-    onPress: () =>
-      Alert.alert('Coming Soon', 'Deposits from your main balance will be available soon.'),
-  },
 ];
 
 export default function AddMoneyScreen() {
@@ -44,7 +30,7 @@ export default function AddMoneyScreen() {
           className="text-[22px] font-bold text-[#032252] leading-[26px]"
           style={{ includeFontPadding: false }}
         >
-          Add Money to Savings
+          Add Money
         </Text>
       </View>
       <Text className="text-[13px] text-[#6B7280] mb-7">

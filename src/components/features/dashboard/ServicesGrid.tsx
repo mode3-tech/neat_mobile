@@ -2,7 +2,6 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
-import { toast } from 'sonner-native';
 
 import { QUERY_KEYS } from '@/constants';
 import { vasService } from '@/services/vas.service';
@@ -14,8 +13,6 @@ interface ServiceItem {
   route?: string;
   /** VAS category name to resolve a category_id from /vas/categories. */
   categoryName?: string;
-  /** Not yet implemented — tapping shows a "coming soon" toast. */
-  comingSoon?: boolean;
 }
 
 // Fallback category ids used if /vas/categories hasn't loaded yet.
@@ -38,15 +35,12 @@ const SERVICES: ServiceItem[][] = [
 
     { icon: 'cash-multiple', label: 'Loans', route: '/(loan)/loan-home' },
     { icon: 'file-document-outline', label: 'Statement', route: '/(account)/statement' },
-     { icon: 'television', label: 'Cable TV', categoryName: 'CABLE TV' },
-    { icon: 'wifi', label: 'Buy Data', categoryName: 'DATA' },
+    { icon: 'television', label: 'Cable TV', categoryName: 'CABLE TV' },
   ],
   [
-    // { icon: 'television', label: 'Cable TV', categoryName: 'CABLE TV' },
+    { icon: 'wifi', label: 'Buy Data', categoryName: 'DATA' },
     { icon: 'flash', label: 'Electricity', categoryName: 'ELECTRICITY' },
     { icon: 'trophy', label: 'Buy Airtime', categoryName: 'AIRTIME' },
-     { icon: 'qrcode-scan', label: 'QR Code', comingSoon: true },
-    { icon: 'dots-horizontal', label: 'More', comingSoon: true },
   ],
 ];
 
@@ -69,12 +63,6 @@ export default function ServicesGrid() {
   };
 
   const handlePress = (item: ServiceItem) => {
-    if (item.comingSoon) {
-      toast(`${item.label} coming soon`, {
-        description: "We're putting the finishing touches on this. Check back shortly.",
-      });
-      return;
-    }
     if (item.categoryName) {
       openVasCategory(item.categoryName);
       return;
@@ -88,11 +76,11 @@ export default function ServicesGrid() {
     <View className="mt-7 px-6">
       <Text className="text-base font-semibold text-gray-900 mb-4">Services Just for You</Text>
       {SERVICES.map((row, rowIndex) => (
-        <View key={rowIndex} className="flex-row justify-between mb-4">
+        <View key={rowIndex} className="flex-row justify-center mb-4">
           {row.map((item) => (
             <TouchableOpacity
               key={item.label}
-              className="items-center w-[22%]"
+              className="items-center w-20 mx-6"
               activeOpacity={0.7}
               onPress={() => handlePress(item)}
             >
