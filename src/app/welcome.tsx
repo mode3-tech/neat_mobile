@@ -16,6 +16,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 
+import { LOANS_ENABLED } from '@/constants';
 import { useSignupFlowVersion } from '@/hooks/use-signup-flow-version';
 import { signupEntryRoute } from '@/utils/signup-entry';
 
@@ -33,13 +34,14 @@ interface Slide {
   description: string;
 }
 
-const SLIDES: Slide[] = [
+const ALL_SLIDES: Slide[] = [
   {
     id: '1',
     image: require('../../assets/images/new/new1.png'),
     title: 'Instant Transfers',
-    description:
-      'Open your account in minutes, access instant loans, transfer money securely.',
+    description: LOANS_ENABLED
+      ? 'Open your account in minutes, access instant loans, transfer money securely.'
+      : 'Open your account in minutes, pay bills and transfer money securely.',
   },
   {
     id: '2',
@@ -49,7 +51,7 @@ const SLIDES: Slide[] = [
       'Your data and money are protected with advanced security and real-time monitoring.',
   },
   {
-    id: '3',
+    id: 'loans',
     image: require('../../assets/images/new/new3.png'),
     title: 'Get Quick Loans',
     description:
@@ -63,6 +65,10 @@ const SLIDES: Slide[] = [
       'Verify your identity, get your account instantly, and enjoy seamless transfers.',
   },
 ];
+
+const SLIDES = LOANS_ENABLED
+  ? ALL_SLIDES
+  : ALL_SLIDES.filter((slide) => slide.id !== 'loans');
 
 const EXTENDED_SLIDES: Slide[] = [...SLIDES, { ...SLIDES[0], id: '1-clone' }];
 

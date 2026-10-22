@@ -2,6 +2,8 @@ import { Tabs, router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { LOANS_ENABLED } from '@/constants';
+
 const PRIMARY = '#032252';
 const INACTIVE = '#9CA3AF';
 
@@ -51,16 +53,21 @@ export default function TabsLayout() {
         name="loan"
         options={{
           title: 'Loan',
+          href: LOANS_ENABLED ? undefined : null,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="wallet" size={size} color={color} />
           ),
         }}
-        listeners={{
-          tabPress: (e) => {
-            e.preventDefault();
-            router.push('/(loan)/loan-home');
-          },
-        }}
+        listeners={
+          LOANS_ENABLED
+            ? {
+                tabPress: (e) => {
+                  e.preventDefault();
+                  router.push('/(loan)/loan-home');
+                },
+              }
+            : undefined
+        }
       />
       {/* <Tabs.Screen
         name="support"

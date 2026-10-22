@@ -1,4 +1,9 @@
+import { Platform } from 'react-native';
+
 export const APP_NAME = 'NEAT';
+
+
+export const LOANS_ENABLED = Platform.OS !== 'ios';
 
 export const NIGERIAN_PHONE_REGEX = /^\+234[789][01]\d{8}$/;
 export const BVN_LENGTH = 11;

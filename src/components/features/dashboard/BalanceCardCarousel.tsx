@@ -15,6 +15,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { router } from 'expo-router';
 
 import { CopyButton } from '@/components/ui/copy-button';
+import { LOANS_ENABLED } from '@/constants';
 
 const CARD_MARGIN = 14;
 const AUTO_ROTATE_INTERVAL = 4000;
@@ -53,7 +54,7 @@ function buildCards(
       ? new Intl.NumberFormat('en-NG').format(val)
       : '---';
 
-  return [
+  const cards: CardData[] = [
     {
       id: 'available',
       bgColor: '#E8AA00',
@@ -88,6 +89,8 @@ function buildCards(
       // imageSize: { width: 80, height: 70 },
     },
   ];
+
+  return LOANS_ENABLED ? cards : cards.filter((card) => card.id !== 'loan');
 }
 
 export default function BalanceCardCarousel({
@@ -106,8 +109,9 @@ export default function BalanceCardCarousel({
     () => buildCards(accountNumber, availableBalance, loanBalance, hasActiveLoan),
     [accountNumber, availableBalance, loanBalance, hasActiveLoan],
   );
+  const isCarousel = CARDS.length > 1;
   const EXTENDED_CARDS = useMemo(
-    () => [...CARDS, CARDS[0]],
+    () => (CARDS.length > 1 ? [...CARDS, CARDS[0]] : CARDS),
     [CARDS],
   );
 
@@ -156,9 +160,10 @@ export default function BalanceCardCarousel({
   }, [stopAutoRotate]);
 
   useEffect(() => {
+    if (!isCarousel) return;
     startAutoRotate();
     return stopAutoRotate;
-  }, [startAutoRotate, stopAutoRotate]);
+  }, [isCarousel, startAutoRotate, stopAutoRotate]);
 
   const onScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (isResettingRef.current) return;
@@ -267,6 +272,7 @@ export default function BalanceCardCarousel({
       <ScrollView
         ref={scrollRef}
         horizontal
+        scrollEnabled={isCarousel}
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={onScrollEnd}
         onScrollBeginDrag={stopAutoRotate}
@@ -276,16 +282,18 @@ export default function BalanceCardCarousel({
         {EXTENDED_CARDS.map(renderCard)}
       </ScrollView>
 
-      <View className="flex-row justify-center items-center gap-1.5 mt-3">
-        {CARDS.map((card, i) => (
-          <View
-            key={card.id}
-            className={`rounded-full ${
-              i === activeIndex % CARDS.length ? 'w-2 h-2 bg-[#032252]' : 'w-1.5 h-1.5 bg-gray-300'
-            }`}
-          />
-        ))}
-      </View>
+      {isCarousel && (
+        <View className="flex-row justify-center items-center gap-1.5 mt-3">
+          {CARDS.map((card, i) => (
+            <View
+              key={card.id}
+              className={`rounded-full ${
+                i === activeIndex % CARDS.length ? 'w-2 h-2 bg-[#032252]' : 'w-1.5 h-1.5 bg-gray-300'
+              }`}
+            />
+          ))}
+        </View>
+      )}
     </View>
   );
 }

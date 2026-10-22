@@ -3,7 +3,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 
-import { QUERY_KEYS } from '@/constants';
+import { LOANS_ENABLED, QUERY_KEYS } from '@/constants';
 import { vasService } from '@/services/vas.service';
 import { useVasStore } from '@/stores/vas.store';
 
@@ -30,19 +30,22 @@ const CATEGORY_ROUTE: Record<string, string> = {
   ELECTRICITY: '/(vas)/buy-electricity',
 };
 
-const SERVICES: ServiceItem[][] = [
-  [
+const LOANS: ServiceItem = { icon: 'cash-multiple', label: 'Loans', route: '/(loan)/loan-home' };
+const STATEMENT: ServiceItem = { icon: 'file-document-outline', label: 'Statement', route: '/(account)/statement' };
+const CABLE_TV: ServiceItem = { icon: 'television', label: 'Cable TV', categoryName: 'CABLE TV' };
+const BUY_DATA: ServiceItem = { icon: 'wifi', label: 'Buy Data', categoryName: 'DATA' };
+const ELECTRICITY: ServiceItem = { icon: 'flash', label: 'Electricity', categoryName: 'ELECTRICITY' };
+const BUY_AIRTIME: ServiceItem = { icon: 'trophy', label: 'Buy Airtime', categoryName: 'AIRTIME' };
 
-    { icon: 'cash-multiple', label: 'Loans', route: '/(loan)/loan-home' },
-    { icon: 'file-document-outline', label: 'Statement', route: '/(account)/statement' },
-    { icon: 'television', label: 'Cable TV', categoryName: 'CABLE TV' },
-  ],
-  [
-    { icon: 'wifi', label: 'Buy Data', categoryName: 'DATA' },
-    { icon: 'flash', label: 'Electricity', categoryName: 'ELECTRICITY' },
-    { icon: 'trophy', label: 'Buy Airtime', categoryName: 'AIRTIME' },
-  ],
-];
+const SERVICES: ServiceItem[][] = LOANS_ENABLED
+  ? [
+      [LOANS, STATEMENT, CABLE_TV],
+      [BUY_DATA, ELECTRICITY, BUY_AIRTIME],
+    ]
+  : [
+      [STATEMENT, CABLE_TV, BUY_DATA],
+      [ELECTRICITY, BUY_AIRTIME],
+    ];
 
 export default function ServicesGrid() {
   const setCategory = useVasStore((s) => s.setCategory);

@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { ScrollView, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { QUERY_KEYS } from '@/constants';
+import { LOANS_ENABLED, QUERY_KEYS } from '@/constants';
 import { accountService } from '@/services/account.service';
 import DashboardHeader from '@/components/features/dashboard/DashboardHeader';
 import BalanceCardCarousel from '@/components/features/dashboard/BalanceCardCarousel';
@@ -37,7 +37,7 @@ export default function HomeScreen() {
     queryFn: accountService.getSummary,
   });
 
-  const hasActiveLoan = (accountSummary?.active_loans?.length ?? 0) > 0;
+  const hasActiveLoan = LOANS_ENABLED && (accountSummary?.active_loans?.length ?? 0) > 0;
 
   return (
     <View className="flex-1 bg-white">
@@ -76,19 +76,21 @@ export default function HomeScreen() {
    
         <PromoCard />
 
-        {accountSummary?.active_loans && accountSummary.active_loans.length > 0 && (
+        {hasActiveLoan && accountSummary?.active_loans && (
           <ActiveLoanCard loans={accountSummary.active_loans} />
         )}
 
         <RecentTransactions />
       </ScrollView>
 
-      <RepaymentBottomSheet
-        visible={repaymentOpen}
-        onClose={() => setRepaymentOpen(false)}
-        loan={accountSummary?.active_loans?.[0]}
-        availableBalance={accountSummary?.available_balance}
-      />
+      {LOANS_ENABLED && (
+        <RepaymentBottomSheet
+          visible={repaymentOpen}
+          onClose={() => setRepaymentOpen(false)}
+          loan={accountSummary?.active_loans?.[0]}
+          availableBalance={accountSummary?.available_balance}
+        />
+      )}
     </View>
   );
 }
