@@ -331,10 +331,6 @@ export default function RootLayout(): React.JSX.Element {
               name="notifications"
               options={{ statusBarStyle: 'light' }}
             />
-            <Stack.Screen
-              name="modal"
-              options={{ presentation: 'modal' }}
-            />
           </Stack>
           </AppVersionGate>
           </DeviceIntegrityGate>
